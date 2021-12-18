@@ -49,7 +49,7 @@ python -m pip install nconpp-python/.
 py -m venv nconpp-venv
 .\nconpp-venv\Scripts\activate
 pip install numpy
-pip install nconpp-python\.
+pip install python\.
 ```
 
 Grab some coffee, this will take a while.

@@ -4,8 +4,8 @@
 #include <xtensor-python/pyarray.hpp>
 #include <xtensor-python/pytensor.hpp>
 
-#include "nconpp.h"
-#include "nconpp.cpp"
+#include "NetworkContractor.h"
+#include "NetworkContractor.cpp"
 
 namespace py = pybind11;
 
@@ -49,7 +49,7 @@ PYBIND11_MODULE(_nconpp, m) {
     xt::import_numpy();
 
     //m.def("contract", &compute);
-    m.def("contract", &NetworkContractor::compute<xt::pyarray<std::complex<double>, xt::layout_type::dynamic>>);
+    m.def("contract", &NetworkContractor::contract<xt::pyarray<std::complex<double>, xt::layout_type::dynamic>>);
 }
 
 //#include <pybind11/pybind11.h>
