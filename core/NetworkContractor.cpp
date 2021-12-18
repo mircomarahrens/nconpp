@@ -10,13 +10,12 @@
 
 using namespace std;
 
-template <class T, template <class> class C,
-	NetworkContractor::check_constraints<C, T>>
-	T NetworkContractor::contract(
-		vector<T> containerList,
-		vector<vector<int>> legsList,
-		vector<int> contractionSequenceLegs,
-		vector<int> finalOrder)
+template<class T>
+T NetworkContractor::contract(
+	vector<T> containerList,
+	vector<vector<int>> legsList,
+	vector<int> contractionSequenceLegs,
+	vector<int> finalOrder)
 {
 	validateInput(
 		containerList,
