@@ -1,0 +1,15 @@
+[project]
+python = "^3"
+
+# do not override, e.g. by poetry
+[build-system]
+requires = [
+    "cmake>=3.22",
+    "ninja",
+    "numpy>=1.21.4",
+    "pybind11>=2.8.0",
+    "scikit-build>=0.12",
+    "setuptools>=54.2.0",
+    "wheel",
+]
+build-backend = "setuptools.build_meta"

@@ -1,0 +1,27 @@
+#pragma once
+
+#include <vector>
+#include <set>
+
+class Graph
+{
+public:
+    Graph(size_t N);
+    ~Graph() = default;
+
+    virtual void addEdge(int src, int dest);
+    virtual void removeEdge(int src, int dest);
+
+    void addVertex(int vertex);
+    void removeVertex(int vertex);
+
+    const std::set<int>& getVertices();
+    void setVertices(std::set<int> nodes);
+
+    const std::vector<std::vector<int>>& getAdjanceyList();
+    void setAdjanceyList(std::vector<std::vector<int>> adjanceyList);
+
+private:
+    std::vector<std::vector<int>> mAdjanceyList;
+    std::set<int> mVertices;
+};

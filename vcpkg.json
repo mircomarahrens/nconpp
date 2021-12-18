@@ -1,0 +1,12 @@
+{
+  "dependencies": [
+    "pybind11",
+    "lapack",
+    "openblas",
+    "xtensor",
+    "xtensor-blas",
+    "gtest"
+  ],
+  "name": "nconpp-core",
+  "version": "0.0.1"
+}
