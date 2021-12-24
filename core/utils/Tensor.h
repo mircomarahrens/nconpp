@@ -59,13 +59,6 @@ namespace Tensor
 	template <typename T>
 	static inline auto trace(const xt::xexpression<T>& M, int offset = 0, std::size_t axis1 = 0, std::size_t axis2 = 1)
 	{
-		using value_type = std::common_type_t<typename T::value_type>;
-		using result_type = std::conditional_t<
-			(T::static_layout != xt::layout_type::dynamic && T::static_layout != xt::layout_type::any),
-			xt::xarray<value_type, T::static_layout>,
-			xt::xarray<value_type, XTENSOR_DEFAULT_LAYOUT>>;
-
-		result_type result;
 		auto&& vM = xt::view_eval<T::static_layout>(M.derived_cast());
 		auto d = xt::diagonal(vM, offset, std::size_t(axis1), std::size_t(axis2));
 		std::size_t dim = d.dimension();
