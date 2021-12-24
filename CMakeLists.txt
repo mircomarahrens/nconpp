@@ -3,7 +3,7 @@
 cmake_minimum_required (VERSION 3.18)
 
 # build additional python module, TODO via env?
-set(BUILD_PYTHON_MODULE         false)
+set(BUILD_PYTHON_MODULE         true)
 
 # vcpkg flags
 set(VCPKG_FEATURE_FLAGS         "versions")

@@ -1,9 +1,13 @@
 #include "Network.h"
-#include "Search.h"
 
-Network::Network(std::vector<std::vector<int>> vertexLegs)
+#include "utils/Container.h"
+
+using namespace std;
+
+Network::Network(vector<vector<int>> vertexLegs)
     : mVertexLegs{ vertexLegs },
-    Graph(vertexLegs.size())
+    Graph(vertexLegs.size()),
+    mConnectedComponents{}
 {
     generateEdges(vertexLegs);
 }
@@ -12,8 +16,8 @@ void Network::addEdge(int src, int dest)
 {
     Graph::addEdge(src, dest);
 
-    std::vector<int>& vertexSrc = mVertexLegs[src];
-    std::vector<int>& vertexDest = mVertexLegs[dest];
+    vector<int>& vertexSrc = mVertexLegs[src];
+    vector<int>& vertexDest = mVertexLegs[dest];
 
     if (Container::getIntersection(vertexSrc, vertexDest).empty())
     {
@@ -21,7 +25,7 @@ void Network::addEdge(int src, int dest)
         int newLegIndex = 0;
         if (!legs.empty())
         {
-            auto ind = std::max_element(legs.begin(), legs.end());
+            auto ind = max_element(legs.begin(), legs.end());
             newLegIndex = *ind + 1;
         }
         vertexSrc.push_back(newLegIndex);
@@ -39,9 +43,9 @@ void Network::removeEdge(int src, int dest)
     auto intersec = Container::getIntersection(vertexSrc, vertexDest);
     for (int val : intersec)
     {
-        auto pos_src = std::find(vertexSrc.begin(), vertexSrc.end(), val);
+        auto pos_src = find(vertexSrc.begin(), vertexSrc.end(), val);
         vertexSrc.erase(pos_src);
-        auto pos_dest = std::find(vertexDest.begin(), vertexDest.end(), val);
+        auto pos_dest = find(vertexDest.begin(), vertexDest.end(), val);
         vertexSrc.erase(pos_dest);
     }
 }
@@ -51,25 +55,25 @@ void Network::addLeg(int newLeg, int node)
     mVertexLegs[node].push_back(newLeg);
 }
 
-const std::vector<std::vector<int>>& Network::getVertexLegs()
+const vector<vector<int>>& Network::getVertexLegs()
 {
     return mVertexLegs;
 }
 
 void Network::calculateConnectedComponents()
 {
-    Search::connectedComponents(Graph::getVertices().size(),
+    Search::connectedComponents(mVertexLegs.size(),
         Graph::getAdjanceyList(), mConnectedComponents);
 }
 
-const std::vector<std::set<int>>& Network::getConnectedComponents()
+const vector<set<int>>& Network::getConnectedComponents()
 {
     if (mConnectedComponents.empty())
         calculateConnectedComponents();
     return mConnectedComponents;
 }
 
-void Network::generateEdges(const std::vector<std::vector<int>>& vertexLegs)
+void Network::generateEdges(const vector<vector<int>>& vertexLegs)
 {
     for (auto& i_legs : vertexLegs)
     {

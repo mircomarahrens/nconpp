@@ -8,15 +8,13 @@ set(NCONPP_MAIN
 
 set(NCONPP_INCLUDE
     include/Graph.h
-    include/Network.h
-    include/Search.h)
+    include/Network.h)
 string(REPLACE "include/" "${NCONPP_DIR}/include/"
     NCONPP_INCLUDE "${NCONPP_INCLUDE}")
 
 set(NCONPP_SRC
     src/Graph.cpp
-    src/Network.cpp
-    src/Search.cpp)
+    src/Network.cpp)
 string(REPLACE "src/" "${NCONPP_DIR}/src/"
     NCONPP_SRC "${NCONPP_SRC}")
 
