@@ -56,26 +56,26 @@ namespace Tensor
 	}
 
 	// trace
-	//template <typename T>
-	//static inline auto trace(const xt::xexpression<T>& M, int offset = 0, std::size_t axis1 = 0, std::size_t axis2 = 1)
-	//	-> decltype(xt::linalg::trace(M, offset, axis1, axis2))
-	//{
-	//	auto&& dM = M.derived_cast();
-	//	return xt::linalg::trace(dM, offset, axis1, axis2);
-	//}
-
 	template <typename T>
-	static inline auto trace(const array_type<T>& M, int offset = 0, std::size_t axis1 = 0, std::size_t axis2 = 1)
+	static inline auto trace(const xt::xexpression<T>& M, int offset = 0, std::size_t axis1 = 0, std::size_t axis2 = 1)
 	{
-		auto d = xt::diagonal(M, offset, axis1, axis2);
+		using value_type = std::common_type_t<typename T::value_type>;
+		using result_type = std::conditional_t<
+			(T::static_layout != xt::layout_type::dynamic && T::static_layout != xt::layout_type::any),
+			xt::xarray<value_type, T::static_layout>,
+			xt::xarray<value_type, XTENSOR_DEFAULT_LAYOUT>>;
+
+		result_type result;
+		auto&& vM = xt::view_eval<T::static_layout>(M.derived_cast());
+		auto d = xt::diagonal(vM, offset, std::size_t(axis1), std::size_t(axis2));
 		std::size_t dim = d.dimension();
 		if (dim == 1)
 		{
-			return array_type<T>(xt::sum(d)());
+			return xt::xarray<std::complex<double>>(xt::sum(d)());
 		}
 		else
 		{
-			return array_type<T>(xt::sum(d, { dim - 1 }));
+			return xt::xarray<std::complex<double>>(xt::sum(d, { dim - 1 }));
 		}
 	}
 
