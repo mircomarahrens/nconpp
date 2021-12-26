@@ -51,8 +51,3 @@ py -m venv nconpp-venv
 pip install numpy
 pip install python\.
 ```
-
-Grab some coffee, this will take a while.
-
-
-

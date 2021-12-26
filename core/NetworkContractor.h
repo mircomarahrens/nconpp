@@ -4,7 +4,6 @@
 #include "utils/Container.h"
 #include "utils/Tensor.h"
 
-#include <memory>
 #include <vector>
 #include <set>
 
@@ -17,8 +16,8 @@ public:
 	// contracts multiple tensors to one tensor, if possible.
 	//
 	// @params:
-	//  tensorList:
-	//      list of tensors to contract
+	//  containerList:
+	//      list of containers, i.e. tensors to contract
 	//  legsList:
 	//      Nomenclature of the legs of the tensors in tensorList:
 	//          - the legs are named by integers
@@ -26,18 +25,16 @@ public:
 	//            hence occuring in pairs
 	//          - legs with negative integers won't be contracted, so called
 	//            dangling legs
-	//  contractionSequenceTensors:
+	//  contractionSequenceTensors (optional):
 	//      order in which the tensors shall be contracted
-	//  contractionSequenceLegs:
-	//      order in which the legs shall be contracted
-	//  finalOrder:
+	//  finalOrder (optional):
 	//      Permutation of the legs of the final tensor.
 	//
 	// @return:
-	//  the final contracted tensor
+	//  the final contracted container
 	template<class T>
 	static T contract(
-		std::vector<T> containerList,
+		std::vector<T>& containerList,
 		std::vector<std::vector<int>> legsList,
 		std::vector<int> contractionSequenceLegs = {},
 		std::vector<int> finalOrder = {});

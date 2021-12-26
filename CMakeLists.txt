@@ -1,6 +1,6 @@
 ﻿message(STATUS "Processing directory " ${CMAKE_CURRENT_SOURCE_DIR})
 
-cmake_minimum_required (VERSION 3.18)
+cmake_minimum_required (VERSION 3.16)
 
 # build additional python module, TODO via env?
 set(BUILD_PYTHON_MODULE         true)
@@ -14,9 +14,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS        OFF)
 
 # windows specific, don't remove
-if (WIN32)
+#if (WIN32)
     set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-endif()
+#endif()
 
 # perform a debug build by default
 if(NOT CMAKE_BUILD_TYPE)

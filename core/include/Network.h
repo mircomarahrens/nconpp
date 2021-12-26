@@ -17,7 +17,7 @@ public:
 
     const std::vector<std::vector<int>>& getVertexLegs();
 
-    void calculateConnectedComponents();
+    void calculateConnectedComponents(); // TODO to own class
     const std::vector<std::set<int>>& getConnectedComponents();
 
 private:

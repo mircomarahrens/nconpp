@@ -2,9 +2,11 @@
 
 project(nconpp_python)
 
-set(PYBIND_MAIN     "src/main.cpp")
-set(PYBIND_MODULE   "_nconpp")
-set(PYBIND_INIT     "src/nconpp/__init__.py")
+set(PYBIND_MAIN                "src/main.cpp")
+set(PYBIND_MODULE              "_nconpp")
+set(PYBIND_INIT                "src/nconpp/__init__.py")
+set(EXTERNAL_SOURCE_DIR        ${CMAKE_CURRENT_SOURCE_DIR}/external)
+set(XTENSOR_PYTHON_INCLUDE_DIR ${EXTERNAL_SOURCE_DIR}/src/xtensor-python/include)
 
 find_package(pybind11 CONFIG REQUIRED)
 
@@ -14,8 +16,6 @@ pybind11_add_module(${PYBIND_MODULE} MODULE
 # get xtensor-python
 include(ExternalProject)
 find_package(Git REQUIRED)
-
-set(EXTERNAL_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/external)
 
 ExternalProject_Add(xtensor-python
     PREFIX ${EXTERNAL_SOURCE_DIR}
@@ -33,7 +33,7 @@ target_include_directories(${PYBIND_MODULE} PRIVATE
     ${NCONPP_INCLUDE_DIR}
     ${NCONPP_SRC_DIR}
     ${NCONPP_UTILS_DIR}
-    ${EXTERNAL_SOURCE_DIR}/src/xtensor-python/include)
+    ${XTENSOR_PYTHON_INCLUDE_DIR})
 
 target_link_libraries(${PYBIND_MODULE} PRIVATE
     ${NCONPP_LIBRARIES}

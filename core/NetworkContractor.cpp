@@ -12,7 +12,7 @@ using namespace std;
 
 template<class T>
 T NetworkContractor::contract(
-	vector<T> containerList,
+	vector<T>& containerList,
 	vector<vector<int>> legsList,
 	vector<int> contractionSequenceLegs,
 	vector<int> finalOrder)
