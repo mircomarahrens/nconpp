@@ -2,9 +2,6 @@
 
 cmake_minimum_required (VERSION 3.16)
 
-# build additional python module, TODO via env?
-set(BUILD_PYTHON_MODULE         false)
-
 # vcpkg flags
 set(VCPKG_FEATURE_FLAGS         "versions")
 
@@ -13,10 +10,10 @@ set(CMAKE_CXX_STANDARD          17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS        OFF)
 
-# windows specific, don't remove
-#if (WIN32)
+# windows specific
+if (WIN32)
     set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-#endif()
+endif()
 
 # perform a debug build by default
 if(NOT CMAKE_BUILD_TYPE)
@@ -51,7 +48,7 @@ set(NCONPP_LIBRARIES
 add_subdirectory(${NCONPP_DIR})
 
 # testing
-if(CMAKE_BUILD_TYPE MATCHES Debug)
+if(CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
     enable_testing()
 
     # GoogleTest
@@ -61,6 +58,6 @@ if(CMAKE_BUILD_TYPE MATCHES Debug)
 endif()
 
 # python module
-if (BUILD_PYTHON_MODULE)
+if (SKBUILD)
     add_subdirectory(${NCONPP_PYTHON_DIR})
 endif()

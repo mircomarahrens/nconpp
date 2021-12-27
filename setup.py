@@ -20,8 +20,6 @@ if sys.platform == "win32":
 elif sys.platform == "linux":
     __toolchain__ = "/home/mircomarahrens/repos/vcpkg/scripts/buildsystems/vcpkg.cmake"
 
-__cmake_source_dir__ = Path.cwd().parents[0]
-
 __cmake_args__.append("-DCMAKE_TOOLCHAIN_FILE={}".format(__toolchain__))
 __cmake_args__.append("-DVERSION_INFO={}".format(__version__))
 
@@ -33,10 +31,8 @@ setup(
     description="Library for Tensor Network contraction.",
     packages=find_packages(where = 'src'),
     url="https://github.com/mircomarahrens/nconpp",
-    #packages=[__name__],
     package_dir={"" : "src"},
     cmake_args=__cmake_args__,
-    cmake_source_dir = __cmake_source_dir__,
-    cmake_install_dir = "src/nconpp",
+    cmake_install_dir = "python/src/nconpp",
     include_package_data = True,
 )

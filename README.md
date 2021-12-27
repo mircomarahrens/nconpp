@@ -37,10 +37,10 @@ From root folder `nconpp`.
 * Linux
 
 ```bash
-python -m venv nconpp-venv
+python -m venv nconpp-venv # or python3 ...
 source ./nconpp-venv/bin/activate
-pip install numpy
-python -m pip install nconpp-python/.
+pip install scikit-build numpy
+pip install .
 ```
 
 * Windows

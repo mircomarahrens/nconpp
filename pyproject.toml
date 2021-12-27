@@ -1,0 +1,12 @@
+[project]
+python = "^3"
+
+[build-system]
+requires = [
+    "cmake",
+    "ninja",
+    "pybind11",
+    "setuptools",
+    "wheel",
+]
+build-backend = "setuptools.build_meta"
