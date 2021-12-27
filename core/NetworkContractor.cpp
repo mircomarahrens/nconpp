@@ -2,7 +2,6 @@
 
 #include "utils/Container.h"
 #include "utils/ErrorMessages.h"
-#include "Search.h"
 
 #include <set>
 #include <stdexcept>

@@ -8,10 +8,13 @@
 namespace py = pybind11;
 
 template <class T, xt::layout_type L>
-struct is_array<xt::pyarray<T, L>> : std::true_type {};
+struct is_array<xt::pyarray<T, L>> : std::true_type
+{
+};
 
-PYBIND11_MODULE(_nconpp, m) {
-    m.doc() = R"pbdoc(
+PYBIND11_MODULE(_nconpp, m)
+{
+	m.doc() = R"pbdoc(
 	contracts multiple tensors to one tensor, if possible.
 	
 	@params:
@@ -33,8 +36,8 @@ PYBIND11_MODULE(_nconpp, m) {
 	 the final contracted container
     )pbdoc";
 
-    xt::import_numpy();
+	xt::import_numpy();
 
-    //m.def("contract", &BindingWithConstraints::contractWrapper<xt::pyarray<std::complex<double>, xt::layout_type::dynamic>>);
-    m.def("contract", &NetworkContractor::contract<xt::pyarray<std::complex<double>, xt::layout_type::dynamic>>);
+	// m.def("contract", &BindingWithConstraints::contractWrapper<xt::pyarray<std::complex<double>, xt::layout_type::dynamic>>);
+	m.def("contract", &NetworkContractor::contract<xt::pyarray<std::complex<double>, xt::layout_type::dynamic>>);
 }
