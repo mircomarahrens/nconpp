@@ -5,7 +5,7 @@ project(nconpp_python)
 set(PYBIND_MAIN                "src/main.cpp")
 set(PYBIND_MODULE              "_nconpp")
 set(PYBIND_INIT                "src/nconpp/__init__.py")
-set(EXTERNAL_SOURCE_DIR        ${CMAKE_CURRENT_SOURCE_DIR}/external)
+set(EXTERNAL_SOURCE_DIR        ${CMAKE_SOURCE_DIR}/external)
 set(XTENSOR_PYTHON_INCLUDE_DIR ${EXTERNAL_SOURCE_DIR}/src/xtensor-python/include)
 
 # Scikit-Build does not add your site-packages to the search path
@@ -38,6 +38,8 @@ ExternalProject_Add(xtensor-python
     INSTALL_COMMAND ""
     LOG_DOWNLOAD ON
 )
+
+add_dependencies(${PYBIND_MODULE} xtensor-python)
 
 target_include_directories(${PYBIND_MODULE} PRIVATE 
     ${NCONPP_DIR}

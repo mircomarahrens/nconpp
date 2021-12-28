@@ -1,0 +1,10 @@
+Metadata-Version: 1.0
+Name: nconpp
+Version: 0.0.1
+Summary: Library for Tensor Network contraction.
+Home-page: https://github.com/mircomarahrens/nconpp
+Author: Mirco Marahrens
+Author-email: mirco.marahrens@googlemail.com
+License: UNKNOWN
+Description: UNKNOWN
+Platform: UNKNOWN

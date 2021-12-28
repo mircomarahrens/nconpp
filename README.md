@@ -39,8 +39,7 @@ From root folder `nconpp`.
 ```bash
 python -m venv nconpp-venv # or python3 ...
 source ./nconpp-venv/bin/activate
-pip install scikit-build numpy
-pip install .
+python -m pip install .
 ```
 
 * Windows
@@ -48,6 +47,5 @@ pip install .
 ```bash
 py -m venv nconpp-venv
 .\nconpp-venv\Scripts\activate
-pip install numpy
-pip install python\.
+pip install .
 ```

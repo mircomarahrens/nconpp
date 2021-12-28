@@ -31,7 +31,7 @@ set(NCONPP_UTILS_DIR    ${CMAKE_CURRENT_SOURCE_DIR}/core/utils)
 # test
 set(NCONPP_TEST_DIR     ${CMAKE_CURRENT_SOURCE_DIR}/test)
 # python
-set(NCONPP_PYTHON_DIR   ${CMAKE_CURRENT_SOURCE_DIR}/python)
+set(NCONPP_PYTHON_DIR   ${CMAKE_CURRENT_SOURCE_DIR}/py)
 
 # collect dependencies
 find_package(LAPACK       CONFIG REQUIRED)

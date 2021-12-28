@@ -6,6 +6,8 @@ requires = [
     "cmake",
     "ninja",
     "pybind11",
+    "scikit-build",
+    "numpy",
     "setuptools",
     "wheel",
 ]
