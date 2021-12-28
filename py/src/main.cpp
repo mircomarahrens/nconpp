@@ -38,6 +38,6 @@ PYBIND11_MODULE(_nconpp, m)
 
 	xt::import_numpy();
 
-	// m.def("contract", &BindingWithConstraints::contractWrapper<xt::pyarray<std::complex<double>, xt::layout_type::dynamic>>);
+	//m.def("contract", &BindingWithConstraints::contractWrapper<xt::pyarray<std::complex<double>, xt::layout_type::dynamic>>);
 	m.def("contract", &NetworkContractor::contract<xt::pyarray<std::complex<double>, xt::layout_type::dynamic>>);
 }

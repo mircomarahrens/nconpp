@@ -1,6 +1,5 @@
 {
   "dependencies": [
-    "pybind11",
     "lapack",
     "openblas",
     "xtensor",

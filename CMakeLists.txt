@@ -10,28 +10,21 @@ set(CMAKE_CXX_STANDARD          17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS        OFF)
 
-# windows specific
-if (WIN32)
-    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-endif()
-
 # perform a debug build by default
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug)
 endif()
 
-project (nconpp CXX)
+project(nconpp CXX)
 
 # directories
-# core
-set(NCONPP_DIR          ${CMAKE_CURRENT_SOURCE_DIR}/core)
-set(NCONPP_INCLUDE_DIR  ${CMAKE_CURRENT_SOURCE_DIR}/core/include)
-set(NCONPP_SRC_DIR      ${CMAKE_CURRENT_SOURCE_DIR}/core/src)
-set(NCONPP_UTILS_DIR    ${CMAKE_CURRENT_SOURCE_DIR}/core/utils)
-# test
-set(NCONPP_TEST_DIR     ${CMAKE_CURRENT_SOURCE_DIR}/test)
-# python
-set(NCONPP_PYTHON_DIR   ${CMAKE_CURRENT_SOURCE_DIR}/py)
+set(NCONPP_CORE_DIR    ${CMAKE_CURRENT_SOURCE_DIR}/core)
+set(NCONPP_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/core/include)
+set(NCONPP_SRC_DIR     ${CMAKE_CURRENT_SOURCE_DIR}/core/src)
+set(NCONPP_UTILS_DIR   ${CMAKE_CURRENT_SOURCE_DIR}/core/utils)
+set(NCONPP_TEST_DIR    ${CMAKE_CURRENT_SOURCE_DIR}/test)
+set(NCONPP_UT_DIR      ${CMAKE_CURRENT_SOURCE_DIR}/test/ut)
+set(NCONPP_PYTHON_DIR  ${CMAKE_CURRENT_SOURCE_DIR}/py)
 
 # collect dependencies
 find_package(LAPACK       CONFIG REQUIRED)
@@ -39,13 +32,13 @@ find_package(OpenBLAS     CONFIG REQUIRED)
 find_package(xtensor      CONFIG REQUIRED)
 find_package(xtensor-blas CONFIG REQUIRED)
 
-set(NCONPP_LIBRARIES
+set(NCONPP_DEPENDENCIES
     OpenBLAS::OpenBLAS
     xtensor
     xtensor-blas)
 
-# main
-add_subdirectory(${NCONPP_DIR})
+# core
+add_subdirectory(${NCONPP_CORE_DIR})
 
 # testing
 if(CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
@@ -58,6 +51,4 @@ if(CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
 endif()
 
 # python module
-if (SKBUILD)
-    add_subdirectory(${NCONPP_PYTHON_DIR})
-endif()
+add_subdirectory(${NCONPP_PYTHON_DIR})

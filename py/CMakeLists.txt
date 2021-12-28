@@ -2,79 +2,75 @@
 
 project(nconpp_python)
 
-set(PYBIND_MAIN                "src/main.cpp")
-set(PYBIND_MODULE              "_nconpp")
-set(PYBIND_INIT                "src/nconpp/__init__.py")
-set(EXTERNAL_SOURCE_DIR        ${CMAKE_SOURCE_DIR}/external)
-set(XTENSOR_PYTHON_INCLUDE_DIR ${EXTERNAL_SOURCE_DIR}/src/xtensor-python/include)
+set(PYBIND_MAIN      "src/main.cpp")
+set(PYBIND_MODULE    "_nconpp")
+set(PYBIND_INTERFACE "_nconpp_interface")
+set(PYBIND_INIT      "src/nconpp/__init__.py")
 
-# Scikit-Build does not add your site-packages to the search path
-# automatically, so we need to add it _or_ the pybind11 specific directory
-# here.
-execute_process(
-    COMMAND "${PYTHON_EXECUTABLE}" -c "import pybind11; print(pybind11.get_cmake_dir())"
-    OUTPUT_VARIABLE _tmp_dir
-    OUTPUT_STRIP_TRAILING_WHITESPACE COMMAND_ECHO STDOUT
-)
-message(STATUS "Use CMake dir: ${_tmp_dir}")
-list(APPEND CMAKE_PREFIX_PATH "${_tmp_dir}")
-
-find_package(pybind11 CONFIG REQUIRED)
-
-pybind11_add_module(${PYBIND_MODULE} MODULE
-    ${PYBIND_MAIN})
-
-# get xtensor-python
-include(ExternalProject)
-find_package(Git REQUIRED)
-
-ExternalProject_Add(xtensor-python
-    PREFIX ${EXTERNAL_SOURCE_DIR}
+# get headers in xtensor-python/include
+include(FetchContent)
+FetchContent_Declare(xtensor-python
     GIT_REPOSITORY https://github.com/xtensor-stack/xtensor-python
-    TIMEOUT 10
-    UPDATE_COMMAND ${GIT_EXECUTABLE} pull
+    GIT_TAG master
     CONFIGURE_COMMAND ""
-    BUILD_COMMAND ""
-    INSTALL_COMMAND ""
-    LOG_DOWNLOAD ON
-)
+    BUILD_COMMAND "")
 
-add_dependencies(${PYBIND_MODULE} xtensor-python)
+FetchContent_GetProperties(xtensor-python)
+if(NOT xtensor-python_POPULATED)
+  FetchContent_Populate(xtensor-python)
+endif()
 
-target_include_directories(${PYBIND_MODULE} PRIVATE 
-    ${NCONPP_DIR}
+add_library(xtensor-python INTERFACE)
+target_include_directories(xtensor-python INTERFACE ${xtensor-python_SOURCE_DIR}/include)
+
+add_library(${PYBIND_INTERFACE} INTERFACE)
+
+target_include_directories(${PYBIND_INTERFACE} INTERFACE 
+    ${NCONPP_CORE_DIR}
     ${NCONPP_INCLUDE_DIR}
     ${NCONPP_SRC_DIR}
-    ${NCONPP_UTILS_DIR}
-    ${XTENSOR_PYTHON_INCLUDE_DIR})
+    ${NCONPP_UTILS_DIR})
 
-target_link_libraries(${PYBIND_MODULE} PRIVATE
-    ${NCONPP_LIBRARIES}
-    ${NCONPP_MAIN}
-    ${NCONPP_INCLUDE}
-    ${NCONPP_SRC}
-    ${NCONPP_UTILS})
+target_link_libraries(${PYBIND_INTERFACE} INTERFACE
+    nconpp
+    xtensor-python)
 
-target_compile_definitions(${PYBIND_MODULE} PRIVATE
+target_compile_definitions(${PYBIND_INTERFACE} INTERFACE
     VERSION_INFO=${VERSION_INFO})
 
-# Cmake's find_package was not able to find the NumPy include dir.
-# Therefore we will add it manually.
-execute_process(
-    COMMAND "${PYTHON_EXECUTABLE}" -c "import numpy; print(numpy.get_include())"
-    OUTPUT_VARIABLE NUMPY_INCLUDE_DIR
-    OUTPUT_STRIP_TRAILING_WHITESPACE COMMAND_ECHO STDOUT
-)
-message(STATUS "Use numpy include dir: ${NUMPY_INCLUDE_DIR}")
-list(APPEND CMAKE_PREFIX_PATH "${NUMPY_INCLUDE_DIR}")
+if (SKBUILD)
+    message(STATUS "Skbuild process triggered.")
+    find_package(Python3 REQUIRED COMPONENTS Interpreter Development NumPy)
 
-target_include_directories(${PYBIND_MODULE} PRIVATE
-    ${NUMPY_INCLUDE_DIR})
+    message(STATUS "Use numpy include dir: ${Python3_NumPy_INCLUDE_DIRS}")
 
-install(TARGETS ${PYBIND_MODULE} LIBRARY
-COMPONENT python 
-DESTINATION .)
+    # Scikit-Build does not add your site-packages to the search path
+    # automatically, so we need to add it _or_ the pybind11 specific directory
+    # here.
+    execute_process(
+        COMMAND "${Python3_EXECUTABLE}" -c "import pybind11; print(pybind11.get_cmake_dir())"
+        OUTPUT_VARIABLE _tmp_dir
+        OUTPUT_STRIP_TRAILING_WHITESPACE COMMAND_ECHO STDOUT
+    )
+    message(STATUS "Use CMake dir: ${_tmp_dir}")
+    list(APPEND CMAKE_PREFIX_PATH "${_tmp_dir}")
 
-install(FILES ${PYBIND_INIT}
-COMPONENT python
-DESTINATION .)
+    find_package(pybind11 CONFIG REQUIRED)
+
+    pybind11_add_module(${PYBIND_MODULE} MODULE
+        ${PYBIND_MAIN})
+
+    target_include_directories(${PYBIND_MODULE} PRIVATE
+        ${Python3_NumPy_INCLUDE_DIRS})
+
+    target_link_libraries(${PYBIND_MODULE} PRIVATE
+        ${PYBIND_INTERFACE})
+
+    install(TARGETS ${PYBIND_MODULE} LIBRARY
+    COMPONENT python 
+    DESTINATION .)
+
+    install(FILES ${PYBIND_INIT}
+    COMPONENT python
+    DESTINATION .)
+endif()

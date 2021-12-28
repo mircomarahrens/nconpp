@@ -39,7 +39,7 @@ From root folder `nconpp`.
 ```bash
 python -m venv nconpp-venv # or python3 ...
 source ./nconpp-venv/bin/activate
-python -m pip install .
+python -m pip install py/.
 ```
 
 * Windows
@@ -47,5 +47,5 @@ python -m pip install .
 ```bash
 py -m venv nconpp-venv
 .\nconpp-venv\Scripts\activate
-pip install .
+pip install py\.
 ```

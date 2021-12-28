@@ -1,8 +1,7 @@
-README.md
 pyproject.toml
 setup.py
-python/src/nconpp/__init__.py
-python/src/nconpp.egg-info/PKG-INFO
-python/src/nconpp.egg-info/SOURCES.txt
-python/src/nconpp.egg-info/dependency_links.txt
-python/src/nconpp.egg-info/top_level.txt
+src/nconpp/__init__.py
+src/nconpp.egg-info/PKG-INFO
+src/nconpp.egg-info/SOURCES.txt
+src/nconpp.egg-info/dependency_links.txt
+src/nconpp.egg-info/top_level.txt
