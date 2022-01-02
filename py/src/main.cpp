@@ -60,6 +60,8 @@ int sub(int i, int j) {
 
 PYBIND11_MODULE(_nconpp, m)
 {
+	xt::import_numpy();
+
 	m.doc() = R"pbdoc(
 	contracts multiple tensors to one tensor, if possible.
 	
@@ -81,8 +83,6 @@ PYBIND11_MODULE(_nconpp, m)
 	@return:
 	 the final contracted container
     )pbdoc";
-
-	xt::import_numpy();
 
 	//m.def("contract", &WithConstraints::contract<xt::pyarray<std::complex<double>, xt::layout_type::dynamic>>);
 	m.def("contract", &NetworkContractor::contract);

@@ -5,6 +5,7 @@
 #include "utils/Tensor.h"
 
 #include <vector>
+#include <optional>
 #include <set>
 
 class NetworkContractor
@@ -12,6 +13,37 @@ class NetworkContractor
 public:
 	NetworkContractor() = default;
 	~NetworkContractor() = default;
+
+	//static int add(int i, int j) {
+	//	return i + j;
+	//};
+
+	//template<typename T>
+	//static T add(T i, T j) {
+	//	return i + j;
+	//};
+
+	template <class T>
+	static T add(std::vector<T> i, std::vector<T> j)
+	{
+		return i[0] + j[0];
+	};
+
+	template <class T>
+	static T contract_debug(const std::vector<T>& containerList,
+		std::vector<std::vector<int>> legsList,
+		std::optional<std::vector<int>> contractionSequenceLegs,
+		std::optional<std::vector<int>> finalOrder)
+	{
+		//validateInput(
+		//	containerList,
+		//	legsList,
+		//	contractionSequenceLegs,
+		//	finalOrder
+		//);
+
+		return containerList[0] + containerList[1];
+	};
 
 	// contracts multiple tensors to one tensor, if possible.
 	//
@@ -42,7 +74,7 @@ public:
 private:
 	template <class T>
 	static void validateInput(
-		const std::vector<T>& tensorList,
+		const std::vector<T>& containerList,
 		std::vector<std::vector<int>>& legsIndex,
 		std::vector<int>& contractionSequenceLegs,
 		std::vector<int>& finalOrder);

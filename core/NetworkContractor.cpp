@@ -73,7 +73,7 @@ T NetworkContractor::contract(
 
 template <class T>
 void NetworkContractor::validateInput(
-	const vector<T>& tensorList,
+	const vector<T>& containerList,
 	vector<vector<int>>& legsList,
 	vector<int>& contractionSequenceLegs,
 	vector<int>& finalOrder)
@@ -82,11 +82,11 @@ void NetworkContractor::validateInput(
 		throw invalid_argument("LegsList empty. You need to specify a list of legs corresponding to your network.");
 
 	// check sizes of container
-	if (tensorList.size() != legsList.size())
+	if (containerList.size() != legsList.size())
 	{
 		throw invalid_argument(
 			"The number of tensors, which is " +
-			to_string(tensorList.size()) +
+			to_string(containerList.size()) +
 			", does not match the number of legs, which is " +
 			to_string(legsList.size()) + ".");
 	}

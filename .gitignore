@@ -344,10 +344,8 @@ paket-files/
 __pycache__/
 *.pyc
 *-venv
-**.egg-info
+**/*.egg-info
 **/_skbuild
-python/external
-python/src/nconpp.egg-info
 
 # Cake - Uncomment if you are using it
 # tools/**
