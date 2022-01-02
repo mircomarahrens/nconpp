@@ -13,8 +13,8 @@ template<class T>
 T NetworkContractor::contract(
 	vector<T>& containerList,
 	vector<vector<int>> legsList,
-	vector<int> contractionSequenceLegs,
-	vector<int> finalOrder)
+	std::vector<int> contractionSequenceLegs,
+	std::vector<int> finalOrder)
 {
 	validateInput(
 		containerList,
@@ -75,8 +75,8 @@ template <class T>
 void NetworkContractor::validateInput(
 	const vector<T>& containerList,
 	vector<vector<int>>& legsList,
-	vector<int>& contractionSequenceLegs,
-	vector<int>& finalOrder)
+	std::vector<int>& contractionSequenceLegs,
+	std::vector<int>& finalOrder)
 {
 	if (legsList.empty())
 		throw invalid_argument("LegsList empty. You need to specify a list of legs corresponding to your network.");
@@ -94,8 +94,7 @@ void NetworkContractor::validateInput(
 	// check if legs are contractable
 
 	// if empty fill with defaults
-	if (contractionSequenceLegs.empty())
-	{
+	if (contractionSequenceLegs.empty()) {
 		set<int> conSet = Container::allUniqueIntegersSorted(legsList);
 		contractionSequenceLegs.assign(conSet.begin(), conSet.end());
 		Container::removeNegatives(contractionSequenceLegs);

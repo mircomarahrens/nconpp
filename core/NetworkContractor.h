@@ -32,15 +32,40 @@ public:
 	template <class T>
 	static T contract_debug(const std::vector<T>& containerList,
 		std::vector<std::vector<int>> legsList,
-		std::optional<std::vector<int>> contractionSequenceLegs,
+		std::optional<std::vector<int>> contractionSequenceLegs ,
 		std::optional<std::vector<int>> finalOrder)
 	{
-		//validateInput(
-		//	containerList,
-		//	legsList,
-		//	contractionSequenceLegs,
-		//	finalOrder
-		//);
+		// if empty fill with defaults
+		std::vector<int> _contractionSequenceLegs = {};
+		if (!contractionSequenceLegs.has_value()) {
+			set<int> conSet = Container::allUniqueIntegersSorted(legsList);
+			_contractionSequenceLegs.assign(conSet.begin(), conSet.end());
+			Container::removeNegatives(_contractionSequenceLegs);
+		}
+		else
+		{
+			_contractionSequenceLegs = contractionSequenceLegs.value();
+		}
+		std::vector<int> _finalOrder = {};
+		if (!finalOrder.has_value())
+		{
+			set<int> conSet = Container::allUniqueIntegersSorted(legsList);
+			_finalOrder.assign(conSet.begin(), conSet.end());
+			Container::removePositives(_finalOrder);
+			std::reverse(_finalOrder.begin(), _finalOrder.end());
+		}
+		else
+		{
+			_finalOrder = finalOrder.value();
+		}
+
+
+		validateInput(
+			containerList,
+			legsList,
+			_contractionSequenceLegs,
+			_finalOrder
+		);
 
 		return containerList[0] + containerList[1];
 	};
