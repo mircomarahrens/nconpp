@@ -344,7 +344,7 @@ paket-files/
 __pycache__/
 *.pyc
 *-venv
-python/_skbuild
+**.egg-info
 **/_skbuild
 python/external
 python/src/nconpp.egg-info
