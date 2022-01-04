@@ -30,7 +30,7 @@ public:
 	};
 
 	template <class T>
-	static T contract_debug(const std::vector<T>& containerList,
+	static T contract_debug(std::vector<T>& containerList,
 		std::vector<std::vector<int>> legsList,
 		std::optional<std::vector<int>> contractionSequenceLegs ,
 		std::optional<std::vector<int>> finalOrder)
@@ -59,7 +59,6 @@ public:
 			_finalOrder = finalOrder.value();
 		}
 
-
 		validateInput(
 			containerList,
 			legsList,
@@ -67,7 +66,55 @@ public:
 			_finalOrder
 		);
 
-		return containerList[0] + containerList[1];
+		connectDisconnectedComponents(
+			containerList,
+			legsList,
+			_contractionSequenceLegs
+		);
+
+		while (!_contractionSequenceLegs.empty())
+		{
+			auto it = _contractionSequenceLegs.begin();
+			// 1. get contraction parameters:
+			// TODO add multi index contraction
+			auto contractionParams = findContractionParameters(
+				*it,
+				legsList);
+
+			size_t indexA = contractionParams.first.first;
+			size_t indexB = contractionParams.second.first;
+			const auto& axisA = contractionParams.first.second;
+			const auto& axisB = contractionParams.second.second;
+
+			// 2. perform contraction of tensors
+			if (indexA == indexB) // do trace
+			{
+				doTrace(
+					indexA,
+					indexB,
+					axisA,
+					axisB,
+					containerList,
+					legsList);
+			}
+			else // do tensor product
+			{
+				// TODO here is the problem
+				// ImportError: DLL load failed while importing _nconpp: The specified module could not be found.
+				// DependencyWalker: It seems to be that openblas.dll cannot be found.
+				doTensorProduct(
+					indexA,
+					indexB,
+					axisA,
+					axisB,
+					containerList,
+					legsList);
+			}
+			_contractionSequenceLegs
+				.erase(_contractionSequenceLegs.begin());
+		}
+
+		return containerList[0];
 	};
 
 	// contracts multiple tensors to one tensor, if possible.

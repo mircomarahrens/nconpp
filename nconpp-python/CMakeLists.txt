@@ -21,7 +21,8 @@ if(NOT xtensor-python_POPULATED)
 endif()
 
 add_library(xtensor-python INTERFACE)
-target_include_directories(xtensor-python INTERFACE ${xtensor-python_SOURCE_DIR}/include)
+target_include_directories(xtensor-python INTERFACE 
+    ${xtensor-python_SOURCE_DIR}/include)
 
 add_library(${PYBIND_INTERFACE} INTERFACE)
 
@@ -41,7 +42,6 @@ target_compile_definitions(${PYBIND_INTERFACE} INTERFACE
 if (SKBUILD)
     message(STATUS "Skbuild process triggered.")
     find_package(Python3 REQUIRED COMPONENTS Interpreter Development NumPy)
-
     message(STATUS "Use numpy include dir: ${Python3_NumPy_INCLUDE_DIRS}")
 
     # Scikit-Build does not add your site-packages to the search path
