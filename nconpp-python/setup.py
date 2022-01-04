@@ -16,9 +16,8 @@ __cmake_args__= []
 if sys.platform == "win32":
     __toolchain__ = "C:\\Users\\MircoMarahrens\\source\\repos\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake"
     __cmake_args__.append("-DCMAKE_GENERATOR_PLATFORM={}".format("x64")) # Visual Studio specific
-    __cmake_args__.append("-DPython3_FIND_VIRTUALENV={}".format("ONLY"))
 elif sys.platform == "linux":
-    __toolchain__ = "/home/mircomarahrens/repos/vcpkg/scripts/buildsystems/vcpkg.cmake"
+    __toolchain__ = "/home/mircomarahrens/Development/vcpkg/scripts/buildsystems/vcpkg.cmake"
 
 __cmake_source_dir__ = Path.cwd().parents[0]
 
@@ -33,7 +32,6 @@ setup(
     description="Library for Tensor Network contraction.",
     packages=find_packages(where = 'src'),
     url="https://github.com/mircomarahrens/nconpp",
-    #packages=[__name__],
     package_dir={"" : "src"},
     cmake_args=__cmake_args__,
     cmake_source_dir = __cmake_source_dir__,

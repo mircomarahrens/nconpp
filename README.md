@@ -37,10 +37,9 @@ From root folder `nconpp`.
 * Linux
 
 ```bash
-python -m venv nconpp-venv
+python -m venv nconpp-venv # or python3 ...
 source ./nconpp-venv/bin/activate
-pip install numpy
-python -m pip install nconpp-python/.
+python -m pip install py/.
 ```
 
 * Windows
@@ -48,11 +47,5 @@ python -m pip install nconpp-python/.
 ```bash
 py -m venv nconpp-venv
 .\nconpp-venv\Scripts\activate
-pip install numpy
-pip install nconpp-python\.
+pip install py\.
 ```
-
-Grab some coffee, this will take a while.
-
-
-

@@ -5,12 +5,7 @@
 #include <xtensor/xlayout.hpp>
 #include <xtensor-blas/xlinalg.hpp>
 
-// Wrapper for tensor operations used by nconpp.
-// The current approach is based on xtensor due to its
-// availability for modern package manager like conan
-// or vcpkg and its native numpy style.
-// 
-// This may be replaced later.
+// Wrapper for tensor operations used by nconpp based on xtensor.
 namespace Tensor
 {
 	// array
@@ -22,30 +17,34 @@ namespace Tensor
 
 	// reshape
 	template <typename T>
-	static inline auto reshape(array_type<T>& M, shape_type shape)
+	static inline auto reshape(const xt::xexpression<T>& M, shape_type shape)
 	{
-		return M.reshape(shape);
+		auto&& dM = M.derived_cast();
+		return dM.reshape(shape);
 	}
 
 	// shape
 	template <typename T>
-	static inline auto shape(array_type<T>& M)
+	static inline auto shape(const xt::xexpression<T>& M)
 	{
-		return M.shape();
+		auto&& dM = M.derived_cast();
+		return dM.shape();
 	}
 
 	// shape
 	template <typename T>
-	static inline auto dimension(array_type<T>& M)
+	static inline auto dimension(const xt::xexpression<T>& M)
 	{
-		return M.dimension();
+		auto&& dM = M.derived_cast();
+		return dM.dimension();
 	}
 
 	// expand_dims
 	template <typename T>
-	static inline auto expand_dims(array_type<T>& M, std::size_t axis)
+	static inline auto expand_dims(xt::xexpression<T>& M, std::size_t axis)
 	{
-		return xt::expand_dims(M, axis);
+		auto&& dM = M.derived_cast();
+		return xt::expand_dims(dM, axis);
 	}
 
 	// tensordot
@@ -58,24 +57,26 @@ namespace Tensor
 
 	// trace
 	template <typename T>
-	static inline auto trace(const array_type<T>& M, int offset = 0, std::size_t axis1 = 0, std::size_t axis2 = 1)
+	static inline auto trace(const xt::xexpression<T>& M, int offset = 0, std::size_t axis1 = 0, std::size_t axis2 = 1)
 	{
-		auto d = xt::diagonal(M, offset, axis1, axis2);
+		auto&& vM = xt::view_eval<T::static_layout>(M.derived_cast());
+		auto d = xt::diagonal(vM, offset, std::size_t(axis1), std::size_t(axis2));
 		std::size_t dim = d.dimension();
 		if (dim == 1)
 		{
-			return array_type<T>(xt::sum(d)());
+			return xt::xarray<std::complex<double>>(xt::sum(d)());
 		}
 		else
 		{
-			return array_type<T>(xt::sum(d, { dim - 1 }));
+			return xt::xarray<std::complex<double>>(xt::sum(d, { dim - 1 }));
 		}
 	}
 
 	// transpose
 	template <typename T>
-	static inline auto transpose(array_type<T>& M, const std::vector<int>& perm)
+	static inline auto transpose(const xt::xexpression<T>& M, const std::vector<int>& perm)
 	{
-		xt::transpose(M, perm);
+		auto&& dM = M.derived_cast();
+		return xt::transpose(dM, perm);
 	}
 };

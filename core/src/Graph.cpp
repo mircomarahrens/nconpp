@@ -1,4 +1,4 @@
-#include "utils/Container.h"
+#include "Container.h"
 #include "Graph.h"
 
 using namespace std;
@@ -42,16 +42,6 @@ void Graph::removeVertex(int vertex)
 const vector<vector<int>>& Graph::getAdjanceyList()
 {
     return mAdjanceyList;
-}
-
-void Graph::setAdjanceyList(vector<vector<int>> adjanceyList)
-{
-    mAdjanceyList = adjanceyList;
-}
-
-void Graph::setVertices(set<int> nodes)
-{
-    mVertices = nodes;
 }
 
 const set<int>& Graph::getVertices()

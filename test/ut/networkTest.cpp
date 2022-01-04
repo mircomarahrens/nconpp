@@ -22,6 +22,7 @@ TEST(NetworkTest, graph_test)
     network.addEdge(2, 3);
     network.addEdge(3, 4);
 
+    network.calculateConnectedComponents();
     std::vector<std::set<int>> connectedComponents =
         network.getConnectedComponents();
 

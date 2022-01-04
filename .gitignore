@@ -343,11 +343,9 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
-nconpp-venv
-python/_skbuild
+*-venv
+**/*.egg-info
 **/_skbuild
-python/external
-python/src/nconpp.egg-info
 
 # Cake - Uncomment if you are using it
 # tools/**
