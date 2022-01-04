@@ -29,12 +29,12 @@ TEST(NconppTest, tensorOperations)
     Tensor::array_type<std::complex<double>> B = xt::random::rand<double>({ 2, 3, 1, 3, 3 });
 
     Tensor::array_type<std::complex<double>> C = Tensor::tensordot(A, B, { 1 }, { 1 });
-    Tensor::shape_type shapeC = { 4 ,8, 2, 1, 3, 3 };
+    Tensor::shape_type shapeC = { 4, 8, 2, 1, 3, 3 };
     ASSERT_EQ(Tensor::shape(C), shapeC);
 
     Tensor::array_type<std::complex<double>> D = Tensor::trace(C, 0, 4, 5);
 
-    Tensor::shape_type shapeD = { 4 ,8, 2, 1 };
+    Tensor::shape_type shapeD = { 4, 8, 2, 1 };
     ASSERT_EQ(Tensor::shape(D), shapeD);
 }
 

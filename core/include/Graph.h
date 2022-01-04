@@ -16,12 +16,9 @@ public:
     void removeVertex(int vertex);
 
     const std::set<int>& getVertices();
-    void setVertices(std::set<int> nodes);
-
     const std::vector<std::vector<int>>& getAdjanceyList();
-    void setAdjanceyList(std::vector<std::vector<int>> adjanceyList);
 
 private:
-    std::vector<std::vector<int>> mAdjanceyList;
     std::set<int> mVertices;
+    std::vector<std::vector<int>> mAdjanceyList;
 };

@@ -2,7 +2,6 @@
 
 #include "utils/Container.h"
 #include "utils/ErrorMessages.h"
-#include "Search.h"
 
 #include <set>
 #include <stdexcept>
@@ -10,13 +9,12 @@
 
 using namespace std;
 
-template <class T, template <class> class C,
-	NetworkContractor::check_constraints<C, T>>
-	T NetworkContractor::contract(
-		vector<T> containerList,
-		vector<vector<int>> legsList,
-		vector<int> contractionSequenceLegs,
-		vector<int> finalOrder)
+template<class T>
+T NetworkContractor::contract(
+	vector<T>& containerList,
+	vector<vector<int>> legsList,
+	std::vector<int> contractionSequenceLegs,
+	std::vector<int> finalOrder)
 {
 	validateInput(
 		containerList,
@@ -75,20 +73,20 @@ template <class T, template <class> class C,
 
 template <class T>
 void NetworkContractor::validateInput(
-	const vector<T>& tensorList,
+	const vector<T>& containerList,
 	vector<vector<int>>& legsList,
-	vector<int>& contractionSequenceLegs,
-	vector<int>& finalOrder)
+	std::vector<int>& contractionSequenceLegs,
+	std::vector<int>& finalOrder)
 {
 	if (legsList.empty())
 		throw invalid_argument("LegsList empty. You need to specify a list of legs corresponding to your network.");
 
 	// check sizes of container
-	if (tensorList.size() != legsList.size())
+	if (containerList.size() != legsList.size())
 	{
 		throw invalid_argument(
 			"The number of tensors, which is " +
-			to_string(tensorList.size()) +
+			to_string(containerList.size()) +
 			", does not match the number of legs, which is " +
 			to_string(legsList.size()) + ".");
 	}
@@ -96,8 +94,7 @@ void NetworkContractor::validateInput(
 	// check if legs are contractable
 
 	// if empty fill with defaults
-	if (contractionSequenceLegs.empty())
-	{
+	if (contractionSequenceLegs.empty()) {
 		set<int> conSet = Container::allUniqueIntegersSorted(legsList);
 		contractionSequenceLegs.assign(conSet.begin(), conSet.end());
 		Container::removeNegatives(contractionSequenceLegs);
