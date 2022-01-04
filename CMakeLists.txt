@@ -10,9 +10,9 @@ set(CMAKE_CXX_STANDARD          17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS        OFF)
 
-if (WIN32)
-    set(CMAKE_EXE_LINKER_FLAGS  /MANIFEST:NO)
-endif()
+#if (WIN32)
+#    set(CMAKE_EXE_LINKER_FLAGS  /MANIFEST:NO)
+#endif()
 
 project(nconpp CXX)
 
@@ -26,12 +26,13 @@ set(NCONPP_UT_DIR      ${CMAKE_CURRENT_SOURCE_DIR}/test/ut)
 set(NCONPP_PYTHON_DIR  ${CMAKE_CURRENT_SOURCE_DIR}/nconpp-python)
 
 # collect dependencies
-get_cmake_property(_variableNames VARIABLES)
-list (SORT _variableNames)
-foreach (_variableName ${_variableNames})
-    message(STATUS "${_variableName}=${${_variableName}}")
-endforeach()
-message(STATUS "Bin dir is: ${_VCPKG_INSTALLED_DIR}")
+if(CMAKE_BUILD_TYPE MATCHES Debug)
+    get_cmake_property(_variableNames VARIABLES)
+    list (SORT _variableNames)
+    foreach (_variableName ${_variableNames})
+        message(STATUS "${_variableName}=${${_variableName}}")
+    endforeach()
+endif()
 
 find_package(BLAS REQUIRED)
 message(STATUS "BLAS LIBRARIES: " ${BLAS_LIBRARIES})

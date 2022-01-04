@@ -9,43 +9,52 @@
 #include "xtensor-python/pyvectorize.hpp"
 
 #include <complex>
+#include <cmath>
 #include <iostream>
 #include <numeric>
-#include <cmath>
+#include <optional>
 
 #include "NetworkContractor.h"
 #include "NetworkContractor.cpp"
 
 namespace py = pybind11;
 
-// Examples
-
-inline double example1(xt::pyarray<double> &m)
+template <class T>
+T contract_wrapper(std::vector<T>& containerList,
+	std::vector<std::vector<int>> legsList,
+	std::optional<std::vector<int>> contractionSequenceLegs,
+	std::optional<std::vector<int>> finalOrder)
 {
-    return m(0);
-}
+	// if empty fill with defaults
+	std::vector<int> _contractionSequenceLegs = {};
+	if (!contractionSequenceLegs.has_value()) {
+		set<int> conSet = Container::allUniqueIntegersSorted(legsList);
+		_contractionSequenceLegs.assign(conSet.begin(), conSet.end());
+		Container::removeNegatives(_contractionSequenceLegs);
+	}
+	else
+	{
+		_contractionSequenceLegs = contractionSequenceLegs.value();
+	}
+	std::vector<int> _finalOrder = {};
+	if (!finalOrder.has_value())
+	{
+		set<int> conSet = Container::allUniqueIntegersSorted(legsList);
+		_finalOrder.assign(conSet.begin(), conSet.end());
+		Container::removePositives(_finalOrder);
+		std::reverse(_finalOrder.begin(), _finalOrder.end());
+	}
+	else
+	{
+		_finalOrder = finalOrder.value();
+	}
 
-inline xt::pyarray<double> example2(xt::pyarray<double> &m)
-{
-    return m + 2;
-}
-
-// Readme Examples
-
-inline double readme_example1(xt::pyarray<double> &m)
-{
-    auto sines = xt::sin(m);
-    return std::accumulate(sines.cbegin(), sines.cend(), 0.0);
-}
-
-// Vectorize Examples
-
-inline double scalar_func(double i, double j)
-{
-    return std::sin(i) + std::cos(j);
-}
-
-// Python Module and Docstrings
+	return NetworkContractor::contract(
+		containerList,
+		legsList,
+		_contractionSequenceLegs,
+		_finalOrder);
+};
 
 PYBIND11_MODULE(_nconpp, m)
 {
@@ -83,16 +92,9 @@ PYBIND11_MODULE(_nconpp, m)
     //m.def("add2", &NetworkContractor::add<xt::pyarray<std::complex<double>>>);
 
     m.def("contract",
-        &NetworkContractor::contract_debug<xt::pyarray<std::complex<double>>>,
+        &contract_wrapper<xt::pyarray<std::complex<double>>>,
         py::arg("containerList"),
         py::arg("legsList"),
         py::arg("contractionSequenceLegs") = py::none(),
         py::arg("finalOrder") = py::none());
-
-    m.def("example1", example1, "Return the first element of an array, of dimension at least one");
-    m.def("example2", example2, "Return the the specified array plus 2");
-
-    m.def("readme_example1", readme_example1, "Accumulate the sines of all the values of the specified array");
-
-    m.def("vectorize_example1", xt::pyvectorize(scalar_func), "Add the sine and and cosine of the two specified values");
 }
