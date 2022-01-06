@@ -10,10 +10,6 @@ set(CMAKE_CXX_STANDARD          17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS        OFF)
 
-#if (WIN32)
-#    set(CMAKE_EXE_LINKER_FLAGS  /MANIFEST:NO)
-#endif()
-
 project(nconpp CXX)
 
 # directories
@@ -23,7 +19,7 @@ set(NCONPP_SRC_DIR     ${CMAKE_CURRENT_SOURCE_DIR}/core/src)
 set(NCONPP_UTILS_DIR   ${CMAKE_CURRENT_SOURCE_DIR}/core/utils)
 set(NCONPP_TEST_DIR    ${CMAKE_CURRENT_SOURCE_DIR}/test)
 set(NCONPP_UT_DIR      ${CMAKE_CURRENT_SOURCE_DIR}/test/ut)
-set(NCONPP_PYTHON_DIR  ${CMAKE_CURRENT_SOURCE_DIR}/nconpp-python)
+set(NCONPP_PYTHON_DIR  ${CMAKE_CURRENT_SOURCE_DIR}/python)
 
 # collect dependencies
 if(CMAKE_BUILD_TYPE MATCHES Debug)
