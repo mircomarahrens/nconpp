@@ -14,7 +14,7 @@ __cmake_args__= []
 # (see https://github.com/microsoft/vcpkg for details). Vcpkg offers a cmake
 # toolchain file which we have to reveal to the cmake installer.
 if sys.platform == "win32":
-    __toolchain__ = "C:\\Users\\MircoMarahrens\\source\\repos\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake"
+    __toolchain__ = "D:\\Tools\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake"
     __cmake_args__.append("-DCMAKE_GENERATOR_PLATFORM={}".format("x64")) # Visual Studio specific
 elif sys.platform == "linux":
     __toolchain__ = "/home/mircomarahrens/Development/vcpkg/scripts/buildsystems/vcpkg.cmake"
