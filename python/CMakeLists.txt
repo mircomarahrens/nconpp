@@ -11,7 +11,7 @@ set(PYBIND_INIT      "src/nconpp/__init__.py")
 include(FetchContent)
 FetchContent_Declare(xtensor-python
     GIT_REPOSITORY https://github.com/xtensor-stack/xtensor-python
-    GIT_TAG master
+    GIT_TAG "0.26.0"
     CONFIGURE_COMMAND ""
     BUILD_COMMAND "")
 

@@ -1,5 +1,5 @@
-nconpp-python
-==============
+nconpp
+=======
 
 Library for Tensor Network contraction.
 
@@ -10,13 +10,13 @@ Installation
 **On Unix (Linux, OS X)**
 
  - clone this repository
- - `pip install ./nconpp-python`
+ - `pip install ./python`
 
 **On Windows (Requires Visual Studio 2015)**
 
  - For Python 3.5:
      - clone this repository
-     - `pip install ./nconpp-python`
+     - `pip install ./python`
  - For earlier versions of Python, including Python 2.7:
 
    xtensor requires a C++14 compliant compiler (i.e. Visual Studio 2015 on
@@ -28,9 +28,9 @@ Installation
      - `"%VS140COMNTOOLS%\..\..\VC\vcvarsall.bat" x64`
      - `set DISTUTILS_USE_SDK=1`
      - `set MSSdk=1`
-     - `pip install ./nconpp-python`
+     - `pip install ./python`
 
-   Note that this requires the user building `nconpp-python` to have registry edition
+   Note that this requires the user building `python` to have registry edition
    rights on the machine, to be able to run the `vcvarsall.bat` script.
 
 
@@ -65,7 +65,7 @@ the extension module to generate beautiful documentation in a variety formats.
 The following command generates HTML-based reference documentation; for other
 formats please refer to the Sphinx manual:
 
- - `nconpp-python/docs`
+ - `python/docs`
  - `make html`
 
 
