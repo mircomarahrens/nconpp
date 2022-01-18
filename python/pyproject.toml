@@ -4,6 +4,18 @@ version = "0.1"
 description = "Module for Tensor Network contraction."
 authors = ["Mirco Marahrens <mirco.marahrens@googlemail.com>"]
 
+include = [
+    # Source files for C extensions must be included in the source distribution.
+    { path = "CMakeLists.txt", format = "sdist" },
+    { path = "src/**/*.cxx", format = "sdist" },
+    # C extensions must be included in the wheel distribution.
+    { path = "src/**/*.so", format = "wheel" },
+]
+exclude = [
+    "src/**/*.cxx",
+    "src/**/*.so",
+]
+
 [tool.poetry.build]
 generate-setup-file = false
 script = "build.py"
@@ -19,6 +31,8 @@ pybind11 = "^2.9.0"
 wheel = "^0.37.1"
 scikit-build = "^0.12.0"
 setuptools = "^60.5.0"
+pytest-cov = "^3.0.0"
+pytest = "^6.2.5"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
