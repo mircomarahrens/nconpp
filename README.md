@@ -22,15 +22,9 @@ Graph algorithms in the Language of Linear Algebra
 docker build --target build -t nconpp-builder .
 ```
 
-# CMake Toolchain
+## Python module
 
-## Windows + WSL2
-
-```bash
-sudo apt install build-essential g++ gdb make ninja-build rsync zip
-```
-
-## Python
+Install poetry <https://python-poetry.org/>.
 
 From root folder `nconpp`.
 

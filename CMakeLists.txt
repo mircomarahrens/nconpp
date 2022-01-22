@@ -10,10 +10,6 @@ set(CMAKE_CXX_STANDARD          17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS        OFF)
 
-#if (WIN32)
-#    set(CMAKE_EXE_LINKER_FLAGS  /MANIFEST:NO)
-#endif()
-
 project(nconpp CXX)
 
 # directories
@@ -23,16 +19,15 @@ set(NCONPP_SRC_DIR     ${CMAKE_CURRENT_SOURCE_DIR}/core/src)
 set(NCONPP_UTILS_DIR   ${CMAKE_CURRENT_SOURCE_DIR}/core/utils)
 set(NCONPP_TEST_DIR    ${CMAKE_CURRENT_SOURCE_DIR}/test)
 set(NCONPP_UT_DIR      ${CMAKE_CURRENT_SOURCE_DIR}/test/ut)
-set(NCONPP_PYTHON_DIR  ${CMAKE_CURRENT_SOURCE_DIR}/nconpp-python)
 
 # collect dependencies
-if(CMAKE_BUILD_TYPE MATCHES Debug)
-    get_cmake_property(_variableNames VARIABLES)
-    list (SORT _variableNames)
-    foreach (_variableName ${_variableNames})
-        message(STATUS "${_variableName}=${${_variableName}}")
-    endforeach()
-endif()
+#if(CMAKE_BUILD_TYPE MATCHES Debug)
+#    get_cmake_property(_variableNames VARIABLES)
+#    list (SORT _variableNames)
+#    foreach (_variableName ${_variableNames})
+#        message(STATUS "${_variableName}=${${_variableName}}")
+#    endforeach()
+#endif()
 
 find_package(BLAS REQUIRED)
 message(STATUS "BLAS LIBRARIES: " ${BLAS_LIBRARIES})
@@ -60,6 +55,3 @@ if(CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
 
     add_subdirectory(${NCONPP_TEST_DIR})
 endif()
-
-# python module
-add_subdirectory(${NCONPP_PYTHON_DIR})
