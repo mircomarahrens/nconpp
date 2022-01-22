@@ -19,7 +19,7 @@ set(NCONPP_UTILS
     ${NCONPP_UTILS_DIR}/ErrorMessages.h
     ${NCONPP_UTILS_DIR}/Tensor.h)
 
-add_library(${NCONPP_LIBRARY_TARGET} SHARED
+add_library(${NCONPP_LIBRARY_TARGET} STATIC
     ${NCONPP_MAIN}
     ${NCONPP_INCLUDE}
     ${NCONPP_SRC}
