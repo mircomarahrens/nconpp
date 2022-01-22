@@ -1,4 +1,0 @@
-nconpp
-=========================
-
-.. automodule:: nconpp

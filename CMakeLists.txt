@@ -56,6 +56,3 @@ if(CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
 
     add_subdirectory(${NCONPP_TEST_DIR})
 endif()
-
-# python module
-add_subdirectory(${NCONPP_PYTHON_DIR})
