@@ -21,8 +21,8 @@ target_include_directories(${NCONPP_TEST_TARGET} PRIVATE
 
 target_link_libraries(${NCONPP_TEST_TARGET}
     ${CMAKE_THREAD_LIBS_INIT}
-    ${GTEST_BOTH_LIBRARIES}
     ${NCONPP_DEPENDENCIES}
+    gtest_main
     nconpp)
 
 include(GoogleTest)

@@ -3,8 +3,7 @@
     "clapack",
     "openblas",
     "xtensor",
-    "xtensor-blas",
-    "gtest"
+    "xtensor-blas"
   ],
   "name": "nconpp-core",
   "version": "0.0.1"
