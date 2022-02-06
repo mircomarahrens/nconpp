@@ -20,17 +20,8 @@ set(NCONPP_UTILS_DIR   ${CMAKE_CURRENT_SOURCE_DIR}/core/utils)
 set(NCONPP_TEST_DIR    ${CMAKE_CURRENT_SOURCE_DIR}/test)
 set(NCONPP_UT_DIR      ${CMAKE_CURRENT_SOURCE_DIR}/test/ut)
 
-# collect dependencies
-#if(CMAKE_BUILD_TYPE MATCHES Debug)
-#    get_cmake_property(_variableNames VARIABLES)
-#    list (SORT _variableNames)
-#    foreach (_variableName ${_variableNames})
-#        message(STATUS "${_variableName}=${${_variableName}}")
-#    endforeach()
-#endif()
-
 find_package(BLAS REQUIRED)
-message(STATUS "BLAS LIBRARIES: " ${BLAS_LIBRARIES})
+message(STATUS "BLAS LIBRARIES: ${BLAS_LIBRARIES}")
 find_package(LAPACK REQUIRED)
 message(STATUS "LAPACK LIBRARIES: ${LAPACK_LIBRARIES}")
 find_package(xtensor      CONFIG REQUIRED)
@@ -48,10 +39,17 @@ add_subdirectory(${NCONPP_CORE_DIR})
 
 # testing
 if(CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
-    enable_testing()
-
     # GoogleTest
-    find_package(GTest REQUIRED)
+    include(FetchContent)
+    FetchContent_Declare(
+      googletest
+      URL https://github.com/google/googletest/archive/609281088cfefc76f9d0ce82e1ff6c30cc3591e5.zip
+    )
+    # For Windows: Prevent overriding the parent project's compiler/linker settings
+    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+    FetchContent_MakeAvailable(googletest)
+
+    enable_testing()
 
     add_subdirectory(${NCONPP_TEST_DIR})
 endif()
