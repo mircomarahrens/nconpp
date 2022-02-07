@@ -6,7 +6,7 @@
 class Graph
 {
 public:
-    Graph(size_t N);
+    Graph(std::size_t N);
     ~Graph() = default;
 
     virtual void addEdge(int src, int dest);
