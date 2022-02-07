@@ -28,7 +28,7 @@ private:
 
     struct Search
     {
-        static void connectedComponents(const size_t size,
+        static void connectedComponents(const std::size_t size,
             const std::vector<std::vector<int>>& adjanceyList,
             std::vector<std::set<int>>& connectedComponents)
         {
