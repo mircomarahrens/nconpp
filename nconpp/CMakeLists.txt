@@ -30,6 +30,6 @@ target_include_directories(${NCONPP_LIBRARY_TARGET} PRIVATE
     ${NCONPP_INCLUDE_DIR}
     ${NCONPP_SRC_DIR}
     ${NCONPP_UTILS_DIR})
-    
+
 target_link_libraries(${NCONPP_LIBRARY_TARGET}
     ${NCONPP_DEPENDENCIES})
