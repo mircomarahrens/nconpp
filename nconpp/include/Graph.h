@@ -36,9 +36,9 @@ public:
 
     const std::set<int> &getVertexIndices();
 
-    const std::vector<std::vector<int>> &getAdjacencyList();
-
+    const std::vector<std::vector<int>>& getAdjacencyList();
 private:
     std::set<int> mVertexIndices;
+    std::set<Vertex> mVertices;
     std::vector<std::vector<int>> mAdjacencyList;
 };

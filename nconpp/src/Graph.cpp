@@ -56,12 +56,11 @@ void Graph::removeVertex(const Vertex &vertex) {
     removeVertexByIndex(vertex.index);
 }
 
-const vector<vector<int>>& Graph::getAdjacencyList()
-{
-    return mAdjacencyList;
-}
-
 const set<int>& Graph::getVertexIndices()
 {
     return mVertexIndices;
+}
+
+const std::vector<std::vector<int>>& Graph::getAdjacencyList(){
+    return mAdjacencyList;
 }
