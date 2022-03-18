@@ -12,7 +12,7 @@ class NetworkTest : public testing::Test
     ~NetworkTest() override= default;;
 };
 
-TEST(NetworkTest, graph_test)
+TEST(NetworkTest, ConnectedComponents)
 {
     // 5 vertices numbered from 0 to 4 without legs
     Network network({{}, {}, {}, {}, {}});
@@ -22,7 +22,6 @@ TEST(NetworkTest, graph_test)
     network.addEdge(2, 3);
     network.addEdge(3, 4);
 
-    network.calculateConnectedComponents();
     std::vector<std::set<int>> connectedComponents =
         network.getConnectedComponents();
 

@@ -1,5 +1,6 @@
 #include "Network.h"
 
+#include "Algorithms.h"
 #include "Container.h"
 
 using namespace std;
@@ -40,8 +41,8 @@ void Network::removeEdge(int src, int dest)
     auto& vertexSrc = mVertexLegs[src];
     auto& vertexDest = mVertexLegs[dest];
 
-    auto intersec = Container::getIntersection(vertexSrc, vertexDest);
-    for (int val : intersec)
+    auto intersection = Container::getIntersection(vertexSrc, vertexDest);
+    for (int val : intersection)
     {
         auto pos_src = find(vertexSrc.begin(), vertexSrc.end(), val);
         vertexSrc.erase(pos_src);
@@ -62,8 +63,8 @@ const vector<vector<int>>& Network::getVertexLegs()
 
 void Network::calculateConnectedComponents()
 {
-    Search::connectedComponents(mVertexLegs.size(),
-                                Graph::getAdjacencyList(), mConnectedComponents);
+    mConnectedComponents = Algorithms::connectedComponents(mVertexLegs.size(),
+                            Graph::getAdjacencyList());
 }
 
 const vector<set<int>>& Network::getConnectedComponents()

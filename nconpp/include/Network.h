@@ -25,4 +25,6 @@ private:
     std::vector<std::set<int>> mConnectedComponents;
 
     void generateEdges(const std::vector<std::vector<int>>& vertexLegs);
+
+    void calculateConnectedComponents();
 };
