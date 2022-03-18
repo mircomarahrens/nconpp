@@ -8,8 +8,8 @@
 
 class NetworkTest : public testing::Test
 {
-    NetworkTest(){};
-    ~NetworkTest() override{};
+    NetworkTest()= default;;
+    ~NetworkTest() override= default;;
 };
 
 TEST(NetworkTest, graph_test)
