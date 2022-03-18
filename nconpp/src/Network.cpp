@@ -63,7 +63,7 @@ const vector<vector<int>>& Network::getVertexLegs()
 void Network::calculateConnectedComponents()
 {
     Search::connectedComponents(mVertexLegs.size(),
-        Graph::getAdjanceyList(), mConnectedComponents);
+                                Graph::getAdjacencyList(), mConnectedComponents);
 }
 
 const vector<set<int>>& Network::getConnectedComponents()
