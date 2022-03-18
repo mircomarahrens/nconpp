@@ -3,48 +3,65 @@
 
 using namespace std;
 
-Graph::Graph(size_t N) : mVertices(Container::createRangeSet(N))
+Graph::Graph(size_t N) : mVertexIndices(Container::createRangeSet(N))
 {
-    mAdjanceyList = vector<vector<int>>(N);
+    mAdjacencyList = vector<vector<int>>(N);
 }
 
 void Graph::addEdge(int src, int dest)
 {
-    if ((size_t)src < mVertices.size() && ((size_t)dest < mVertices.size()))
+    if ((size_t)src < mVertexIndices.size() && ((size_t)dest < mVertexIndices.size()))
     {
-        mAdjanceyList[src].emplace_back(dest);
-        mAdjanceyList[dest].emplace_back(src);
+        mAdjacencyList[src].emplace_back(dest);
+        mAdjacencyList[dest].emplace_back(src);
     }
+}
+
+
+void Graph::addEdge(const Edge &edge) {
+    addEdge(edge.src, edge.dest);
 }
 
 void Graph::removeEdge(int src, int dest)
 {
-    if ((size_t)src < mVertices.size())
+    if ((size_t)src < mVertexIndices.size())
     {
-        auto end = mAdjanceyList[src].end();
-        auto pos = find(mAdjanceyList[src].begin(), end, dest);
+        auto end = mAdjacencyList[src].end();
+        auto pos = find(mAdjacencyList[src].begin(), end, dest);
         if (pos != end)
-            mAdjanceyList[src].erase(pos);
+            mAdjacencyList[src].erase(pos);
     }
 }
 
-void Graph::addVertex(int vertex)
-{
-    mVertices.insert(vertex);
+void Graph::removeEdge(const Edge& edge) {
+    removeEdge(edge.src, edge.dest);
 }
 
-void Graph::removeVertex(int vertex)
+void Graph::addVertexIndex(int vertex)
 {
-    auto pos = mVertices.find(vertex);
-    mVertices.erase(pos);
+    mVertexIndices.insert(vertex);
 }
 
-const vector<vector<int>>& Graph::getAdjanceyList()
-{
-    return mAdjanceyList;
+void Graph::addVertex(const Vertex& vertex) {
+    addVertexIndex(vertex.index);
 }
 
-const set<int>& Graph::getVertices()
+void Graph::removeVertexByIndex(int index)
 {
-    return mVertices;
+    auto pos = mVertexIndices.find(index);
+    mVertexIndices.erase(pos);
+}
+
+void Graph::removeVertex(const Vertex &vertex) {
+    removeVertexByIndex(vertex.index);
+}
+
+const vector<vector<int>>& Graph::getAdjacencyList()
+{
+    return mAdjacencyList;
+}
+
+const set<int>& Graph::getVertexIndices()
+{
+    return mVertexIndices;
 }

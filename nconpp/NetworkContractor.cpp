@@ -217,7 +217,7 @@ void NetworkContractor::connectDisconnectedComponents(
 			// don't consider the last element, as this needs to be connected
 			vector<vector<int>> legsSubList(
 				legsList.begin(), legsList.end() - 1);
-			set<int> subComponents = network.getVertices();
+			set<int> subComponents = network.getVertexIndices();
 			subComponents.erase(currentNode);
 
 			currentNode = getShortestOfLegsList(

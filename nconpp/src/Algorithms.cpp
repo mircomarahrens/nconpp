@@ -1,4 +1,14 @@
-//
-// Created by MircoMarahrens on 17/03/2022.
-//
+#include "Algorithms.h"
+
+Algorithms::Algorithms() {
+
+}
+
+Algorithms::~Algorithms() {
+
+}
+
+void Algorithms::calculateConnectedComponents(const Graph& graph) {
+
+}
 

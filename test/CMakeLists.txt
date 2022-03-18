@@ -6,8 +6,9 @@ set(NCONPP_TEST_MAIN
     nconpp_test.cpp)
 
 set(NCONPP_TEST_UT
-    ${NCONPP_UT_DIR}/networkTest.cpp
-    ${NCONPP_UT_DIR}/nconppTest.cpp)
+    ${NCONPP_UT_DIR}/NetworkTest.cpp
+    ${NCONPP_UT_DIR}/NconppTest.cpp
+    ${NCONPP_UT_DIR}/GraphTest.cpp)
 
 add_executable(${NCONPP_TEST_TARGET}
     ${NCONPP_TEST_MAIN}

@@ -7,10 +7,12 @@ set(NCONPP_MAIN
     ${NCONPP_CORE_DIR}/NetworkContractor.cpp)
 
 set(NCONPP_INCLUDE
+    ${NCONPP_INCLUDE_DIR}/Algorithms.h
     ${NCONPP_INCLUDE_DIR}/Graph.h
     ${NCONPP_INCLUDE_DIR}/Network.h)
 
 set(NCONPP_SRC
+    ${NCONPP_SRC_DIR}/Algorithms.cpp
     ${NCONPP_SRC_DIR}/Graph.cpp
     ${NCONPP_SRC_DIR}/Network.cpp)
 
