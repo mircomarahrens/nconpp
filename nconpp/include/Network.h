@@ -6,25 +6,22 @@
 #include <vector>
 #include <set>
 
-class Network : public Graph
-{
+class Network : public Graph {
 public:
-    Network(std::vector<std::vector<int>> vertexLegs);
+    explicit Network(std::vector<std::vector<int>> vertexLegs);
+
     ~Network() = default;
 
     void addEdge(int src, int dest) override;
-    void removeEdge(int src, int dest) override;
+
+    void removeEdgeByIndices(int src, int dest) override;
+
     void addLeg(int newLeg, int node);
 
-    const std::vector<std::vector<int>>& getVertexLegs();
-
-    const std::vector<std::set<int>>& getConnectedComponents();
+    const std::vector<std::vector<int>> &getVertexLegs();
 
 private:
     std::vector<std::vector<int>> mVertexLegs;
-    std::vector<std::set<int>> mConnectedComponents;
 
-    void generateEdges(const std::vector<std::vector<int>>& vertexLegs);
-
-    void calculateConnectedComponents();
+    void generateEdges(const std::vector<std::vector<int>> &vertexLegs);
 };

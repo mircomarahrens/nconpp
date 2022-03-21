@@ -121,7 +121,7 @@ private:
             // sorted version - advance through begin..end
             auto rm_iter = begin;
             const auto pred = [&](const T&) {
-                // any more to remove?
+                // anymore to remove?
                 if (rm_iter != end && *rm_iter == current_index++)
                 {
                     return ++rm_iter, true;
