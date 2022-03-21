@@ -10,6 +10,14 @@ struct Edge {
 
 struct Vertex {
     int index;
+
+    friend bool operator<(const Vertex &lhs, const Vertex &rhs) {
+        return lhs.index < rhs.index;
+    };
+
+    friend bool operator>(const Vertex &lhs, const Vertex &rhs) {
+        return lhs.index > rhs.index;
+    };
 };
 
 class Graph {
@@ -20,23 +28,26 @@ public:
 
     virtual void addEdge(int src, int dest);
 
-    virtual void addEdge(const Edge& edge);
+    virtual void addEdge(const Edge &edge);
 
-    virtual void removeEdge(int src, int dest);
+    virtual void removeEdgeByIndices(int src, int dest);
 
-    virtual void removeEdge(const Edge& edge);
+    virtual void removeEdge(const Edge &edge);
 
-    void addVertexIndex(int vertex);
+    void addVertexIndex(int vertexIndex);
 
-    void addVertex(const Vertex& vertex);
+    virtual void addVertex(const Vertex &vertex);
+
+    const std::set<Vertex> &getVertices();
 
     void removeVertexByIndex(int index);
 
-    void removeVertex(const Vertex& vertex);
+    void removeVertex(const Vertex &vertex);
 
     const std::set<int> &getVertexIndices();
 
-    const std::vector<std::vector<int>>& getAdjacencyList();
+    const std::vector<std::vector<int>> &getAdjacencyList();
+
 private:
     std::set<int> mVertexIndices;
     std::set<Vertex> mVertices;
