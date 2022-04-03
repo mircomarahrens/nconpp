@@ -4,6 +4,7 @@ cmake_minimum_required(VERSION 3.16)
 
 # avoid infinite recursion
 if(DEFINED NCONPP_CORE_PROJECT)
+    message(STATUS "NCONPP_CORE_PROJECT already called. Go to next step.")
     return()
 endif()
 
