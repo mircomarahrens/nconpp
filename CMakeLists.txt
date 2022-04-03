@@ -40,9 +40,8 @@ set(NCONPP_DEPENDENCIES
         xtensor-blas)
 
 # core
-add_subdirectory(${NCONPP_CORE_DIR})
-
 set(NCONPP_CORE_PROJECT ON)
+add_subdirectory(${NCONPP_CORE_DIR})
 
 # testing
 if (CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
