@@ -2,6 +2,11 @@
 
 cmake_minimum_required(VERSION 3.16)
 
+# avoid infinite recursion
+if(DEFINED NCONPP_CORE_PROJECT)
+    return()
+endif()
+
 # vcpkg flags
 set(VCPKG_FEATURE_FLAGS "versions")
 
@@ -35,6 +40,8 @@ set(NCONPP_DEPENDENCIES
 
 # core
 add_subdirectory(${NCONPP_CORE_DIR})
+
+set(NCONPP_CORE_PROJECT ON)
 
 # testing
 if (CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
