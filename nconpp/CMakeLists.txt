@@ -19,7 +19,7 @@ set(NCONPP_SRC
         ${NCONPP_SRC_DIR}/Graph.cpp
         ${NCONPP_SRC_DIR}/Network.cpp)
 
-add_library(${NCONPP_LIBRARY_TARGET} STATIC
+add_library(${NCONPP_LIBRARY_TARGET} SHARED
         ${NCONPP_MAIN}
         ${NCONPP_INCLUDE}
         ${NCONPP_SRC})
