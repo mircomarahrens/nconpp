@@ -8,7 +8,7 @@
 
 class Network : public Graph {
 public:
-    explicit Network(std::vector<std::vector<int>> vertexLegs);
+    Network(std::vector<std::vector<int>> vertexLegs);
 
     ~Network() = default;
 
