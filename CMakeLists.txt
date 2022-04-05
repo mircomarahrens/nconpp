@@ -73,7 +73,6 @@ target_include_directories(${NCONPP_LIBRARY_TARGET} PRIVATE
 target_link_libraries(${NCONPP_LIBRARY_TARGET}
         ${NCONPP_DEPENDENCIES})
 
-
 # testing
 if (CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
     # GoogleTest
