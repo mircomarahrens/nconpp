@@ -1,8 +1,8 @@
 #include "NetworkContractor.h"
 
-#include "Algorithms.h"
-#include "Container.h"
-#include "ErrorMessages.h"
+#include "include/Algorithms.h"
+#include "include/Container.h"
+#include "include/ErrorMessages.h"
 
 #include <set>
 #include <stdexcept>
