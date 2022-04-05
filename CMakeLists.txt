@@ -8,21 +8,8 @@ if(DEFINED NCONPP_CORE_PROJECT)
     return()
 endif()
 
-# vcpkg flags
+# activate vcpkg manifest mode
 set(VCPKG_FEATURE_FLAGS "versions")
-
-# dependencies
-find_package(BLAS REQUIRED)
-find_package(LAPACK REQUIRED)
-find_package(xtensor CONFIG REQUIRED)
-find_package(xtensor-blas CONFIG REQUIRED)
-
-set(NCONPP_DEPENDENCIES
-        ${BLAS_LIBRARIES}
-        ${LAPACK_LIBRARIES}
-        xtensor
-        xtensor::optimize
-        xtensor-blas)
 
 # cmake flags
 set(CMAKE_CXX_STANDARD 17)
@@ -39,6 +26,19 @@ set(NCONPP_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/nconpp/include)
 set(NCONPP_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/nconpp/src)
 set(NCONPP_TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test)
 set(NCONPP_UT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test/ut)
+
+# dependencies
+find_package(BLAS REQUIRED)
+find_package(LAPACK REQUIRED)
+find_package(xtensor CONFIG REQUIRED)
+find_package(xtensor-blas CONFIG REQUIRED)
+
+set(NCONPP_DEPENDENCIES
+        ${BLAS_LIBRARIES}
+        ${LAPACK_LIBRARIES}
+        xtensor
+        xtensor::optimize
+        xtensor-blas)
 
 # core
 set(NCONPP_CORE_PROJECT ON)
