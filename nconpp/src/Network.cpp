@@ -5,7 +5,7 @@
 
 using namespace std;
 
-Network::Network(vector<vector<int>> vertexLegs)
+Network::Network(const vector<vector<int>>& vertexLegs)
         : mVertexLegs{vertexLegs},
           Graph(vertexLegs.size()) {
     generateEdges(vertexLegs);
