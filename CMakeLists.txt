@@ -24,8 +24,6 @@ set(NCONPP_LIBRARY_TARGET "nconpp")
 set(NCONPP_CORE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/nconpp)
 set(NCONPP_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/nconpp/include)
 set(NCONPP_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/nconpp/src)
-set(NCONPP_TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test)
-set(NCONPP_UT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test/ut)
 
 # dependencies
 find_package(BLAS REQUIRED)
@@ -73,7 +71,7 @@ target_include_directories(${NCONPP_LIBRARY_TARGET} PRIVATE
 target_link_libraries(${NCONPP_LIBRARY_TARGET}
         ${NCONPP_DEPENDENCIES})
 
-# testing
+# test via gtest
 if (CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
     # GoogleTest
     include(FetchContent)
@@ -87,5 +85,88 @@ if (CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
 
     enable_testing()
 
-    add_subdirectory(${NCONPP_TEST_DIR})
+    set(NCONPP_TEST_TARGET "nconpp_test")
+
+    set(NCONPP_TEST_MAIN
+            test/nconpp_test.cpp)
+
+    set(NCONPP_TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test)
+    set(NCONPP_UT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test/ut)
+
+    set(NCONPP_TEST_UT
+            ${NCONPP_UT_DIR}/NetworkTest.cpp
+            ${NCONPP_UT_DIR}/NconppTest.cpp
+            ${NCONPP_UT_DIR}/GraphTest.cpp)
+
+    add_executable(${NCONPP_TEST_TARGET}
+            ${NCONPP_TEST_MAIN}
+            ${NCONPP_TEST_UT})
+
+    target_include_directories(${NCONPP_TEST_TARGET} PRIVATE
+            ${NCONPP_CORE_DIR}
+            ${NCONPP_INCLUDE_DIR}
+            ${NCONPP_SRC_DIR})
+
+    target_link_libraries(${NCONPP_TEST_TARGET}
+            ${CMAKE_THREAD_LIBS_INIT}
+            ${NCONPP_DEPENDENCIES}
+            gtest_main
+            nconpp)
+
+    include(GoogleTest)
+    gtest_discover_tests(${NCONPP_TEST_TARGET})
 endif ()
+
+# python via pybind
+if (NOT CMAKE_BUILD_TYPE MATCHES Debug AND SKBUILD)
+    message(STATUS "Skbuild process triggered.")
+
+    set(PYBIND_MAIN nconpp-python/main.cpp)
+    set(PYBIND_MODULE _nconpp)
+    set(PYBIND_INIT nconpp-python/nconpp/__init__.py)
+
+    include(FetchContent)
+    FetchContent_Declare(
+            pybind11
+            GIT_REPOSITORY https://github.com/pybind/pybind11
+            GIT_TAG v2.9.1
+    )
+
+    FetchContent_Declare(
+            xtensor-python
+            GIT_REPOSITORY https://github.com/xtensor-stack/xtensor-python
+            GIT_TAG 0.25.3
+    )
+
+    FetchContent_MakeAvailable(pybind11 xtensor-python)
+
+    set(Python_FIND_VIRTUALENV FIRST) # needed for poetry's virtualenv
+    find_package(Python REQUIRED COMPONENTS Interpreter Development NumPy)
+    message(STATUS "Use NumPy include dir: ${Python_NumPy_INCLUDE_DIRS}")
+
+    pybind11_add_module(${PYBIND_MODULE}
+            ${PYBIND_MAIN}
+            ${NCONPP_INCLUDE}
+            ${NCONPP_SRC})
+
+    target_include_directories(${PYBIND_MODULE} PRIVATE
+            ${NCONPP_CORE_DIR}
+            ${NCONPP_INCLUDE_DIR}
+            ${NCONPP_SRC_DIR}
+            ${Python_NumPy_INCLUDE_DIRS})
+
+    target_link_libraries(${PYBIND_MODULE} PRIVATE
+            ${NCONPP_DEPENDENCIES}
+            xtensor-python)
+
+    target_compile_definitions(${PYBIND_MODULE} PRIVATE
+            VERSION_INFO=${VERSION_INFO})
+
+    install(TARGETS ${PYBIND_MODULE}
+            COMPONENT python
+            LIBRARY DESTINATION .)
+
+    install(FILES ${PYBIND_INIT}
+            COMPONENT python
+            DESTINATION .)
+endif()
