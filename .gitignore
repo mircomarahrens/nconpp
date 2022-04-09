@@ -24,3 +24,9 @@ CMakeSettings.json
 .vscode/launch.json
 .vscode/extensions.json
 *.code-workspace
+
+# python
+nconpp-venv
+nconpp.egg-info/
+nconpp-python/nconpp.egg-info
+_skbuild/
