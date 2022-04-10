@@ -40,6 +40,13 @@ public:
             std::vector<int> contractionSequenceLegs = {},
             std::vector<int> finalOrder = {});
 
+    // TODO
+//    template<class T>
+//    static std::vector<T> decompose(
+//            T &container,
+//            std::vector<std::vector<int>> legsList,
+//            );
+
 private:
     template<class T>
     static void validateInput(

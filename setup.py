@@ -16,10 +16,8 @@ setup(
     author="Mirco Marahrens",
     author_email="mirco.marahrens@googlemail.com",
     url="https://github.com/mircomarahrens/nconpp-python",
-    packages=find_packages(where="nconpp-python", include=["numpy"]),
-    package_dir={"": "nconpp-python"},
-    cmake_install_dir="nconpp-python/nconpp",
+    packages=find_packages(where="pybind"),
+    package_dir={"": "pybind"},
     cmake_args=__cmake_args__,
-    include_package_data=True,
     python_requires=">=3.6",
 )

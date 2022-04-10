@@ -8,6 +8,9 @@ if(DEFINED NCONPP_CORE_PROJECT)
     return()
 endif()
 
+# include(FetchContent)
+# vcpkg...
+
 # activate vcpkg manifest mode
 set(VCPKG_FEATURE_FLAGS "versions")
 
@@ -16,14 +19,14 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-project(nconpp CXX)
+project(core CXX)
 
-set(NCONPP_LIBRARY_TARGET "nconpp")
+set(NCONPP_LIBRARY_TARGET "core")
 
 # directories
-set(NCONPP_CORE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/nconpp)
-set(NCONPP_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/nconpp/include)
-set(NCONPP_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/nconpp/src)
+set(NCONPP_CORE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/core)
+set(NCONPP_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/core/include)
+set(NCONPP_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/core/src)
 
 # dependencies
 find_package(BLAS REQUIRED)
@@ -111,7 +114,7 @@ if (CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
             ${CMAKE_THREAD_LIBS_INIT}
             ${NCONPP_DEPENDENCIES}
             gtest_main
-            nconpp)
+            core)
 
     include(GoogleTest)
     gtest_discover_tests(${NCONPP_TEST_TARGET})
@@ -121,9 +124,9 @@ endif ()
 if (NOT CMAKE_BUILD_TYPE MATCHES Debug AND SKBUILD)
     message(STATUS "Skbuild process triggered.")
 
-    set(PYBIND_MAIN nconpp-python/main.cpp)
+    set(PYBIND_MAIN pybind/main.cpp)
     set(PYBIND_MODULE _nconpp)
-    set(PYBIND_INIT nconpp-python/nconpp/__init__.py)
+    set(PYBIND_INIT pybind/nconpp/__init__.py)
 
     include(FetchContent)
     FetchContent_Declare(
