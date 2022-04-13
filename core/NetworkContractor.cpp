@@ -14,14 +14,17 @@ template<class T>
 T NetworkContractor::contract(
         vector<T> &containerList,
         vector<vector<int>> legsList,
+        bool skipValidation,
         std::vector<int> contractionSequenceLegs,
         std::vector<int> finalOrder) {
-    validateInput(
-            containerList,
-            legsList,
-            contractionSequenceLegs,
-            finalOrder
-    );
+
+    if (!skipValidation)
+        validateInput(
+                containerList,
+                legsList,
+                contractionSequenceLegs,
+                finalOrder
+        );
 
     connectDisconnectedComponents(
             containerList,
@@ -309,4 +312,15 @@ NetworkContractor::findContractionParameters(
         }
     }
     return make_pair(tensorParamsA, tensorParamsB);
+}
+
+template<class T>
+vector<T> NetworkContractor::decompose(T &container,
+                                       std::vector<std::vector<int>> legsList,
+                                       int decompositionIndex,
+                                       bool skipValidation,
+                                       std::vector<int> decompositionSequenceLegs,
+                                       std::vector<int> finalOrder) {
+
+    return vector<T>();
 }

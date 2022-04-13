@@ -70,4 +70,11 @@ namespace Tensor {
         auto &&dM = M.derived_cast();
         return xt::transpose(dM, perm);
     }
+
+    // svd
+    template<typename T>
+    static inline auto svd(const xt::xexpression<T> &M, bool full_matrices = true, bool compute_uv = true) {
+        auto &&dM = M.derived_cast();
+        return xt::linalg::svd(dM, full_matrices, compute_uv);
+    }
 };

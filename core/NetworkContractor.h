@@ -37,15 +37,26 @@ public:
     static T contract(
             std::vector<T> &containerList,
             std::vector<std::vector<int>> legsList,
+            bool skipValidation = true,
             std::vector<int> contractionSequenceLegs = {},
             std::vector<int> finalOrder = {});
 
-    // TODO
+    template<class T>
+    static std::vector<T> decompose(
+            T &container,
+            std::vector<std::vector<int>> legsList,
+            int decompositionIndex,
+            bool skipValidation = true,
+            std::vector<int> decompositionSequenceLegs = {},
+            std::vector<int> finalOrder = {});
+
+// TODO
 //    template<class T>
-//    static std::vector<T> decompose(
+//    static std::vector<T> diagonalize(
 //            T &container,
 //            std::vector<std::vector<int>> legsList,
-//            );
+//            std::vector<int> decompositionSequenceLegs = {},
+//            std::vector<int> finalOrder = {});
 
 private:
     template<class T>

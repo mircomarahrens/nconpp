@@ -18,9 +18,9 @@
 #include <set>
 
 class NconppTest : public testing::Test {
-    NconppTest() = default;;
+    NconppTest() = default;
 
-    ~NconppTest() override = default;;
+    ~NconppTest() override = default;
 };
 
 TEST(NconppTest, tensorOperations) {
@@ -55,7 +55,7 @@ TEST(NconppTest, logicError_MoreThanTwoLegs) {
     EXPECT_THROW(
             try {
                 Tensor::array_type<std::complex<double>> finalTensor =
-                        NetworkContractor::contract(tensorList, legLinks);
+                        NetworkContractor::contract(tensorList, legLinks, false);
             }
             catch (const std::logic_error &ex) {
                 EXPECT_EQ(ERROR_MESSAGES::MISMATCH, ex.what());
@@ -85,7 +85,7 @@ TEST(NconppTest, largeContraction) {
             };
 
     Tensor::array_type<std::complex<double>> finalTensor =
-            NetworkContractor::contract(tensorList, legLinks);
+            NetworkContractor::contract(tensorList, legLinks, false);
 
     Tensor::shape_type shape = {2, 4, 9};
     ASSERT_EQ(Tensor::shape(finalTensor), shape);
