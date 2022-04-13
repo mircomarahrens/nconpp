@@ -1,6 +1,6 @@
 {
   "dependencies": [
-    "clapack",
+    "lapack",
     "openblas",
     "xtensor",
     "xtensor-blas"
