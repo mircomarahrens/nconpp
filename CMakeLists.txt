@@ -8,8 +8,15 @@ if(DEFINED NCONPP_CORE_PROJECT)
     return()
 endif()
 
-# include(FetchContent)
-# vcpkg...
+#include(FetchContent)
+#FetchContent_Declare(vcpkg
+#        GIT_REPOSITORY https://github.com/microsoft/vcpkg.git
+#        GIT_TAG 2022.03.10)
+#FetchContent_GetProperties(vcpkg)
+#if(NOT vcpkg_POPULATED)
+#    FetchContent_Populate(vcpkg)
+#endif()
+# --no-warn-unused-cli -DCMAKE_TOOLCHAIN_FILE:FILEPATH=/home/mircomarahrens/vcpkg/scripts/buildsystems/vcpkg.cmake -G Ninja
 
 # activate vcpkg manifest mode
 set(VCPKG_FEATURE_FLAGS "versions")
@@ -99,7 +106,8 @@ if (CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
     set(NCONPP_TEST_UT
             ${NCONPP_UT_DIR}/NetworkTest.cpp
             ${NCONPP_UT_DIR}/NconppTest.cpp
-            ${NCONPP_UT_DIR}/GraphTest.cpp)
+            ${NCONPP_UT_DIR}/GraphTest.cpp
+            ${NCONPP_UT_DIR}/TensorTest.cpp)
 
     add_executable(${NCONPP_TEST_TARGET}
             ${NCONPP_TEST_MAIN}

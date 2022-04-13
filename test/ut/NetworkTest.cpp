@@ -7,9 +7,9 @@
 #include <set>
 
 class NetworkTest : public testing::Test {
-    NetworkTest() = default;;
+    NetworkTest() = default;
 
-    ~NetworkTest() override = default;;
+    ~NetworkTest() override = default;
 };
 
 TEST(NetworkTest, ConnectedComponents) {

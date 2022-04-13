@@ -68,6 +68,7 @@ PYBIND11_MODULE(_nconpp, m)
         &contract_wrapper<xt::pyarray<std::complex<double>>>,
         py::arg("containerList"),
         py::arg("legsList"),
+        py::arg("skipValidation"),
         py::arg("contractionSequenceLegs") = py::none(),
         py::arg("finalOrder") = py::none());
 }
