@@ -8,7 +8,7 @@ __cmake_args__= []
 # For our 3rd party library handling we used the C++ package manager vcpkg
 # (see https://github.com/microsoft/vcpkg for details). Vcpkg offers a cmake
 # toolchain file which we have to reveal to the cmake installer.
-'__toolchain__ = "/home/mircomarahrens/vcpkg/scripts/buildsystems/vcpkg.cmake"
+#__toolchain__ = "/home/mircomarahrens/vcpkg/scripts/buildsystems/vcpkg.cmake"
 __toolchain__ = os.getenv("CMAKE_TOOLCHAIN_FILE")
 __cmake_args__.append("-DCMAKE_TOOLCHAIN_FILE={}".format())
 
