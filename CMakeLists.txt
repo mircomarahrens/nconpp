@@ -52,8 +52,8 @@ set(NCONPP_DEPENDENCIES
 set(NCONPP_CORE_PROJECT ON)
 
 set(NCONPP_MAIN
-        ${NCONPP_CORE_DIR}/NetworkContractor.h
-        ${NCONPP_CORE_DIR}/NetworkContractor.cpp)
+        ${NCONPP_CORE_DIR}/Nconpp.h
+        ${NCONPP_CORE_DIR}/Nconpp.cpp)
 
 set(NCONPP_INCLUDE
         ${NCONPP_INCLUDE_DIR}/Algorithms.h

@@ -16,6 +16,7 @@ namespace py = pybind11;
 template <class T>
 T contract_wrapper(std::vector<T>& containerList,
 	std::vector<std::vector<int>> legsList,
+	bool skipValidation,
 	std::optional<std::vector<int>> contractionSequenceLegs,
 	std::optional<std::vector<int>> finalOrder)
 {
@@ -32,6 +33,7 @@ T contract_wrapper(std::vector<T>& containerList,
 	return NetworkContractor::contract(
 		containerList,
 		legsList,
+		skipValidation,
 		_contractionSequenceLegs,
 		_finalOrder);
 };

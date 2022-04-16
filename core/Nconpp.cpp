@@ -314,16 +314,16 @@ Nconpp::findContractionParameters(
     return make_pair(tensorParamsA, tensorParamsB);
 }
 
-template<class T>
-vector<T> Nconpp::decompose(T &container,
-                            std::vector<std::vector<int>> legsList,
-                            int decompositionIndex,
-                            bool skipValidation,
-                            std::vector<int> decompositionSequenceLegs,
-                            std::vector<int> finalOrder) {
+// template<class T>
+// vector<T> Nconpp::decompose(T &container,
+//                             std::vector<std::vector<int>> legsList,
+//                             int decompositionIndex,
+//                             bool skipValidation,
+//                             std::vector<int> decompositionSequenceLegs,
+//                             std::vector<int> finalOrder) {
 
-    auto sh = Tensor::shape(container);
-    Tensor::prod();
-    Tensor::reshape(container, )
-    return vector<T>();
-}
+//     auto sh = Tensor::shape(container);
+//     Tensor::prod();
+//     Tensor::reshape(container, )
+//     return vector<T>();
+// }
