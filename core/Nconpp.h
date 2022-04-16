@@ -1,18 +1,18 @@
 #pragma once
 
-#include "include/Network.h"
 #include "include/Container.h"
+#include "include/Network.h"
 #include "include/Tensor.h"
 
-#include <vector>
 #include <optional>
 #include <set>
+#include <vector>
 
-class NetworkContractor {
+class Nconpp {
 public:
-    NetworkContractor() = default;
+    Nconpp() = default;
 
-    ~NetworkContractor() = default;
+    ~Nconpp() = default;
 
     // contracts multiple tensors to one tensor, if possible.
     //

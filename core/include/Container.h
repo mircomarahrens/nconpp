@@ -2,10 +2,10 @@
 
 #include <algorithm>
 #include <iterator>
-#include <optional>
-#include <vector>
-#include <set>
 #include <numeric>
+#include <optional>
+#include <set>
+#include <vector>
 
 class Container {
 public:

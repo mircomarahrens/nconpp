@@ -1,45 +1,24 @@
-# Efficient network contraction with "nconpp"
+# Efficient tensor network contraction and decomposition with ``nconpp``
 
-Writing efficient algorithms for the contraction of networks can be exhausting. Performing repetitive tasks which only differ slightly can lead to errors and mistakes. At worst the programmer quits his idea. This module shall help to perform efficient contractions of networks with low effort based on graph algorithms.
+This module shall help to perform efficient contractions and decomposition of tensor networks. The module is
+inspired by the matlab library NCON (<https://arxiv.org/abs/1402.0939>) and leverages strongly on graph algorithms.
 
-## Breadth first search and Depth first search
+## Install the Python module
 
-## Literature
-
-Graph algorithms in the Language of Linear Algebra
-
-
-## ToDo
-
-- [x] rename Set class to Container
-- [ ] index position by iterator, not by index would be faster
-- [ ] checkout Travis CI
-- [ ] resources: discarded weight, contraction error (breadth vs depth first vs combination?)
-
-## Docker image
-
-```bash
-docker build --target build -t nconpp-builder .
-```
-
-## Python module
-
-Install poetry <https://python-poetry.org/>.
-
-From root folder `nconpp`.
+Execute the following commands if you wish to install ``nconpp`` in a virtual environment. 
 
 * Linux
 
 ```bash
-python -m venv nconpp-venv # or python3 ...
+python -m venv nconpp-venv # or python3
 source ./nconpp-venv/bin/activate
-python -m pip install py/.
+python -m pip install $PATH_TO_NCONPP # $PATH_TO_NCONPP = ., if in root dir of nconpp
 ```
 
-* Windows
+* Windows with `pylauncher`
 
 ```bash
 py -m venv nconpp-venv
 .\nconpp-venv\Scripts\activate
-pip install py\.
+pip install $PATH_TO_NCONPP # $PATH_TO_NCONPP = ., if in root dir of nconpp
 ```

@@ -8,8 +8,8 @@
 #include <complex>
 #include <optional>
 
-#include "NetworkContractor.h"
-#include "NetworkContractor.cpp"
+#include "Nconpp.h"
+#include "Nconpp.cpp"
 
 namespace py = pybind11;
 
