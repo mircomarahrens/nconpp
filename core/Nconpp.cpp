@@ -1,4 +1,4 @@
-#include "NetworkContractor.h"
+#include "Nconpp.h"
 
 #include "include/Algorithms.h"
 #include "include/Container.h"
@@ -11,7 +11,7 @@
 using namespace std;
 
 template<class T>
-T NetworkContractor::contract(
+T Nconpp::contract(
         vector<T> &containerList,
         vector<vector<int>> legsList,
         bool skipValidation,
@@ -73,7 +73,7 @@ T NetworkContractor::contract(
 }
 
 template<class T>
-void NetworkContractor::validateInput(
+void Nconpp::validateInput(
         const vector<T> &containerList,
         vector<vector<int>> &legsList,
         std::vector<int> &contractionSequenceLegs,
@@ -109,8 +109,8 @@ void NetworkContractor::validateInput(
 
 
 // Network operations
-int NetworkContractor::getShortestOfLegsList(const set<int> &indexSet,
-                                             const vector<vector<int>> &legsList) {
+int Nconpp::getShortestOfLegsList(const set<int> &indexSet,
+                                  const vector<vector<int>> &legsList) {
     int shortest = 0;
     for (int index: indexSet)
         if (legsList[index].size() < legsList[shortest].size())
@@ -118,8 +118,8 @@ int NetworkContractor::getShortestOfLegsList(const set<int> &indexSet,
     return shortest;
 }
 
-int NetworkContractor::getLongestOfLegsList(const set<int> &indexSet,
-                                            const vector<vector<int>> &legsList) {
+int Nconpp::getLongestOfLegsList(const set<int> &indexSet,
+                                 const vector<vector<int>> &legsList) {
     int longest = 0;
     for (int index: indexSet)
         if (legsList[index].size() > legsList[longest].size())
@@ -127,7 +127,7 @@ int NetworkContractor::getLongestOfLegsList(const set<int> &indexSet,
     return longest;
 }
 
-int NetworkContractor::getNewLeg(const vector<int> &contractionSequenceLegs) {
+int Nconpp::getNewLeg(const vector<int> &contractionSequenceLegs) {
     int newLeg = *max_element(
             contractionSequenceLegs.begin(),
             contractionSequenceLegs.end());
@@ -135,7 +135,7 @@ int NetworkContractor::getNewLeg(const vector<int> &contractionSequenceLegs) {
     return newLeg;
 }
 
-void NetworkContractor::addEdge(
+void Nconpp::addEdge(
         vector<vector<int>> &legsList,
         int src,
         int dest) {
@@ -155,7 +155,7 @@ void NetworkContractor::addEdge(
 }
 
 template<class T>
-void NetworkContractor::expandNetwork(
+void Nconpp::expandNetwork(
         int node,
         int leg,
         vector<T> &containerList,
@@ -168,7 +168,7 @@ void NetworkContractor::expandNetwork(
 }
 
 template<class T>
-void NetworkContractor::connectDisconnectedComponents(
+void Nconpp::connectDisconnectedComponents(
         vector<T> &containerList,
         vector<vector<int>> &legsList,
         vector<int> &contractionSequenceLegs) {
@@ -222,7 +222,7 @@ void NetworkContractor::connectDisconnectedComponents(
 }
 
 template<class T>
-void NetworkContractor::doTrace(
+void Nconpp::doTrace(
         size_t indexA,
         size_t indexB,
         const vector<size_t> &axisA,
@@ -251,7 +251,7 @@ void NetworkContractor::doTrace(
 }
 
 template<class T>
-void NetworkContractor::doTensorProduct(
+void Nconpp::doTensorProduct(
         size_t indexA,
         size_t indexB,
         const vector<size_t> &axisA,
@@ -281,7 +281,7 @@ void NetworkContractor::doTensorProduct(
 }
 
 pair<pair<size_t, vector<size_t>>, pair<size_t, vector<size_t>>>
-NetworkContractor::findContractionParameters(
+Nconpp::findContractionParameters(
         int contractionLeg,
         vector<vector<int>> &legsList) {
     // index to tensor, position of legs to contract
@@ -315,12 +315,15 @@ NetworkContractor::findContractionParameters(
 }
 
 template<class T>
-vector<T> NetworkContractor::decompose(T &container,
-                                       std::vector<std::vector<int>> legsList,
-                                       int decompositionIndex,
-                                       bool skipValidation,
-                                       std::vector<int> decompositionSequenceLegs,
-                                       std::vector<int> finalOrder) {
+vector<T> Nconpp::decompose(T &container,
+                            std::vector<std::vector<int>> legsList,
+                            int decompositionIndex,
+                            bool skipValidation,
+                            std::vector<int> decompositionSequenceLegs,
+                            std::vector<int> finalOrder) {
 
+    auto sh = Tensor::shape(container);
+    Tensor::prod();
+    Tensor::reshape(container, )
     return vector<T>();
 }

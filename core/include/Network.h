@@ -3,8 +3,8 @@
 #include "Algorithms.h"
 #include "Graph.h"
 
-#include <vector>
 #include <set>
+#include <vector>
 
 class Network : public Graph {
 public:
