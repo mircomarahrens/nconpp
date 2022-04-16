@@ -10,7 +10,7 @@ __cmake_args__= []
 # toolchain file which we have to reveal to the cmake installer.
 #__toolchain__ = "/home/mircomarahrens/vcpkg/scripts/buildsystems/vcpkg.cmake"
 __toolchain__ = os.getenv("CMAKE_TOOLCHAIN_FILE")
-__cmake_args__.append("-DCMAKE_TOOLCHAIN_FILE={}".format())
+__cmake_args__.append("-DCMAKE_TOOLCHAIN_FILE={}".format(__toolchain__))
 
 setup(
     name="nconpp",
