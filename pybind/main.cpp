@@ -30,7 +30,7 @@ T contract_wrapper(std::vector<T>& containerList,
 		_finalOrder = finalOrder.value();
 	}
 
-	return NetworkContractor::contract(
+	return Nconpp::contract(
 		containerList,
 		legsList,
 		skipValidation,

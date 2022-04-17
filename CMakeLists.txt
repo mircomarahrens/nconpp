@@ -1,6 +1,6 @@
 ﻿message(STATUS "Processing directory " ${CMAKE_CURRENT_SOURCE_DIR})
 
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.20)
 
 # avoid infinite recursion
 if(DEFINED NCONPP_CORE_PROJECT)
@@ -26,9 +26,9 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-project(core CXX)
+project(nconpp CXX)
 
-set(NCONPP_LIBRARY_TARGET "core")
+set(NCONPP_LIBRARY_TARGET "nconpp")
 
 # directories
 set(NCONPP_CORE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/core)
@@ -51,7 +51,7 @@ set(NCONPP_DEPENDENCIES
 # core
 set(NCONPP_CORE_PROJECT ON)
 
-set(NCONPP_MAIN
+set(NCONPP_CORE
         ${NCONPP_CORE_DIR}/Nconpp.h
         ${NCONPP_CORE_DIR}/Nconpp.cpp)
 
@@ -69,7 +69,7 @@ set(NCONPP_SRC
         ${NCONPP_SRC_DIR}/Network.cpp)
 
 add_library(${NCONPP_LIBRARY_TARGET} SHARED
-        ${NCONPP_MAIN}
+        ${NCONPP_CORE}
         ${NCONPP_INCLUDE}
         ${NCONPP_SRC})
 
@@ -83,6 +83,7 @@ target_link_libraries(${NCONPP_LIBRARY_TARGET}
 
 # test via gtest
 if (CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
+    message(STATUS "GoogleTest process triggered.")
     # GoogleTest
     include(FetchContent)
     FetchContent_Declare(
@@ -122,7 +123,7 @@ if (CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
             ${CMAKE_THREAD_LIBS_INIT}
             ${NCONPP_DEPENDENCIES}
             gtest_main
-            core)
+            nconpp)
 
     include(GoogleTest)
     gtest_discover_tests(${NCONPP_TEST_TARGET})
@@ -134,7 +135,6 @@ if (NOT CMAKE_BUILD_TYPE MATCHES Debug AND SKBUILD)
 
     set(PYBIND_MAIN pybind/main.cpp)
     set(PYBIND_MODULE _nconpp)
-    set(PYBIND_INIT pybind/nconpp/__init__.py)
 
     include(FetchContent)
     FetchContent_Declare(
@@ -173,11 +173,9 @@ if (NOT CMAKE_BUILD_TYPE MATCHES Debug AND SKBUILD)
     target_compile_definitions(${PYBIND_MODULE} PRIVATE
             VERSION_INFO=${VERSION_INFO})
 
+    #message(STATUS "PYTHON_LIBRARY_DIR is ${PYTHON_LIBRARY_DIR}")
+
     install(TARGETS ${PYBIND_MODULE}
             COMPONENT python
             LIBRARY DESTINATION .)
-
-    install(FILES ${PYBIND_INIT}
-            COMPONENT python
-            DESTINATION .)
 endif()
