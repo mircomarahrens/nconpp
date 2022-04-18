@@ -21,6 +21,8 @@ setup(
     url="https://github.com/mircomarahrens/nconpp",
     packages=find_packages(where="pybind"),
     package_dir={"": "pybind"},
+    cmake_install_dir="pybind/nconpp",
+    include_package_data=True,
     cmake_args=__cmake_args__,
     python_requires=">=3.6",
 )
