@@ -17,25 +17,25 @@ public:
     // contracts multiple tensors to one tensor, if possible.
     //
     // @params:
-    //  containerList:
-    //      list of containers, i.e. tensors to contract
+    //  tensorList:
+    //      list of tensors
     //  legsList:
-    //      Nomenclature of the legs of the tensors in tensorList:
+    //      Nomenclature of the legs of the tensor in tensorList:
     //          - the legs are named by integers
     //          - contractable legs have the same positive integer as name,
     //            hence occuring in pairs
     //          - legs with negative integers won't be contracted, so called
     //            dangling legs
-    //  contractionSequenceTensors (optional):
-    //      order in which the tensors shall be contracted
+    //  contractionSequenceLegs (optional):
+    //      order by legs in which the tensors shall be contracted
     //  finalOrder (optional):
     //      Permutation of the legs of the final tensor.
     //
     // @return:
-    //  the final contracted container
+    //  the final contracted tensor
     template<class T>
     static T contract(
-            std::vector<T> &containerList,
+            std::vector<T> &tensorList,
             std::vector<std::vector<int>> legsList,
             bool skipValidation = true,
             std::vector<int> contractionSequenceLegs = {},

@@ -12,7 +12,7 @@ using namespace std;
 
 template<class T>
 T Nconpp::contract(
-        vector<T> &containerList,
+        vector<T> &tensorList,
         vector<vector<int>> legsList,
         bool skipValidation,
         std::vector<int> contractionSequenceLegs,
@@ -20,14 +20,14 @@ T Nconpp::contract(
 
     if (!skipValidation)
         validateInput(
-                containerList,
+                tensorList,
                 legsList,
                 contractionSequenceLegs,
                 finalOrder
         );
 
     connectDisconnectedComponents(
-            containerList,
+            tensorList,
             legsList,
             contractionSequenceLegs
     );
@@ -53,7 +53,7 @@ T Nconpp::contract(
                     indexB,
                     axisA,
                     axisB,
-                    containerList,
+                    tensorList,
                     legsList);
         } else // do tensor product
         {
@@ -62,14 +62,14 @@ T Nconpp::contract(
                     indexB,
                     axisA,
                     axisB,
-                    containerList,
+                    tensorList,
                     legsList);
         }
         contractionSequenceLegs
                 .erase(contractionSequenceLegs.begin());
     }
 
-    return containerList[0];
+    return std::move(tensorList[0]);
 }
 
 template<class T>
