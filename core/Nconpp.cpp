@@ -40,10 +40,10 @@ T Nconpp::contract(
                 *it,
                 legsList);
 
-        size_t indexA = contractionParams.first.first;
-        size_t indexB = contractionParams.second.first;
-        const auto &axisA = contractionParams.first.second;
-        const auto &axisB = contractionParams.second.second;
+        size_t indexA = get<0>(contractionParams).first;
+        const auto &axisA = get<0>(contractionParams).second;
+        size_t indexB = get<1>(contractionParams).first;
+        const auto &axisB = get<1>(contractionParams).second;
 
         // 2. perform contraction of tensors
         if (indexA == indexB) // do trace
@@ -280,7 +280,8 @@ void Nconpp::doTensorProduct(
     legsList.emplace_back(legsA);
 }
 
-pair<pair<size_t, vector<size_t>>, pair<size_t, vector<size_t>>>
+tuple<pair<size_t, vector<size_t>>,
+        pair<size_t, vector<size_t>>>
 Nconpp::findContractionParameters(
         int contractionLeg,
         vector<vector<int>> &legsList) {
@@ -311,7 +312,7 @@ Nconpp::findContractionParameters(
             }
         }
     }
-    return make_pair(tensorParamsA, tensorParamsB);
+    return make_tuple(tensorParamsA, tensorParamsB);
 }
 
 // template<class T>
