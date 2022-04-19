@@ -99,6 +99,7 @@ private:
             std::vector<std::vector<int>> &legsList,
             std::vector<int> &contractionSequenceLegs);
 
+    // TODO std::make_tuple<...>, std::get<0> to access
     static std::pair<std::pair<std::size_t, std::vector<std::size_t>>,
             std::pair<std::size_t, std::vector<std::size_t>>>
     findContractionParameters(

@@ -90,7 +90,7 @@ void Nconpp::validateInput(
                 to_string(legsList.size()) + ".");
     }
 
-    // check if legs are contractable
+    // TODO check if legs are contractable
 
     // if empty fill with defaults
     if (contractionSequenceLegs.empty()) {
