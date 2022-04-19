@@ -48,6 +48,10 @@ void Network::addLeg(int newLeg, int node) {
     mVertexLegs[node].push_back(newLeg);
 }
 
+void Network::addLeg(const Leg& leg) {
+    mVertexLegs[leg.node].push_back(leg.id);
+}
+
 const vector<vector<int>> &Network::getVertexLegs() {
     return mVertexLegs;
 }
