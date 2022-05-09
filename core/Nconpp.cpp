@@ -280,8 +280,7 @@ void Nconpp::doTensorProduct(
     legsList.emplace_back(legsA);
 }
 
-tuple<pair<size_t, vector<size_t>>,
-        pair<size_t, vector<size_t>>>
+auto
 Nconpp::findContractionParameters(
         int contractionLeg,
         vector<vector<int>> &legsList) {
@@ -315,16 +314,17 @@ Nconpp::findContractionParameters(
     return make_tuple(tensorParamsA, tensorParamsB);
 }
 
-// template<class T>
-// vector<T> Nconpp::decompose(T &container,
-//                             std::vector<std::vector<int>> legsList,
-//                             int decompositionIndex,
-//                             bool skipValidation,
-//                             std::vector<int> decompositionSequenceLegs,
-//                             std::vector<int> finalOrder) {
+template<class T>
+void Nconpp::decompose(
+        T &tensor,
+        int decompositionIndex,
+        bool skipValidation,
+        std::vector<int> decompositionSequenceLegs,
+        std::vector<int> finalOrder) {
 
-//     auto sh = Tensor::shape(container);
-//     Tensor::prod();
-//     Tensor::reshape(container, )
-//     return vector<T>();
-// }
+    auto sh = Tensor::shape(tensor);
+    auto left = sh[:decompositionIndex];
+    auto right = sh[decompositionIndex:];
+    auto mat = Tensor::reshape(tensor, {Tensor::prod(left), Tensor::prod(right)});
+    //Tensor::svd();
+}

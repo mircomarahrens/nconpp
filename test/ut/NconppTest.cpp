@@ -63,7 +63,7 @@ TEST(NconppTest, logicError_MoreThanTwoLegs) {
             }, std::logic_error);
 }
 
-TEST(NconppTest, largeContraction) {
+TEST(NconppTest, contract) {
     std::vector<Tensor::array_type<std::complex<double>>> tensorList =
             {
                     xt::random::rand<double>({3, 4, 5}),
@@ -89,4 +89,11 @@ TEST(NconppTest, largeContraction) {
 
     Tensor::shape_type shape = {2, 4, 9};
     ASSERT_EQ(Tensor::shape(finalTensor), shape);
+}
+
+TEST(NconppTest, decompose) {
+    Tensor::array_type<std::complex<double>> tensor =
+            xt::random::rand<double>({2, 4, 9});
+
+    Nconpp::decompose(tensor, 1);
 }

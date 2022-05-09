@@ -41,22 +41,13 @@ public:
             std::vector<int> contractionSequenceLegs = {},
             std::vector<int> finalOrder = {});
 
-//     template<class T>
-//     static std::vector<T> decompose(
-//             T &container,
-//             std::vector<std::vector<int>> legsList,
-//             int decompositionIndex,
-//             bool skipValidation = true,
-//             std::vector<int> decompositionSequenceLegs = {},
-//             std::vector<int> finalOrder = {});
-
-// TODO
-//    template<class T>
-//    static std::vector<T> diagonalize(
-//            T &container,
-//            std::vector<std::vector<int>> legsList,
-//            std::vector<int> decompositionSequenceLegs = {},
-//            std::vector<int> finalOrder = {});
+    template<class T>
+    static void decompose(
+            T &tensor,
+            int decompositionIndex,
+            bool skipValidation = true,
+            std::vector<int> decompositionSequenceLegs = {},
+            std::vector<int> finalOrder = {});
 
 private:
     template<class T>
@@ -99,9 +90,7 @@ private:
             std::vector<std::vector<int>> &legsList,
             std::vector<int> &contractionSequenceLegs);
 
-    static std::tuple<std::pair<std::size_t, std::vector<std::size_t>>,
-        std::pair<std::size_t, std::vector<std::size_t>>>
-    findContractionParameters(
+    static auto findContractionParameters(
             int contractionLeg,
             std::vector<std::vector<int>> &legsList);
 
