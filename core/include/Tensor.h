@@ -37,7 +37,7 @@ namespace Tensor {
     // range
     template<class A, class B>
     static inline auto range(A start_val, B stop_val) {
-        return xt::range(star_val, stop_val);
+        return xt::range(start_val, stop_val);
     }
 
     // shape

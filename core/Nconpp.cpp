@@ -323,8 +323,9 @@ void Nconpp::decompose(
         std::vector<int> finalOrder) {
 
     auto sh = Tensor::shape(tensor);
-    auto left = sh[:decompositionIndex];
-    auto right = sh[decompositionIndex:];
-    auto mat = Tensor::reshape(tensor, {Tensor::prod(left), Tensor::prod(right)});
+    // TODO
+    //auto left = sh[:decompositionIndex];
+    //auto right = sh[decompositionIndex:];
+    //auto mat = Tensor::reshape(tensor, {Tensor::prod(left), Tensor::prod(right)});
     //Tensor::svd();
 }
