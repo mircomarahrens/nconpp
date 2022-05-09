@@ -7,6 +7,8 @@
 
 // Wrapper for tensor operations used by nconpp based on xtensor.
 namespace Tensor {
+    using namespace xt::placeholders;
+
     // array
     template<typename dtype>
     using array_type = xt::xarray<dtype, xt::layout_type::dynamic>;
@@ -28,9 +30,14 @@ namespace Tensor {
     // prod
     template<typename T>
     static inline auto prod(const tensor_type<T> &M, std::size_t axis) {
-
         auto &&dM = M.derived_cast();
         return xt::prod(dM, axis);
+    }
+
+    // range
+    template<class A, class B>
+    static inline auto range(A start_val, B stop_val) {
+        return xt::range(star_val, stop_val);
     }
 
     // shape
