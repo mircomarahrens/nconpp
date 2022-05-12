@@ -49,7 +49,7 @@ void Network::addLeg(int newLeg, int node) {
 }
 
 void Network::addLeg(const Leg& leg) {
-    mVertexLegs[leg.node].push_back(leg.id);
+    mVertexLegs[leg.vertex->index].push_back(leg.index);
 }
 
 const vector<vector<int>> &Network::getVertexLegs() {
