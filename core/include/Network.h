@@ -7,9 +7,9 @@
 #include <vector>
 
 struct Leg {
-    int id;
-    int dim;
-    int node;
+    int index{-1};
+    int dim{0};
+    struct Vertex* vertex{nullptr};
 };
 
 class Network : public Graph {
