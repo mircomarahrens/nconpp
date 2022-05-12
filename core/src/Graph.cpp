@@ -16,7 +16,7 @@ void Graph::addEdge(int src, int dest) {
 }
 
 void Graph::addEdge(const Edge &edge) {
-    addEdge(edge.src, edge.dest);
+    addEdge(edge.src->index, edge.dest->index);
 }
 
 void Graph::removeEdgeByIndices(int src, int dest) {
@@ -29,7 +29,7 @@ void Graph::removeEdgeByIndices(int src, int dest) {
 }
 
 void Graph::removeEdge(const Edge &edge) {
-    removeEdgeByIndices(edge.src, edge.dest);
+    removeEdgeByIndices(edge.src->index, edge.dest->index);
 }
 
 void Graph::addVertexIndex(int vertexIndex) {

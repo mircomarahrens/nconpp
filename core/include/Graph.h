@@ -3,13 +3,15 @@
 #include <set>
 #include <vector>
 
-struct Edge {
-    int src;
-    int dest;
+enum Color {
+    white, gray, black
 };
 
 struct Vertex {
-    int index;
+    int index{0};
+    Color color{white};
+    int distance{-1};
+    struct Vertex *parent{nullptr};
 
     friend bool operator<(const Vertex &lhs, const Vertex &rhs) {
         return lhs.index < rhs.index;
@@ -18,6 +20,11 @@ struct Vertex {
     friend bool operator>(const Vertex &lhs, const Vertex &rhs) {
         return lhs.index > rhs.index;
     };
+};
+
+struct Edge {
+    struct Vertex *src;
+    struct Vertex *dest;
 };
 
 class Graph {
@@ -34,8 +41,6 @@ public:
 
     virtual void removeEdge(const Edge &edge);
 
-    void addVertexIndex(int vertexIndex);
-
     virtual void addVertex(const Vertex &vertex);
 
     const std::set<Vertex> &getVertices();
@@ -51,5 +56,8 @@ public:
 private:
     std::set<int> mVertexIndices;
     std::set<Vertex> mVertices;
+    std::set<Edge> mEdges;
     std::vector<std::vector<int>> mAdjacencyList;
+
+    void addVertexIndex(int vertexIndex);
 };
