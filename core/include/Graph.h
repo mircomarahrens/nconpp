@@ -23,8 +23,9 @@ struct Vertex {
 };
 
 struct Edge {
-    struct Vertex *src;
-    struct Vertex *dest;
+    struct Vertex *src{nullptr};
+    struct Vertex *dest{nullptr};
+    bool directed{false};
 };
 
 class Graph {
