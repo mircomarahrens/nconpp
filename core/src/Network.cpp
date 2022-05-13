@@ -70,3 +70,7 @@ void Network::generateEdges(const vector<vector<int>> &vertexLegs) {
         }
     }
 }
+
+void Network::addEdge(const Edge &edge) {
+    Graph::addEdge(edge);
+}

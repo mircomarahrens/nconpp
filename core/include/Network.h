@@ -7,9 +7,13 @@
 #include <vector>
 
 struct Leg {
-    int index{-1};
+    int index{0};
     int dim{0};
-    struct Vertex* vertex{nullptr};
+    struct Vertex *vertex{nullptr};
+};
+
+struct NetworkVertex : Vertex {
+    std::set<Leg> legs{};
 };
 
 class Network : public Graph {
@@ -19,6 +23,8 @@ public:
     ~Network() = default;
 
     void addEdge(int src, int dest) override;
+
+    void addEdge(const Edge &edge) override;
 
     void removeEdgeByIndices(int src, int dest) override;
 
