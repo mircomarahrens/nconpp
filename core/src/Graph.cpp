@@ -5,6 +5,11 @@
 using namespace std;
 
 Graph::Graph(size_t N) : mVertexIndices(Container::createRangeSet(N)) {
+    for (int i=0; i < N; i++) {
+        Vertex vertex{i};
+        mVertices.insert(vertex);
+    }
+
     mAdjacencyList = vector<vector<int>>(N);
 }
 

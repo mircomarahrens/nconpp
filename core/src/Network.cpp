@@ -5,11 +5,17 @@
 
 using namespace std;
 
-Network::Network(const vector<vector<int>>& vertexLegs)
+Network::Network(const vector<vector<int>> &vertexLegs)
         : mVertexLegs{vertexLegs},
           Graph(vertexLegs.size()) {
     generateEdges(vertexLegs);
 }
+
+//Network::Network(const std::set<NetworkVertex> &networkVertices)
+//        : mNetworkVertices(networkVertices),
+//          Graph(networkVertices.size()) {
+    //generateEdges();
+//}
 
 void Network::addEdge(int src, int dest) {
     Graph::addEdge(src, dest);
@@ -44,11 +50,7 @@ void Network::removeEdgeByIndices(int src, int dest) {
     }
 }
 
-void Network::addLeg(int newLeg, int node) {
-    mVertexLegs[node].push_back(newLeg);
-}
-
-void Network::addLeg(const Leg& leg) {
+void Network::addLeg(const Leg &leg) {
     mVertexLegs[leg.vertex->index].push_back(leg.index);
 }
 
