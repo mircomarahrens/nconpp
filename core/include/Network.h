@@ -20,6 +20,8 @@ class Network : public Graph {
 public:
     explicit Network(const std::vector<std::vector<int>> &vertexLegs);
 
+    //explicit Network(const std::set<NetworkVertex> &networkVertices);
+
     ~Network() = default;
 
     void addEdge(int src, int dest) override;
@@ -27,8 +29,6 @@ public:
     void addEdge(const Edge &edge) override;
 
     void removeEdgeByIndices(int src, int dest) override;
-
-    void addLeg(int newLeg, int node);
 
     void addLeg(const Leg &leg);
 
@@ -40,4 +40,6 @@ private:
     std::vector<Leg> mLegsList;
 
     void generateEdges(const std::vector<std::vector<int>> &vertexLegs);
+
+    std::set<NetworkVertex> mNetworkVertices;
 };
