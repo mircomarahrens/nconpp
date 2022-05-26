@@ -12,11 +12,7 @@ struct Leg {
     struct Vertex *vertex{nullptr};
 };
 
-struct NetworkVertex : Vertex {
-    std::set<Leg> legs{};
-};
-
-class Network : public Graph {
+class Network : private Graph {
 public:
     explicit Network(const std::vector<std::vector<int>> &vertexLegs);
 
@@ -24,11 +20,15 @@ public:
 
     ~Network() = default;
 
-    void addEdge(int src, int dest) override;
+    void addEdge(const Vertex &src, const Vertex &dest) override;
 
     void addEdge(const Edge &edge) override;
 
-    void removeEdgeByIndices(int src, int dest) override;
+    void removeEdge(int src, int dest) override;
+
+    void removeEdge(const Vertex &src, const Vertex &dest) override;
+
+    void removeEdge(const Edge &edge) override;
 
     void addLeg(const Leg &leg);
 
@@ -41,5 +41,5 @@ private:
 
     void generateEdges(const std::vector<std::vector<int>> &vertexLegs);
 
-    std::set<NetworkVertex> mNetworkVertices;
+    std::set<Leg> mLegs;
 };

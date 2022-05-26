@@ -17,7 +17,7 @@ Network::Network(const vector<vector<int>> &vertexLegs)
     //generateEdges();
 //}
 
-void Network::addEdge(int src, int dest) {
+void Network::addEdge(const Vertex &src, const Vertex &dest) {
     Graph::addEdge(src, dest);
 
     vector<int> &vertexSrc = mVertexLegs[src];
@@ -35,8 +35,8 @@ void Network::addEdge(int src, int dest) {
     }
 }
 
-void Network::removeEdgeByIndices(int src, int dest) {
-    Graph::removeEdgeByIndices(src, dest);
+void Network::removeEdge(int src, int dest) {
+    Graph::removeEdge(src, dest);
 
     auto &vertexSrc = mVertexLegs[src];
     auto &vertexDest = mVertexLegs[dest];
@@ -73,6 +73,6 @@ void Network::generateEdges(const vector<vector<int>> &vertexLegs) {
     }
 }
 
-void Network::addEdge(const Edge &edge) {
+void Network::addEdge(const NetworkEdge &edge) {
     Graph::addEdge(edge);
 }
