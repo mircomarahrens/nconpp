@@ -1,5 +1,6 @@
 #pragma once
 
+#include <optional>
 #include <set>
 #include <vector>
 
@@ -9,8 +10,8 @@ enum Color {
 
 struct Vertex {
     int index{0};
-    Color color{white};
-    int distance{-1};
+    std::optional<Color> color{white};
+    std::optional<int> distance{-1};
     struct Vertex *parent{nullptr};
 
     friend bool operator<(const Vertex &lhs, const Vertex &rhs) {
@@ -56,36 +57,31 @@ public:
 
     ~Graph() = default;
 
-    virtual void addEdge(int src, int dest);
-
     virtual void addEdge(const Vertex &src, const Vertex &dest);
 
     virtual void addEdge(const Edge &edge);
 
-    virtual void removeEdgeByIndices(int src, int dest);
+    virtual void removeEdge(int src, int dest);
+
+    virtual void removeEdge(const Vertex &src, const Vertex &dest);
 
     virtual void removeEdge(const Edge &edge);
 
     virtual void addVertex(const Vertex &vertex);
 
-    const std::vector<Vertex> &getVertices();
-
-    const std::vector<Edge> &getEdges();
-
-    void removeVertexByIndex(int index);
+    void removeVertex(int index);
 
     void removeVertex(const Vertex &vertex);
 
-    const std::set<int> &getVertexIndices();
+    const std::vector<Edge> &getEdges();
 
-    const std::vector<std::vector<int>> &getAdjacencyList();
+    const std::vector<Vertex> &getVertices();
+
+    const std::set<int>& getVertexIndices();
+
+
 
 private:
-    std::set<int> mVertexIndices;
     std::vector<Vertex> mVertices;
     std::vector<Edge> mEdges;
-
-    std::vector<std::vector<int>> mAdjacencyList;
-
-    void addVertexIndex(int vertexIndex);
 };
