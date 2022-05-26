@@ -86,6 +86,12 @@ public:
         return removeIndicesFromVector(v, begin(rm), end(rm));
     }
 
+    template<typename T>
+    static void extend(std::vector<T> &v_first, std::vector<T> &v_second) {
+        v_first.reserve(v_first.size() + distance(v_second.begin(),v_second.end()));
+        v_first.insert(v_first.end(),v_second.begin(),v_second.end());
+    }
+
 private:
     static bool isNegative(int i) {
         return i < 0;

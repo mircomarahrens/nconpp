@@ -5,9 +5,9 @@
 using namespace std;
 
 Graph::Graph(size_t N) : mVertexIndices(Container::createRangeSet(N)) {
-    for (int i=0; i < N; i++) {
+    for (int i = 0; i < N; i++) {
         Vertex vertex{i};
-        mVertices.insert(vertex);
+        mVertices.emplace_back(vertex);
     }
 
     mAdjacencyList = vector<vector<int>>(N);
@@ -20,8 +20,15 @@ void Graph::addEdge(int src, int dest) {
     }
 }
 
+void Graph::addEdge(const Vertex &src, const Vertex &dest) {
+    Edge edge{src, dest};
+    mEdges.emplace_back(edge);
+    addEdge(edge.src.index, edge.dest.index);
+}
+
 void Graph::addEdge(const Edge &edge) {
-    addEdge(edge.src->index, edge.dest->index);
+    mEdges.emplace_back(edge);
+    addEdge(edge.src.index, edge.dest.index);
 }
 
 void Graph::removeEdgeByIndices(int src, int dest) {
@@ -34,7 +41,7 @@ void Graph::removeEdgeByIndices(int src, int dest) {
 }
 
 void Graph::removeEdge(const Edge &edge) {
-    removeEdgeByIndices(edge.src->index, edge.dest->index);
+    removeEdgeByIndices(edge.src.index, edge.dest.index);
 }
 
 void Graph::addVertexIndex(int vertexIndex) {
@@ -42,7 +49,7 @@ void Graph::addVertexIndex(int vertexIndex) {
 }
 
 void Graph::addVertex(const Vertex &vertex) {
-    mVertices.insert(vertex);
+    mVertices.emplace_back(vertex);
     addVertexIndex(vertex.index);
 }
 
@@ -63,6 +70,10 @@ const std::vector<std::vector<int>> &Graph::getAdjacencyList() {
     return mAdjacencyList;
 }
 
-const std::set<Vertex> &Graph::getVertices() {
+const std::vector<Vertex> &Graph::getVertices() {
     return mVertices;
+}
+
+const std::vector<Edge> &Graph::getEdges() {
+    return mEdges;
 }
