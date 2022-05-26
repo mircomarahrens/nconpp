@@ -20,12 +20,34 @@ struct Vertex {
     friend bool operator>(const Vertex &lhs, const Vertex &rhs) {
         return lhs.index > rhs.index;
     };
+
+    friend bool operator==(const Vertex &lhs, const Vertex &rhs) {
+        return lhs.index == rhs.index;
+    };
+
+    friend bool operator!=(const Vertex &lhs, const Vertex &rhs) {
+        return lhs.index != rhs.index;
+    };
 };
 
 struct Edge {
-    struct Vertex *src{nullptr};
-    struct Vertex *dest{nullptr};
+    Vertex src;
+    Vertex dest;
     bool directed{false};
+
+    friend bool operator==(const Edge &lhs, const Edge &rhs) {
+        if (!lhs.directed && !rhs.directed)
+            return (lhs.src == rhs.src && lhs.dest == rhs.dest) || (lhs.dest == rhs.src && lhs.src == rhs.dest);
+        else
+            return (lhs.src == rhs.src && lhs.dest == rhs.dest);
+    };
+
+    friend bool operator!=(const Edge &lhs, const Edge &rhs) {
+        if (!lhs.directed && !rhs.directed)
+            return (lhs.src != rhs.src || lhs.dest != rhs.dest) || (lhs.dest != rhs.src || lhs.src != rhs.dest);
+        else
+            return (lhs.src != rhs.src || lhs.dest != rhs.dest);
+    };
 };
 
 class Graph {
@@ -36,6 +58,8 @@ public:
 
     virtual void addEdge(int src, int dest);
 
+    virtual void addEdge(const Vertex &src, const Vertex &dest);
+
     virtual void addEdge(const Edge &edge);
 
     virtual void removeEdgeByIndices(int src, int dest);
@@ -44,7 +68,9 @@ public:
 
     virtual void addVertex(const Vertex &vertex);
 
-    const std::set<Vertex> &getVertices();
+    const std::vector<Vertex> &getVertices();
+
+    const std::vector<Edge> &getEdges();
 
     void removeVertexByIndex(int index);
 
@@ -56,8 +82,9 @@ public:
 
 private:
     std::set<int> mVertexIndices;
-    std::set<Vertex> mVertices;
-    std::set<Edge> mEdges;
+    std::vector<Vertex> mVertices;
+    std::vector<Edge> mEdges;
+
     std::vector<std::vector<int>> mAdjacencyList;
 
     void addVertexIndex(int vertexIndex);
