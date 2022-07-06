@@ -10,15 +10,15 @@ namespace Tensor {
     using namespace xt::placeholders;
 
     // array
-    template<typename dtype>
-    using array_type = xt::xarray<dtype, xt::layout_type::dynamic>;
+    template<typename T>
+    using array_type = xt::xarray<T, xt::layout_type::dynamic>;
 
     // shape_type
     using shape_type = xt::dynamic_shape<size_t>;
 
     // general multi-dimensional object
-    template<typename dtype>
-    using tensor_type = xt::xexpression<dtype>;
+    template<typename T>
+    using tensor_type = xt::xexpression<T>;
 
     // reshape
     template<typename T>

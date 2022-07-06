@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "Container.h"
+#include "Utils.h"
 #include "Graph.h"
 
 using namespace std;
@@ -15,7 +15,7 @@ TEST(GraphTest, withVertices) {
     size_t N = 5;
     Graph graph(N);
     ASSERT_EQ(N, graph.getVertices().size());
-    auto rangeSet = Container::createRangeSet(N);
+    auto rangeSet = Utils::createRangeSet(N);
     for (Vertex v: graph.getVertices()) {
         ASSERT_TRUE(rangeSet.find(v.index) != rangeSet.end());
     }
@@ -38,7 +38,7 @@ TEST(GraphTest, withEdges_1) {
     size_t N = 5;
     Graph graph(N);
     ASSERT_EQ(N, graph.getVertices().size());
-    auto rangeSet = Container::createRangeSet(N);
+    auto rangeSet = Utils::createRangeSet(N);
     for (Vertex v: graph.getVertices()) {
         ASSERT_TRUE(rangeSet.find(v.index) != rangeSet.end());
     }
@@ -84,7 +84,7 @@ TEST(GraphTest, withEdges_2) {
     size_t N = 5;
     Graph graph(N);
     ASSERT_EQ(N, graph.getVertices().size());
-    auto rangeSet = Container::createRangeSet(N);
+    auto rangeSet = Utils::createRangeSet(N);
     for (Vertex v: graph.getVertices()) {
         ASSERT_TRUE(rangeSet.find(v.index) != rangeSet.end());
     }
@@ -104,11 +104,11 @@ TEST(GraphTest, withEdges_2) {
     edges.emplace_back(edge4);
     edges.emplace_back(edge5);
 
-    graph.addEdge(graphVertices[0], graphVertices[1]);
-    graph.addEdge(graphVertices[1], graphVertices[3]);
-    graph.addEdge(graphVertices[2], graphVertices[4]);
-    graph.addEdge(graphVertices[1], graphVertices[4]);
-    graph.addEdge(graphVertices[3], graphVertices[4]);
+    graph.constructEdge(graphVertices[0], graphVertices[1]);
+    graph.constructEdge(graphVertices[1], graphVertices[3]);
+    graph.constructEdge(graphVertices[2], graphVertices[4]);
+    graph.constructEdge(graphVertices[1], graphVertices[4]);
+    graph.constructEdge(graphVertices[3], graphVertices[4]);
 
     auto graphEdges = graph.getEdges();
     for (auto edge: edges) {
@@ -128,4 +128,25 @@ TEST(GraphTest, withEdges_2) {
 
 TEST(GraphTest, removeEdge) {
 
+}
+
+TEST(GraphTest, ConnectedComponents) {
+    // 5 vertices numbered from 0 to 4 without legs
+    Graph graph{5};
+
+    auto vertices = graph.getVertices();
+
+    // create edges
+    graph.constructEdge(vertices[1], vertices[0]);
+    graph.constructEdge(vertices[2], vertices[3]);
+    graph.constructEdge(vertices[3], vertices[4]);
+
+    std::vector<std::set<int>> connectedComponents = graph.getConnectedComponentsIndices();
+
+    ASSERT_TRUE(std::find(connectedComponents.begin(),
+                          connectedComponents.end(),
+                          std::set<int>{0, 1}) != connectedComponents.end());
+    ASSERT_TRUE(std::find(connectedComponents.begin(),
+                          connectedComponents.end(),
+                          std::set<int>{2, 3, 4}) != connectedComponents.end());
 }
