@@ -56,17 +56,16 @@ set(NCONPP_CORE
         ${NCONPP_CORE_DIR}/Nconpp.cpp)
 
 set(NCONPP_INCLUDE
-        ${NCONPP_INCLUDE_DIR}/Algorithms.h
-        ${NCONPP_INCLUDE_DIR}/Container.h
         ${NCONPP_INCLUDE_DIR}/ErrorMessages.h
         ${NCONPP_INCLUDE_DIR}/Graph.h
-        ${NCONPP_INCLUDE_DIR}/Network.h
-        ${NCONPP_INCLUDE_DIR}/Tensor.h)
+        ${NCONPP_INCLUDE_DIR}/TensorNetwork.h
+        ${NCONPP_INCLUDE_DIR}/Tensor.h
+        ${NCONPP_INCLUDE_DIR}/Utils.h)
 
 set(NCONPP_SRC
-        ${NCONPP_SRC_DIR}/Algorithms.cpp
         ${NCONPP_SRC_DIR}/Graph.cpp
-        ${NCONPP_SRC_DIR}/Network.cpp)
+        ${NCONPP_SRC_DIR}/TensorNetwork.cpp
+        ${NCONPP_SRC_DIR}/Utils.cpp)
 
 add_library(${NCONPP_LIBRARY_TARGET} SHARED
         ${NCONPP_CORE}
@@ -105,7 +104,6 @@ if (CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
     set(NCONPP_UT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test/ut)
 
     set(NCONPP_TEST_UT
-            ${NCONPP_UT_DIR}/NetworkTest.cpp
             ${NCONPP_UT_DIR}/NconppTest.cpp
             ${NCONPP_UT_DIR}/GraphTest.cpp
             ${NCONPP_UT_DIR}/TensorTest.cpp)

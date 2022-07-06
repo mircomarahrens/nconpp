@@ -1,7 +1,7 @@
 #pragma once
 
-#include "include/Container.h"
-#include "include/Network.h"
+#include "include/Utils.h"
+#include "include/TensorNetwork.h"
 #include "include/Tensor.h"
 
 #include <optional>
@@ -18,9 +18,10 @@ public:
     //
     // @params:
     //  tensorList:
-    //      list of tensors
-    //  legsList:
-    //      Nomenclature of the legs of the tensor in tensorList:
+    //      a list of tensors
+    //  subscriptVectorList:
+    //      - aka LegsList
+    //      - Nomenclature of the legs of the tensor in tensorList:
     //          - the legs are named by integers
     //          - contractable legs have the same positive integer as name,
     //            hence occuring in pairs
@@ -36,43 +37,34 @@ public:
     template<class T>
     static T contract(
             std::vector<T> &tensorList,
-            std::vector<std::vector<int>> legsList,
-            bool skipValidation = true,
-            std::vector<int> contractionSequenceLegs = {},
+            std::vector<std::vector<int>> subscriptVectorList,
+            bool skipInputValidation = true,
+            std::vector<int> contractionSequence = {},
             std::vector<int> finalOrder = {});
 
     template<class T>
     static void decompose(
             T &tensor,
             int decompositionIndex,
-            bool skipValidation = true,
+            bool skipInputValidation = true,
             std::vector<int> decompositionSequenceLegs = {},
             std::vector<int> finalOrder = {});
 
 private:
     template<class T>
-    static void validateInput(
-            const std::vector<T> &containerList,
-            std::vector<std::vector<int>> &legsIndex,
-            std::vector<int> &contractionSequenceLegs,
+    static void validateInputData(
+            const std::vector<T> &tensorList,
+            std::vector<std::vector<int>> &subscriptVectorList,
+            std::vector<int> &contractionSequence,
             std::vector<int> &finalOrder);
 
-    // Network operations
-    static int getShortestOfLegsList(
-            const std::set<int> &indexSet,
-            const std::vector<std::vector<int>> &legsList);
-
-    static int getLongestOfLegsList(
-            const std::set<int> &indexSet,
-            const std::vector<std::vector<int>> &legsList);
-
-    static int getNewLeg(
-            const std::vector<int> &contractionSequenceLegs);
-
-    static void addEdge(
-            std::vector<std::vector<int>> &legsList,
-            int src,
-            int dest);
+    // trivial connection by extending the network
+    // with leg pair of dimension one
+    template<class T>
+    static void connectDisconnectedComponents(
+            std::vector<T> &tensorList,
+            std::vector<std::vector<int>> &subscriptVectorList,
+            std::vector<int> &contractionSequence);
 
     template<class T>
     static void expandNetwork(
@@ -81,14 +73,6 @@ private:
             std::vector<T> &containerList,
             std::vector<std::vector<int>> &legsList
     );
-
-    // trivial connection by extending the network
-    // with leg pair of dimension one
-    template<class T>
-    static void connectDisconnectedComponents(
-            std::vector<T> &containerList,
-            std::vector<std::vector<int>> &legsList,
-            std::vector<int> &contractionSequenceLegs);
 
     static auto findContractionParameters(
             int contractionLeg,
@@ -112,4 +96,21 @@ private:
             const std::vector<std::size_t> &axisB,
             std::vector<T> &containerList,
             std::vector<std::vector<int>> &legsList);
+
+    // Network operations
+    static int getShortestOfLegsList(
+            const std::set<int> &indexSet,
+            const std::vector<std::vector<int>> &legsList);
+
+    static int getLongestOfLegsList(
+            const std::set<int> &indexSet,
+            const std::vector<std::vector<int>> &legsList);
+
+    static int getNewLeg(
+            const std::vector<int> &contractionSequenceLegs);
+
+    static void addEdge(
+            std::vector<std::vector<int>> &legsList,
+            int src,
+            int dest);
 };
