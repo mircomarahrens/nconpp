@@ -78,17 +78,6 @@ void Nconpp::validateInputData(
         vector<vector<int>> &subscriptVectorList,
         std::vector<int> &contractionSequence,
         std::vector<int> &finalOrder) {
-    if (subscriptVectorList.empty())
-        throw invalid_argument("LegsList empty. You need to specify a list of legs corresponding to your network.");
-
-    // check sizes of container
-    if (tensorList.size() != subscriptVectorList.size()) {
-        throw invalid_argument(
-                "The number of tensors, which is " +
-                to_string(tensorList.size()) +
-                ", does not match the number of legs, which is " +
-                to_string(subscriptVectorList.size()) + ".");
-    }
 
     // check subscript vectors
 
