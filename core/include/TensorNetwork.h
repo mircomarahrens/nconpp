@@ -1,5 +1,7 @@
 #pragma once
 
+#include <unordered_map>
+
 #include "Graph.h"
 
 struct Leg {
@@ -23,11 +25,11 @@ struct Leg {
     };
 };
 
-template<template<typename> class T, typename U>
+template<class D, template<typename> class V, typename T>
 class VertexContainer {
 public:
-
-    VertexContainer(const Vertex &mVertex, T<U> mContainer) : mVertex(mVertex), mContainer(mContainer) {}
+    VertexContainer(const Vertex &vertex, D data, V<T> container) :
+            mVertex(vertex), mData(data), mContainer(container) {}
 
     VertexContainer() = default;
 
@@ -37,28 +39,43 @@ public:
         return mVertex;
     }
 
-    T<U> getContainer() const {
+    V<T>& getContainer() const {
         return mContainer;
+    }
+
+    D& getData() {
+        return mData;
+    }
+
+    void setContainer(V<T> container) {
+        VertexContainer::mContainer = container;
+    }
+
+    void setData(D data) {
+        VertexContainer::mData = data;
     }
 
 private:
     const Vertex &mVertex;
-    T<U> mContainer;
+    V<T> mContainer;
+    D mData;
 };
 
+template<class T>
 class TensorNetwork : public Graph {
 public:
-    template<class T>
     explicit TensorNetwork(std::vector<T> &tensorList, std::vector<std::vector<int>> subscriptVectorList);
 
     ~TensorNetwork() = default;
 
-    const std::vector<VertexContainer<std::vector, Leg>> &getVertexLegsSet();
+    const std::vector<VertexContainer<T, std::vector, Leg>> &getVertexLegsSet();
 
     void doTrace(int vertexId, const std::vector<size_t> &axisA, const std::vector<size_t> &axisB);
 
 private:
-    std::vector<VertexContainer<std::vector, Leg>> mVertexContainerList;
+    std::vector<VertexContainer<T, std::vector, Leg>> mVertexContainerList;
 
-    void getEdgesFromVerticesLegsList(const std::vector<std::vector<int>> &verticesLegsList);
+    std::unordered_map<int, Leg> mLegs;
+
+    void getEdgesFromVerticesLegsSet();
 };
