@@ -6,7 +6,7 @@
 using namespace std;
 
 template<class T>
-TensorNetwork<T>::TensorNetwork(vector<T> &tensorList, std::vector<std::vector<int>> subscriptVectorList) :
+TensorNetwork<T>::TensorNetwork(vector<T> &tensorList, vector<vector<int>> subscriptVectorList) :
         Graph(subscriptVectorList.size()) {
     // 1. data validation
     if (tensorList.size() != subscriptVectorList.size()) {
@@ -18,9 +18,24 @@ TensorNetwork<T>::TensorNetwork(vector<T> &tensorList, std::vector<std::vector<i
     }
 
     // 2. extract VertexContainer
+    generateVertexContainerList(tensorList, subscriptVectorList);
+
+    generateEdges();
+}
+
+template<class T>
+const vector<VertexContainer<T, vector, Leg>> &
+TensorNetwork<T>::getVertexLegsSet() {
+    return mVertexContainerList;
+}
+
+template<class T>
+void TensorNetwork<T>::generateVertexContainerList(std::vector<T> &tensorList,
+                                                   std::vector<std::vector<int>> &subscriptVectorList) {
     mLegs = {};
     for (int i = 0; i < tensorList.size(); i++) {
-        int li = 0; vector<Leg> legs = {};
+        int li = 0;
+        vector<Leg> legs = {};
         for (int l: subscriptVectorList[i]) {
             auto s = Tensor::shape(tensorList[i]);
             Leg leg(l, s[li]);
@@ -33,18 +48,10 @@ TensorNetwork<T>::TensorNetwork(vector<T> &tensorList, std::vector<std::vector<i
         VertexContainer vc{mVertices[i], tensorList[i], legs};
         mVertexContainerList.emplace_back(vc);
     }
-
-    getEdgesFromVerticesLegsSet();
 }
 
 template<class T>
-const vector<VertexContainer<T, vector, Leg>> &
-TensorNetwork<T>::getVertexLegsSet() {
-    return mVertexContainerList;
-}
-
-template<class T>
-void TensorNetwork<T>::getEdgesFromVerticesLegsSet() {
+void TensorNetwork<T>::generateEdges() {
     for (auto i_vc: mVertexContainerList) {
         auto i_container = i_vc.getContainer();
         for (auto j_vc: mVertexContainerList) {
