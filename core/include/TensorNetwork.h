@@ -25,10 +25,10 @@ struct Leg {
     };
 };
 
-template<class D, template<typename> class V, typename T>
+template<class D, template<typename> class V, class W>
 class VertexContainer {
 public:
-    VertexContainer(const Vertex &vertex, D data, V<T> container) :
+    VertexContainer(const Vertex &vertex, D data, V<W> container) :
             mVertex(vertex), mData(data), mContainer(container) {}
 
     VertexContainer() = default;
@@ -39,11 +39,11 @@ public:
         return mVertex;
     }
 
-    V<T>& getContainer() const {
+    V<W> &getContainer() const {
         return mContainer;
     }
 
-    D& getData() {
+    D &getData() {
         return mData;
     }
 
@@ -57,7 +57,7 @@ public:
 
 private:
     const Vertex &mVertex;
-    V<T> mContainer;
+    V<W> mContainer;
     D mData;
 };
 
@@ -77,5 +77,7 @@ private:
 
     std::unordered_map<int, Leg> mLegs;
 
-    void getEdgesFromVerticesLegsSet();
+    void generateVertexContainerList(std::vector<T> &tensorList, std::vector<std::vector<int>> &subscriptVectorList);
+
+    void generateEdges();
 };
