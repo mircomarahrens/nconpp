@@ -61,7 +61,7 @@ public:
 
     virtual void addEdge(const Edge &edge);
 
-    virtual void destructEdges(const Vertex &src, const Vertex &dest);
+    virtual void removeAllEdges(const Vertex &src, const Vertex &dest);
 
     virtual void removeEdge(const Edge &edge);
 

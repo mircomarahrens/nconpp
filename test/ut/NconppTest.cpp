@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
-#include "Nconpp.h"
-#include "Nconpp.cpp"
+#include "../../lib/Nconpp.h"
+#include "../../lib/Nconpp.cpp"
 
 #include "Utils.h"
 #include "ErrorMessages.h"
