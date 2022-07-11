@@ -28,13 +28,6 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 project(nconpp CXX)
 
-set(NCONPP_LIBRARY_TARGET "nconpp")
-
-# directories
-set(NCONPP_CORE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/core)
-set(NCONPP_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/core/include)
-set(NCONPP_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/core/src)
-
 # dependencies
 find_package(BLAS REQUIRED)
 find_package(LAPACK REQUIRED)
@@ -48,132 +41,128 @@ set(NCONPP_DEPENDENCIES
         xtensor::optimize
         xtensor-blas)
 
-# core
 set(NCONPP_CORE_PROJECT ON)
 
-set(NCONPP_CORE
-        ${NCONPP_CORE_DIR}/Nconpp.h
-        ${NCONPP_CORE_DIR}/Nconpp.cpp)
+set(NCONPP_LIB
+        lib/Nconpp.h
+        lib/Nconpp.cpp)
 
 set(NCONPP_INCLUDE
-        ${NCONPP_INCLUDE_DIR}/ErrorMessages.h
-        ${NCONPP_INCLUDE_DIR}/Graph.h
-        ${NCONPP_INCLUDE_DIR}/TensorNetwork.h
-        ${NCONPP_INCLUDE_DIR}/Tensor.h
-        ${NCONPP_INCLUDE_DIR}/Utils.h)
+        include/ErrorMessages.h
+        include/Graph.h
+        include/TensorNetwork.h
+        include/Tensor.h
+        include/Utils.h)
 
 set(NCONPP_SRC
-        ${NCONPP_SRC_DIR}/Graph.cpp
-        ${NCONPP_SRC_DIR}/TensorNetwork.cpp
-        ${NCONPP_SRC_DIR}/Utils.cpp)
+        src/Graph.cpp
+        src/TensorNetwork.cpp
+        src/Utils.cpp)
 
-add_library(${NCONPP_LIBRARY_TARGET} SHARED
-        ${NCONPP_CORE}
+add_library(nconpp SHARED
+        ${NCONPP_LIB}
         ${NCONPP_INCLUDE}
         ${NCONPP_SRC})
 
-target_include_directories(${NCONPP_LIBRARY_TARGET} PRIVATE
-        ${NCONPP_CORE_DIR}
-        ${NCONPP_INCLUDE_DIR}
-        ${NCONPP_SRC_DIR})
+target_include_directories(nconpp PRIVATE
+        lib/
+        include/
+        src/)
 
-target_link_libraries(${NCONPP_LIBRARY_TARGET}
+target_link_libraries(nconpp
         ${NCONPP_DEPENDENCIES})
 
-# test via gtest
-if (CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
-    message(STATUS "GoogleTest process triggered.")
-    # GoogleTest
-    include(FetchContent)
-    FetchContent_Declare(
-            googletest
-            URL https://github.com/google/googletest/archive/609281088cfefc76f9d0ce82e1ff6c30cc3591e5.zip
-    )
-    # For Windows: Prevent overriding the parent project's compiler/linker settings
-    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-    FetchContent_MakeAvailable(googletest)
-
-    enable_testing()
-
-    set(NCONPP_TEST_TARGET "nconpp_test")
-
-    set(NCONPP_TEST_MAIN
-            test/nconpp_test.cpp)
-
-    set(NCONPP_TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test)
-    set(NCONPP_UT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test/ut)
-
-    set(NCONPP_TEST_UT
-            ${NCONPP_UT_DIR}/NconppTest.cpp
-            ${NCONPP_UT_DIR}/GraphTest.cpp
-            ${NCONPP_UT_DIR}/TensorTest.cpp)
-
-    add_executable(${NCONPP_TEST_TARGET}
-            ${NCONPP_TEST_MAIN}
-            ${NCONPP_TEST_UT})
-
-    target_include_directories(${NCONPP_TEST_TARGET} PRIVATE
-            ${NCONPP_CORE_DIR}
-            ${NCONPP_INCLUDE_DIR}
-            ${NCONPP_SRC_DIR})
-
-    target_link_libraries(${NCONPP_TEST_TARGET}
-            ${CMAKE_THREAD_LIBS_INIT}
-            ${NCONPP_DEPENDENCIES}
-            gtest_main
-            nconpp)
-
-    include(GoogleTest)
-    gtest_discover_tests(${NCONPP_TEST_TARGET})
-endif ()
-
-# python via pybind
-if (NOT CMAKE_BUILD_TYPE MATCHES Debug AND SKBUILD)
-    message(STATUS "Skbuild process triggered.")
-
-    set(PYBIND_MAIN pybind/main.cpp)
-    set(PYBIND_MODULE _nconpp)
-
-    include(FetchContent)
-    FetchContent_Declare(
-            pybind11
-            GIT_REPOSITORY https://github.com/pybind/pybind11
-            GIT_TAG v2.9.1
-    )
-
-    FetchContent_Declare(
-            xtensor-python
-            GIT_REPOSITORY https://github.com/xtensor-stack/xtensor-python
-            GIT_TAG 0.25.3
-    )
-
-    FetchContent_MakeAvailable(pybind11 xtensor-python)
-
-    set(Python_FIND_VIRTUALENV FIRST) # needed for poetry's virtualenv
-    find_package(Python REQUIRED COMPONENTS Interpreter Development NumPy)
-    message(STATUS "Use NumPy include dir: ${Python_NumPy_INCLUDE_DIRS}")
-
-    pybind11_add_module(${PYBIND_MODULE}
-            ${PYBIND_MAIN}
-            ${NCONPP_INCLUDE}
-            ${NCONPP_SRC})
-
-    target_include_directories(${PYBIND_MODULE} PRIVATE
-            ${NCONPP_CORE_DIR}
-            ${NCONPP_INCLUDE_DIR}
-            ${NCONPP_SRC_DIR}
-            ${Python_NumPy_INCLUDE_DIRS})
-
-    target_link_libraries(${PYBIND_MODULE} PRIVATE
-            ${NCONPP_DEPENDENCIES}
-            xtensor-python)
-
-    target_compile_definitions(${PYBIND_MODULE} PRIVATE
-            VERSION_INFO=${VERSION_INFO})
-
-    #message(STATUS "PYTHON_LIBRARY_DIR is ${PYTHON_LIBRARY_DIR}")
-
-    install(TARGETS ${PYBIND_MODULE}
-            COMPONENT python
-            LIBRARY DESTINATION .)
-endif()
+## test via gtest
+#if (CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
+#    message(STATUS "GoogleTest process triggered.")
+#    # GoogleTest
+#    include(FetchContent)
+#    FetchContent_Declare(
+#            googletest
+#            URL https://github.com/google/googletest/archive/609281088cfefc76f9d0ce82e1ff6c30cc3591e5.zip
+#    )
+#    # For Windows: Prevent overriding the parent project's compiler/linker settings
+#    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+#    FetchContent_MakeAvailable(googletest)
+#
+#    enable_testing()
+#
+#    set(NCONPP_TEST_TARGET "nconpp_test")
+#
+#    set(NCONPP_TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test)
+#    set(NCONPP_UT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test/ut)
+#
+#    set(NCONPP_TEST_UT
+#            test/ut/NconppTest.cpp
+#            test/ut/GraphTest.cpp
+#            test/ut/TensorTest.cpp)
+#
+#    add_executable(${NCONPP_TEST_TARGET}
+#            test/nconpp_test.cpp
+#            ${NCONPP_TEST_UT})
+#
+#    target_include_directories(${NCONPP_TEST_TARGET} PUBLIC
+#            ${NCONPP_CORE_DIR}
+#            ${NCONPP_INCLUDE_DIR}
+#            ${NCONPP_SRC_DIR})
+#
+#    target_link_libraries(${NCONPP_TEST_TARGET}
+#            ${CMAKE_THREAD_LIBS_INIT}
+#            ${NCONPP_DEPENDENCIES}
+#            gtest_main
+#            nconpp)
+#
+#    include(GoogleTest)
+#    gtest_discover_tests(${NCONPP_TEST_TARGET})
+#endif ()
+#
+## python via pybind
+#if (NOT CMAKE_BUILD_TYPE MATCHES Debug AND SKBUILD)
+#    message(STATUS "Skbuild process triggered.")
+#
+#    set(PYBIND_MAIN pybind/main.cpp)
+#    set(PYBIND_MODULE _nconpp)
+#
+#    include(FetchContent)
+#    FetchContent_Declare(
+#            pybind11
+#            GIT_REPOSITORY https://github.com/pybind/pybind11
+#            GIT_TAG v2.9.1
+#    )
+#
+#    FetchContent_Declare(
+#            xtensor-python
+#            GIT_REPOSITORY https://github.com/xtensor-stack/xtensor-python
+#            GIT_TAG 0.25.3
+#    )
+#
+#    FetchContent_MakeAvailable(pybind11 xtensor-python)
+#
+#    set(Python_FIND_VIRTUALENV FIRST) # needed for poetry's virtualenv
+#    find_package(Python REQUIRED COMPONENTS Interpreter Development NumPy)
+#    message(STATUS "Use NumPy include dir: ${Python_NumPy_INCLUDE_DIRS}")
+#
+#    pybind11_add_module(${PYBIND_MODULE}
+#            ${PYBIND_MAIN}
+#            ${NCONPP_INCLUDE}
+#            ${NCONPP_SRC})
+#
+#    target_include_directories(${PYBIND_MODULE} PRIVATE
+#            ${NCONPP_CORE_DIR}
+#            ${NCONPP_INCLUDE_DIR}
+#            ${NCONPP_SRC_DIR}
+#            ${Python_NumPy_INCLUDE_DIRS})
+#
+#    target_link_libraries(${PYBIND_MODULE} PRIVATE
+#            ${NCONPP_DEPENDENCIES}
+#            xtensor-python)
+#
+#    target_compile_definitions(${PYBIND_MODULE} PRIVATE
+#            VERSION_INFO=${VERSION_INFO})
+#
+#    #message(STATUS "PYTHON_LIBRARY_DIR is ${PYTHON_LIBRARY_DIR}")
+#
+#    install(TARGETS ${PYBIND_MODULE}
+#            COMPONENT python
+#            LIBRARY DESTINATION .)
+#endif()

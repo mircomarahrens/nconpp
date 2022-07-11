@@ -26,7 +26,7 @@ void Graph::addEdge(const Edge &edge) {
     }
 }
 
-void Graph::destructEdges(const Vertex &src, const Vertex &dest) {
+void Graph::removeAllEdges(const Vertex &src, const Vertex &dest) {
     auto pos = std::find_if(mEdges.begin(),
                             mEdges.end(),
                             [&csrc = src, &cdest = dest]
