@@ -30,64 +30,36 @@ T Nconpp::contract(
         reverse(finalOrder.begin(), finalOrder.end());
     }
 
+    // TODO connect disconnected components
+
     TensorNetwork tensorNetwork{tensorList, subscriptVectorList};
 
     while (!contractionSequence.empty()) {
         auto it = contractionSequence.begin();
-        // 1. get contraction parameters:
-        // TODO add multi index contraction
-        auto contractionParams = findContractionParameters(
-                *it,
-                subscriptVectorList);
 
-        size_t indexA = get<0>(contractionParams).first;
-        const auto &axisA = get<0>(contractionParams).second;
-        size_t indexB = get<1>(contractionParams).first;
-        const auto &axisB = get<1>(contractionParams).second;
+        for (int i = 0; i < subscriptVectorList.size(); i++) {
+            std::vector<int> ilegs = subscriptVectorList[i];
+            std::vector<size_t> results;
+            auto pos = std::find_if(std::begin(ilegs), std::end(ilegs), [it](int i){return i == *it;});
+            while (pos != std::end(ilegs)) {
+                results.emplace_back(std::distance(std::begin(ilegs), pos));
+                pos = std::find_if(std::next(pos), std::end(ilegs), [](int i){return i > 5;});
+            }
+            if (results.size() != 1) {
+                // doTrace
+                tensorNetwork.doTrace(indexA, axisA, axisB);
+            } else {
+                // doTensorProduct
+                for (int j = i; j < subscriptVectorList.size(); j++) {
+                    auto& jlegs = subscriptVectorList[j];
 
-        // 2. perform contraction of tensors
-        if (indexA == indexB) // do trace
-        {
-            tensorNetwork.doTrace(indexA, axisA, axisB);
-        } else // do tensor product
-        {
-            tensorNetwork.doTensorProduct(indexA, indexB, axisA, axisB);
+                    tensorNetwork.doTensorProduct(indexA, indexB, axisA, axisB);
+                }
+            }
         }
+
         contractionSequence.erase(contractionSequence.begin());
     }
 
-    return std::move(tensorList[0]);
-}
-
-auto Nconpp::findContractionParameters(
-        int contractionLeg,
-        vector<vector<int>> &legsList) {
-    // index to tensor, position of legs to contract
-    pair<size_t, vector<size_t>> tensorParamsA, tensorParamsB;
-    tensorParamsA.second = {};
-    tensorParamsB.second = {};
-    bool visitA = false, visitB = false;
-    for (int ind = 0; ind < legsList.size(); ++ind) {
-        for (int leg: legsList[ind]) {
-            if (contractionLeg == leg) {
-                int legIndex;
-                if (!visitA) {
-                    tensorParamsA.first = ind;
-                    legIndex = *Utils::getIndexToElement(legsList[ind], leg);
-                    tensorParamsA.second.emplace_back((size_t) legIndex);
-                    visitA = true;
-                } else if (visitA && !visitB) {
-                    tensorParamsB.first = ind;
-                    if (tensorParamsB.first == tensorParamsA.first) // trace
-                        legIndex = *Utils::getIndexToElement(legsList[ind], leg, (int) tensorParamsA.second[0] + 1);
-                    else // tensor product
-                        legIndex = *Utils::getIndexToElement(legsList[ind], leg);
-                    tensorParamsB.second.emplace_back((size_t) legIndex);
-                    visitB = true;
-                } else if (visitA && visitB)
-                    throw logic_error(ERROR_MESSAGES::MISMATCH);
-            }
-        }
-    }
-    return make_tuple(tensorParamsA, tensorParamsB);
+    return tensorNetwork.getTensor();
 }

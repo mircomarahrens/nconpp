@@ -40,9 +40,4 @@ public:
             std::vector<std::vector<int>> subscriptVectorList,
             std::vector<int> contractionSequence = {},
             std::vector<int> finalOrder = {});
-
-private:
-    static auto findContractionParameters(
-            int contractionLeg,
-            std::vector<std::vector<int>> &legsList);
 };

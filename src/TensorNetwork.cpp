@@ -10,7 +10,7 @@ TensorNetwork<T>::TensorNetwork(vector<T> &tensorList, vector<vector<int>> subsc
         Graph(subscriptVectorList.size()) {
     validateData(tensorList, subscriptVectorList);
 
-    generateVerticesAndLegs(tensorList, subscriptVectorList);
+    generateVerticesTensorAndVerticesLegs(tensorList, subscriptVectorList);
 
     generateEdges();
 }
@@ -27,29 +27,25 @@ void TensorNetwork<T>::validateData(const vector<T> &tensorList, const vector<ve
 }
 
 template<class T>
-void TensorNetwork<T>::generateVerticesAndLegs(std::vector<T> &tensorList,
-                                               std::vector<std::vector<int>> &subscriptVectorList) {
+void TensorNetwork<T>::generateVerticesTensorAndVerticesLegs(std::vector<T> &tensorList,
+                                                             std::vector<std::vector<int>> &subscriptVectorList) {
     for (int i = 0; i < tensorList.size(); i++) {
-        TensorNetworkVertex tnv{mVertices[i]};
-        TensorNetworkLeg tnl{mVertices[i]};
-        int li = 0;
-        for (int l: subscriptVectorList[i]) {
-            auto s = Tensor::shape(tensorList[i]);
-            tnl.index = l;
-            tnl.dim = s[li];
-            mTensorNetworkLegs.emplace_back(tnl);
-            li++;
-        }
+        VertexTensor tnv{mVertices[i]};
         tnv.tensor = tensorList[i];
-        mTensorNetworkVertices.emplace_back(tnv);
+        mVerticesTensors.emplace_back(tnv);
+
+        VertexLegs tnl{mVertices[i]};
+        tnl.legs = subscriptVectorList[i];
+        tnl.dims = Tensor::shape(tensorList[i]);
+        mVerticesLegs.emplace_back(tnl);
     }
 }
 
 template<class T>
 void TensorNetwork<T>::generateEdges() {
-    for (auto i_vc: mTensorNetworkLegs) {
+    for (auto i_vc: mVerticesLegs) {
         auto i_legs = i_vc.legs;
-        for (auto j_vc: mTensorNetworkLegs) {
+        for (auto j_vc: mVerticesLegs) {
             auto j_legs = j_vc.legs;
             if (!Utils::getIntersection(i_legs, j_legs).empty())
                 Graph::constructEdge(i_vc.getVertex(), j_vc.getVertex());
@@ -59,31 +55,39 @@ void TensorNetwork<T>::generateEdges() {
 
 template<class T>
 void TensorNetwork<T>::doTrace(int vertexId, const vector<size_t> &axisA, const vector<size_t> &axisB) {
-    auto vc = mTensorNetworkVertices[vertexId];
-    auto newTensor = Tensor::trace(vc.tensor, 0, axisA[0], axisB[0]);
-    mTensorNetworkLegs.erase(axisA[0]);
-    mTensorNetworkLegs.erase(axisB[0]);
+    Tensor::trace(mVerticesTensors[vertexId], 0, axisA[0], axisB[0]);
+    mVerticesLegs[vertexId].erase(mVerticesLegs[vertexId].begin() + axisA[0]);
+    mVerticesLegs[vertexId].erase(mVerticesLegs[vertexId].begin() + axisB[0]);
 }
 
 template<class T>
 void TensorNetwork<T>::doTensorProduct(size_t indexA, size_t indexB, const std::vector<std::size_t> &axisA,
                                        const std::vector<std::size_t> &axisB) {
-    auto& ta = mTensorNetworkVertices[indexA];
-    auto& tb = mTensorNetworkVertices[indexB];
+    auto& ta = mVerticesTensors[indexA];
+    auto& tb = mVerticesTensors[indexB];
 
     const auto &newTensor = Tensor::tensordot(std::move(ta), std::move(tb), axisA, axisB);
 
-    mTensorNetworkVertices.emplace_back(newTensor);
+    auto legsA = mVerticesLegs[indexA];
+    auto legsB = mVerticesLegs[indexB];
 
-    auto legsA = mTensorNetworkLegs[indexA];
-    auto legsB = mTensorNetworkLegs[indexB];
+    mVerticesLegs.erase(mVerticesLegs.begin() + indexA);
+    mVerticesLegs.erase(mVerticesLegs.begin() + indexB);
 
     Utils::removeIndicesFromVector(legsA, axisA);
     Utils::removeIndicesFromVector(legsB, axisB);
 
     legsA.insert(legsA.end(), legsB.begin(), legsB.end());
 
-    mTensorNetworkLegs.emplace_back(legsA);
+    mVerticesTensors.emplace_back(newTensor);
+    mVerticesLegs.emplace_back(legsA);
+}
+
+template<class T>
+T TensorNetwork<T>::contract(std::vector<int>& contractionSequence) {
+
+
+    return std::move(mVerticesTensors[0].tensor);
 }
 
 //template<class T>
