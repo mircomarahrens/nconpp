@@ -3,6 +3,9 @@
 #include <xtensor/xarray.hpp>
 #include <xtensor/xexpression.hpp>
 #include <xtensor/xlayout.hpp>
+#include <xtensor/xrandom.hpp>
+#include <xtensor-blas/xblas.hpp>
+#include <xtensor-blas/xlapack.hpp>
 #include <xtensor-blas/xlinalg.hpp>
 
 // Wrapper for tensor operations used by nconpp based on xtensor.

@@ -2,12 +2,6 @@
 
 #include "Tensor.h"
 
-#include <xtensor/xarray.hpp>
-#include <xtensor/xrandom.hpp>
-#include "xtensor-blas/xblas.hpp"
-#include "xtensor-blas/xlapack.hpp"
-#include "xtensor-blas/xlinalg.hpp"
-
 class TensorTest : public testing::Test {
     TensorTest() = default;
 

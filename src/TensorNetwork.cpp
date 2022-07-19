@@ -1,14 +1,51 @@
 #include "TensorNetwork.h"
 
-#include "Tensor.h"
-#include "Utils.h"
+namespace Utils {
+    template<typename D, typename Iter>
+    void removeByIndicesFromVector(std::vector<D> &v, Iter begin, Iter end)
+    // requires std::is_convertible_v<std::iterator_traits<Iter>::value_type, std::size_t>
+    {
+        std::size_t current_index = 0;
 
-using namespace std;
+        if (std::is_sorted(begin, end)) {
+            // sorted version - advance through begin..end
+            auto rm_iter = begin;
+            const auto pred = [&](const D &) {
+                // anymore to remove?
+                if (rm_iter != end && *rm_iter == current_index++) {
+                    return ++rm_iter, true;
+                }
+                return false;
+            };
+            v.erase(std::remove_if(v.begin(), v.end(), pred), v.end());
+        } else {
+            // unsorted version - search for each index in begin..end
+            const auto pred = [&](const D &) {
+                return std::find(begin, end, current_index++) != end;
+            };
+            v.erase(std::remove_if(v.begin(), v.end(), pred), v.end());
+        }
+    };
+
+    template<typename D>
+    std::vector<D> getIntersection(std::vector<D> vec1,
+                                   std::vector<D> vec2) {
+        std::sort(vec1.begin(), vec1.end());
+        std::sort(vec2.begin(), vec2.end());
+
+        std::vector<D> intersec = {};
+        std::set_intersection(vec1.begin(), vec1.end(),
+                              vec2.begin(), vec2.end(),
+                              std::back_inserter(intersec));
+
+        return intersec;
+    }
+}
 
 template<class T>
-TensorNetwork<T>::TensorNetwork(vector<T> &tensorList, vector<vector<int>> subscriptVectorList) :
+TensorNetwork<T>::TensorNetwork(std::vector<T> &tensorList, std::vector<std::vector<int>> &subscriptVectorList) :
         Graph(subscriptVectorList.size()) {
-    validateData(tensorList, subscriptVectorList);
+    validateInputData(tensorList, subscriptVectorList);
 
     generateVerticesTensorAndVerticesLegs(tensorList, subscriptVectorList);
 
@@ -16,13 +53,14 @@ TensorNetwork<T>::TensorNetwork(vector<T> &tensorList, vector<vector<int>> subsc
 }
 
 template<class T>
-void TensorNetwork<T>::validateData(const vector<T> &tensorList, const vector<vector<int>> &subscriptVectorList) {
+void TensorNetwork<T>::validateInputData(const std::vector<T> &tensorList,
+                                         const std::vector<std::vector<int>> &subscriptVectorList) {
     if (tensorList.size() != subscriptVectorList.size()) {
-        throw invalid_argument(
+        throw std::invalid_argument(
                 "The number of tensors, which is " +
-                to_string(tensorList.size()) +
+                std::to_string(tensorList.size()) +
                 ", does not match the number of legs, which is " +
-                to_string(subscriptVectorList.size()) + ".");
+                std::to_string(subscriptVectorList.size()) + ".");
     }
 }
 
@@ -54,7 +92,7 @@ void TensorNetwork<T>::generateEdges() {
 }
 
 template<class T>
-void TensorNetwork<T>::doTrace(int vertexId, const vector<size_t> &axisA, const vector<size_t> &axisB) {
+void TensorNetwork<T>::doTrace(int vertexId, const std::vector<size_t> &axisA, const std::vector<size_t> &axisB) {
     Tensor::trace(mVerticesTensors[vertexId], 0, axisA[0], axisB[0]);
     mVerticesLegs[vertexId].erase(mVerticesLegs[vertexId].begin() + axisA[0]);
     mVerticesLegs[vertexId].erase(mVerticesLegs[vertexId].begin() + axisB[0]);
@@ -63,8 +101,8 @@ void TensorNetwork<T>::doTrace(int vertexId, const vector<size_t> &axisA, const 
 template<class T>
 void TensorNetwork<T>::doTensorProduct(size_t indexA, size_t indexB, const std::vector<std::size_t> &axisA,
                                        const std::vector<std::size_t> &axisB) {
-    auto& ta = mVerticesTensors[indexA];
-    auto& tb = mVerticesTensors[indexB];
+    auto &ta = mVerticesTensors[indexA];
+    auto &tb = mVerticesTensors[indexB];
 
     const auto &newTensor = Tensor::tensordot(std::move(ta), std::move(tb), axisA, axisB);
 
@@ -74,8 +112,8 @@ void TensorNetwork<T>::doTensorProduct(size_t indexA, size_t indexB, const std::
     mVerticesLegs.erase(mVerticesLegs.begin() + indexA);
     mVerticesLegs.erase(mVerticesLegs.begin() + indexB);
 
-    Utils::removeIndicesFromVector(legsA, axisA);
-    Utils::removeIndicesFromVector(legsB, axisB);
+    Utils::removeByIndicesFromVector(legsA, axisA.begin(), axisA.end());
+    Utils::removeByIndicesFromVector(legsB, axisB.begin(), axisB.end());
 
     legsA.insert(legsA.end(), legsB.begin(), legsB.end());
 
@@ -84,125 +122,53 @@ void TensorNetwork<T>::doTensorProduct(size_t indexA, size_t indexB, const std::
 }
 
 template<class T>
-T TensorNetwork<T>::contract(std::vector<int>& contractionSequence) {
+T TensorNetwork<T>::contract(std::vector<int> &contractionSequence) {
 
+    auto it_cs = contractionSequence.begin();
+    for (auto vli: mVerticesLegs) {
+        std::vector<int> results = getPositions(vli.legs, *it_cs);
+        if (results.size() == 2) {
+            // TODO doTrace
+        } else if (results.size() == 1) {
+            // doTensorProduct
+            for (auto vlj: mVerticesLegs) {
+                // TODO
+            }
+        } else {
+            // error
+        }
+    }
+
+    validateOutputData();
 
     return std::move(mVerticesTensors[0].tensor);
 }
 
-//template<class T>
-//void Nconpp::connectDisconnectedComponents(
-//        vector<T> &tensorList,
-//        vector<vector<int>> &subscriptVectorList,
-//        vector<int> &contractionSequence) {
-//
-//    TensorNetwork network{subscriptVectorList};
-//    auto connectedComponents = network.getConnectedComponentsIndices();
-//
-//    // TODO connect components
-//    if (connectedComponents.size() > 1u) {
-//        Vertex lastVertex{0}, currentVertex;
-//        int newLeg;
-//        enum class parity {
-//            EVEN, ODD
-//        };
-//        parity p = parity::EVEN;
-//        auto it = connectedComponents.begin();
-//        while (it != connectedComponents.end()) {
-//            int tmp = getShortestOfLegsList(*it, subscriptVectorList);
-//            currentVertex = Vertex{tmp};
-//            switch (p) {
-//                case (parity::EVEN):
-//                    newLeg = getNewLeg(contractionSequence);
-//                    contractionSequence.push_back(newLeg);
-//                    p = parity::ODD;
-//                    break;
-//                case (parity::ODD):
-//                    network.constructEdge(lastVertex, currentVertex);
-//                    p = parity::EVEN;
-//                    break;
-//            }
-//
-//            expandNetwork(currentVertex, newLeg, tensorList, subscriptVectorList);
-//
-//            lastVertex = currentVertex;
-//            it++;
-//        }
-//
-//        if (p == parity::ODD) {
-//            // don't consider the last element, as this needs to be connected
-//            vector<vector<int>> legsSubList(
-//                    subscriptVectorList.begin(), subscriptVectorList.end() - 1);
-//            set<int> subComponents = network.getVertexIndices();
-//            subComponents.erase(currentVertex);
-//
-//            currentVertex = getShortestOfLegsList(
-//                    subComponents,
-//                    legsSubList);
-//
-//            network.constructEdge(lastVertex, currentVertex);
-//
-//            expandNetwork(currentVertex, newLeg, tensorList, subscriptVectorList);
-//        }
-//    }
-//}
-//
-//
-//template<class T>
-//void Nconpp::expandNetwork(
-//        int node,
-//        int leg,
-//        vector<T> &containerList,
-//        vector<vector<int>> &legsList) {
-//    T &container_type = containerList[node];
-//    size_t dim = Tensor::dimension(container_type);
-//    container_type =
-//            Tensor::expand_dims(container_type, dim);
-//    legsList[node].push_back(leg);
-//}
+template<class T>
+void TensorNetwork<T>::validateOutputData(const std::vector<int> &contractionSequence) {
+    if (!contractionSequence.empty()) {
+        throw std::invalid_argument(
+                "The contraction sequence vector, which size is " +
+                std::to_string(contractionSequence.size()) +
+                ", is not empty.");
+    }
+}
 
-//// Network operations
-//int Nconpp::getShortestOfLegsList(const set<int> &indexSet,
-//                                  const vector<vector<int>> &legsList) {
-//    int shortest = 0;
-//    for (int index: indexSet)
-//        if (legsList[index].size() < legsList[shortest].size())
-//            shortest = index;
-//    return shortest;
-//}
-//
-//int Nconpp::getLongestOfLegsList(const set<int> &indexSet,
-//                                 const vector<vector<int>> &legsList) {
-//    int longest = 0;
-//    for (int index: indexSet)
-//        if (legsList[index].size() > legsList[longest].size())
-//            longest = index;
-//    return longest;
-//}
-//
-//int Nconpp::getNewLeg(const vector<int> &contractionSequenceLegs) {
-//    int newLeg = *max_element(
-//            contractionSequenceLegs.begin(),
-//            contractionSequenceLegs.end());
-//    newLeg += 1;
-//    return newLeg;
-//}
-//
-//void Nconpp::addEdge(
-//        vector<vector<int>> &legsList,
-//        int src,
-//        int dest) {
-//    vector<int> &vertexSrc = legsList[src];
-//    vector<int> &vertexDest = legsList[dest];
-//
-//    if (Utils::getIntersection(vertexSrc, vertexDest).empty()) {
-//        auto legs = Utils::allUniqueSorted(legsList);
-//        int newLegIndex = 0;
-//        if (!legs.empty()) {
-//            auto ind = max_element(legs.begin(), legs.end());
-//            newLegIndex = *ind + 1;
-//        }
-//        vertexSrc.push_back(newLegIndex);
-//        vertexDest.push_back(newLegIndex);
-//    }
-//}
+template<class T>
+std::vector<int> TensorNetwork<T>::getPositions(const std::vector<int> &search, int match) {
+    std::vector<int> results;
+    auto pos = std::find_if(search.begin(), search.end(), [match](int i) { return i == match; });
+    while (pos != search.end()) {
+        results.emplace_back(std::distance(search.begin(), pos));
+        pos = std::find_if(std::next(pos), search.end(), [match](int i) { return i == match; });
+    }
+    return results;
+}
+
+template<class T>
+void TensorNetwork<T>::expandTensorNetwork(int vertexIndex, int legIndex) {
+    T &container_type = mVerticesTensors[vertexIndex];
+    size_t dim = Tensor::dimension(container_type);
+    container_type = Tensor::expand_dims(container_type, dim);
+    mVerticesLegs[vertexIndex].legs.emplace_back(legIndex);
+}

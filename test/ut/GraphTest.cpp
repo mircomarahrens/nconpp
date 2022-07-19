@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
+#include <numeric>
 
-#include "Utils.h"
 #include "Graph.h"
 
 using namespace std;
@@ -9,13 +9,21 @@ class GraphTest : public testing::Test {
     GraphTest() = default;
 
     ~GraphTest() override = default;
+
+public:
+    static std::set<int> createRangeSet(size_t size) {
+        std::vector<int> vec(size);
+        std::iota(vec.begin(), vec.end(), 0);
+        return {vec.begin(), vec.end()};
+    }
 };
 
 TEST(GraphTest, withVertices) {
     size_t N = 5;
     Graph graph(N);
     ASSERT_EQ(N, graph.getVertices().size());
-    auto rangeSet = Utils::createRangeSet(N);
+
+    auto rangeSet = GraphTest::createRangeSet(N);
     for (Vertex v: graph.getVertices()) {
         ASSERT_TRUE(rangeSet.find(v.index) != rangeSet.end());
     }
@@ -38,34 +46,22 @@ TEST(GraphTest, withEdges_1) {
     size_t N = 5;
     Graph graph(N);
     ASSERT_EQ(N, graph.getVertices().size());
-    auto rangeSet = Utils::createRangeSet(N);
+    auto rangeSet = GraphTest::createRangeSet(N);
     for (Vertex v: graph.getVertices()) {
         ASSERT_TRUE(rangeSet.find(v.index) != rangeSet.end());
     }
 
     auto graphVertices = graph.getVertices();
 
-    vector<Edge> edges = {};
-    Edge edge1{graphVertices[0], graphVertices[1]};
-    Edge edge2{graphVertices[1], graphVertices[3]};
-    Edge edge3{graphVertices[2], graphVertices[4]};
-    Edge edge4{graphVertices[1], graphVertices[4]};
-    Edge edge5{graphVertices[3], graphVertices[4]};
+    graph.constructEdge(graphVertices[0], graphVertices[1]);
+    graph.constructEdge(graphVertices[1], graphVertices[3]);
+    graph.constructEdge(graphVertices[2], graphVertices[4]);
+    graph.constructEdge(graphVertices[1], graphVertices[4]);
+    graph.constructEdge(graphVertices[3], graphVertices[4]);
 
-    edges.emplace_back(edge1);
-    edges.emplace_back(edge2);
-    edges.emplace_back(edge3);
-    edges.emplace_back(edge4);
-    edges.emplace_back(edge5);
-
-    graph.addEdge(edge1);
-    graph.addEdge(edge2);
-    graph.addEdge(edge3);
-    graph.addEdge(edge4);
-    graph.addEdge(edge5);
 
     auto graphEdges = graph.getEdges();
-    for (auto edge: edges) {
+    for (auto edge: graphEdges) {
         ASSERT_TRUE(std::find(graphVertices.begin(),
                               graphVertices.end(),
                               edge.src) != graphVertices.end());
@@ -73,10 +69,6 @@ TEST(GraphTest, withEdges_1) {
         ASSERT_TRUE(std::find(graphVertices.begin(),
                               graphVertices.end(),
                               edge.dest) != graphVertices.end());
-
-        ASSERT_TRUE(std::find(graphEdges.begin(),
-                              graphEdges.end(),
-                              edge) != graphEdges.end());
     }
 }
 
@@ -84,7 +76,7 @@ TEST(GraphTest, withEdges_2) {
     size_t N = 5;
     Graph graph(N);
     ASSERT_EQ(N, graph.getVertices().size());
-    auto rangeSet = Utils::createRangeSet(N);
+    auto rangeSet = GraphTest::createRangeSet(N);
     for (Vertex v: graph.getVertices()) {
         ASSERT_TRUE(rangeSet.find(v.index) != rangeSet.end());
     }
@@ -126,10 +118,6 @@ TEST(GraphTest, withEdges_2) {
     }
 }
 
-TEST(GraphTest, removeEdge) {
-
-}
-
 TEST(GraphTest, ConnectedComponents) {
     // 5 vertices numbered from 0 to 4 without legs
     Graph graph{5};
@@ -141,12 +129,12 @@ TEST(GraphTest, ConnectedComponents) {
     graph.constructEdge(vertices[2], vertices[3]);
     graph.constructEdge(vertices[3], vertices[4]);
 
-    std::vector<std::set<int>> connectedComponents = graph.getConnectedComponentsIndices();
+    std::vector<std::vector<int>> connectedComponents = graph.calculateConnectedComponents();
 
     ASSERT_TRUE(std::find(connectedComponents.begin(),
                           connectedComponents.end(),
-                          std::set<int>{0, 1}) != connectedComponents.end());
+                          std::vector<int>{0, 1}) != connectedComponents.end());
     ASSERT_TRUE(std::find(connectedComponents.begin(),
                           connectedComponents.end(),
-                          std::set<int>{2, 3, 4}) != connectedComponents.end());
+                          std::vector<int>{2, 3, 4}) != connectedComponents.end());
 }
