@@ -52,12 +52,12 @@ set(NCONPP_INCLUDE
         include/Graph.h
         include/TensorNetwork.h
         include/Tensor.h
-        include/Utils.h)
+        )
 
 set(NCONPP_SRC
         src/Graph.cpp
         src/TensorNetwork.cpp
-        src/Utils.cpp)
+        )
 
 add_library(nconpp SHARED
         ${NCONPP_LIB}
@@ -72,10 +72,11 @@ target_include_directories(nconpp PRIVATE
 target_link_libraries(nconpp
         ${NCONPP_DEPENDENCIES})
 
-## test via gtest
-#if (CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
-#    message(STATUS "GoogleTest process triggered.")
-#    # GoogleTest
+# test via gtest
+if (CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
+    message(STATUS "GoogleTest process triggered.")
+    # GoogleTest
+#    # ... via FetchContent
 #    include(FetchContent)
 #    FetchContent_Declare(
 #            googletest
@@ -87,82 +88,81 @@ target_link_libraries(nconpp
 #
 #    enable_testing()
 #
-#    set(NCONPP_TEST_TARGET "nconpp_test")
-#
-#    set(NCONPP_TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test)
-#    set(NCONPP_UT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test/ut)
-#
-#    set(NCONPP_TEST_UT
-#            test/ut/NconppTest.cpp
-#            test/ut/GraphTest.cpp
-#            test/ut/TensorTest.cpp)
-#
-#    add_executable(${NCONPP_TEST_TARGET}
-#            test/nconpp_test.cpp
-#            ${NCONPP_TEST_UT})
-#
-#    target_include_directories(${NCONPP_TEST_TARGET} PUBLIC
-#            ${NCONPP_CORE_DIR}
-#            ${NCONPP_INCLUDE_DIR}
-#            ${NCONPP_SRC_DIR})
-#
-#    target_link_libraries(${NCONPP_TEST_TARGET}
-#            ${CMAKE_THREAD_LIBS_INIT}
-#            ${NCONPP_DEPENDENCIES}
-#            gtest_main
-#            nconpp)
-#
-#    include(GoogleTest)
-#    gtest_discover_tests(${NCONPP_TEST_TARGET})
-#endif ()
-#
-## python via pybind
-#if (NOT CMAKE_BUILD_TYPE MATCHES Debug AND SKBUILD)
-#    message(STATUS "Skbuild process triggered.")
-#
-#    set(PYBIND_MAIN pybind/main.cpp)
-#    set(PYBIND_MODULE _nconpp)
-#
-#    include(FetchContent)
-#    FetchContent_Declare(
-#            pybind11
-#            GIT_REPOSITORY https://github.com/pybind/pybind11
-#            GIT_TAG v2.9.1
-#    )
-#
-#    FetchContent_Declare(
-#            xtensor-python
-#            GIT_REPOSITORY https://github.com/xtensor-stack/xtensor-python
-#            GIT_TAG 0.25.3
-#    )
-#
-#    FetchContent_MakeAvailable(pybind11 xtensor-python)
-#
-#    set(Python_FIND_VIRTUALENV FIRST) # needed for poetry's virtualenv
-#    find_package(Python REQUIRED COMPONENTS Interpreter Development NumPy)
-#    message(STATUS "Use NumPy include dir: ${Python_NumPy_INCLUDE_DIRS}")
-#
-#    pybind11_add_module(${PYBIND_MODULE}
-#            ${PYBIND_MAIN}
-#            ${NCONPP_INCLUDE}
-#            ${NCONPP_SRC})
-#
-#    target_include_directories(${PYBIND_MODULE} PRIVATE
-#            ${NCONPP_CORE_DIR}
-#            ${NCONPP_INCLUDE_DIR}
-#            ${NCONPP_SRC_DIR}
-#            ${Python_NumPy_INCLUDE_DIRS})
-#
-#    target_link_libraries(${PYBIND_MODULE} PRIVATE
-#            ${NCONPP_DEPENDENCIES}
-#            xtensor-python)
-#
-#    target_compile_definitions(${PYBIND_MODULE} PRIVATE
-#            VERSION_INFO=${VERSION_INFO})
-#
-#    #message(STATUS "PYTHON_LIBRARY_DIR is ${PYTHON_LIBRARY_DIR}")
-#
-#    install(TARGETS ${PYBIND_MODULE}
-#            COMPONENT python
-#            LIBRARY DESTINATION .)
-#endif()
+#    # ... via submodule/clone
+    add_subdirectory(googletest)
+    include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
+
+    enable_testing()
+
+    add_executable(nconpp_test
+            test/nconpp_test.cpp
+            test/ut/NconppTest.cpp
+            test/ut/GraphTest.cpp
+            test/ut/TensorTest.cpp test/ut/TensorNetworkTest.cpp)
+
+    target_include_directories(nconpp_test PUBLIC
+            lib/
+            include/
+            src/)
+
+    target_link_libraries(nconpp_test
+            ${CMAKE_THREAD_LIBS_INIT}
+            ${NCONPP_DEPENDENCIES}
+            gtest
+            gtest_main
+            nconpp)
+
+    include(GoogleTest)
+    gtest_discover_tests(nconpp_test)
+endif ()
+
+# python via pybind
+if (NOT CMAKE_BUILD_TYPE MATCHES Debug AND SKBUILD)
+    message(STATUS "Skbuild process triggered.")
+
+    set(PYBIND_MAIN pybind/main.cpp)
+    set(PYBIND_MODULE _nconpp)
+
+    include(FetchContent)
+    FetchContent_Declare(
+            pybind11
+            GIT_REPOSITORY https://github.com/pybind/pybind11
+            GIT_TAG v2.9.1
+    )
+
+    FetchContent_Declare(
+            xtensor-python
+            GIT_REPOSITORY https://github.com/xtensor-stack/xtensor-python
+            GIT_TAG 0.25.3
+    )
+
+    FetchContent_MakeAvailable(pybind11 xtensor-python)
+
+    set(Python_FIND_VIRTUALENV FIRST) # needed for poetry's virtualenv
+    find_package(Python REQUIRED COMPONENTS Interpreter Development NumPy)
+    message(STATUS "Use NumPy include dir: ${Python_NumPy_INCLUDE_DIRS}")
+
+    pybind11_add_module(${PYBIND_MODULE}
+            ${PYBIND_MAIN}
+            ${NCONPP_INCLUDE}
+            ${NCONPP_SRC})
+
+    target_include_directories(${PYBIND_MODULE} PRIVATE
+            ${NCONPP_CORE_DIR}
+            ${NCONPP_INCLUDE_DIR}
+            ${NCONPP_SRC_DIR}
+            ${Python_NumPy_INCLUDE_DIRS})
+
+    target_link_libraries(${PYBIND_MODULE} PRIVATE
+            ${NCONPP_DEPENDENCIES}
+            xtensor-python)
+
+    target_compile_definitions(${PYBIND_MODULE} PRIVATE
+            VERSION_INFO=${VERSION_INFO})
+
+    #message(STATUS "PYTHON_LIBRARY_DIR is ${PYTHON_LIBRARY_DIR}")
+
+    install(TARGETS ${PYBIND_MODULE}
+            COMPONENT python
+            LIBRARY DESTINATION .)
+endif()

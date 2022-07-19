@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Utils.h"
 #include "TensorNetwork.h"
+#include "TensorNetwork.cpp"
 #include "Tensor.h"
 
 #include <optional>
@@ -40,4 +40,45 @@ public:
             std::vector<std::vector<int>> subscriptVectorList,
             std::vector<int> contractionSequence = {},
             std::vector<int> finalOrder = {});
+
+    template<class T>
+    static void connectDisconnectedComponents(
+            std::vector<T> &tensorList,
+            std::vector<std::vector<int>> subscriptVectorList,
+            std::vector<int> contractionSequence = {});
+
+private:
+    static void fillContractionSequence(std::vector<int>& contractionSequence, const std::vector<int>& legIndices);
+
+    static void fillFinalOrder(std::vector<int>& finalOrder, const std::vector<int>& legIndices);
+
+    static std::vector<int> retrieveLegIndices(const std::vector<std::vector<int>> &subscriptVectorList);
+
+    static bool isNegative(int i) {
+        return i < 0;
+    };
+
+    static bool isPositive(int i) {
+        return i > 0;
+    };
+
+    // Network operations
+    static int getShortestOfLegsList(
+            const std::vector<int> &indexSet,
+            const std::vector<std::vector<int>> &legsList);
+
+    static int getLongestOfLegsList(
+            const std::vector<int> &indexSet,
+            const std::vector<std::vector<int>> &legsList);
+
+    static int getNewLeg(
+            const std::vector<int> &contractionSequenceLegs);
+
+    template<class T>
+    static void expandNetwork(
+            int node,
+            int leg,
+            std::vector<T> &containerList,
+            std::vector<std::vector<int>> &legsList
+    );
 };

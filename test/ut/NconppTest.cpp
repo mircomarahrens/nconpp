@@ -1,15 +1,10 @@
 #include <gtest/gtest.h>
 
-#include "../../lib/Nconpp.h"
-#include "../../lib/Nconpp.cpp"
+#include "Nconpp.h"
+#include "Nconpp.cpp"
 
-#include "Utils.h"
 #include "ErrorMessages.h"
 #include "Tensor.h"
-
-#include <xtensor/xarray.hpp>
-#include <xtensor/xrandom.hpp>
-#include <xtensor-blas/xlinalg.hpp>
 
 #include <algorithm>
 #include <complex>
@@ -55,7 +50,7 @@ TEST(NconppTest, logicError_MoreThanTwoLegs) {
     EXPECT_THROW(
             try {
                 Tensor::array_type<std::complex<double>> finalTensor =
-                        Nconpp::contract(tensorList, legLinks, false);
+                        Nconpp::contract(tensorList, legLinks);
             }
             catch (const std::logic_error &ex) {
                 EXPECT_EQ(ERROR_MESSAGES::MISMATCH, ex.what());
@@ -85,16 +80,16 @@ TEST(NconppTest, contract) {
             };
 
     Tensor::array_type<std::complex<double>> finalTensor =
-            Nconpp::contract(tensorList, legLinks, false);
+            Nconpp::contract(tensorList, legLinks);
 
     Tensor::shape_type shape = {2, 4, 9};
     ASSERT_EQ(Tensor::shape(finalTensor), shape);
 }
 
 // TODO
-TEST(NconppTest, DISABLED_decompose) {
-    Tensor::array_type<std::complex<double>> tensor =
-            xt::random::rand<double>({2, 4, 9});
-
-    Nconpp::decompose(tensor, 1);
-}
+//TEST(NconppTest, DISABLED_decompose) {
+//    Tensor::array_type<std::complex<double>> tensor =
+//            xt::random::rand<double>({2, 4, 9});
+//
+//    Nconpp::decompose(tensor, 1);
+//}
