@@ -10,7 +10,7 @@ class TensorNetworkTest : public testing::Test {
 };
 
 TEST(TensorNetworkTest, tensorNetwork) {
-    std::vector<Tensor::array_type<std::complex<double>>> tensorList =
+    std::vector<TensorOperations::array_type<std::complex<double>>> tensorList =
             {
                     xt::random::rand<double>({3, 4, 5}),
                     xt::random::rand<double>({5, 3, 6, 7, 6}),

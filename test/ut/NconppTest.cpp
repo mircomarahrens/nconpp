@@ -22,18 +22,18 @@ TEST(NconppTest, tensorOperations) {
     auto A = xt::random::rand<double>({4, 3, 8});
     auto B = xt::random::rand<double>({2, 3, 1, 3, 3});
 
-    auto C = Tensor::tensordot(A, B, {1}, {1});
-    Tensor::shape_type shapeC = {4, 8, 2, 1, 3, 3};
-    ASSERT_EQ(Tensor::shape(C), shapeC);
+    auto C = TensorOperations::tensordot(A, B, {1}, {1});
+    TensorOperations::shape_type shapeC = {4, 8, 2, 1, 3, 3};
+    ASSERT_EQ(TensorOperations::shape(C), shapeC);
 
-    Tensor::array_type<std::complex<double>> D = Tensor::trace(C, 0, 4, 5);
+    TensorOperations::array_type<std::complex<double>> D = TensorOperations::trace(C, 0, 4, 5);
 
-    Tensor::shape_type shapeD = {4, 8, 2, 1};
-    ASSERT_EQ(Tensor::shape(D), shapeD);
+    TensorOperations::shape_type shapeD = {4, 8, 2, 1};
+    ASSERT_EQ(TensorOperations::shape(D), shapeD);
 }
 
 TEST(NconppTest, logicError_MoreThanTwoLegs) {
-    std::vector<Tensor::array_type<std::complex<double>>> tensorList =
+    std::vector<TensorOperations::array_type<std::complex<double>>> tensorList =
             {
                     xt::random::rand<double>({3, 4, 5}),
                     xt::random::rand<double>({5, 3, 6, 7, 6}),
@@ -49,7 +49,7 @@ TEST(NconppTest, logicError_MoreThanTwoLegs) {
 
     EXPECT_THROW(
             try {
-                Tensor::array_type<std::complex<double>> finalTensor =
+                TensorOperations::array_type<std::complex<double>> finalTensor =
                         Nconpp::contract(tensorList, legLinks);
             }
             catch (const std::logic_error &ex) {
@@ -59,7 +59,7 @@ TEST(NconppTest, logicError_MoreThanTwoLegs) {
 }
 
 TEST(NconppTest, contract) {
-    std::vector<Tensor::array_type<std::complex<double>>> tensorList =
+    std::vector<TensorOperations::array_type<std::complex<double>>> tensorList =
             {
                     xt::random::rand<double>({3, 4, 5}),
                     xt::random::rand<double>({5, 3, 6, 7, 6}),
@@ -79,16 +79,16 @@ TEST(NconppTest, contract) {
                     {6, 6}
             };
 
-    Tensor::array_type<std::complex<double>> finalTensor =
+    TensorOperations::array_type<std::complex<double>> finalTensor =
             Nconpp::contract(tensorList, legLinks);
 
-    Tensor::shape_type shape = {2, 4, 9};
-    ASSERT_EQ(Tensor::shape(finalTensor), shape);
+    TensorOperations::shape_type shape = {2, 4, 9};
+    ASSERT_EQ(TensorOperations::shape(finalTensor), shape);
 }
 
 // TODO
 //TEST(NconppTest, DISABLED_decompose) {
-//    Tensor::array_type<std::complex<double>> tensor =
+//    TensorOperations::array_type<std::complex<double>> tensor =
 //            xt::random::rand<double>({2, 4, 9});
 //
 //    Nconpp::decompose(tensor, 1);

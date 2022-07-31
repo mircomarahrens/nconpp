@@ -108,3 +108,10 @@ void Graph::BFSVisit(int v, std::vector<bool> &visited, std::vector<int> &compon
     visited[v] = true;
     component.emplace_back(v);
 }
+
+std::vector<int> Graph::getVertexIndices() {
+    std::vector<int> indices;
+    for (Vertex vertex : mVertices)
+        indices.emplace_back(vertex.index);
+    return std::move(indices);
+}
