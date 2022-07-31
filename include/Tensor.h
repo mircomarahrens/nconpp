@@ -13,24 +13,28 @@ template<typename T>
 class Tensor {
 public:
     // dynamic multi-dimensional array object
-    using at = xt::xarray<T, xt::layout_type::dynamic>;
+    using array_type = xt::xarray<T, xt::layout_type::dynamic>;
 
     // dynamic multi-dimensional shape object
-    using st = xt::dynamic_shape<size_t>;
+    using shape_type = xt::dynamic_shape<size_t>;
 
-    explicit Tensor(const at &data) : mData(data) {};
+    explicit Tensor(const array_type &data) : mData(data) {};
 
-    explicit Tensor(const st &shape) : mData(xt::random::rand<T>(shape)) {};
+    template<typename... Args>
+    explicit Tensor(Args... args) {
+        std::initializer_list<int> list{args...};
+        mData = xt::random::rand<double>(list);
+    };
 
     explicit Tensor() = default;
 
     // shape
-    st shape() {
+    shape_type shape() {
         return mData.shape();
     };
 
     // reshape
-    void reshape(const st &shape) {
+    void reshape(const shape_type &shape) {
         mData.reshape(shape);
     };
 
@@ -57,10 +61,10 @@ public:
         xt::transpose(mData, perm);
     };
 
-    const at &getData() const {
+    const array_type &getData() const {
         return mData;
     };
 
 private:
-    at &mData;
+    array_type mData;
 };

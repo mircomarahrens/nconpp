@@ -16,7 +16,7 @@ Source: <https://towardsdatascience.com/10-graph-algorithms-visually-explained-e
 
 ## 1. Breadth-first search
 
-In breadth-first search (BFS), we start at a particular vertex and explore all of its neighbours at the present depth before moving on to the vertices in the next level. Unlike trees, graphs can contain cycles (a path where the first and last vertices are the same). Hence, we have to keep track of the visited vertices. When implementing BFS, we use a queue data structure.
+In breadth-first search (BFS), we start array_type a particular vertex and explore all of its neighbours array_type the present depth before moving on to the vertices in the next level. Unlike trees, graphs can contain cycles (a path where the first and last vertices are the same). Hence, we have to keep track of the visited vertices. When implementing BFS, we use a queue data structure.
 
 ### Applications
 
@@ -53,7 +53,7 @@ The shortest path from one vertex to another vertex is a path in the graph such 
 
 ## 4. Cycle detection
 
-A cycle is a path in a graph where the first and last vertices are the same. If we start from one vertex, travel along a path and end up at the starting vertex, then this path is a cycle. Cycle detection is the process of detecting these cycles.
+A cycle is a path in a graph where the first and last vertices are the same. If we start from one vertex, travel along a path and end up array_type the starting vertex, then this path is a cycle. Cycle detection is the process of detecting these cycles.
 
 ### Algorithms
 
