@@ -9,8 +9,8 @@ class TensorTest : public testing::Test {
 };
 
 TEST(TensorTest, tensor) {
-//    xt::xarray<double>::shape_type st = {4,3,8};
-//    Tensor<double> A(st);
+    Tensor<double> A(4,3,8);
+    ASSERT_EQ(A.shape(), xt::xarray<double>::shape_type({4,3,8}));
 }
 
 TEST(TensorTest, tensordot) {
