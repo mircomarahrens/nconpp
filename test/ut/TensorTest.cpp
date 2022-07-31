@@ -12,14 +12,14 @@ TEST(TensorTest, tensordot) {
     auto A = xt::random::rand<double>({4, 3, 8});
     auto B = xt::random::rand<double>({2, 3, 1, 3, 3});
 
-    auto C = Tensor::tensordot(A, B, {1}, {1});
-    Tensor::shape_type shapeC = {4, 8, 2, 1, 3, 3};
-    ASSERT_EQ(Tensor::shape(C), shapeC);
+    auto C = TensorOperations::tensordot(A, B, {1}, {1});
+    TensorOperations::shape_type shapeC = {4, 8, 2, 1, 3, 3};
+    ASSERT_EQ(TensorOperations::shape(C), shapeC);
 
-    Tensor::array_type<std::complex<double>> D = Tensor::trace(C, 0, 4, 5);
+    TensorOperations::array_type<std::complex<double>> D = TensorOperations::trace(C, 0, 4, 5);
 
-    Tensor::shape_type shapeD = {4, 8, 2, 1};
-    ASSERT_EQ(Tensor::shape(D), shapeD);
+    TensorOperations::shape_type shapeD = {4, 8, 2, 1};
+    ASSERT_EQ(TensorOperations::shape(D), shapeD);
 }
 
 TEST(TensorTest, svd) {
@@ -28,7 +28,7 @@ TEST(TensorTest, svd) {
                                 {3, 4, 5},
                                 {6, 7, 8}};
 
-    auto res = Tensor::svd(arg_0);
+    auto res = TensorOperations::svd(arg_0);
 
     xt::xarray<double, xt::layout_type::column_major> expected_0 = {{-0.13511895, 0.90281571,  0.40824829},
                                                                     {-0.49633514, 0.29493179,  -0.81649658},

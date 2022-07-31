@@ -45,12 +45,12 @@ public:
     static void connectDisconnectedComponents(
             std::vector<T> &tensorList,
             std::vector<std::vector<int>> subscriptVectorList,
-            std::vector<int> contractionSequence = {});
+            std::vector<int> contractionSequence);
 
 private:
-    static void fillContractionSequence(std::vector<int>& contractionSequence, const std::vector<int>& legIndices);
+    static void fillContractionSequence(std::vector<int> &contractionSequence, const std::vector<int> &legIndices);
 
-    static void fillFinalOrder(std::vector<int>& finalOrder, const std::vector<int>& legIndices);
+    static void fillFinalOrder(std::vector<int> &finalOrder, const std::vector<int> &legIndices);
 
     static std::vector<int> retrieveLegIndices(const std::vector<std::vector<int>> &subscriptVectorList);
 
@@ -63,22 +63,22 @@ private:
     };
 
     // Network operations
-    static int getShortestOfLegsList(
+    static int getShortestOfSubscriptVectorList(
             const std::vector<int> &indexSet,
-            const std::vector<std::vector<int>> &legsList);
+            const std::vector<std::vector<int>> &subscriptVectorList);
 
-    static int getLongestOfLegsList(
+    static int getLongestOfSubscriptVectorList(
             const std::vector<int> &indexSet,
-            const std::vector<std::vector<int>> &legsList);
+            const std::vector<std::vector<int>> &subscriptVectorList);
 
     static int getNewLeg(
             const std::vector<int> &contractionSequenceLegs);
 
     template<class T>
-    static void expandNetwork(
-            int node,
-            int leg,
-            std::vector<T> &containerList,
-            std::vector<std::vector<int>> &legsList
+    static void expandRawTensorNetwork(
+            int vertexIndex,
+            int legIndex,
+            std::vector<T> &tensorList,
+            std::vector<std::vector<int>> &subscriptVectorList
     );
 };

@@ -73,6 +73,8 @@ public:
 
     std::vector<std::vector<int>> calculateConnectedComponents();
 
+    std::vector<int> getVertexIndices();
+
 protected:
     std::vector<Vertex> mVertices;
     std::vector<Edge> mEdges;

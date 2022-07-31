@@ -17,7 +17,8 @@ T Nconpp::contract(
     if (finalOrder.empty())
         fillFinalOrder(finalOrder, legIndices);
 
-    // TODO connect disconnected components
+    // TODO refactor this method into ???
+    connectDisconnectedComponents(tensorList, subscriptVectorList, contractionSequence);
 
     TensorNetwork tensorNetwork{tensorList, subscriptVectorList};
 
@@ -88,7 +89,7 @@ Nconpp::connectDisconnectedComponents(std::vector<T> &tensorList, std::vector<st
         st s = st::EVEN;
         auto it = connectedComponents.begin();
         while (it != connectedComponents.end()) {
-            int index = getShortestOfLegsList(*it, subscriptVectorList);
+            int index = getShortestOfSubscriptVectorList(*it, subscriptVectorList);
             currentVertex = vertices[index];
             switch (s) {
                 case (st::EVEN):
@@ -102,7 +103,7 @@ Nconpp::connectDisconnectedComponents(std::vector<T> &tensorList, std::vector<st
                     break;
             }
 
-            expandNetwork(currentVertex, newLeg, tensorList, subscriptVectorList);
+            expandRawTensorNetwork(currentVertex.index, newLeg, tensorList, subscriptVectorList);
 
             lastVertex = currentVertex;
             it++;
@@ -112,33 +113,38 @@ Nconpp::connectDisconnectedComponents(std::vector<T> &tensorList, std::vector<st
             // don't consider the last element, as this needs to be connected
             std::vector<std::vector<int>> legsSubList(
                     subscriptVectorList.begin(), subscriptVectorList.end() - 1);
+
             graph.removeVertex(currentVertex);
 
-            currentVertex = getShortestOfLegsList(
+            std::vector<int> subComponents = graph.getVertexIndices();
+
+            int currentVertexIndex = getShortestOfSubscriptVectorList(
                     subComponents,
-                    legsSubList);
+                    subscriptVectorList);
 
-            graph.addEdge(lastVertex, currentVertex);
+            currentVertex = graph.getVertices()[currentVertexIndex];
 
-            expandNetwork(currentVertex, newLeg, tensorList, subscriptVectorList);
+            graph.constructEdge(lastVertex, currentVertex);
+
+            expandRawTensorNetwork(currentVertex.index, newLeg, tensorList, subscriptVectorList);
         }
     }
 }
 
-int Nconpp::getShortestOfLegsList(const std::vector<int> &indexSet,
-                                  const std::vector<std::vector<int>> &legsList) {
+int Nconpp::getShortestOfSubscriptVectorList(const std::vector<int> &indexSet,
+                                             const std::vector<std::vector<int>> &subscriptVectorList) {
     int shortest = 0;
     for (int index: indexSet)
-        if (legsList[index].size() < legsList[shortest].size())
+        if (subscriptVectorList[index].size() < subscriptVectorList[shortest].size())
             shortest = index;
     return shortest;
 }
 
-int Nconpp::getLongestOfLegsList(const std::vector<int> &indexSet,
-                                 const std::vector<std::vector<int>> &legsList) {
+int Nconpp::getLongestOfSubscriptVectorList(const std::vector<int> &indexSet,
+                                            const std::vector<std::vector<int>> &subscriptVectorList) {
     int longest = 0;
     for (int index: indexSet)
-        if (legsList[index].size() > legsList[longest].size())
+        if (subscriptVectorList[index].size() > subscriptVectorList[longest].size())
             longest = index;
     return longest;
 }
@@ -152,14 +158,16 @@ int Nconpp::getNewLeg(const std::vector<int> &contractionSequenceLegs) {
 }
 
 template<class T>
-void Nconpp::expandNetwork(
-        int node,
-        int leg,
-        std::vector<T> &containerList,
-        std::vector<std::vector<int>> &legsList) {
-    T &container_type = containerList[node];
-    size_t dim = Tensor::dimension(container_type);
+void Nconpp::expandRawTensorNetwork(
+        int vertexIndex,
+        int legIndex,
+        std::vector<T> &tensorList,
+        std::vector<std::vector<int>> &subscriptVectorList) {
+
+    T &container_type = tensorList[vertexIndex];
+    size_t dim = TensorOperations::dimension(container_type);
     container_type =
-            Tensor::expand_dims(container_type, dim);
-    legsList[node].push_back(leg);
+            TensorOperations::expand_dims(container_type, dim);
+
+    subscriptVectorList[vertexIndex].push_back(legIndex);
 }
