@@ -8,16 +8,7 @@ if(DEFINED NCONPP_CORE_PROJECT)
     return()
 endif()
 
-#include(FetchContent)
-#FetchContent_Declare(vcpkg
-#        GIT_REPOSITORY https://github.com/microsoft/vcpkg.git
-#        GIT_TAG 2022.03.10)
-#FetchContent_GetProperties(vcpkg)
-#if(NOT vcpkg_POPULATED)
-#    FetchContent_Populate(vcpkg)
-#endif()
-# --no-warn-unused-cli -DCMAKE_TOOLCHAIN_FILE:FILEPATH=/home/mircomarahrens/vcpkg/scripts/buildsystems/vcpkg.cmake -G Ninja
-
+# git clone https://github.com/microsoft/vcpkg.git
 # activate vcpkg manifest mode
 set(VCPKG_FEATURE_FLAGS "versions")
 
@@ -75,20 +66,7 @@ target_link_libraries(nconpp
 # test via gtest
 if (CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
     message(STATUS "GoogleTest process triggered.")
-    # GoogleTest
-#    # ... via FetchContent
-#    include(FetchContent)
-#    FetchContent_Declare(
-#            googletest
-#            URL https://github.com/google/googletest/archive/609281088cfefc76f9d0ce82e1ff6c30cc3591e5.zip
-#    )
-#    # For Windows: Prevent overriding the parent project's compiler/linker settings
-#    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-#    FetchContent_MakeAvailable(googletest)
-#
-#    enable_testing()
-#
-#    # ... via submodule/clone
+    # GoogleTest: git clone https://github.com/google/googletest.git
     add_subdirectory(googletest)
     include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
