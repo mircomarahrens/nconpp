@@ -88,7 +88,7 @@ TEST(NconppTest, contract) {
 
 // TODO
 //TEST(NconppTest, DISABLED_decompose) {
-//    TensorOperations::array_type<std::complex<double>> tensor =
+//    TensorOperations::at<std::complex<double>> tensor =
 //            xt::random::rand<double>({2, 4, 9});
 //
 //    Nconpp::decompose(tensor, 1);
