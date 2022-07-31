@@ -20,6 +20,8 @@ public:
 
     explicit Tensor(const at &data) : mData(data) {};
 
+    explicit Tensor(const st &shape) : mData(xt::random::rand<T>(shape)) {};
+
     explicit Tensor() = default;
 
     // shape
@@ -55,15 +57,10 @@ public:
         xt::transpose(mData, perm);
     };
 
-    template<typename D>
-    void random(const std::vector<int> &shape) {
-        mData = xt::random::rand<D>(shape);
-    }
-
     const at &getData() const {
         return mData;
     };
 
 private:
-    const at &mData;
+    at &mData;
 };
