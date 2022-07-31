@@ -1,9 +1,5 @@
 #pragma once
 
-#include "TensorNetwork.h"
-#include "TensorNetwork.cpp"
-#include "Tensor.h"
-
 #include <optional>
 #include <set>
 #include <vector>

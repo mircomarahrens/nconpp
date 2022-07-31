@@ -1,5 +1,8 @@
 #include "Nconpp.h"
 
+#include "TensorNetwork.h"
+#include "Tensor.h"
+
 #include <vector>
 
 template<class T>
@@ -165,9 +168,7 @@ void Nconpp::expandRawTensorNetwork(
         std::vector<std::vector<int>> &subscriptVectorList) {
 
     T &container_type = tensorList[vertexIndex];
-    size_t dim = TensorOperations::dimension(container_type);
-    container_type =
-            TensorOperations::expand_dims(container_type, dim);
-
+    size_t dim = container_type.dimension(container_type);
+    container_type = container_type.expand_dims(dim);
     subscriptVectorList[vertexIndex].push_back(legIndex);
 }

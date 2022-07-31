@@ -1,49 +1,7 @@
 #include "TensorNetwork.h"
 
-namespace Utils {
-    template<typename D, typename Iter>
-    void removeByIndicesFromVector(std::vector<D> &v, Iter begin, Iter end)
-    // requires std::is_convertible_v<std::iterator_traits<Iter>::value_type, std::size_t>
-    {
-        std::size_t current_index = 0;
-
-        if (std::is_sorted(begin, end)) {
-            // sorted version - advance through begin..end
-            auto rm_iter = begin;
-            const auto pred = [&](const D &) {
-                // anymore to remove?
-                if (rm_iter != end && *rm_iter == current_index++) {
-                    return ++rm_iter, true;
-                }
-                return false;
-            };
-            v.erase(std::remove_if(v.begin(), v.end(), pred), v.end());
-        } else {
-            // unsorted version - search for each index in begin..end
-            const auto pred = [&](const D &) {
-                return std::find(begin, end, current_index++) != end;
-            };
-            v.erase(std::remove_if(v.begin(), v.end(), pred), v.end());
-        }
-    };
-
-    template<typename D>
-    std::vector<D> getIntersection(std::vector<D> vec1,
-                                   std::vector<D> vec2) {
-        std::sort(vec1.begin(), vec1.end());
-        std::sort(vec2.begin(), vec2.end());
-
-        std::vector<D> intersec = {};
-        std::set_intersection(vec1.begin(), vec1.end(),
-                              vec2.begin(), vec2.end(),
-                              std::back_inserter(intersec));
-
-        return intersec;
-    }
-}
-
 TensorNetwork::TensorNetwork(std::vector<Tensor<std::complex<double>>> &tensorList,
-                             std::vector<std::vector<size_t>> &subscriptVectorList) :
+                             std::vector<std::vector<int>> &subscriptVectorList) :
         Graph(subscriptVectorList.size()) {
     validateInputData(tensorList, subscriptVectorList);
 
@@ -53,7 +11,7 @@ TensorNetwork::TensorNetwork(std::vector<Tensor<std::complex<double>>> &tensorLi
 }
 
 void TensorNetwork::validateInputData(const std::vector<Tensor<std::complex<double>>> &tensorList,
-                                      const std::vector<std::vector<size_t>> &subscriptVectorList) {
+                                      const std::vector<std::vector<int>> &subscriptVectorList) {
     if (tensorList.size() != subscriptVectorList.size()) {
         throw std::invalid_argument(
                 "The number of tensors, which is " +
@@ -64,7 +22,7 @@ void TensorNetwork::validateInputData(const std::vector<Tensor<std::complex<doub
 }
 
 void TensorNetwork::generateVerticesTensorAndVerticesLegs(std::vector<Tensor<std::complex<double>>> &tensorList,
-                                                          std::vector<std::vector<size_t>> &subscriptVectorList) {
+                                                          std::vector<std::vector<int>> &subscriptVectorList) {
     for (int i = 0; i < tensorList.size(); i++) {
         TensorNetworkVertex tnv{mVertices[i], tensorList[i], subscriptVectorList[i]};
         mVerticesTensors.emplace_back(tnv);
@@ -122,7 +80,7 @@ void TensorNetwork::validateOutputData(const std::vector<int> &contractionSequen
     }
 }
 
-std::vector<std::size_t> TensorNetwork::getPositions(const std::vector<size_t> &search, int match) {
+std::vector<std::size_t> TensorNetwork::getPositions(const std::vector<int> &search, int match) {
     std::vector<std::size_t> results;
     auto pos = std::find_if(search.begin(), search.end(), [match](int i) { return i == match; });
     while (pos != search.end()) {
@@ -130,13 +88,6 @@ std::vector<std::size_t> TensorNetwork::getPositions(const std::vector<size_t> &
         pos = std::find_if(std::next(pos), search.end(), [match](int i) { return i == match; });
     }
     return results;
-}
-
-void TensorNetwork::expandTensorNetwork(int vertexIndex, int legIndex) {
-    auto container_type = mVerticesTensors[vertexIndex].getTensor();
-    size_t dim = container_type.dimension();
-    container_type.expand_dims(dim);
-    mVerticesTensors[vertexIndex].addLeg(legIndex);
 }
 
 void TensorNetwork::trace(std::size_t index, std::size_t axis1, std::size_t axis2) {
