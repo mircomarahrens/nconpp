@@ -24,12 +24,12 @@ TEST(NconppTest, tensorOperations) {
 //
 //    auto C = TensorOperations::tensordot(A, B, {1}, {1});
 //    TensorOperations::shape_type shapeC = {4, 8, 2, 1, 3, 3};
-//    ASSERT_EQ(TensorOperations::shape(C), shapeC);
+//    ASSERT_EQ(TensorOperations::Shape(C), shapeC);
 //
 //    TensorOperations::array_type<std::complex<double>> D = TensorOperations::trace(C, 0, 4, 5);
 //
 //    TensorOperations::shape_type shapeD = {4, 8, 2, 1};
-//    ASSERT_EQ(TensorOperations::shape(D), shapeD);
+//    ASSERT_EQ(TensorOperations::Shape(D), shapeD);
 }
 
 TEST(NconppTest, logicError_MoreThanTwoLegs) {
@@ -82,8 +82,8 @@ TEST(NconppTest, contract) {
 //    TensorOperations::array_type<std::complex<double>> finalTensor =
 //            Nconpp::contract(tensorList, legLinks);
 //
-//    TensorOperations::shape_type shape = {2, 4, 9};
-//    ASSERT_EQ(TensorOperations::shape(finalTensor), shape);
+//    TensorOperations::shape_type Shape = {2, 4, 9};
+//    ASSERT_EQ(TensorOperations::Shape(finalTensor), Shape);
 }
 
 // TODO

@@ -48,7 +48,8 @@ set(NCONPP_INCLUDE
 set(NCONPP_SRC
         src/Graph.cpp
         src/TensorNetwork.cpp
-        src/Tensor.cpp)
+        src/Tensor.cpp
+        )
 
 add_library(nconpp SHARED
         ${NCONPP_LIB}

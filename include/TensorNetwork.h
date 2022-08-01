@@ -3,6 +3,9 @@
 #include "Graph.h"
 #include "Tensor.h"
 
+#include <algorithm>
+#include <complex>
+
 namespace Utils {
     template<typename D, typename Iter>
     void removeByIndicesFromVector(std::vector<D> &v, Iter begin, Iter end)

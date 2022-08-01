@@ -91,10 +91,10 @@ std::vector<std::size_t> TensorNetwork::getPositions(const std::vector<int> &sea
 }
 
 void TensorNetwork::trace(std::size_t index, std::size_t axis1, std::size_t axis2) {
-    // TODO
+    // TODO perform a trace in-place
 }
 
 void TensorNetwork::tensordot(std::size_t indexA, std::size_t indexB, const std::vector<std::size_t> &axisA,
                               const std::vector<std::size_t> &axisB) {
-    // TODO
+    // TODO perform a tensordot in-place
 }
