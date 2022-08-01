@@ -9,8 +9,9 @@ class TensorTest : public testing::Test {
 };
 
 TEST(TensorTest, tensor) {
-    Tensor<double> A(4,3,8);
-    ASSERT_EQ(A.shape(), xt::xarray<double>::shape_type({4,3,8}));
+    std::vector<int> s = {4,3,8};
+    Tensor<double> A({4,3,8});
+    ASSERT_EQ(A.shape(), s);
 }
 
 TEST(TensorTest, tensordot) {
@@ -19,12 +20,12 @@ TEST(TensorTest, tensordot) {
 //
 //    auto C = TensorOperations::tensordot(A, B, {1}, {1});
 //    TensorOperations::shape_type shapeC = {4, 8, 2, 1, 3, 3};
-//    ASSERT_EQ(TensorOperations::shape(C), shapeC);
+//    ASSERT_EQ(TensorOperations::Shape(C), shapeC);
 //
 //    TensorOperations::array_type<std::complex<double>> D = TensorOperations::trace(C, 0, 4, 5);
 //
 //    TensorOperations::shape_type shapeD = {4, 8, 2, 1};
-//    ASSERT_EQ(TensorOperations::shape(D), shapeD);
+//    ASSERT_EQ(TensorOperations::Shape(D), shapeD);
 }
 
 TEST(TensorTest, svd) {

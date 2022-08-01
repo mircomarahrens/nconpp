@@ -167,8 +167,8 @@ void Nconpp::expandRawTensorNetwork(
         std::vector<T> &tensorList,
         std::vector<std::vector<int>> &subscriptVectorList) {
 
-    T &container_type = tensorList[vertexIndex];
-    size_t dim = container_type.dimension(container_type);
-    container_type = container_type.expand_dims(dim);
-    subscriptVectorList[vertexIndex].push_back(legIndex);
+//    T &container_type = tensorList[vertexIndex];
+//    size_t dim = container_type.dimension(container_type);
+//    container_type = container_type.expand_dims(dim);
+//    subscriptVectorList[vertexIndex].push_back(legIndex);
 }
