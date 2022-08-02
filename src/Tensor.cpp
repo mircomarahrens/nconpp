@@ -22,24 +22,30 @@ void Tensor<T>::reshape(const std::vector<int> &shape) {
 
 template<typename T>
 auto Tensor<T>::dimension() {
-//    return mData.dimension();
+    return mShape.size();
 };
 
+// Return the product of array elements over a given axis.
 template<typename T>
 void Tensor<T>::prod(std::size_t axis) {
     //xt::prod(mData, axis);
 }
 
+// Return the product of array elements over a given axis.
 template<typename T>
 void Tensor<T>::prod(const std::vector<std::size_t> &axis) {
 //    xt::prod(mData, axis);
 }
 
+// Expand the shape of an array.
+// Insert a new axis that will appear at the axis position in the expanded array shape.
 template<typename T>
 void Tensor<T>::expand_dims(std::size_t axis) {
 //    xt::expand_dims(mData, axis);
 }
 
+// Reverse or permute the axes of an array; returns the modified array.
+// For an array a with two axes, transpose(a) gives the matrix transpose.
 template<typename T>
 void Tensor<T>::transpose(const std::vector<int> &perm) {
 //    xt::transpose(mData, perm);
@@ -50,6 +56,7 @@ const auto &Tensor<T>::getData() {
     return mData;
 }
 
+// Fill the data array with randomized data.
 template<typename T>
 void Tensor<T>::randomize(size_t lower, size_t upper) {
     // First create an instance of an engine.
@@ -59,7 +66,7 @@ void Tensor<T>::randomize(size_t lower, size_t upper) {
     std::mt19937 mersenne_engine{rnd_device()};  // Generates random doubles
     std::uniform_real_distribution<double> dist(0, 1.0);
 
-    int dim = std::accumulate(std::begin(mShape), std::end(mShape), 1, std::multiplies<int>());
+    int dim = std::accumulate(std::begin(mShape), std::end(mShape), 1, std::multiplies<>());
     mData = std::vector<T>(dim);
 
     if (std::is_same<T, std::complex<double>>::value)
