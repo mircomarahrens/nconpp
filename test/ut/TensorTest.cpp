@@ -1,6 +1,10 @@
 #include <gtest/gtest.h>
 
 #include "Tensor.h"
+#include "Tensor.cpp"
+
+#include <complex>
+#include <random>
 
 class TensorTest : public testing::Test {
     TensorTest() = default;
@@ -8,11 +12,35 @@ class TensorTest : public testing::Test {
     ~TensorTest() override = default;
 };
 
-TEST(TensorTest, tensor) {
-    std::vector<int> s = {4,3,8};
-    Tensor<double> A({4,3,8});
+TEST(TensorTest, tensorWithoutData) {
+    std::vector<int> s = {4, 3, 8};
+    Tensor<double> A({4, 3, 8});
     ASSERT_EQ(A.shape(), s);
 }
+
+TEST(TensorTest, tensorFromRandomData) {
+    std::vector<int> s = {4, 3, 8};
+
+    std::vector<double> data(4 * 3 * 8);
+
+    std::default_random_engine gen{std::random_device{}()};
+    std::uniform_real_distribution<double> dist(0, 1);
+    std::generate(std::begin(data), std::end(data), [&] { return dist(gen); });
+
+    Tensor<double> A(data, {4, 3, 8});
+    ASSERT_EQ(A.shape(), s);
+    ASSERT_EQ(A.getData(), data);
+    ASSERT_EQ(A.getData().size(), 4 * 3 * 8);
+}
+
+TEST(TensorTest, tensorRandomizeData) {
+    std::vector<int> s = {4, 3, 8};
+    Tensor<std::complex<double>> A({4, 3, 8});
+    A.randomize();
+    ASSERT_EQ(A.shape(), s);
+    ASSERT_EQ(A.getData().size(), 4 * 3 * 8);
+}
+
 
 TEST(TensorTest, tensordot) {
 //    auto A = xt::random::rand<double>({4, 3, 8});
