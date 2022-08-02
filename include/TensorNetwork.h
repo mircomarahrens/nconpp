@@ -2,6 +2,7 @@
 
 #include "Graph.h"
 #include "Tensor.h"
+#include "Tensor.cpp"
 
 #include <algorithm>
 #include <complex>

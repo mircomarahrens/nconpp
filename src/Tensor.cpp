@@ -1,6 +1,8 @@
 #include "Tensor.h"
 
-#include <utility>
+#include <algorithm>
+#include <complex>
+#include <random>
 
 template<typename T>
 Tensor<T>::Tensor(std::vector<T> data, std::vector<int> shape) : mData(std::move(data)), mShape(std::move(shape)) {}
@@ -20,7 +22,7 @@ void Tensor<T>::reshape(const std::vector<int> &shape) {
 
 template<typename T>
 auto Tensor<T>::dimension() {
-    return mData.dimension();
+//    return mData.dimension();
 };
 
 template<typename T>
@@ -46,4 +48,26 @@ void Tensor<T>::transpose(const std::vector<int> &perm) {
 template<typename T>
 const auto &Tensor<T>::getData() {
     return mData;
+}
+
+template<typename T>
+void Tensor<T>::randomize(size_t lower, size_t upper) {
+    // First create an instance of an engine.
+    std::random_device rnd_device;
+
+    // Specify the engine and distribution.
+    std::mt19937 mersenne_engine{rnd_device()};  // Generates random doubles
+    std::uniform_real_distribution<double> dist(0, 1.0);
+
+    int dim = std::accumulate(std::begin(mShape), std::end(mShape), 1, std::multiplies<int>());
+    mData = std::vector<T>(dim);
+
+    if (std::is_same<T, std::complex<double>>::value)
+        std::generate(std::begin(mData), std::end(mData), [&dist, &mersenne_engine]() {
+            return std::complex<double>(dist(mersenne_engine), dist(mersenne_engine));
+        });
+    else
+        std::generate(std::begin(mData), std::end(mData), [&dist, &mersenne_engine]() {
+            return dist(mersenne_engine);
+        });
 }

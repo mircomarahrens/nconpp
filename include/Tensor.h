@@ -2,7 +2,6 @@
 
 #include <vector>
 
-// Wrapper for tensor containers used by nconpp based on xtensor.
 template<typename T>
 class Tensor {
 public:
@@ -13,10 +12,13 @@ public:
     ~Tensor() = default;
 
     // Shape
-    const std::vector<int>& shape();
+    const std::vector<int> &shape();
 
     // reshape
     void reshape(const std::vector<int> &shape);
+
+    // random values
+    void randomize(std::size_t lower = 0, std::size_t upper = 1);
 
     // dimension
     auto dimension();
@@ -34,6 +36,6 @@ public:
     const auto &getData();
 
 private:
-    std::vector<T> mData = {};
+    std::vector<T> mData;
     std::vector<int> mShape;
 };
