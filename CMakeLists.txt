@@ -75,11 +75,11 @@ if (CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
     gtest_discover_tests(nconpp_test)
 endif ()
 
-## python via pybind
+## python via python
 #if (NOT CMAKE_BUILD_TYPE MATCHES Debug AND SKBUILD)
 #    message(STATUS "Skbuild process triggered.")
 #
-#    set(PYBIND_MAIN pybind/main.cpp)
+#    set(PYBIND_MAIN python/main.cpp)
 #    set(PYBIND_MODULE _nconpp)
 #
 #    include(FetchContent)
