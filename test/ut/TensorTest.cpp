@@ -1,5 +1,8 @@
 #include <gtest/gtest.h>
 
+#define TEST_FRIENDS \
+    friend class TensorTest_flatten_Test; friend class TensorTest_unflatten_Test;
+
 #include "Tensor.h"
 #include "Tensor.cpp"
 
@@ -12,14 +15,58 @@ class TensorTest : public testing::Test {
     ~TensorTest() override = default;
 };
 
-TEST(TensorTest, tensorWithoutData) {
+TEST(DISABLED_TensorTest, permutation) {
+    std::vector<int> s = {4, 3, 8};
+    for (int i: s) {
+        for (int j = 0; j < i; j++)
+            std::cout << j << std::endl;
+    }
+}
+
+TEST(TensorTest, flatten) {
+    std::vector<int> s = {2, 3, 2};
+    Tensor<double> A({2, 3, 2});
+
+    ASSERT_EQ(A.flatten(0, 0, 0), 0);
+    ASSERT_EQ(A.flatten(0, 0, 1), 1);
+    ASSERT_EQ(A.flatten(0, 1, 0), 2);
+    ASSERT_EQ(A.flatten(0, 1, 1), 3);
+    ASSERT_EQ(A.flatten(0, 2, 0), 4);
+    ASSERT_EQ(A.flatten(0, 2, 1), 5);
+    ASSERT_EQ(A.flatten(1, 0, 0), 6);
+    ASSERT_EQ(A.flatten(1, 0, 1), 7);
+    ASSERT_EQ(A.flatten(1, 1, 0), 8);
+    ASSERT_EQ(A.flatten(1, 1, 1), 9);
+    ASSERT_EQ(A.flatten(1, 2, 0), 10);
+    ASSERT_EQ(A.flatten(1, 2, 1), 11);
+}
+
+TEST(TensorTest, unflatten) {
+    std::vector<int> s = {2, 3, 2};
+    Tensor<double> A(s);
+
+    ASSERT_EQ(A.unflatten(0), std::vector<int>({ 0, 0, 0 }));
+    ASSERT_EQ(A.unflatten(1), std::vector<int>({ 0, 0, 1 }));
+    ASSERT_EQ(A.unflatten(2), std::vector<int>({ 0, 1, 0 }));
+    ASSERT_EQ(A.unflatten(3), std::vector<int>({ 0, 1, 1 }));
+    ASSERT_EQ(A.unflatten(4), std::vector<int>({ 0, 2, 0 }));
+    ASSERT_EQ(A.unflatten(5), std::vector<int>({ 0, 2, 1 }));
+    ASSERT_EQ(A.unflatten(6), std::vector<int>({ 1, 0, 0 }));
+    ASSERT_EQ(A.unflatten(7), std::vector<int>({ 1, 0, 1 }));
+    ASSERT_EQ(A.unflatten(8), std::vector<int>({ 1, 1, 0 }));
+    ASSERT_EQ(A.unflatten(9), std::vector<int>({ 1, 1, 1 }));
+    ASSERT_EQ(A.unflatten(10), std::vector<int>({ 1, 2, 0 }));
+    ASSERT_EQ(A.unflatten(11), std::vector<int>({ 1, 2, 1 }));
+}
+
+TEST(TensorTest, constructorShape) {
     std::vector<int> s = {4, 3, 8};
     Tensor<double> A({4, 3, 8});
     ASSERT_EQ(A.shape(), s);
 }
 
-TEST(TensorTest, tensorFromRandomData) {
-    std::vector<int> s = {4, 3, 8};
+TEST(TensorTest, constructorRandomData) {
+    std::vector<int> s = {4, 3, 1, 8};
 
     std::vector<double> data(4 * 3 * 8);
 
@@ -27,18 +74,67 @@ TEST(TensorTest, tensorFromRandomData) {
     std::uniform_real_distribution<double> dist(0, 1);
     std::generate(std::begin(data), std::end(data), [&] { return dist(gen); });
 
-    Tensor<double> A(data, {4, 3, 8});
+    Tensor<double> A(data, {4, 3, 1, 8});
     ASSERT_EQ(A.shape(), s);
     ASSERT_EQ(A.getData(), data);
     ASSERT_EQ(A.getData().size(), 4 * 3 * 8);
 }
 
-TEST(TensorTest, tensorRandomizeData) {
+TEST(TensorTest, randomize) {
     std::vector<int> s = {4, 3, 8};
     Tensor<std::complex<double>> A({4, 3, 8});
     A.randomize();
     ASSERT_EQ(A.shape(), s);
     ASSERT_EQ(A.getData().size(), 4 * 3 * 8);
+}
+
+TEST(TensorTest, dimension) {
+    std::vector<int> s = {4, 3, 8};
+    Tensor<std::complex<double>> A({4, 3, 8});
+    ASSERT_EQ(A.dimension(), 3);
+}
+
+TEST(TensorTest, reshapeMatch) {
+    std::vector<int> s = {4, 3, 8};
+    Tensor<std::complex<double>> A({4, 3, 8});
+    A.reshape({3, 4, 2, 2, 2});
+}
+
+TEST(TensorTest, reshapeNoMatch) {
+    std::vector<int> s = {4, 3, 8};
+    Tensor<std::complex<double>> A({4, 3, 8});
+    EXPECT_THROW(A.reshape({8, 8}), std::logic_error);
+}
+
+TEST(TensorTest, prod1) {
+    std::vector<int> s = {3};
+    std::vector<int> d = {1, 2, 3};
+    Tensor<int> A(d, s);
+
+    auto res = A.prod(0);
+
+    ASSERT_EQ(res, 6);
+}
+
+TEST(TensorTest, prod2) {
+//    std::vector<int> s = {3, 1, 2, 1};
+//    std::vector<int> d = {1, 2, 3, 4, 5, 6};
+//    Tensor<int> A(d, s);
+//
+//    auto res = A.prod(1);
+//
+//    ASSERT_EQ(res, 4 * 5);
+}
+
+TEST(TensorTest, prod3) {
+//    std::vector<int> s = {3, 2, 1, 3, 4};
+//    std::vector<int> d = {1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4};
+//    Tensor<int> A(d, s);
+//
+//    auto res = A.prod({1, 3});
+//
+//    ASSERT_EQ(res[0], 4 * 5);
+//    ASSERT_EQ(res[1], 7 * 8 * 9);
 }
 
 
@@ -54,25 +150,4 @@ TEST(TensorTest, tensordot) {
 //
 //    TensorOperations::shape_type shapeD = {4, 8, 2, 1};
 //    ASSERT_EQ(TensorOperations::Shape(D), shapeD);
-}
-
-TEST(TensorTest, svd) {
-//    // from https://github.com/xtensor-stack/xtensor-blas/blob/master/test/test_linalg.cpp
-//    xt::xarray<double> arg_0 = {{0, 1, 2},
-//                                {3, 4, 5},
-//                                {6, 7, 8}};
-//
-//    auto res = TensorOperations::svd(arg_0);
-//
-//    xt::xarray<double, xt::layout_type::column_major> expected_0 = {{-0.13511895, 0.90281571,  0.40824829},
-//                                                                    {-0.49633514, 0.29493179,  -0.81649658},
-//                                                                    {-0.85755134, -0.31295213, 0.40824829}};
-//    xt::xarray<double, xt::layout_type::column_major> expected_1 = {1.42267074e+01, 1.26522599e+00, 5.89938022e-16};
-//    xt::xarray<double, xt::layout_type::column_major> expected_2 = {{-0.4663281,  -0.57099079, -0.67565348},
-//                                                                    {-0.78477477, -0.08545673, 0.61386131},
-//                                                                    {-0.40824829, 0.81649658,  -0.40824829}};
-//
-//    EXPECT_TRUE(allclose(std::get<0>(res), expected_0));
-//    EXPECT_TRUE(allclose(std::get<1>(res), expected_1));
-//    EXPECT_TRUE(allclose(std::get<2>(res), expected_2));
 }

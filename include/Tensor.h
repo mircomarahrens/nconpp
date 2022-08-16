@@ -1,6 +1,12 @@
 #pragma once
 
+#ifndef TEST_FRIENDS
+#define TEST_FRIENDS
+#endif
+
 #include <vector>
+#include <string>
+#include <unordered_map>
 
 template<typename T>
 class Tensor {
@@ -18,15 +24,15 @@ public:
     void reshape(const std::vector<int> &shape);
 
     // random values
-    void randomize(std::size_t lower = 0, std::size_t upper = 1);
+    void randomize(double lower = 0, double upper = 1.0);
 
     // dimension
     auto dimension();
 
     // prod
-    void prod(std::size_t axis);
+    T prod(int axis);
 
-    void prod(const std::vector<std::size_t> &axis);
+    std::vector<T> prod(std::vector<int> axis);
 
     // expand_dims
     void expand_dims(std::size_t axis);
@@ -36,6 +42,14 @@ public:
     const auto &getData();
 
 private:
+    TEST_FRIENDS;
     std::vector<T> mData;
     std::vector<int> mShape;
+
+    template<typename... Args>
+    int flatten(Args... args);
+
+    auto unflatten(int val);
+
+    std::unordered_map<int, int> getProducts();
 };
