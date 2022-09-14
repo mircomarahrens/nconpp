@@ -3,72 +3,115 @@
 #include <algorithm>
 #include <complex>
 #include <random>
-//#include <cstdarg>
-//#include <iostream>
-//#include <cassert>
+#include <unordered_map>
 
-template<typename T>
-Tensor<T>::Tensor(std::vector<T> data, std::vector<int> shape) : mData(std::move(data)), mShape(std::move(shape)) {}
-
-template<typename T>
-Tensor<T>::Tensor(std::vector<int> shape) : mShape(std::move(shape)) {}
-
-template<typename T>
-const std::vector<int> &Tensor<T>::shape() {
-    return mShape;
+template<class T>
+Tensor<T>::Tensor(std::vector<T> data, std::vector<std::size_t> shape) {
+    compute_prods(shape);
+    auto num_elements =
+            std::accumulate(shape.cbegin(), shape.cend(), 1, std::multiplies<std::size_t>{});
+    check_number_elements(num_elements, data.size());
+    mShape = std::move(shape);
+    mData = std::move(data);
 }
 
-template<typename T>
-void Tensor<T>::reshape(const std::vector<int> &shape) {
-    auto dim1 = std::accumulate(begin(shape), end(shape), 1, std::multiplies<>());
-    auto dim2 = std::accumulate(begin(mShape), end(mShape), 1, std::multiplies<>());
-    if (dim1 == dim2)
-        mShape = shape;
-    else
-        throw std::logic_error("Total number of elements in new shape does not match old shape.");
+template<class T>
+Tensor<T>::Tensor(std::vector<std::size_t> shape) {
+    compute_prods(shape);
+    mShape = std::move(shape);
 }
 
-template<typename T>
-auto Tensor<T>::dimension() {
+template<class T>
+Tensor<T>::Tensor(std::initializer_list<std::size_t> shape) : mShape(shape) { compute_prods(shape); }
+
+template<class T>
+std::size_t Tensor<T>::dimension() const {
     return mShape.size();
 };
 
-// Return the product of array elements over a given axis.
-template<typename T>
-T Tensor<T>::prod(int axis) {
-    // TODO think about mapping multiple dimension to one dimension
-    return 0;
+template<class T>
+std::size_t Tensor<T>::size() const {
+    return std::accumulate(mShape.cbegin(), mShape.cend(), std::size_t(1), std::multiplies<>());
 }
 
-// Return the product of array elements over a given axis.
-template<typename T>
-std::vector<T> Tensor<T>::prod(std::vector<int> axis) {
-    std::vector<T> res(axis.size());
-    std::fill(res.begin(), res.end(), 1);
-    return res;
+template<class T>
+const std::vector<std::size_t> &Tensor<T>::shape() {
+    return mShape;
+}
+
+template<class T>
+void Tensor<T>::reshape(const std::vector<std::size_t> &shape) {
+    check_new_shape(mShape, shape);
+
+    mShape = shape;
+    compute_prods(shape);
+}
+
+/**
+ * Return the product of array elements over a given axis.
+ *
+ * @tparam T
+ * @param axis
+ * @return
+ */
+template<class T>
+T Tensor<T>::prod(std::size_t axis) {
+    std::vector<std::size_t> indices = mShape;
+    for (std::size_t &i: indices)
+        i -= 1;
+
+    indices[axis] = 0;
+    int index = flatten(indices);
+    auto prod = mData[index];
+    for (std::size_t i = 1; i < mShape[axis]; ++i) {
+        indices[axis] = i;
+        prod *= mData[flatten(indices)];
+    }
+    return prod;
+}
+
+/**
+ * Return the products of array elements over given axes.
+ *
+ * @tparam T
+ * @param axes
+ * @return
+ */
+template<class T>
+std::vector<T> Tensor<T>::prod(const std::vector<std::size_t> &axes) {
+    std::vector<T> res(axes.size());
+    for (std::size_t i = 0; i < axes.size(); ++i)
+        res[i] = prod(axes[i]);
+    return std::move(res);
 }
 
 // Expand the shape of an array.
 // Insert a new axis that will appear at the axis position in the expanded array shape.
-template<typename T>
+template<class T>
 void Tensor<T>::expand_dims(std::size_t axis) {
 //    xt::expand_dims(mData, axis);
 }
 
-// Reverse or permute the axes of an array; returns the modified array.
-// For an array a with two axes, transpose(a) gives the matrix transpose.
-template<typename T>
-void Tensor<T>::transpose(const std::vector<int> &perm) {
-//    xt::transpose(mData, perm);
+template<class T>
+void Tensor<T>::transpose(const std::vector<std::size_t> &perm) {
+    check_perm(perm);
+    reorder(mShape, perm);
+    reorder(mProds, perm);
 }
 
-template<typename T>
+template<class T>
 const auto &Tensor<T>::getData() {
     return mData;
 }
 
-// Fill the data array with randomized data.
-template<typename T>
+/**
+ * Fill the data vector with randomized values using the engine mt19937.
+ *
+ * @tparam T
+ * @param lower
+ * @param upper
+ */
+template<class T>
 void Tensor<T>::randomize(double lower, double upper) {
     // First create an instance of an engine.
     std::random_device rnd_device;
@@ -90,88 +133,132 @@ void Tensor<T>::randomize(double lower, double upper) {
         });
 }
 
-//int floor_div(int a, int b) {
-//    assert(b != 0);
-//    div_t r = div(a, b);
-//    if (r.rem != 0 && ((a < 0) ^ (b < 0)))
-//        r.quot--;
-//    return r.quot;
-//}
-
 /**
- *
- * i_j = \frac{i-\sum_{l=0}^{j-1}{i_l\prod_{k=l+1}^{d}{n_k}}}{\prod_{k=j+1}^{d}n_k}
+ * Flatten a given list of indices via the formula
+ * i = i_d + \sum_{j=0}^{d-1}{i_j\prod_{k=j+1}^{d}{n_k}}
+ * with i_j = \{i_0, i_1, \cdots, i_d\}, the "indices",
+ * and n_k = \{n_0, n_1, \cdots, n_d\}, the "shape".
  *
  * @tparam T
- * @param val
+ * @tparam Args: variadic template (C++11)
+ * @param args: index list as (i_0, i_1, ..., i_d).
  * @return
  */
-template<typename T>
-auto Tensor<T>::unflatten(int val) {
-    int d = static_cast<int>(mShape.size());
-    std::unordered_map<int, int> prods;
-    prods[d - 1] = mShape[d - 1];
-    for (int j = d - 2; j >= 0; j--)
-        prods[j] = mShape[j] * prods[j + 1];
+template<class T>
+template<typename... Args>
+std::size_t Tensor<T>::flatten(Args... args) {
+    std::size_t size{sizeof...(Args)};
+    check_index_size(size);
 
-    std::vector<int> indices = {val/prods[1]};
-    for (int j = 1; j < d; j++) {
-        double tmp = val;
-        for (int l = 0; l < j; l++)
-            tmp -= prods[l+1]*indices[l];
-        if (j < d - 1)
-            tmp = floor(tmp/prods[j+1]);
-        indices.emplace_back(tmp);
-    }
-    return indices;
+    std::vector<std::size_t> indices;
+    for (const auto &arg: {args...})
+        indices.emplace_back(arg);
+
+    return flatten_details(size, indices);
 }
 
 /**
  * Flatten a given list of indices via the formula
- *
- * i = i_d + \sum_{j=0}^{d-1}{i_j\prod_{k=j+1}^{d}{n_k}}
- *
+ * i = \sum_{j=0}^{d}{i_j\prod_{k=j+1}^{d}{n_k}}
  * with i_j = \{i_0, i_1, \cdots, i_d\}, the "indices",
  * and n_k = \{n_0, n_1, \cdots, n_d\}, the "shape".
  *
- * Remark: The method makes use of variadic template (C++11).
- *
  * @tparam T
- * @tparam Args
- * @param args: index list as (i_0, i_1, ..., i_d).
+ * @param args
  * @return
  */
-template<typename T>
-template<typename... Args>
-int Tensor<T>::flatten(Args... args) {
-    int size{sizeof...(Args)};
-    if (size != mShape.size())
-        throw std::logic_error(
-                "Index tuple does not belong to this tensor. Number of indices does not match shape size.");
-
-    std::vector<int> indices;
-    for (const auto &arg: {args...}) {
-        indices.emplace_back(arg);
-    };
-
-    int result = indices[size - 1];
-    int temp = 1;
-    for (int j1 = 0; j1 < size - 1; j1++) {
-        temp = indices[j1];
-        for (int j2 = j1 + 1; j2 < size; j2++)
-            temp *= mShape[j2];
-        result += temp;
-    }
-
-    return result;
+template<class T>
+std::size_t Tensor<T>::flatten(std::vector<std::size_t> indices) {
+    std::size_t size = indices.size();
+    check_index_size(size);
+    return flatten_details(size, indices);
 }
 
-template<typename T>
-std::unordered_map<int, int> Tensor<T>::getProducts() {
-    int d = mShape.size();
-    std::unordered_map<int, int> prods;
-    prods[d - 1] = mShape[d - 1];
-    for (int j = d - 2; j >= 0; j--)
-        prods[j] = mShape[j] * prods[j + 1];
-    return prods;
+template<class T>
+std::size_t
+Tensor<T>::flatten_details(std::size_t size, std::vector<std::size_t> indices) {
+    std::size_t id = 0;
+    for (std::size_t j = 0; j < size; j++) {
+        check_index(indices[j], j);
+        id += std::multiplies{}(indices[j], mProds[j]);
+    }
+    return id;
+}
+
+
+template<class T>
+void Tensor<T>::reorder(std::vector<std::size_t> &v, const std::vector<std::size_t> &order) {
+    auto orderCopy = order;
+    std::size_t i,j,k;
+    for(i = 0; i < orderCopy.size() - 1; ++i) {
+        j = orderCopy[i];
+        if (j != i) {
+            for (k = i + 1; order[k] != i; ++k);
+            std::swap(orderCopy[i], orderCopy[k]);
+            std::swap(v[i], v[j]);
+        }
+    }
+}
+
+/**
+ * Compute the products used in the methods flatten and unflatten.
+ *
+ * @tparam T
+ */
+template<class T>
+void Tensor<T>::compute_prods(const std::vector<std::size_t> &shape) {
+    std::size_t d = shape.size();
+    mProds = std::vector<std::size_t>(d);
+    mProds[d - 1] = 1;
+    for (auto j = d - 1; j-- > 0; )
+        mProds[j] = std::multiplies{}(shape[j+1], mProds[j + 1]);
+}
+
+template<class T>
+template<class... I>
+T &Tensor<T>::operator()(I... i) {
+    return mData[flatten(i...)];
+}
+
+template<class T>
+template<class... I>
+const T &Tensor<T>::operator()(I... i) const {
+    return mData[flatten(i...)];
+}
+
+template<class T>
+void Tensor<T>::check_index_size(std::size_t index_size) {
+    if (index_size != mShape.size())
+        throw std::logic_error(
+                "Index tuple does not belong to this tensor. Number of indices does not match shape size.");
+}
+
+template<class T>
+void Tensor<T>::check_number_elements(std::size_t num_elements, std::size_t data_size) {
+    if (num_elements != data_size)
+        throw std::logic_error(
+                "Size of data container does not match number of possible num_elements.");
+}
+
+template<class T>
+void Tensor<T>::check_new_shape(std::vector<std::size_t> s1, std::vector<std::size_t> s2) {
+    auto dim1 = std::accumulate(s1.begin(), s1.end(), 1, std::multiplies<>());
+    auto dim2 = std::accumulate(s2.begin(), s2.end(), 1, std::multiplies<>());
+    if (dim1 != dim2)
+        throw std::logic_error(
+                "Total number of elements in new shape does not match old shape.");
+}
+
+template<class T>
+void Tensor<T>::check_index(std::size_t index, std::size_t axis) {
+    if (index > mShape[axis] - 1)
+        throw std::logic_error(
+                "Index " + std::to_string(index) + " out of range for axis " + std::to_string(axis) +
+                " with dimension " + std::to_string(mShape[axis]));
+}
+
+template<class T>
+void Tensor<T>::check_perm(const std::vector<std::size_t> &perm) {
+    if (perm.size() != mShape.size())
+        throw std::logic_error("Number of axes in perm do not match shape.");
 }
