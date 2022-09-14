@@ -5,51 +5,77 @@
 #endif
 
 #include <vector>
-#include <string>
+#include <utility>
 #include <unordered_map>
 
-template<typename T>
+/**
+ * This class is inspired by xtensor (https://github.com/xtensor-stack/xtensor) and the articles within
+ * https://johan-mabille.medium.com/how-we-wrote-xtensor-9365952372d9. I reimplemented most of it for
+ * learning and add slightly modifications to ensure in-place modification of the data container.
+ *
+ * @tparam T
+ */
+template<class T>
 class Tensor {
 public:
-    explicit Tensor(std::vector<T> data, std::vector<int> shape);
+    explicit Tensor(std::vector<T> data, std::vector<std::size_t> shape);
 
-    explicit Tensor(std::vector<int> shape);
+    explicit Tensor(std::vector<std::size_t> shape);
+
+    Tensor(std::initializer_list<std::size_t> shape);
 
     ~Tensor() = default;
 
-    // Shape
-    const std::vector<int> &shape();
+    [[nodiscard]] std::size_t dimension() const;
 
-    // reshape
-    void reshape(const std::vector<int> &shape);
+    [[nodiscard]] std::size_t size() const;
 
-    // random values
+    const std::vector<std::size_t> &shape();
+
+    void reshape(const std::vector<std::size_t> &shape);
+
     void randomize(double lower = 0, double upper = 1.0);
 
-    // dimension
-    auto dimension();
+    T prod(std::size_t axis);
 
-    // prod
-    T prod(int axis);
+    std::vector<T> prod(const std::vector<std::size_t> &axes);
 
-    std::vector<T> prod(std::vector<int> axis);
-
-    // expand_dims
     void expand_dims(std::size_t axis);
 
-    void transpose(const std::vector<int> &perm);
+    void transpose(const std::vector<std::size_t> &perm);
 
     const auto &getData();
+
+    template<class... I>
+    T &operator()(I... i);
+
+    template<class... I>
+    const T &operator()(I... i) const;
 
 private:
     TEST_FRIENDS;
     std::vector<T> mData;
-    std::vector<int> mShape;
+    std::vector<std::size_t> mShape;
+    std::vector<std::size_t> mProds;
 
     template<typename... Args>
-    int flatten(Args... args);
+    std::size_t flatten(Args... args);
 
-    auto unflatten(int val);
+    std::size_t flatten(std::vector<std::size_t> indices);
 
-    std::unordered_map<int, int> getProducts();
+    std::size_t flatten_details(std::size_t size, std::vector<std::size_t> indices);
+
+    void reorder(std::vector<std::size_t> &v, const std::vector<std::size_t> &order);
+
+    void compute_prods(const std::vector<std::size_t> &shape);
+
+    void check_index_size(std::size_t index_size);
+
+    void check_index(std::size_t index, std::size_t axis);
+
+    void check_perm(const std::vector<std::size_t> &perm);
+
+    void check_number_elements(std::size_t num_elements, std::size_t data_size);
+
+    void check_new_shape(std::vector<std::size_t> s1, std::vector<std::size_t> s2);
 };
