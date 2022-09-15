@@ -10,8 +10,7 @@
 
 /**
  * This class is inspired by xtensor (https://github.com/xtensor-stack/xtensor) and the articles within
- * https://johan-mabille.medium.com/how-we-wrote-xtensor-9365952372d9. I reimplemented most of it for
- * learning and add slightly modifications to ensure in-place modification of the data container.
+ * https://johan-mabille.medium.com/how-we-wrote-xtensor-9365952372d9.
  *
  * @tparam T
  */
@@ -43,6 +42,8 @@ public:
     void expand_dims(std::size_t axis);
 
     void transpose(const std::vector<std::size_t> &perm);
+
+    // TODO s.th. like "A.tensordot(B, axes)" for inplace data manipulation?
 
     const auto &getData();
 
