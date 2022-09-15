@@ -32,7 +32,7 @@ set(NCONPP_SRC
         src/Graph.cpp
         src/Tensor.cpp
         src/TensorNetwork.cpp
-        )
+        include/TensorLinAlg.h)
 
 add_library(nconpp SHARED
         ${NCONPP_LIB}
