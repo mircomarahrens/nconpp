@@ -43,8 +43,6 @@ public:
 
     void transpose(const std::vector<std::size_t> &perm);
 
-    // TODO s.th. like "A.tensordot(B, axes)" for inplace data manipulation?
-
     const auto &getData();
 
     template<class... I>
@@ -57,7 +55,7 @@ private:
     TEST_FRIENDS;
     std::vector<T> mData;
     std::vector<std::size_t> mShape;
-    std::vector<std::size_t> mProds;
+    std::vector<std::size_t> mStrides;
 
     template<typename... Args>
     std::size_t flatten(Args... args);
@@ -68,7 +66,7 @@ private:
 
     void reorder(std::vector<std::size_t> &v, const std::vector<std::size_t> &order);
 
-    void compute_prods(const std::vector<std::size_t> &shape);
+    void compute_strides(const std::vector<std::size_t> &shape);
 
     void check_index_size(std::size_t index_size);
 

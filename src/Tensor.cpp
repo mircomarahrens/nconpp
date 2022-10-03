@@ -7,7 +7,7 @@
 
 template<class T>
 Tensor<T>::Tensor(std::vector<T> data, std::vector<std::size_t> shape) {
-    compute_prods(shape);
+    compute_strides(shape);
     auto num_elements =
             std::accumulate(shape.cbegin(), shape.cend(), 1, std::multiplies<std::size_t>{});
     check_number_elements(num_elements, data.size());
@@ -17,12 +17,12 @@ Tensor<T>::Tensor(std::vector<T> data, std::vector<std::size_t> shape) {
 
 template<class T>
 Tensor<T>::Tensor(std::vector<std::size_t> shape) {
-    compute_prods(shape);
+    compute_strides(shape);
     mShape = std::move(shape);
 }
 
 template<class T>
-Tensor<T>::Tensor(std::initializer_list<std::size_t> shape) : mShape(shape) { compute_prods(shape); }
+Tensor<T>::Tensor(std::initializer_list<std::size_t> shape) : mShape(shape) { compute_strides(shape); }
 
 template<class T>
 std::size_t Tensor<T>::dimension() const {
@@ -44,7 +44,7 @@ void Tensor<T>::reshape(const std::vector<std::size_t> &shape) {
     check_new_shape(mShape, shape);
 
     mShape = shape;
-    compute_prods(shape);
+    compute_strides(shape);
 }
 
 /**
@@ -89,14 +89,15 @@ std::vector<T> Tensor<T>::prod(const std::vector<std::size_t> &axes) {
 // Insert a new axis that will appear at the axis position in the expanded array shape.
 template<class T>
 void Tensor<T>::expand_dims(std::size_t axis) {
-//    xt::expand_dims(mData, axis);
+    mShape.insert(mShape.begin() + axis, 1);
+    compute_strides(mShape);
 }
 
 template<class T>
 void Tensor<T>::transpose(const std::vector<std::size_t> &perm) {
     check_perm(perm);
     reorder(mShape, perm);
-    reorder(mProds, perm);
+    reorder(mStrides, perm);
 }
 
 template<class T>
@@ -180,7 +181,7 @@ Tensor<T>::flatten_details(std::size_t size, std::vector<std::size_t> indices) {
     std::size_t id = 0;
     for (std::size_t j = 0; j < size; j++) {
         check_index(indices[j], j);
-        id += std::multiplies{}(indices[j], mProds[j]);
+        id += std::multiplies{}(indices[j], mStrides[j]);
     }
     return id;
 }
@@ -206,12 +207,12 @@ void Tensor<T>::reorder(std::vector<std::size_t> &v, const std::vector<std::size
  * @tparam T
  */
 template<class T>
-void Tensor<T>::compute_prods(const std::vector<std::size_t> &shape) {
+void Tensor<T>::compute_strides(const std::vector<std::size_t> &shape) {
     std::size_t d = shape.size();
-    mProds = std::vector<std::size_t>(d);
-    mProds[d - 1] = 1;
+    mStrides = std::vector<std::size_t>(d);
+    mStrides[d - 1] = 1;
     for (auto j = d - 1; j-- > 0; )
-        mProds[j] = std::multiplies{}(shape[j+1], mProds[j + 1]);
+        mStrides[j] = std::multiplies{}(shape[j + 1], mStrides[j + 1]);
 }
 
 template<class T>
