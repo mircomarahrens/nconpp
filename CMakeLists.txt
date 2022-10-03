@@ -25,14 +25,14 @@ set(NCONPP_INCLUDE
         include/ErrorMessages.h
         include/Graph.h
         include/Tensor.h
+        include/TensorLinAlg.h
         include/TensorNetwork.h
         )
 
 set(NCONPP_SRC
         src/Graph.cpp
         src/Tensor.cpp
-        src/TensorNetwork.cpp
-        include/TensorLinAlg.h)
+        src/TensorNetwork.cpp)
 
 add_library(nconpp SHARED
         ${NCONPP_LIB}

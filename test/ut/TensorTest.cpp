@@ -127,6 +127,26 @@ TEST(TensorTest, dimension) {
     ASSERT_EQ(A.dimension(), 3);
 }
 
+TEST(TensorTest, expand_dims) {
+    std::vector<std::size_t> s = {4, 3, 8};
+    Tensor<std::complex<double>> A({4, 3, 8});
+
+    A.expand_dims(0);
+    std::vector<std::size_t> new_shape1 = {1, 4, 3, 8};
+    ASSERT_EQ(A.dimension(), 4);
+    ASSERT_EQ(A.shape(), new_shape1);
+
+    A.expand_dims(4);
+    std::vector<std::size_t> new_shape2 = {1, 4, 3, 8, 1};
+    ASSERT_EQ(A.dimension(), 5);
+    ASSERT_EQ(A.shape(), new_shape2);
+
+    A.expand_dims(2);
+    std::vector<std::size_t> new_shape3 = {1, 4, 1, 3, 8, 1};
+    ASSERT_EQ(A.dimension(), 6);
+    ASSERT_EQ(A.shape(), new_shape3);
+}
+
 TEST(TensorTest, reshapeMatch) {
     std::vector<std::size_t> s = {4, 3, 8};
     Tensor<std::complex<double>> A({4, 3, 8});
