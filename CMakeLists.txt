@@ -2,20 +2,35 @@
 
 cmake_minimum_required(VERSION 3.20)
 
+#set(CMAKE_TOOLCHAIN_FILE /home/mircomarahrens/vcpkg/scripts/buildsystems/vcpkg.cmake)
+
 # avoid infinite recursion
 if(DEFINED NCONPP_CORE_PROJECT)
     message(STATUS "NCONPP_CORE_PROJECT already called. Go next.")
     return()
 endif()
+set(NCONPP_CORE_PROJECT ON)
+
+project(nconpp CXX)
+
+# git clone https://github.com/microsoft/vcpkg.git
+# activate vcpkg manifest mode
+set(VCPKG_FEATURE_FLAGS "versions")
 
 # cmake flags
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-project(nconpp CXX)
+# dependencies
+find_package(BLAS REQUIRED)
+set(BLAS_INCLUDE_DIR ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include/openblas)
+message(STATUS "cblas.h is located in " ${BLAS_INCLUDE_DIR})
+find_package(LAPACK REQUIRED)
 
-set(NCONPP_CORE_PROJECT ON)
+set(NCONPP_DEPENDENCIES
+        ${BLAS_LIBRARIES}
+        ${LAPACK_LIBRARIES})
 
 set(NCONPP_LIB
         lib/Nconpp.h
@@ -25,9 +40,9 @@ set(NCONPP_INCLUDE
         include/ErrorMessages.h
         include/Graph.h
         include/Tensor.h
-        include/TensorLinAlg.h
+        include/nlinalg.h
         include/TensorNetwork.h
-        )
+        include/nblas.h)
 
 set(NCONPP_SRC
         src/Graph.cpp
@@ -42,7 +57,11 @@ add_library(nconpp SHARED
 target_include_directories(nconpp PRIVATE
         lib/
         include/
-        src/)
+        src/
+        ${BLAS_INCLUDE_DIR})
+
+target_link_libraries(nconpp
+        ${NCONPP_DEPENDENCIES})
 
 # test via gtest
 if (CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
@@ -63,11 +82,15 @@ if (CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
     target_include_directories(nconpp_test PUBLIC
             lib/
             include/
-            src/)
+            src/
+            ${BLAS_INCLUDE_DIR})
 
     target_link_libraries(nconpp_test
             ${CMAKE_THREAD_LIBS_INIT}
+            ${NCONPP_DEPENDENCIES}
+            gmock
             gtest
+            gmock_main
             gtest_main
             nconpp)
 

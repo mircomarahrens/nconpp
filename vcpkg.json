@@ -1,0 +1,8 @@
+{
+  "dependencies": [
+    "lapack",
+    "openblas"
+  ],
+  "name": "nconpp",
+  "version": "0.0.1"
+}

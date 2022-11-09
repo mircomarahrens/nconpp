@@ -2,9 +2,66 @@
 
 #include <algorithm>
 #include "Tensor.h"
+#include "nblas.h"
 
-// WIP
-namespace TensorLinAlg {
+namespace nlinalg {
+    /**
+ * Compute the tensor product of two tensors a,b along axes ax_a, ax_b.
+ *
+ * @tparam T
+ * @tparam U
+ * @param a
+ * @param b
+ * @param ax_a
+ * @param ax_b
+ * @return
+ */
+    template<class T, class U>
+    auto tensordot(Tensor<T> a, Tensor<U> b, const std::vector<size_t>& ax_a = {0}, const std::vector<size_t>& ax_b = {0}) {
+
+        // determine new axes of tensor a
+        std::vector<std::size_t> newaxes_a = {};
+        for (std::size_t i = 0; i < a.dimension(); ++i) {
+            auto a_ax_it = std::find(ax_a.begin(), ax_a.end(), i);
+            // first pass if i is not in ax_a, add to newaxes_a
+            if (a_ax_it == ax_a.end())
+            {
+                newaxes_a.push_back(i);
+            }
+        }
+        for (auto& a_ax_it : ax_a)
+        {
+            newaxes_a.push_back(a_ax_it);
+        }
+
+        // determine new axes of tensor b
+        std::vector<std::size_t> newaxes_b = {};
+        for (std::size_t i = 0; i < b.dimension(); ++i) {
+
+        }
+
+        // scalar multiplication
+        if (a.dimension() == 1 and b.dimension() == 1) {
+            return (a*b);
+        }
+        // matrix/vector multiplication
+        else if (a.dimension() == 2 and b.dimension() == 2) {
+            return dot(a, b, 2);
+        }
+        // multiply by scalar
+        else if (a.dimension() == 1) {
+            return dot(b, a, 1);
+        }
+        else if (b.dimension() == 1) {
+            return dot(a, b);
+        }
+        // tensor product
+        else {
+            return tdot(a,b);
+        }
+    }
+
+
 
     template<class T>
     auto tensordot(const Tensor<T>& a, const Tensor<T>& b, const std::vector<std::size_t>& ax_a,
@@ -51,8 +108,8 @@ namespace TensorLinAlg {
         return tensordot(a,b,n_ax);
     }
 
-    template <class T>
-    auto tensordot(const Tensor<T>& a, const Tensor<T>& b, std::size_t naxes = 2) {
+    template <class T, class U>
+    auto tensordot(const Tensor<T>& a, const Tensor<U>& b, std::size_t naxes = 2) {
 
         Tensor<T> result;
         if (naxes == 0)
@@ -102,7 +159,7 @@ namespace TensorLinAlg {
                 ++as_it;
                 ++bs_it;
             }
-            xt::dynamic_shape<std::size_t> result_shape;
+            std::vector<std::size_t> result_shape;
             std::size_t keep_a_len = 1;
             for (auto it = a.shape().begin(); it != a.shape().begin() + (a.dimension() - naxes); ++it)
             {
@@ -117,9 +174,9 @@ namespace TensorLinAlg {
                 keep_b_len *= len;
                 result_shape.push_back(len);
             }
-            xarray<value_type, T::static_layout> a_mat = a;
+            Tensor<T> a_mat = a;
             a_mat.reshape({keep_a_len, sum_len});
-            xarray<value_type, O::static_layout> b_mat = b;
+            Tensor<U> b_mat = b;
             b_mat.reshape({sum_len, keep_b_len});
             result = dot(a_mat, b_mat);
             if(result_shape.empty())

@@ -45,6 +45,8 @@ public:
 
     const auto &getData();
 
+    auto& strides();
+
     template<class... I>
     T &operator()(I... i);
 

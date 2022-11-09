@@ -263,3 +263,8 @@ void Tensor<T>::check_perm(const std::vector<std::size_t> &perm) {
     if (perm.size() != mShape.size())
         throw std::logic_error("Number of axes in perm do not match shape.");
 }
+
+template<class T>
+auto &Tensor<T>::strides() {
+    return mStrides;
+}
