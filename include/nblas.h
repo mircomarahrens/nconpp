@@ -9,23 +9,6 @@
 
 #include "cblas.h"
 
-// TODO write generic function for dot product of tensors
-// dot(a, b);
-//   a: tensor a
-//   b: tensor b
-//BLAS:
-// dot(n, x, incX, y, incY, result);
-//   n: number of elements in X and Y
-//   x: vector X
-//   incX: Stride within X. For example, if incX is 7, every 7th element is used.
-//   y: vector Y
-//   incY: Stride within Y. For example, if incY is 7, every 7th element is used.
-//   result: %
-
-// TODO
-// . data in tensor can be of type int, double, complex, etc. or mixed (?)
-// . macro for throw, i.e. sth like THROW(ERROR_TYPE, MESSAGE)
-// .
 namespace nblas {
     /**
      * Non-broadcasting dot function.
