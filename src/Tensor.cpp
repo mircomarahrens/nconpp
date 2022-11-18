@@ -27,7 +27,7 @@ Tensor<T>::Tensor(std::initializer_list<std::size_t> shape) : mShape(shape) { co
 template<class T>
 std::size_t Tensor<T>::dimension() const {
     return mShape.size();
-};
+}
 
 template<class T>
 std::size_t Tensor<T>::size() const {
@@ -89,7 +89,7 @@ std::vector<T> Tensor<T>::prod(const std::vector<std::size_t> &axes) {
 // Insert a new axis that will appear at the axis position in the expanded array shape.
 template<class T>
 void Tensor<T>::expand_dims(std::size_t axis) {
-    mShape.insert(mShape.begin() + axis, 1);
+    mShape.insert(mShape.begin() + static_cast<long>(axis), 1);
     compute_strides(mShape);
 }
 
