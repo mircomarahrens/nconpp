@@ -5,6 +5,7 @@
 
 #include "Tensor.h"
 #include "Tensor.cpp"
+#include "nlinalg.h"
 
 #include <complex>
 #include <random>
@@ -251,11 +252,19 @@ TEST(TensorTest, transpose2) {
 }
 
 TEST(TensorTest, tensordot) {
-//    auto A = xt::random::rand<double>({4, 3, 8});
-//    auto B = xt::random::rand<double>({2, 3, 1, 3, 3});
-//
+    Tensor<std::complex<double>> A({4, 3, 2, 8});
+    A.randomize();
+
+    Tensor<std::complex<double>> B({8, 4, 2, 1, 3});
+    B.randomize();
+
+    auto C = nlinalg::tensordot(A, B, {0,2,3}, {1,2,0});
+
+
+
+//    auto B = xt::random::rand<double>();
 //    auto C = TensorOperations::tensordot(A, B, {1}, {1});
-//    TensorOperations::shape_type shapeC = {4, 8, 2, 1, 3, 3};
+//    TensorOperations::shape_type shapeC = ;
 //    ASSERT_EQ(TensorOperations::Shape(C), shapeC);
 //
 //    TensorOperations::array_type<std::complex<double>> D = TensorOperations::trace(C, 0, 4, 5);
