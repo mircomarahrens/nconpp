@@ -4,6 +4,11 @@
 
 using namespace std;
 
+/**
+ * TODO add comment
+ *
+ * @param N
+ */
 Graph::Graph(size_t N) {
     for (int i = 0; i < N; i++) {
         Vertex vertex{i};
@@ -11,6 +16,12 @@ Graph::Graph(size_t N) {
     }
 }
 
+/**
+ * TODO add comment
+ *
+ * @param src
+ * @param dest
+ */
 void Graph::constructEdge(const Vertex &src, const Vertex &dest) {
     if (std::find(mVertices.begin(), mVertices.end(), src) != mVertices.end() &&
         std::find(mVertices.begin(), mVertices.end(), dest) != mVertices.end()) {
@@ -19,6 +30,12 @@ void Graph::constructEdge(const Vertex &src, const Vertex &dest) {
     }
 }
 
+/**
+ * TODO add comment
+ *
+ * @param src
+ * @param dest
+ */
 void Graph::removeAllEdges(const Vertex &src, const Vertex &dest) {
     auto pos = std::find_if(mEdges.begin(),
                             mEdges.end(),
@@ -27,10 +44,20 @@ void Graph::removeAllEdges(const Vertex &src, const Vertex &dest) {
     mEdges.erase(pos);
 }
 
+/**
+ * TODO add comment
+ *
+ * @param vertex
+ */
 void Graph::addVertex(const Vertex &vertex) {
     mVertices.emplace_back(vertex);
 }
 
+/**
+ * TODO add comment
+ *
+ * @param vertex
+ */
 void Graph::removeVertex(const Vertex &vertex) {
     for (auto dest: mVertices)
         removeAllEdges(vertex, dest);
@@ -43,14 +70,29 @@ void Graph::removeVertex(const Vertex &vertex) {
     mVertices.erase(pos);
 }
 
+/**
+ * TODO add comment
+ *
+ * @return
+ */
 const std::vector<Edge> &Graph::getEdges() {
     return mEdges;
 }
 
+/**
+ * TODO add comment
+ *
+ * @return
+ */
 const vector<Vertex> &Graph::getVertices() {
     return mVertices;
 }
 
+/**
+ * TODO add comment
+ *
+ * @return
+ */
 vector<vector<int>> Graph::calculateAdjacencyList() {
     vector<vector<int>> adjacencyList(mVertices.size());
     for (auto e: mEdges) {
@@ -62,10 +104,22 @@ vector<vector<int>> Graph::calculateAdjacencyList() {
 }
 
 // TODO maybe there is a way to update this on the fly?
+/**
+ * TODO add comment
+ *
+ * @return
+ */
 vector<vector<int>> Graph::calculateConnectedComponents() {
     return move(getConnectedComponents(mVertices.size(), calculateAdjacencyList()));
 }
 
+/**
+ * TODO add comment
+ *
+ * @param size
+ * @param adjacencyList
+ * @return
+ */
 vector<std::vector<int>>
 Graph::getConnectedComponents(const size_t size, const vector<vector<int>> &adjacencyList) {
     vector<vector<int>> connectedComponents = {};
@@ -93,6 +147,14 @@ Graph::getConnectedComponents(const size_t size, const vector<vector<int>> &adja
     return connectedComponents;
 }
 
+/**
+ * TODO add comment
+ *
+ * @param v
+ * @param visited
+ * @param component
+ * @param adjacencyList
+ */
 void Graph::DFSVisit(int v, std::vector<bool> &visited, std::vector<int> &component,
                      const std::vector<std::vector<int>> &adjacencyList) {
     visited[v] = true;
@@ -103,12 +165,25 @@ void Graph::DFSVisit(int v, std::vector<bool> &visited, std::vector<int> &compon
             DFSVisit(*i, visited, component, adjacencyList);
 }
 
+/**
+ * TODO add comment
+ *
+ * @param v
+ * @param visited
+ * @param component
+ * @param adjacencyList
+ */
 void Graph::BFSVisit(int v, std::vector<bool> &visited, std::vector<int> &component,
                      const std::vector<std::vector<int>> &adjacencyList) {
     visited[v] = true;
     component.emplace_back(v);
 }
 
+/**
+ * TODO add comment
+ *
+ * @return
+ */
 std::vector<int> Graph::getVertexIndices() {
     std::vector<int> indices;
     for (Vertex vertex : mVertices)

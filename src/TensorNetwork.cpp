@@ -1,5 +1,11 @@
 #include "TensorNetwork.h"
 
+/**
+ * TODO add comment
+ *
+ * @param tensorList
+ * @param subscriptVectorList
+ */
 TensorNetwork::TensorNetwork(std::vector<Tensor<std::complex<double>>> &tensorList,
                              std::vector<std::vector<int>> &subscriptVectorList) :
         Graph(subscriptVectorList.size()) {
@@ -10,6 +16,12 @@ TensorNetwork::TensorNetwork(std::vector<Tensor<std::complex<double>>> &tensorLi
     generateEdges();
 }
 
+/**
+ * TODO add comment
+ *
+ * @param tensorList
+ * @param subscriptVectorList
+ */
 void TensorNetwork::validateInputData(const std::vector<Tensor<std::complex<double>>> &tensorList,
                                       const std::vector<std::vector<int>> &subscriptVectorList) {
     if (tensorList.size() != subscriptVectorList.size()) {
@@ -21,6 +33,12 @@ void TensorNetwork::validateInputData(const std::vector<Tensor<std::complex<doub
     }
 }
 
+/**
+ * TODO add comment
+ *
+ * @param tensorList
+ * @param subscriptVectorList
+ */
 void TensorNetwork::generateVerticesTensorAndVerticesLegs(std::vector<Tensor<std::complex<double>>> &tensorList,
                                                           std::vector<std::vector<int>> &subscriptVectorList) {
     for (int i = 0; i < tensorList.size(); i++) {
@@ -29,6 +47,10 @@ void TensorNetwork::generateVerticesTensorAndVerticesLegs(std::vector<Tensor<std
     }
 }
 
+/**
+ * TODO add comment
+ *
+ */
 void TensorNetwork::generateEdges() {
     for (auto i_vc: mVerticesTensors) {
         auto i_legs = i_vc.getLegs();
@@ -40,6 +62,12 @@ void TensorNetwork::generateEdges() {
     }
 }
 
+/**
+ * TODO add comment
+ *
+ * @param contractionSequence
+ * @return
+ */
 Tensor<std::complex<double>> TensorNetwork::contract(std::vector<int> &contractionSequence) {
 
     auto iter = contractionSequence.begin();
@@ -71,6 +99,11 @@ Tensor<std::complex<double>> TensorNetwork::contract(std::vector<int> &contracti
     return mVerticesTensors[0].getTensor();
 }
 
+/**
+ * TODO add comment
+ *
+ * @param contractionSequence
+ */
 void TensorNetwork::validateOutputData(const std::vector<int> &contractionSequence) {
     if (!contractionSequence.empty()) {
         throw std::invalid_argument(
@@ -80,6 +113,13 @@ void TensorNetwork::validateOutputData(const std::vector<int> &contractionSequen
     }
 }
 
+/**
+ * TODO add comment
+ *
+ * @param search
+ * @param match
+ * @return
+ */
 std::vector<std::size_t> TensorNetwork::getPositions(const std::vector<int> &search, int match) {
     std::vector<std::size_t> results;
     auto pos = std::find_if(search.begin(), search.end(), [match](int i) { return i == match; });
@@ -90,12 +130,24 @@ std::vector<std::size_t> TensorNetwork::getPositions(const std::vector<int> &sea
     return results;
 }
 
-// inplace manipulation of tensors
+/**
+ * TODO add comment
+ * inplace manipulation of tensors
+ *
+ */
 void TensorNetwork::trace(std::size_t index, std::size_t axis1, std::size_t axis2) {
     // TODO perform a trace in-place
 }
 
-// inplace manipulation of tensors
+/**
+ * TODO add comment
+ * inplace manipulation of tensors
+ *
+ * @param indexA
+ * @param indexB
+ * @param axisA
+ * @param axisB
+ */
 void TensorNetwork::tensordot(std::size_t indexA, std::size_t indexB, const std::vector<std::size_t> &axisA,
                               const std::vector<std::size_t> &axisB) {
     // TODO perform a tensordot in-place

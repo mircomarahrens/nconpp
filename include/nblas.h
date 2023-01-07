@@ -10,24 +10,22 @@
 #include "cblas.h"
 
 namespace nblas {
-    /**
-     * Non-broadcasting dot function.
-     * In the case of two 1D vectors, computes the vector dot
-     * product. In the case of complex vectors, computes the dot
-     * product without conjugating the first argument.
-     * If \em t or \em o is a 2D matrix, computes the matrix-times-vector
-     * product. If both \em t and \em o or 2D matrices, computes
-     * the matrix-product.
-     *
-     * @param t input array
-     * @param o input array
-     *
-     * @return resulting array
-     */
-    template <class T, class U>
-    auto dot(const Tensor<T>& t, const Tensor<U>& o, std::size_t kind = 3)
+    template <class T, class U, class R>
+    void ger(const Tensor<T>& x, const Tensor<U>& y, R& result)
     {
+        // TODO
+    }
 
+    template <class T, class U, class R>
+    void dot(const Tensor<T>& x, const Tensor<U>& y, R& result)
+    {
+        // TODO
+    }
+
+    template <class T, class U, class R>
+    void dotu(const Tensor<T>& x, const Tensor<U>& y, R& result)
+    {
+        // TODO
     }
 
 

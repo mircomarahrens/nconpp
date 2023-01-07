@@ -27,8 +27,12 @@
   <component name="ChangeListManager">
     <list default="true" id="148f9fc6-1df1-44f3-b719-7198d20c4a96" name="Changes" comment="add expand_dims">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/Tensor.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/Tensor.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/include/nblas.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/nblas.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/include/nlinalg.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/nlinalg.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Graph.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Graph.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Tensor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tensor.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/TensorNetwork.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/TensorNetwork.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/ut/TensorTest.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/test/ut/TensorTest.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -41,6 +45,11 @@
   </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="MacroExpansionManager">
@@ -65,25 +74,42 @@
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
     &quot;ctest.advertisement.all.test.configuration.is.created&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;//wsl$/Ubuntu/home/mircomarahrens/Private/nconpp&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;CPPToolchains&quot;,
-    &quot;structure.view.defaults.are.configured&quot;: &quot;true&quot;
+    &quot;structure.view.defaults.are.configured&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
-  <component name="RunManager" selected="Google Test.TensorTest.tensordot">
+  <component name="RunManager" selected="Google Test.All in TensorTest.cpp">
     <configuration name="All in TensorTest.cpp" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nconpp" TARGET_NAME="nconpp_test" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="nconpp" RUN_TARGET_NAME="nconpp_test" TEST_PATTERN="all-tests(file://$PROJECT_DIR$/test/ut/TensorTest.cpp)" TEST_MODE="PATTERN">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
         <option name="BeforeTestRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="TensorTest.expand_dims" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nconpp" TARGET_NAME="nconpp_test" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="nconpp" RUN_TARGET_NAME="nconpp_test" TEST_CLASS="TensorTest" TEST_METHOD="expand_dims" TEST_MODE="SUITE_TEST">
+    <configuration name="TensorTest.asterikOperator" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nconpp" TARGET_NAME="nconpp_test" RUN_TARGET_PROJECT_NAME="nconpp" RUN_TARGET_NAME="nconpp_test" TEST_CLASS="TensorTest" TEST_METHOD="asterikOperator" TEST_MODE="SUITE_TEST">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
         <option name="BeforeTestRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="TensorTest.tensordot" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nconpp" TARGET_NAME="nconpp_test" RUN_TARGET_PROJECT_NAME="nconpp" RUN_TARGET_NAME="nconpp_test" TEST_CLASS="TensorTest" TEST_METHOD="tensordot" TEST_MODE="SUITE_TEST">
+    <configuration name="TensorTest.asterikOperator_int" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nconpp" TARGET_NAME="nconpp_test" RUN_TARGET_PROJECT_NAME="nconpp" RUN_TARGET_NAME="nconpp_test" TEST_CLASS="TensorTest" TEST_METHOD="asterikOperator_int" TEST_MODE="SUITE_TEST">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="BeforeTestRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="TensorTest.dot" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nconpp" TARGET_NAME="nconpp_test" RUN_TARGET_PROJECT_NAME="nconpp" RUN_TARGET_NAME="nconpp_test" TEST_CLASS="TensorTest" TEST_METHOD="dot" TEST_MODE="SUITE_TEST">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="BeforeTestRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="TensorTest.multiplyByScalarViaOperator" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nconpp" TARGET_NAME="nconpp_test" RUN_TARGET_PROJECT_NAME="nconpp" RUN_TARGET_NAME="nconpp_test" TEST_CLASS="TensorTest" TEST_METHOD="multiplyByScalarViaOperator" TEST_MODE="SUITE_TEST">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
         <option name="BeforeTestRunTask" enabled="true" />
@@ -127,15 +153,19 @@
       <item itemvalue="CMake Application.gtest" />
       <item itemvalue="CMake Application.gtest_main" />
       <item itemvalue="CTest Application.All CTest" />
-      <item itemvalue="Google Test.TensorTest.tensordot" />
-      <item itemvalue="Google Test.TensorTest.expand_dims" />
+      <item itemvalue="Google Test.TensorTest.asterikOperator" />
+      <item itemvalue="Google Test.TensorTest.asterikOperator_int" />
+      <item itemvalue="Google Test.TensorTest.dot" />
+      <item itemvalue="Google Test.TensorTest.multiplyByScalarViaOperator" />
       <item itemvalue="Google Test.All in TensorTest.cpp" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Google Test.TensorTest.tensordot" />
         <item itemvalue="Google Test.All in TensorTest.cpp" />
-        <item itemvalue="Google Test.TensorTest.expand_dims" />
+        <item itemvalue="Google Test.TensorTest.asterikOperator_int" />
+        <item itemvalue="Google Test.TensorTest.asterikOperator" />
+        <item itemvalue="Google Test.TensorTest.multiplyByScalarViaOperator" />
+        <item itemvalue="Google Test.TensorTest.dot" />
       </list>
     </recent_temporary>
   </component>
@@ -169,7 +199,22 @@
       <workItem from="1668790762010" duration="4942000" />
       <workItem from="1668849725219" duration="2939000" />
       <workItem from="1668867771797" duration="1543000" />
-      <workItem from="1668883638137" duration="4000" />
+      <workItem from="1668883638137" duration="109000" />
+      <workItem from="1668936535040" duration="6727000" />
+      <workItem from="1669136251669" duration="34000" />
+      <workItem from="1669138163271" duration="149000" />
+      <workItem from="1669453657806" duration="4809000" />
+      <workItem from="1669467640396" duration="3005000" />
+      <workItem from="1669481879228" duration="459000" />
+      <workItem from="1669539967225" duration="2662000" />
+      <workItem from="1669837329487" duration="21000" />
+      <workItem from="1669838992217" duration="1436000" />
+      <workItem from="1670683917213" duration="98000" />
+      <workItem from="1670960757505" duration="120000" />
+      <workItem from="1671047212294" duration="1333000" />
+      <workItem from="1671476853108" duration="1373000" />
+      <workItem from="1672054420034" duration="381000" />
+      <workItem from="1673077385273" duration="13046000" />
     </task>
     <task id="LOCAL-00001" summary="add expand_dims">
       <created>1664824935314</created>
@@ -206,9 +251,9 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/include/nlinalg.h</url>
-          <line>85</line>
-          <option name="timeStamp" value="1" />
+          <url>file://$PROJECT_DIR$/test/ut/TensorTest.cpp</url>
+          <line>190</line>
+          <option name="timeStamp" value="2" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

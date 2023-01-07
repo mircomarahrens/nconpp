@@ -9,7 +9,7 @@
 #include <unordered_map>
 
 /**
- * This class is inspired by xtensor (https://github.com/xtensor-stack/xtensor) and the articles within
+ * This class is inspired by xtensor (https://github.com/xtensor-stack/xtensor) and the articles
  * https://johan-mabille.medium.com/how-we-wrote-xtensor-9365952372d9.
  *
  * @tparam T
@@ -23,15 +23,21 @@ public:
 
     Tensor(std::initializer_list<std::size_t> shape);
 
+    Tensor() = default;
+
     ~Tensor() = default;
 
     [[nodiscard]] std::size_t dimension() const;
 
     [[nodiscard]] std::size_t size() const;
 
-    const std::vector<std::size_t> &shape();
+    [[nodiscard]] std::size_t num_elements() const;
+
+    [[nodiscard]] const std::vector<std::size_t> &shape() const;
 
     void reshape(const std::vector<std::size_t> &shape);
+
+    void resize(const std::vector<std::size_t> &shape);
 
     void randomize(double lower = 0, double upper = 1.0);
 
@@ -45,13 +51,19 @@ public:
 
     const auto &getData();
 
-    auto& strides();
+    auto &strides();
 
     template<class... I>
     T &operator()(I... i);
 
     template<class... I>
     const T &operator()(I... i) const;
+
+    template<class I>
+    Tensor<T> & operator*=(I rhs);
+
+    template<class I>
+    const Tensor<T> &operator*=(I rhs) const;
 
 private:
     TEST_FRIENDS;
@@ -70,6 +82,7 @@ private:
 
     void compute_strides(const std::vector<std::size_t> &shape);
 
+    // checks
     void check_index_size(std::size_t index_size);
 
     void check_index(std::size_t index, std::size_t axis);
@@ -80,3 +93,17 @@ private:
 
     void check_new_shape(std::vector<std::size_t> s1, std::vector<std::size_t> s2);
 };
+
+template<class I, class T>
+constexpr Tensor<T> operator*(I lhs, const Tensor<T>& rhs)
+{
+    auto cp = rhs;
+    return cp *= lhs;
+}
+
+template<class I, class T>
+constexpr Tensor<T> operator*(const Tensor<T>& lhs, I rhs)
+{
+    auto cp = lhs;
+    return cp *= rhs;
+}

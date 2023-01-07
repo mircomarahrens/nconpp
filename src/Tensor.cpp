@@ -5,6 +5,13 @@
 #include <random>
 #include <unordered_map>
 
+/**
+ * Constructor for a tensor object initialized with a linear data array and a shape.
+ *
+ * @tparam T
+ * @param data
+ * @param shape
+ */
 template<class T>
 Tensor<T>::Tensor(std::vector<T> data, std::vector<std::size_t> shape) {
     compute_strides(shape);
@@ -15,36 +22,93 @@ Tensor<T>::Tensor(std::vector<T> data, std::vector<std::size_t> shape) {
     mData = std::move(data);
 }
 
+/**
+ * Constructor for a tensor object initialized with a shape and without data.
+ *
+ * @tparam T
+ * @param shape
+ */
 template<class T>
 Tensor<T>::Tensor(std::vector<std::size_t> shape) {
     compute_strides(shape);
     mShape = std::move(shape);
 }
 
+/**
+ * Constructor for a tensor object initialized with a shape given as a initializer_list and without data.
+ *
+ * @tparam T
+ * @param shape
+ */
 template<class T>
 Tensor<T>::Tensor(std::initializer_list<std::size_t> shape) : mShape(shape) { compute_strides(shape); }
 
+/**
+ * Returns the dimension of the tensor, i.e. the number of axes.
+ *
+ * @tparam T
+ * @return
+ */
 template<class T>
 std::size_t Tensor<T>::dimension() const {
     return mShape.size();
 }
 
+/**
+ * TODO add comment
+ *
+ * @tparam T
+ * @return
+ */
 template<class T>
 std::size_t Tensor<T>::size() const {
     return std::accumulate(mShape.cbegin(), mShape.cend(), std::size_t(1), std::multiplies<>());
 }
 
+/**
+ *
+ * @tparam T
+ * @return
+ */
 template<class T>
-const std::vector<std::size_t> &Tensor<T>::shape() {
+std::size_t Tensor<T>::num_elements() const {
+    return mData.size();
+}
+
+/**
+ * TODO add comment
+ *
+ * @tparam T
+ * @return
+ */
+template<class T>
+const std::vector<std::size_t> &Tensor<T>::shape() const {
     return mShape;
 }
 
+/**
+ * TODO add comment
+ *
+ * @tparam T
+ * @param shape
+ */
 template<class T>
 void Tensor<T>::reshape(const std::vector<std::size_t> &shape) {
     check_new_shape(mShape, shape);
 
     mShape = shape;
     compute_strides(shape);
+}
+
+/**
+ * TODO add comment
+ *
+ * @tparam T
+ * @param shape
+ */
+template<class T>
+void Tensor<T>::resize(const std::vector<std::size_t> &shape) {
+// TODO
 }
 
 /**
@@ -85,14 +149,26 @@ std::vector<T> Tensor<T>::prod(const std::vector<std::size_t> &axes) {
     return std::move(res);
 }
 
-// Expand the shape of an array.
-// Insert a new axis that will appear at the axis position in the expanded array shape.
+/**
+ * @brief Expand the shape of an array.
+ *
+ * Insert a new axis that will appear at the axis position in the expanded array shape.
+ *
+ * @tparam T
+ * @param axis
+ */
 template<class T>
 void Tensor<T>::expand_dims(std::size_t axis) {
     mShape.insert(mShape.begin() + static_cast<long>(axis), 1);
     compute_strides(mShape);
 }
 
+/**
+ * TODO add comment
+ *
+ * @tparam T
+ * @param perm
+ */
 template<class T>
 void Tensor<T>::transpose(const std::vector<std::size_t> &perm) {
     check_perm(perm);
@@ -100,6 +176,12 @@ void Tensor<T>::transpose(const std::vector<std::size_t> &perm) {
     reorder(mStrides, perm);
 }
 
+/**
+ * TODO add comment
+ *
+ * @tparam T
+ * @return
+ */
 template<class T>
 const auto &Tensor<T>::getData() {
     return mData;
@@ -135,6 +217,8 @@ void Tensor<T>::randomize(double lower, double upper) {
 }
 
 /**
+ * @brief flatten indices given via variadic template
+ *
  * Flatten a given list of indices via the formula
  * i = i_d + \sum_{j=0}^{d-1}{i_j\prod_{k=j+1}^{d}{n_k}}
  * with i_j = \{i_0, i_1, \cdots, i_d\}, the "indices",
@@ -159,6 +243,8 @@ std::size_t Tensor<T>::flatten(Args... args) {
 }
 
 /**
+ * @brief flatten indices given via vector
+ *
  * Flatten a given list of indices via the formula
  * i = \sum_{j=0}^{d}{i_j\prod_{k=j+1}^{d}{n_k}}
  * with i_j = \{i_0, i_1, \cdots, i_d\}, the "indices",
@@ -175,6 +261,14 @@ std::size_t Tensor<T>::flatten(std::vector<std::size_t> indices) {
     return flatten_details(size, indices);
 }
 
+/**
+ * TODO add comment
+ *
+ * @tparam T
+ * @param size
+ * @param indices
+ * @return
+ */
 template<class T>
 std::size_t
 Tensor<T>::flatten_details(std::size_t size, std::vector<std::size_t> indices) {
@@ -186,12 +280,18 @@ Tensor<T>::flatten_details(std::size_t size, std::vector<std::size_t> indices) {
     return id;
 }
 
-
+/**
+ * TODO add comment
+ *
+ * @tparam T
+ * @param v
+ * @param order
+ */
 template<class T>
 void Tensor<T>::reorder(std::vector<std::size_t> &v, const std::vector<std::size_t> &order) {
     auto orderCopy = order;
-    std::size_t i,j,k;
-    for(i = 0; i < orderCopy.size() - 1; ++i) {
+    std::size_t i, j, k;
+    for (i = 0; i < orderCopy.size() - 1; ++i) {
         j = orderCopy[i];
         if (j != i) {
             for (k = i + 1; order[k] != i; ++k);
@@ -202,7 +302,7 @@ void Tensor<T>::reorder(std::vector<std::size_t> &v, const std::vector<std::size
 }
 
 /**
- * Compute the products used in the methods flatten and unflatten.
+ * Compute the strides.
  *
  * @tparam T
  */
@@ -211,22 +311,77 @@ void Tensor<T>::compute_strides(const std::vector<std::size_t> &shape) {
     std::size_t d = shape.size();
     mStrides = std::vector<std::size_t>(d);
     mStrides[d - 1] = 1;
-    for (auto j = d - 1; j-- > 0; )
+    for (auto j = d - 1; j-- > 0;)
         mStrides[j] = std::multiplies{}(shape[j + 1], mStrides[j + 1]);
 }
 
+/**
+ * TODO add comment
+ *
+ * @tparam T
+ * @tparam I
+ * @param i
+ * @return
+ */
 template<class T>
 template<class... I>
 T &Tensor<T>::operator()(I... i) {
     return mData[flatten(i...)];
 }
 
+/**
+ * TODO add comment
+ *
+ * @tparam T
+ * @tparam I
+ * @param i
+ * @return
+ */
 template<class T>
 template<class... I>
 const T &Tensor<T>::operator()(I... i) const {
     return mData[flatten(i...)];
 }
 
+/**
+ * TODO add comment
+ *
+ * @tparam T
+ * @tparam I
+ * @param rhs
+ * @return
+ */
+template<class T>
+template<class I>
+Tensor<T> &Tensor<T>::operator*=(I rhs) {
+    std::transform(mData.begin(), mData.end(), mData.begin(),
+                   std::bind(std::multiplies<T>(), std::placeholders::_1, rhs));
+    return *this;
+}
+
+
+/**
+ * TODO add comment
+ *
+ * @tparam T
+ * @tparam I
+ * @param i
+ * @return
+ */
+template<class T>
+template<class I>
+const Tensor<T> &Tensor<T>::operator*=(I rhs) const {
+    std::transform(mData.begin(), mData.end(), mData.begin(),
+                   std::bind(std::multiplies<T>(), std::placeholders::_1, rhs));
+    return *this;
+}
+
+/**
+ * TODO add comment
+ *
+ * @tparam T
+ * @param index_size
+ */
 template<class T>
 void Tensor<T>::check_index_size(std::size_t index_size) {
     if (index_size != mShape.size())
@@ -234,6 +389,13 @@ void Tensor<T>::check_index_size(std::size_t index_size) {
                 "Index tuple does not belong to this tensor. Number of indices does not match shape size.");
 }
 
+/**
+ * TODO add comment
+ *
+ * @tparam T
+ * @param num_elements
+ * @param data_size
+ */
 template<class T>
 void Tensor<T>::check_number_elements(std::size_t num_elements, std::size_t data_size) {
     if (num_elements != data_size)
@@ -241,6 +403,13 @@ void Tensor<T>::check_number_elements(std::size_t num_elements, std::size_t data
                 "Size of data container does not match number of possible num_elements.");
 }
 
+/**
+ * TODO add comment
+ *
+ * @tparam T
+ * @param s1
+ * @param s2
+ */
 template<class T>
 void Tensor<T>::check_new_shape(std::vector<std::size_t> s1, std::vector<std::size_t> s2) {
     auto dim1 = std::accumulate(s1.begin(), s1.end(), 1, std::multiplies<>());
@@ -250,6 +419,13 @@ void Tensor<T>::check_new_shape(std::vector<std::size_t> s1, std::vector<std::si
                 "Total number of elements in new shape does not match old shape.");
 }
 
+/**
+ * TODO add comment
+ *
+ * @tparam T
+ * @param index
+ * @param axis
+ */
 template<class T>
 void Tensor<T>::check_index(std::size_t index, std::size_t axis) {
     if (index > mShape[axis] - 1)
@@ -258,12 +434,24 @@ void Tensor<T>::check_index(std::size_t index, std::size_t axis) {
                 " with dimension " + std::to_string(mShape[axis]));
 }
 
+/**
+ * TODO add comment
+ *
+ * @tparam T
+ * @param perm
+ */
 template<class T>
 void Tensor<T>::check_perm(const std::vector<std::size_t> &perm) {
     if (perm.size() != mShape.size())
         throw std::logic_error("Number of axes in perm do not match shape.");
 }
 
+/**
+ * TODO add comment
+ *
+ * @tparam T
+ * @return
+ */
 template<class T>
 auto &Tensor<T>::strides() {
     return mStrides;

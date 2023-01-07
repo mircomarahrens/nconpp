@@ -182,6 +182,15 @@ TEST(TensorTest, accessOperator_IndexOutOfRange) {
     EXPECT_THROW(A(1, 4, 4), std::logic_error);
 }
 
+TEST(TensorTest, asterikOperator_int) {
+    std::vector<std::size_t> s = {3, 1, 2};
+    std::vector<int> d = {1, 2, 3, 4, 5, 6};
+    Tensor<int> A(d, s);
+
+    auto A1 = A * 2;
+    auto A2 = 2 * A;
+}
+
 TEST(TensorTest, prod1) {
     std::vector<std::size_t> s = {3};
     std::vector<int> d = {1, 2, 3};
@@ -251,16 +260,24 @@ TEST(TensorTest, transpose2) {
     // TODO transform indices
 }
 
-TEST(TensorTest, tensordot) {
-    Tensor<std::complex<double>> A({4, 3, 2, 8});
-    A.randomize();
+TEST(DISABLED_TensorTest, dot) {
+//    Tensor<std::complex<double>> A({4, 3, 2, 8});
+//    A.randomize();
+//
+//    Tensor<std::complex<double>> B({8, 4, 2, 1, 3});
+//    B.randomize();
+//
+//    auto C = nlinalg::dot(A, B);
+}
 
-    Tensor<std::complex<double>> B({8, 4, 2, 1, 3});
-    B.randomize();
-
-    auto C = nlinalg::tensordot(A, B, {0,2,3}, {1,2,0});
-
-
+TEST(DISABLED_TensorTest, tensordot) {
+//    Tensor<std::complex<double>> A({4, 3, 2, 8});
+//    A.randomize();
+//
+//    Tensor<std::complex<double>> B({8, 4, 2, 1, 3});
+//    B.randomize();
+//
+//    auto C = tensordot(A, B, {0,2,3}, {1,2,0});
 
 //    auto B = xt::random::rand<double>();
 //    auto C = TensorOperations::tensordot(A, B, {1}, {1});
@@ -275,43 +292,88 @@ TEST(TensorTest, tensordot) {
 
 ///////////////////////////////// PLAYGROUND //////////////////////////////////////
 
-template<std::size_t... Indices>
-struct indices {
-};
 
-template<class T>
-struct Shape {
-    std::vector<T> v;
 
-    Shape(std::initializer_list<T> l) : v(l) {
-        std::cout << "constructed with a " << l.size() << "-element list\n";
-    }
+//template <typename T>
+//Tensor<T> tensordot(const Tensor<T>& a, const Tensor<T>& b, const std::vector<size_t>& axes_a, const std::vector<size_t>& axes_b) {
+//    // Validate the input tensors and axes
+//    assert(a.dimension() == axes_a.size());
+//    assert(b.dimension() == axes_b.size());
+//    assert(a.shape()[axes_a[0]] == b.shape()[axes_b[1]]);
+//
+//    // Compute the output shape
+//    std::vector<std::size_t> output_shape;
+//    for (std::size_t i = 0; i < axes_a.size(); i++) {
+//        if (i != axes_a[0]) {
+//            output_shape.push_back(a.shape()[i]);
+//        }
+//    }
+//    for (std::size_t i = 0; i < axes_b.size(); i++) {
+//        if (i != axes_b[1]) {
+//            output_shape.push_back(b.shape()[i]);
+//        }
+//    }
+//
+//    // Create an output tensor with the correct shape
+//    Tensor<T> output(output_shape);
+//
+//    // Compute the dot product
+//    for (std::size_t i = 0; i < output.num_elements(); i++) {
+//        std::vector<std::size_t> index = output.unflatten(i);
+//        T sum = T(0);
+//        for (std::size_t j = 0; j < a.shape()[axes_a[0]]; j++) {
+//            index[axes_a[0]] = j;
+//            index[axes_b[1]] = j;
+//            a.flatten(index);
+//            sum += b(b.flatten(index));
+//        }
+//        output(i) = sum;
+//    }
+//
+//    return output;
+//}
 
-    void append(std::initializer_list<T> l) {
-        v.insert(v.end(), l.begin(), l.end());
-    }
-};
-
-template<typename Tuple, size_t... Indices>
-std::array<int, sizeof...(Indices)>
-call_f_detail(Tuple &tuple, std::index_sequence<Indices...>) {
-    return {f(std::get<Indices>(tuple))...};
-}
-
-template<typename Tuple>
-std::array<int, std::tuple_size<Tuple>::value>
-call_f(Tuple &tuple) {
-    return call_f_detail(tuple,
-            // make the sequence type sequence<0, 1, 2, ..., N-1>
-                         std::make_index_sequence<std::tuple_size<Tuple>::value>{}
-    );
-}
+//template<std::size_t... Indices>
+//struct indices {
+//};
+//
+//template<class T>
+//struct Shape {
+//    std::vector<T> v;
+//
+//    Shape(std::initializer_list<T> l) : v(l) {
+//        std::cout << "constructed with a " << l.size() << "-element list\n";
+//    }
+//
+//    void append(std::initializer_list<T> l) {
+//        v.insert(v.end(), l.begin(), l.end());
+//    }
+//};
+//
+//template<typename Tuple, size_t... Indices>
+//std::array<int, sizeof...(Indices)>
+//call_f_detail(Tuple &tuple, std::index_sequence<Indices...>) {
+//    return {f(std::get<Indices>(tuple))...};
+//}
+//
+//template<typename Tuple>
+//std::array<int, std::tuple_size<Tuple>::value>
+//call_f(Tuple &tuple) {
+//    return call_f_detail(tuple,
+//            // make the sequence type sequence<0, 1, 2, ..., N-1>
+//                         std::make_index_sequence<std::tuple_size<Tuple>::value>{}
+//    );
+//}
 //
 //TEST(TensorTest, parameter_pack) {
-//    indices<1, 2, 3, 4> inds;
-//
 //    Shape shape({1, 2, 3, 4});
 //
-////    std::tuple<double, double, double> in{1,2,3};
-//    auto res = call_f(inds);
+//    std::tuple<double, double, double> in{1,2,3};
+//    auto res = call_f(in);
 //}
+
+TEST(TensorTest, common_type) {
+    using common_type_t = typename std::common_type<double, std::complex<double>>::type;
+
+    Tensor<common_type_t> T({4, 3, 1, 8});
+}
