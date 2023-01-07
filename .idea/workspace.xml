@@ -27,13 +27,8 @@
   <component name="ChangeListManager">
     <list default="true" id="148f9fc6-1df1-44f3-b719-7198d20c4a96" name="Changes" comment="add expand_dims">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/Tensor.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/Tensor.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/nblas.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/nblas.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/nlinalg.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/nlinalg.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Graph.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Graph.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Tensor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tensor.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/TensorNetwork.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/TensorNetwork.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/ut/TensorTest.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/test/ut/TensorTest.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -214,7 +209,7 @@
       <workItem from="1671047212294" duration="1333000" />
       <workItem from="1671476853108" duration="1373000" />
       <workItem from="1672054420034" duration="381000" />
-      <workItem from="1673077385273" duration="13046000" />
+      <workItem from="1673077385273" duration="14862000" />
     </task>
     <task id="LOCAL-00001" summary="add expand_dims">
       <created>1664824935314</created>
@@ -223,7 +218,14 @@
       <option name="project" value="LOCAL" />
       <updated>1664824935314</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="add expand_dims">
+      <created>1673127392264</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1673127392264</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

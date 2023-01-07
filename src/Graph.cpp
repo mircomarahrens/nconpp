@@ -5,7 +5,7 @@
 using namespace std;
 
 /**
- * TODO add comment
+ * Constructor for a graph with n nodes
  *
  * @param N
  */
@@ -17,7 +17,7 @@ Graph::Graph(size_t N) {
 }
 
 /**
- * TODO add comment
+ * Construct an undirected edge between a source node src and a destination node dest.
  *
  * @param src
  * @param dest
@@ -31,7 +31,7 @@ void Graph::constructEdge(const Vertex &src, const Vertex &dest) {
 }
 
 /**
- * TODO add comment
+ * Remove all edges between nodes.
  *
  * @param src
  * @param dest
@@ -45,7 +45,7 @@ void Graph::removeAllEdges(const Vertex &src, const Vertex &dest) {
 }
 
 /**
- * TODO add comment
+ * Add a new node to the graph.
  *
  * @param vertex
  */
@@ -54,7 +54,7 @@ void Graph::addVertex(const Vertex &vertex) {
 }
 
 /**
- * TODO add comment
+ * Remove a node from the graph and all corresponding edges with the node.
  *
  * @param vertex
  */
@@ -71,7 +71,7 @@ void Graph::removeVertex(const Vertex &vertex) {
 }
 
 /**
- * TODO add comment
+ * Return all edges.
  *
  * @return
  */
@@ -80,7 +80,7 @@ const std::vector<Edge> &Graph::getEdges() {
 }
 
 /**
- * TODO add comment
+ * Return all nodes.
  *
  * @return
  */
@@ -89,7 +89,7 @@ const vector<Vertex> &Graph::getVertices() {
 }
 
 /**
- * TODO add comment
+ * Calculate the adjacency list for the graph from the edges.
  *
  * @return
  */
@@ -100,21 +100,23 @@ vector<vector<int>> Graph::calculateAdjacencyList() {
         adjacencyList[e.dest.index].emplace_back(e.src.index);
     }
 
-    return move(adjacencyList);
+    return std::move(adjacencyList);
 }
 
 // TODO maybe there is a way to update this on the fly?
 /**
- * TODO add comment
+ * Calculate connected components within the graph and returns them.
  *
  * @return
  */
 vector<vector<int>> Graph::calculateConnectedComponents() {
-    return move(getConnectedComponents(mVertices.size(), calculateAdjacencyList()));
+    return std::move(getConnectedComponents(mVertices.size(), calculateAdjacencyList()));
 }
 
 /**
- * TODO add comment
+ * Returns current connected components within the graph.
+ *
+ * The connected components are discovered via depth first search.
  *
  * @param size
  * @param adjacencyList
@@ -148,7 +150,7 @@ Graph::getConnectedComponents(const size_t size, const vector<vector<int>> &adja
 }
 
 /**
- * TODO add comment
+ * Recursive depth first search to mark visited nodes.
  *
  * @param v
  * @param visited
@@ -166,7 +168,8 @@ void Graph::DFSVisit(int v, std::vector<bool> &visited, std::vector<int> &compon
 }
 
 /**
- * TODO add comment
+ * TODO
+ * Recursive breath first search to mark visited nodes.
  *
  * @param v
  * @param visited
@@ -180,7 +183,7 @@ void Graph::BFSVisit(int v, std::vector<bool> &visited, std::vector<int> &compon
 }
 
 /**
- * TODO add comment
+ * Returns all unique node indices.
  *
  * @return
  */

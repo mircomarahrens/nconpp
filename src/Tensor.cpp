@@ -55,7 +55,7 @@ std::size_t Tensor<T>::dimension() const {
 }
 
 /**
- * TODO add comment
+ * Returns the size of the tensor, i.e. the product of all dimensions of the axes.
  *
  * @tparam T
  * @return
@@ -66,6 +66,7 @@ std::size_t Tensor<T>::size() const {
 }
 
 /**
+ * Returns the number of elements.
  *
  * @tparam T
  * @return
@@ -76,7 +77,7 @@ std::size_t Tensor<T>::num_elements() const {
 }
 
 /**
- * TODO add comment
+ * Returns the shape of the tensor.
  *
  * @tparam T
  * @return
@@ -87,7 +88,9 @@ const std::vector<std::size_t> &Tensor<T>::shape() const {
 }
 
 /**
- * TODO add comment
+ * Reshapes the tensor to a new shape.
+ *
+ * Ensure that the new shape needs to fit the current shape.
  *
  * @tparam T
  * @param shape
@@ -101,7 +104,7 @@ void Tensor<T>::reshape(const std::vector<std::size_t> &shape) {
 }
 
 /**
- * TODO add comment
+ * Resizes the tensor to a new shape. Resizing changes the number of elements, if necessary.
  *
  * @tparam T
  * @param shape
@@ -164,7 +167,7 @@ void Tensor<T>::expand_dims(std::size_t axis) {
 }
 
 /**
- * TODO add comment
+ * Transpose the tensor to a new permutation.
  *
  * @tparam T
  * @param perm
@@ -177,7 +180,7 @@ void Tensor<T>::transpose(const std::vector<std::size_t> &perm) {
 }
 
 /**
- * TODO add comment
+ * Returns a const copy of the data array.
  *
  * @tparam T
  * @return
@@ -262,7 +265,7 @@ std::size_t Tensor<T>::flatten(std::vector<std::size_t> indices) {
 }
 
 /**
- * TODO add comment
+ * Common details for methods flatten.
  *
  * @tparam T
  * @param size
@@ -281,7 +284,7 @@ Tensor<T>::flatten_details(std::size_t size, std::vector<std::size_t> indices) {
 }
 
 /**
- * TODO add comment
+ * Reorders a vector.
  *
  * @tparam T
  * @param v
@@ -316,7 +319,7 @@ void Tensor<T>::compute_strides(const std::vector<std::size_t> &shape) {
 }
 
 /**
- * TODO add comment
+ * Access operator. Returns the element at position.
  *
  * @tparam T
  * @tparam I
@@ -330,7 +333,7 @@ T &Tensor<T>::operator()(I... i) {
 }
 
 /**
- * TODO add comment
+ * Access operator. Returns the element at position.
  *
  * @tparam T
  * @tparam I
@@ -344,7 +347,7 @@ const T &Tensor<T>::operator()(I... i) const {
 }
 
 /**
- * TODO add comment
+ * Asterisk-equal operator, i.e. multiplication by a single value. Returns the new tensor.
  *
  * @tparam T
  * @tparam I
@@ -361,7 +364,7 @@ Tensor<T> &Tensor<T>::operator*=(I rhs) {
 
 
 /**
- * TODO add comment
+ * Asterisk-equal operator, i.e. multiplication by a single value. Returns the new tensor.
  *
  * @tparam T
  * @tparam I
@@ -377,7 +380,7 @@ const Tensor<T> &Tensor<T>::operator*=(I rhs) const {
 }
 
 /**
- * TODO add comment
+ * Check index size.
  *
  * @tparam T
  * @param index_size
@@ -390,7 +393,7 @@ void Tensor<T>::check_index_size(std::size_t index_size) {
 }
 
 /**
- * TODO add comment
+ * Check if number of elements corresponds to the size of the data array.
  *
  * @tparam T
  * @param num_elements
@@ -404,7 +407,7 @@ void Tensor<T>::check_number_elements(std::size_t num_elements, std::size_t data
 }
 
 /**
- * TODO add comment
+ * Check if new shape fits the current shape.
  *
  * @tparam T
  * @param s1
@@ -420,7 +423,7 @@ void Tensor<T>::check_new_shape(std::vector<std::size_t> s1, std::vector<std::si
 }
 
 /**
- * TODO add comment
+ * Check if a index can be in the indices of this tensor.
  *
  * @tparam T
  * @param index
@@ -435,7 +438,7 @@ void Tensor<T>::check_index(std::size_t index, std::size_t axis) {
 }
 
 /**
- * TODO add comment
+ * Check if permutation fits the shape.
  *
  * @tparam T
  * @param perm
@@ -447,7 +450,7 @@ void Tensor<T>::check_perm(const std::vector<std::size_t> &perm) {
 }
 
 /**
- * TODO add comment
+ * Return the strides.
  *
  * @tparam T
  * @return
