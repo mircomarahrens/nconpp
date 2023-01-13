@@ -1,8 +1,10 @@
 {
   "dependencies": [
     "lapack",
-    "openblas"
+    "openblas",
+    "xtensor",
+    "xtensor-blas"
   ],
-  "name": "nconpp",
+  "name": "nconpp-core",
   "version": "0.0.1"
 }

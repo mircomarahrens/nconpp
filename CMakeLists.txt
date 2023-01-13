@@ -27,10 +27,15 @@ find_package(BLAS REQUIRED)
 set(BLAS_INCLUDE_DIR ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include/openblas)
 message(STATUS "cblas.h is located in " ${BLAS_INCLUDE_DIR})
 find_package(LAPACK REQUIRED)
+find_package(xtensor CONFIG REQUIRED)
+find_package(xtensor-blas CONFIG REQUIRED)
 
 set(NCONPP_DEPENDENCIES
         ${BLAS_LIBRARIES}
-        ${LAPACK_LIBRARIES})
+        ${LAPACK_LIBRARIES}
+        xtensor
+        xtensor::optimize
+        xtensor-blas)
 
 set(NCONPP_LIB
         lib/Nconpp.h
@@ -40,13 +45,11 @@ set(NCONPP_INCLUDE
         include/ErrorMessages.h
         include/Graph.h
         include/Tensor.h
-        include/nlinalg.h
         include/TensorNetwork.h
-        include/nblas.h)
+        )
 
 set(NCONPP_SRC
         src/Graph.cpp
-        src/Tensor.cpp
         src/TensorNetwork.cpp)
 
 add_library(nconpp SHARED

@@ -4,6 +4,8 @@
 #include <set>
 #include <vector>
 
+#include "Tensor.h"
+
 class Nconpp {
 public:
     Nconpp() = default;
@@ -31,8 +33,8 @@ public:
     // @return:
     //  the final contracted tensor
     template<class T>
-    static T contract(
-            std::vector<T> &tensorList,
+    static Tensor<T> contract(
+            std::vector<Tensor<T>> &tensorList,
             std::vector<std::vector<int>> subscriptVectorList,
             std::vector<int> contractionSequence = {},
             std::vector<int> finalOrder = {});

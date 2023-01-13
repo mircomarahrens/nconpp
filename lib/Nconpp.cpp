@@ -6,8 +6,8 @@
 #include <vector>
 
 template<class T>
-T Nconpp::contract(
-        std::vector<T> &tensorList,
+Tensor<T> Nconpp::contract(
+        std::vector<Tensor<T>> &tensorList,
         std::vector<std::vector<int>> subscriptVectorList,
         std::vector<int> contractionSequence,
         std::vector<int> finalOrder) {
@@ -49,7 +49,7 @@ void Nconpp::fillFinalOrder(std::vector<int> &finalOrder, const std::vector<int>
     std::reverse(finalOrder.begin(), finalOrder.end());
 }
 
-std::vector<int> Nconpp::retrieveLegIndices(const std::vector <std::vector<int>> &subscriptVectorList) {
+std::vector<int> Nconpp::retrieveLegIndices(const std::vector<std::vector<int>> &subscriptVectorList) {
 
     std::vector<int> legIndices;
     for (std::vector<int> data: subscriptVectorList) {
@@ -70,8 +70,8 @@ Nconpp::connectDisconnectedComponents(std::vector<T> &tensorList, std::vector<st
 
     int i = 0;
     int j = 0;
-    for (const auto& i_legs: subscriptVectorList) {
-        for (const auto& j_legs: subscriptVectorList) {
+    for (const auto &i_legs: subscriptVectorList) {
+        for (const auto &j_legs: subscriptVectorList) {
             if (!Utils::getIntersection(i_legs, j_legs).empty())
                 graph.constructEdge(graph.getVertices()[i], graph.getVertices()[j]);
             j++;
