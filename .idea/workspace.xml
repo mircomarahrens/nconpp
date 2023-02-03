@@ -14,7 +14,6 @@
       <config projectName="nconpp" targetName="gtest_main" />
       <config projectName="nconpp" targetName="nconpp_test" />
       <config projectName="nconpp" targetName="gmock" />
-      <config projectName="nconpp" targetName="nconpp" />
       <config projectName="nconpp" targetName="gtest" />
       <config projectName="nconpp" targetName="gmock_main" />
     </generated>
@@ -26,18 +25,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="148f9fc6-1df1-44f3-b719-7198d20c4a96" name="Changes" comment="add expand_dims">
+      <change afterPath="$PROJECT_DIR$/include/Nconpp.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/Graph.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/Graph.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/include/Tensor.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/Tensor.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/include/TensorNetwork.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/TensorNetwork.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/nblas.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/nlinalg.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/Nconpp.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/lib/Nconpp.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/Nconpp.h" beforeDir="false" afterPath="$PROJECT_DIR$/lib/Nconpp.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Tensor.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/Nconpp.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/Nconpp.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/python/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/python/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Graph.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/TensorNetwork.cpp" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/test/ut/NconppTest.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/test/ut/NconppTest.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/ut/TensorNetworkTest.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/test/ut/TensorNetworkTest.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/ut/TensorTest.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/test/ut/TensorTest.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vcpkg.json" beforeDir="false" afterPath="$PROJECT_DIR$/vcpkg.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -77,7 +78,7 @@
     &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
     &quot;ctest.advertisement.all.test.configuration.is.created&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;//wsl$/Ubuntu/home/mircomarahrens/Private/nconpp&quot;,
+    &quot;last_opened_file_path&quot;: &quot;//wsl$/Ubuntu/home/mircomarahrens/github/mircomarahrens/nconpp/include&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -88,37 +89,43 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
-  <component name="RunManager" selected="Google Test.NconppTest.contract">
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="\\wsl$\Ubuntu\home\mircomarahrens\github\mircomarahrens\nconpp\include" />
+      <recent name="\\wsl$\Ubuntu\home\mircomarahrens\github\mircomarahrens\nconpp\lib" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Google Test.NconppTest.logicError_MoreThanTwoLegs">
     <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
         <option name="CLION.EXTERNAL.BUILD" enabled="true" />
       </method>
     </configuration>
-    <configuration name="All in TensorTest.cpp" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nconpp" TARGET_NAME="nconpp_test" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="nconpp" RUN_TARGET_NAME="nconpp_test" TEST_PATTERN="all-tests(file://$PROJECT_DIR$/test/ut/TensorTest.cpp)" TEST_MODE="PATTERN">
+    <configuration name="All in GraphTest.cpp" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nconpp" TARGET_NAME="nconpp_test" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="nconpp" RUN_TARGET_NAME="nconpp_test" TEST_PATTERN="all-tests(file://$PROJECT_DIR$/test/ut/GraphTest.cpp)" TEST_MODE="PATTERN">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
         <option name="BeforeTestRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="NconppTest.contract" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nconpp" TARGET_NAME="nconpp_test" RUN_TARGET_PROJECT_NAME="nconpp" RUN_TARGET_NAME="nconpp_test" TEST_CLASS="NconppTest" TEST_METHOD="contract" TEST_MODE="SUITE_TEST">
+    <configuration name="All in TensorNetworkTest.cpp" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nconpp" TARGET_NAME="nconpp_test" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="nconpp" RUN_TARGET_NAME="nconpp_test" TEST_PATTERN="all-tests(file://$PROJECT_DIR$/test/ut/TensorNetworkTest.cpp)" TEST_MODE="PATTERN">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
         <option name="BeforeTestRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="NconppTest.logicError_MoreThanTwoLegs" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nconpp" TARGET_NAME="nconpp_test" RUN_TARGET_PROJECT_NAME="nconpp" RUN_TARGET_NAME="nconpp_test" TEST_CLASS="NconppTest" TEST_METHOD="logicError_MoreThanTwoLegs" TEST_MODE="SUITE_TEST">
+    <configuration name="All in nconpp_test.cpp" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nconpp" TARGET_NAME="nconpp_test" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="nconpp" RUN_TARGET_NAME="nconpp_test" TEST_PATTERN="all-tests(file://$PROJECT_DIR$/test/nconpp_test.cpp)" TEST_MODE="PATTERN">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
         <option name="BeforeTestRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="NconppTest.tensorOperations" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nconpp" TARGET_NAME="nconpp_test" RUN_TARGET_PROJECT_NAME="nconpp" RUN_TARGET_NAME="nconpp_test" TEST_CLASS="NconppTest" TEST_METHOD="tensorOperations" TEST_MODE="SUITE_TEST">
+    <configuration name="NconppTest.logicError_MoreThanTwoLegs" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nconpp" TARGET_NAME="nconpp_test" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="nconpp" RUN_TARGET_NAME="nconpp_test" TEST_CLASS="NconppTest" TEST_METHOD="logicError_MoreThanTwoLegs" TEST_MODE="SUITE_TEST">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
         <option name="BeforeTestRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="TensorTest.asterikOperator_int" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nconpp" TARGET_NAME="nconpp_test" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="nconpp" RUN_TARGET_NAME="nconpp_test" TEST_CLASS="TensorTest" TEST_METHOD="asterikOperator_int" TEST_MODE="SUITE_TEST">
+    <configuration name="TensorTest.tensordot" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nconpp" TARGET_NAME="nconpp_test" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="nconpp" RUN_TARGET_NAME="nconpp_test" TEST_CLASS="TensorTest" TEST_METHOD="tensordot" TEST_MODE="SUITE_TEST">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
         <option name="BeforeTestRunTask" enabled="true" />
@@ -144,11 +151,6 @@
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="nconpp" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nconpp" TARGET_NAME="nconpp" CONFIG_NAME="Debug">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="All CTest" type="CTestRunConfiguration" factoryName="CTestRun" PROGRAM_PARAMS="--extra-verbose" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" WORKING_DIR="file://$CMakeCurrentLocalGenerationDir$" PASS_PARENT_ENVS_2="true" CONFIG_NAME="Debug" RUN_PATH="$CTestCurrentExecutableName$" EXPLICIT_BUILD_TARGET_NAME="all" TEST_MODE="SUITE_TEST">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -156,25 +158,24 @@
       </method>
     </configuration>
     <list>
-      <item itemvalue="CMake Application.nconpp" />
       <item itemvalue="CMake Application.gmock" />
       <item itemvalue="CMake Application.gmock_main" />
       <item itemvalue="CMake Application.gtest" />
       <item itemvalue="CMake Application.gtest_main" />
       <item itemvalue="CTest Application.All CTest" />
-      <item itemvalue="Google Test.NconppTest.contract" />
+      <item itemvalue="Google Test.All in GraphTest.cpp" />
+      <item itemvalue="Google Test.All in TensorNetworkTest.cpp" />
+      <item itemvalue="Google Test.All in nconpp_test.cpp" />
       <item itemvalue="Google Test.NconppTest.logicError_MoreThanTwoLegs" />
-      <item itemvalue="Google Test.NconppTest.tensorOperations" />
-      <item itemvalue="Google Test.TensorTest.asterikOperator_int" />
-      <item itemvalue="Google Test.All in TensorTest.cpp" />
+      <item itemvalue="Google Test.TensorTest.tensordot" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Google Test.NconppTest.contract" />
         <item itemvalue="Google Test.NconppTest.logicError_MoreThanTwoLegs" />
-        <item itemvalue="Google Test.NconppTest.tensorOperations" />
-        <item itemvalue="Google Test.All in TensorTest.cpp" />
-        <item itemvalue="Google Test.TensorTest.asterikOperator_int" />
+        <item itemvalue="Google Test.All in nconpp_test.cpp" />
+        <item itemvalue="Google Test.All in GraphTest.cpp" />
+        <item itemvalue="Google Test.All in TensorNetworkTest.cpp" />
+        <item itemvalue="Google Test.TensorTest.tensordot" />
       </list>
     </recent_temporary>
   </component>
@@ -227,6 +228,16 @@
       <workItem from="1673168712550" duration="1267000" />
       <workItem from="1673207711499" duration="15000" />
       <workItem from="1673510259356" duration="962000" />
+      <workItem from="1673684064188" duration="5165000" />
+      <workItem from="1673896884226" duration="6945000" />
+      <workItem from="1673949722094" duration="884000" />
+      <workItem from="1674380060300" duration="16000" />
+      <workItem from="1674847673678" duration="160000" />
+      <workItem from="1674940722087" duration="12000" />
+      <workItem from="1675010823440" duration="2386000" />
+      <workItem from="1675106094812" duration="263000" />
+      <workItem from="1675366615756" duration="3000" />
+      <workItem from="1675446742651" duration="7815000" />
     </task>
     <task id="LOCAL-00001" summary="add expand_dims">
       <created>1664824935314</created>
@@ -273,6 +284,11 @@
           <url>file://$PROJECT_DIR$/test/ut/TensorTest.cpp</url>
           <line>188</line>
           <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/include/Nconpp.h</url>
+          <line>155</line>
+          <option name="timeStamp" value="6" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

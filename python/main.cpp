@@ -8,8 +8,7 @@
 #include <complex>
 #include <optional>
 
-#include "../lib/Nconpp.h"
-#include "../lib/Nconpp.cpp"
+#include "Nconpp.h"
 
 namespace py = pybind11;
 

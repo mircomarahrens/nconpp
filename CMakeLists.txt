@@ -2,15 +2,6 @@
 
 cmake_minimum_required(VERSION 3.20)
 
-#set(CMAKE_TOOLCHAIN_FILE /home/mircomarahrens/vcpkg/scripts/buildsystems/vcpkg.cmake)
-
-# avoid infinite recursion
-if(DEFINED NCONPP_CORE_PROJECT)
-    message(STATUS "NCONPP_CORE_PROJECT already called. Go next.")
-    return()
-endif()
-set(NCONPP_CORE_PROJECT ON)
-
 project(nconpp CXX)
 
 # git clone https://github.com/microsoft/vcpkg.git
@@ -18,9 +9,9 @@ project(nconpp CXX)
 set(VCPKG_FEATURE_FLAGS "versions")
 
 # cmake flags
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_STANDARD 17
+    CMAKE_CXX_STANDARD_REQUIRED ON
+    CMAKE_CXX_EXTENSIONS OFF)
 
 # dependencies
 find_package(BLAS REQUIRED)
@@ -31,40 +22,19 @@ find_package(xtensor CONFIG REQUIRED)
 find_package(xtensor-blas CONFIG REQUIRED)
 
 set(NCONPP_DEPENDENCIES
-        ${BLAS_LIBRARIES}
-        ${LAPACK_LIBRARIES}
-        xtensor
-        xtensor::optimize
-        xtensor-blas)
-
-set(NCONPP_LIB
-        lib/Nconpp.h
-        lib/Nconpp.cpp)
+    ${BLAS_LIBRARIES}
+    ${LAPACK_LIBRARIES}
+    xtensor
+    xtensor::optimize
+    xtensor-blas)
 
 set(NCONPP_INCLUDE
-        include/ErrorMessages.h
-        include/Graph.h
-        include/Tensor.h
-        include/TensorNetwork.h
-        )
-
-set(NCONPP_SRC
-        src/Graph.cpp
-        src/TensorNetwork.cpp)
-
-add_library(nconpp SHARED
-        ${NCONPP_LIB}
-        ${NCONPP_INCLUDE}
-        ${NCONPP_SRC})
-
-target_include_directories(nconpp PRIVATE
-        lib/
-        include/
-        src/
-        ${BLAS_INCLUDE_DIR})
-
-target_link_libraries(nconpp
-        ${NCONPP_DEPENDENCIES})
+    include/ErrorMessages.h
+    include/Graph.h
+    include/Nconpp.h
+    include/Tensor.h
+    include/TensorNetwork.h
+    )
 
 # test via gtest
 if (CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
@@ -76,26 +46,23 @@ if (CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
     enable_testing()
 
     add_executable(nconpp_test
-            test/nconpp_test.cpp
-            test/ut/NconppTest.cpp
-            test/ut/GraphTest.cpp
-            test/ut/TensorTest.cpp
-            test/ut/TensorNetworkTest.cpp)
+        test/nconpp_test.cpp
+        test/ut/GraphTest.cpp
+        test/ut/NconppTest.cpp
+        test/ut/TensorNetworkTest.cpp
+        test/ut/TensorTest.cpp)
 
     target_include_directories(nconpp_test PUBLIC
-            lib/
-            include/
-            src/
-            ${BLAS_INCLUDE_DIR})
+        include/
+        ${BLAS_INCLUDE_DIR})
 
     target_link_libraries(nconpp_test
-            ${CMAKE_THREAD_LIBS_INIT}
-            ${NCONPP_DEPENDENCIES}
-            gmock
-            gtest
-            gmock_main
-            gtest_main
-            nconpp)
+        ${CMAKE_THREAD_LIBS_INIT}
+        ${NCONPP_DEPENDENCIES}
+        gmock
+        gtest
+        gmock_main
+        gtest_main)
 
     include(GoogleTest)
     gtest_discover_tests(nconpp_test)

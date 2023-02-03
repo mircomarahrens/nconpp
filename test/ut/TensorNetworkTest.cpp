@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "TensorNetwork.h"
-#include "TensorNetwork.cpp"
+
 
 class TensorNetworkTest : public testing::Test {
     TensorNetworkTest() = default;

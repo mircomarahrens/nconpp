@@ -1,7 +1,6 @@
 #include <gtest/gtest.h>
 
 #include "Nconpp.h"
-#include "Nconpp.cpp"
 
 #include "ErrorMessages.h"
 #include "Tensor.h"
@@ -9,12 +8,6 @@
 #include <algorithm>
 #include <complex>
 #include <set>
-
-#include <xtensor/xarray.hpp>
-#include <xtensor/xexpression.hpp>
-#include <xtensor/xlayout.hpp>
-#include <xtensor/xrandom.hpp>
-#include <xtensor-blas/xlinalg.hpp>
 
 class NconppTest : public testing::Test {
     NconppTest() = default;
@@ -43,10 +36,6 @@ TEST(NconppTest, logicError_MoreThanTwoLegs) {
                     Tensor<std::complex<double>>({5, 3, 6, 7, 6}),
                     Tensor<std::complex<double>>({7, 2})
             };
-
-    tensorList[0].randomize();
-    tensorList[1].randomize();
-    tensorList[2].randomize();
 
     std::vector<std::vector<int>> legLinks =
             {
