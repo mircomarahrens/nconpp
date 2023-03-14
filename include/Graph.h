@@ -1,259 +1,161 @@
-#pragma once
+//
+// Created by mirco on 3/13/2023.
+//
 
-#include <algorithm>
-#include <optional>
-#include <set>
-#include <vector>
+#ifndef NCONPP_GRAPH_H
+#define NCONPP_GRAPH_H
 
-enum Color {
-    white, gray, black
-};
-
-struct Vertex {
-    int index{0};
-    std::optional<Color> color{white};
-    std::optional<int> distance{-1};
-    struct Vertex *parent{nullptr};
-
-    friend bool operator<(const Vertex &lhs, const Vertex &rhs) {
-        return lhs.index < rhs.index;
-    };
-
-    friend bool operator>(const Vertex &lhs, const Vertex &rhs) {
-        return lhs.index > rhs.index;
-    };
-
-    friend bool operator==(const Vertex &lhs, const Vertex &rhs) {
-        return lhs.index == rhs.index;
-    };
-
-    friend bool operator!=(const Vertex &lhs, const Vertex &rhs) {
-        return lhs.index != rhs.index;
-    };
-};
-
-struct Edge {
-    Vertex src;
-    Vertex dest;
-    bool directed{false};
-
-    friend bool operator==(const Edge &lhs, const Edge &rhs) {
-        if (!lhs.directed && !rhs.directed)
-            return (lhs.src == rhs.src && lhs.dest == rhs.dest) || (lhs.dest == rhs.src && lhs.src == rhs.dest);
-        else
-            return (lhs.src == rhs.src && lhs.dest == rhs.dest);
-    };
-
-    friend bool operator!=(const Edge &lhs, const Edge &rhs) {
-        if (!lhs.directed && !rhs.directed)
-            return (lhs.src != rhs.src || lhs.dest != rhs.dest) || (lhs.dest != rhs.src || lhs.src != rhs.dest);
-        else
-            return (lhs.src != rhs.src || lhs.dest != rhs.dest);
-    };
-};
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/connected_components.hpp>
+#include <boost/graph/properties.hpp>
 
 class Graph {
+    typedef boost::adjacency_list
+            <
+                    boost::vecS,
+                    boost::vecS,
+                    boost::undirectedS
+            > boost_Graph;
 public:
     /**
-     * Constructor for a graph with n nodes
-     *
+     * Default constructor.
+     */
+    explicit Graph() = default;
+
+    /**
+     * Constructor for a graph with n nodes.
      * @param N
      */
-    explicit Graph(std::size_t N) {
-        for (int i = 0; i < N; i++) {
-            Vertex vertex{i};
-            mVertices.emplace_back(vertex);
-        }
-    };
-
-    ~Graph() = default;
+    explicit Graph(std::size_t N) : g(N) {}
 
     /**
-     * Construct an undirected edge between a source node src and a destination node dest.
-     *
+     * Add a new vertex to the graph.
+     */
+    std::size_t addVertex() {
+        auto v = boost::add_vertex(g);
+        return v;
+    }
+
+    /**
+     * Remove a vertex from the graph.  All edges corresponding to the vertex are removed beforehand.
+     * @param index
+     */
+    void removeVertex(std::size_t index) {
+        auto v = boost::vertex(index, g);
+        boost::clear_vertex(v, g); // ensure all edges to vertex are removed beforehand
+        boost::remove_vertex(v, g);
+    }
+
+    /**
+     * Remove all vertices from the graph. All edges corresponding to the vertex are removed beforehand.
+     */
+    void removeAllVertices() {
+        boost::graph_traits<boost_Graph>::vertex_iterator vi, vi_end, next;
+        boost::tie(vi, vi_end) = boost::vertices(g);
+        for (next = vi; vi != vi_end; vi = next) {
+            ++next;
+            boost::clear_vertex(*vi, g); // ensure all edges to vertex are removed beforehand
+            boost::remove_vertex(*vi, g);
+        }
+    }
+
+    /**
+     * Retrieve all current vertex indices.
+     * @return
+     */
+    std::vector<std::size_t> getVertices() {
+        std::vector<std::size_t> result = {};
+
+        // get the property map for vertex id
+        typedef boost::property_map<boost_Graph, boost::vertex_index_t>::type VertexIdMap;
+        VertexIdMap vertex_id = boost::get(boost::vertex_index, g);
+
+        // tie vertex iterators
+        boost::graph_traits<boost_Graph>::vertex_iterator vi, vi_end, next;
+        boost::tie(vi, vi_end) = boost::vertices(g);
+
+        for (next = vi; vi != vi_end; vi = next) {
+            ++next;
+            result.emplace_back(vertex_id[*vi]);
+        }
+
+        return std::move(result);
+    }
+
+    /**
+     * Add a new edge to the graph.
      * @param src
      * @param dest
      */
-    virtual void constructEdge(const Vertex &src, const Vertex &dest) {
-        if (std::find(mVertices.begin(), mVertices.end(), src) != mVertices.end() &&
-            std::find(mVertices.begin(), mVertices.end(), dest) != mVertices.end()) {
-            Edge edge{src, dest};
-            mEdges.emplace_back(edge);
-        }
-    };
+    std::pair<std::size_t, std::size_t> addEdge(std::size_t src, std::size_t dest) {
+        auto s = boost::vertex(src, g);
+        auto d = boost::vertex(dest, g);
+        auto e = boost::add_edge(s, d, g);
+        assert(e.second == true);
+        return std::make_pair(s, d);
+    }
 
     /**
-     * Remove all edges between nodes.
-     *
+     * Remove an edge between source and destination vertices.
      * @param src
      * @param dest
      */
-    virtual void removeAllEdges(const Vertex &src, const Vertex &dest) {
-        auto pos = std::find_if(mEdges.begin(),
-                                mEdges.end(),
-                                [&csrc = src, &cdest = dest]
-                                        (const Edge &edge) -> bool {
-                                    return (csrc == edge.src && cdest == edge.dest);
-                                });
-        mEdges.erase(pos);
-    };
+    void removeEdge(std::size_t src, std::size_t dest) {
+        auto s = boost::vertex(src, g);
+        auto d = boost::vertex(dest, g);
+        boost::remove_edge(s, d, g);
+    }
 
     /**
-     * Add a new node to the graph.
-     *
-     * @param vertex
-     */
-    virtual void addVertex(const Vertex &vertex) {
-        mVertices.emplace_back(vertex);
-    };
-
-    /**
-     * Remove a node from the graph and all corresponding edges with the node.
-     *
-     * @param vertex
-     */
-    virtual void removeVertex(const Vertex &vertex) {
-        for (auto dest: mVertices)
-            removeAllEdges(vertex, dest);
-        auto pos = std::find_if(mVertices.begin(),
-                                mVertices.end(),
-                                [vertex]
-                                        (const Vertex &cvertex) -> bool {
-                                    return (cvertex.index == vertex.index);
-                                });
-        mVertices.erase(pos);
-    };
-
-    /**
-     * Return all edges.
-     *
+     * Retrieve all edges as pair of vertex indices.
      * @return
      */
-    const std::vector<Edge> &getEdges() {
-        return mEdges;
-    };
+    std::vector<std::pair<std::size_t, std::size_t>> getEdges() {
+        std::vector<std::pair<std::size_t, std::size_t>> result = {};
 
-    /**
-     * Return all nodes.
-     *
-     * @return
-     */
-    const std::vector<Vertex> &getVertices() {
-        return mVertices;
-    };
+        // get the property map for vertex id
+        typedef boost::property_map<boost_Graph, boost::vertex_index_t>::type VertexIdMap;
+        VertexIdMap vertex_id = boost::get(boost::vertex_index, g);
 
-    /**
-     * Calculate the adjacency list for the graph from the edges.
-     *
-     * @return
-     */
-    std::vector<std::vector<int>> calculateAdjacencyList() {
-        std::vector<std::vector<int>> adjacencyList(mVertices.size());
-        for (auto e: mEdges) {
-            adjacencyList[e.src.index].emplace_back(e.dest.index);
-            adjacencyList[e.dest.index].emplace_back(e.src.index);
-        }
+        // tie vertex iterators
+        boost::graph_traits<boost_Graph>::vertex_iterator vi, vi_end, next;
+        boost::tie(vi, vi_end) = boost::vertices(g);
 
-        return std::move(adjacencyList);
-    };
+        // iterate through vertices
+        for (next = vi; vi != vi_end; vi = next) {
+            ++next;
 
-    // TODO maybe there is a way to update this on the fly?
-    /**
-     * Calculate connected components within the graph and returns them.
-     *
-     * @return
-     */
-    std::vector<std::vector<int>> calculateConnectedComponents() {
-        return std::move(getConnectedComponents(mVertices.size(), calculateAdjacencyList()));
-    };
-
-    /**
-     * Returns all unique node indices.
-     *
-     * @return
-     */
-    std::vector<int> getVertexIndices() {
-        std::vector<int> indices;
-        for (Vertex vertex: mVertices)
-            indices.emplace_back(vertex.index);
-        return std::move(indices);
-    };
-
-protected:
-    std::vector<Vertex> mVertices;
-    std::vector<Edge> mEdges;
-
-private:
-    /**
-     * Returns current connected components within the graph.
-     *
-     * The connected components are discovered via depth first search.
-     *
-     * @param size
-     * @param adjacencyList
-     * @return
-     */
-    std::vector<std::vector<int>> getConnectedComponents(std::size_t size,
-                                                         const std::vector<std::vector<int>> &adjacencyList) {
-        std::vector<std::vector<int>> connectedComponents = {};
-
-        std::vector<bool> visited(size);
-        for (int v = 0; v < size; v++)
-            visited[v] = false;
-
-        std::vector<int> component;
-        for (int v = 0; v < size; v++) {
-            if (!visited[v]) {
-                // depth first search via recursion
-                // TODO add a threshold for the depth?
-                // Remarks: Why DFS and not BFS?
-                // https://cs.stackexchange.com/questions/73686/why-do-we-prefer-dfs-to-find-connected-components
-                // That is why we use Depth-First Search Mostly because:
-                //  1. there is no need to find an optimal solution
-                //  2. memory matters!
-                DFSVisit(v, visited, component, adjacencyList);
-                connectedComponents.emplace_back(component);
-                component.clear();
+            // iterate through adjacent vertices
+            boost::graph_traits<boost_Graph>::adjacency_iterator ai, ai_end;
+            for (boost::tie(ai, ai_end) = boost::adjacent_vertices(*vi, g); ai != ai_end; ++ai) {
+                result.emplace_back(vertex_id[*vi], vertex_id[*ai]);
             }
         }
 
-        return connectedComponents;
-    };
+        return std::move(result);
+    }
 
     /**
-     * Recursive depth first search to mark visited nodes.
-     *
-     * @param v
-     * @param visited
-     * @param component
-     * @param adjacencyList
+     * Retrieve current connected components of the graph.
+     * @return
      */
-    void DFSVisit(int v,
-                  std::vector<bool> &visited,
-                  std::vector<int> &component,
-                  const std::vector<std::vector<int>> &adjacencyList) {
-        visited[v] = true;
-        component.emplace_back(v);
+    std::vector<std::vector<std::size_t>> getConnectedComponents() {
+        // Assume g is a graph object of type boost::adjacency_list
+        std::vector<std::size_t> component(boost::num_vertices(g)); // Create an array for storing component numbers
 
-        for (auto i = adjacencyList[v].begin(); i != adjacencyList[v].end(); ++i)
-            if (!visited[*i])
-                DFSVisit(*i, visited, component, adjacencyList);
-    };
+        std::size_t num_components = boost::connected_components(g, &component[0]); // Calculate the connected components
 
-    /**
-     * TODO
-     * Recursive breath first search to mark visited nodes.
-     *
-     * @param v
-     * @param visited
-     * @param component
-     * @param adjacencyList
-     */
-    void BFSVisit(int v,
-                  std::vector<bool> &visited,
-                  std::vector<int> &component,
-                  const std::vector<std::vector<int>> &adjacencyList) {
-        visited[v] = true;
-        component.emplace_back(v);
-    };
+        std::vector<std::vector<std::size_t>> result(num_components); // Create a vector of vectors for storing the result
+
+        for (std::size_t i = 0; i < component.size(); ++i) { // Loop over the component array
+            result[component[i]].push_back(i); // Push the vertex index into the corresponding vector
+        }
+
+        return result;
+    }
+
+private:
+    boost_Graph g;
 };
+
+#endif //NCONPP_GRAPH_H

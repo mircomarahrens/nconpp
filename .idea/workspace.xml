@@ -25,20 +25,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="148f9fc6-1df1-44f3-b719-7198d20c4a96" name="Changes" comment="add expand_dims">
-      <change afterPath="$PROJECT_DIR$/include/Nconpp.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/include/Graph.h.backup" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/ErrorMessages.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/ErrorMessages.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/include/Graph.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/Graph.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/Nconpp.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/Nconpp.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/include/Tensor.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/Tensor.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/include/TensorNetwork.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/TensorNetwork.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/Nconpp.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/Nconpp.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/python/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/python/main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Graph.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/TensorNetwork.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/ut/GraphTest.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/test/ut/GraphTest.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/ut/NconppTest.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/test/ut/NconppTest.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/ut/TensorNetworkTest.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/test/ut/TensorNetworkTest.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/ut/TensorTest.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/test/ut/TensorTest.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vcpkg.json" beforeDir="false" afterPath="$PROJECT_DIR$/vcpkg.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,6 +54,19 @@
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">
+    <option name="selectedUrlAndAccountId">
+      <UrlAndAccount>
+        <option name="accountId" value="37210c01-5e20-4813-bc6c-f6fcad1fa1a4" />
+        <option name="url" value="git@github.com:mircomarahrens/nconpp.git" />
+      </UrlAndAccount>
+    </option>
   </component>
   <component name="MacroExpansionManager">
     <option name="directoryName" value="jcwjs3o3" />
@@ -84,7 +95,7 @@
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;CPPToolchains&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.general&quot;,
     &quot;structure.view.defaults.are.configured&quot;: &quot;true&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
@@ -95,19 +106,8 @@
       <recent name="\\wsl$\Ubuntu\home\mircomarahrens\github\mircomarahrens\nconpp\lib" />
     </key>
   </component>
-  <component name="RunManager" selected="Google Test.NconppTest.logicError_MoreThanTwoLegs">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
-      </method>
-    </configuration>
+  <component name="RunManager" selected="Google Test.All in GraphTest.cpp">
     <configuration name="All in GraphTest.cpp" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nconpp" TARGET_NAME="nconpp_test" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="nconpp" RUN_TARGET_NAME="nconpp_test" TEST_PATTERN="all-tests(file://$PROJECT_DIR$/test/ut/GraphTest.cpp)" TEST_MODE="PATTERN">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-        <option name="BeforeTestRunTask" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="All in TensorNetworkTest.cpp" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nconpp" TARGET_NAME="nconpp_test" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="nconpp" RUN_TARGET_NAME="nconpp_test" TEST_PATTERN="all-tests(file://$PROJECT_DIR$/test/ut/TensorNetworkTest.cpp)" TEST_MODE="PATTERN">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
         <option name="BeforeTestRunTask" enabled="true" />
@@ -119,16 +119,27 @@
         <option name="BeforeTestRunTask" enabled="true" />
       </method>
     </configuration>
+    <configuration name="GraphTest.ConnectedComponents" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nconpp" TARGET_NAME="nconpp_test" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="nconpp" RUN_TARGET_NAME="nconpp_test" TEST_CLASS="GraphTest" TEST_METHOD="ConnectedComponents" TEST_MODE="SUITE_TEST">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="BeforeTestRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="GraphTest.withVertices" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nconpp" TARGET_NAME="nconpp_test" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="nconpp" RUN_TARGET_NAME="nconpp_test" TEST_CLASS="GraphTest" TEST_METHOD="withVertices" TEST_MODE="SUITE_TEST">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="BeforeTestRunTask" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="NconppTest.logicError_MoreThanTwoLegs" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nconpp" TARGET_NAME="nconpp_test" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="nconpp" RUN_TARGET_NAME="nconpp_test" TEST_CLASS="NconppTest" TEST_METHOD="logicError_MoreThanTwoLegs" TEST_MODE="SUITE_TEST">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
         <option name="BeforeTestRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="TensorTest.tensordot" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nconpp" TARGET_NAME="nconpp_test" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="nconpp" RUN_TARGET_NAME="nconpp_test" TEST_CLASS="TensorTest" TEST_METHOD="tensordot" TEST_MODE="SUITE_TEST">
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-        <option name="BeforeTestRunTask" enabled="true" />
       </method>
     </configuration>
     <configuration name="gmock" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nconpp" TARGET_NAME="gmock" CONFIG_NAME="Debug">
@@ -163,19 +174,19 @@
       <item itemvalue="CMake Application.gtest" />
       <item itemvalue="CMake Application.gtest_main" />
       <item itemvalue="CTest Application.All CTest" />
+      <item itemvalue="Google Test.GraphTest.withVertices" />
+      <item itemvalue="Google Test.GraphTest.ConnectedComponents" />
       <item itemvalue="Google Test.All in GraphTest.cpp" />
-      <item itemvalue="Google Test.All in TensorNetworkTest.cpp" />
-      <item itemvalue="Google Test.All in nconpp_test.cpp" />
       <item itemvalue="Google Test.NconppTest.logicError_MoreThanTwoLegs" />
-      <item itemvalue="Google Test.TensorTest.tensordot" />
+      <item itemvalue="Google Test.All in nconpp_test.cpp" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Google Test.NconppTest.logicError_MoreThanTwoLegs" />
-        <item itemvalue="Google Test.All in nconpp_test.cpp" />
         <item itemvalue="Google Test.All in GraphTest.cpp" />
-        <item itemvalue="Google Test.All in TensorNetworkTest.cpp" />
-        <item itemvalue="Google Test.TensorTest.tensordot" />
+        <item itemvalue="Google Test.GraphTest.withVertices" />
+        <item itemvalue="Google Test.GraphTest.ConnectedComponents" />
+        <item itemvalue="Google Test.All in nconpp_test.cpp" />
+        <item itemvalue="Google Test.NconppTest.logicError_MoreThanTwoLegs" />
       </list>
     </recent_temporary>
   </component>
@@ -237,7 +248,48 @@
       <workItem from="1675010823440" duration="2386000" />
       <workItem from="1675106094812" duration="263000" />
       <workItem from="1675366615756" duration="3000" />
-      <workItem from="1675446742651" duration="7815000" />
+      <workItem from="1675446742651" duration="8232000" />
+      <workItem from="1675598099938" duration="909000" />
+      <workItem from="1675887528139" duration="16000" />
+      <workItem from="1675958493899" duration="2696000" />
+      <workItem from="1676318633519" duration="1887000" />
+      <workItem from="1676491905801" duration="43000" />
+      <workItem from="1676571836800" duration="47000" />
+      <workItem from="1676572743153" duration="2078000" />
+      <workItem from="1676581217777" duration="1197000" />
+      <workItem from="1676727898854" duration="1966000" />
+      <workItem from="1676729980989" duration="865000" />
+      <workItem from="1676732570134" duration="3763000" />
+      <workItem from="1676792202885" duration="4284000" />
+      <workItem from="1676799020302" duration="254000" />
+      <workItem from="1676812048372" duration="5112000" />
+      <workItem from="1676823829231" duration="685000" />
+      <workItem from="1676824784123" duration="1609000" />
+      <workItem from="1676837300311" duration="3219000" />
+      <workItem from="1676840665501" duration="1027000" />
+      <workItem from="1677001815098" duration="660000" />
+      <workItem from="1677007528108" duration="1162000" />
+      <workItem from="1677012785460" duration="2584000" />
+      <workItem from="1677147656809" duration="26000" />
+      <workItem from="1677320497584" duration="16107000" />
+      <workItem from="1677344874096" duration="813000" />
+      <workItem from="1677346886147" duration="737000" />
+      <workItem from="1677351177289" duration="957000" />
+      <workItem from="1677428586807" duration="1661000" />
+      <workItem from="1677430381864" duration="878000" />
+      <workItem from="1677483541395" duration="1971000" />
+      <workItem from="1677493587519" duration="190000" />
+      <workItem from="1677897509335" duration="3189000" />
+      <workItem from="1678525305645" duration="1092000" />
+      <workItem from="1678533752825" duration="6799000" />
+      <workItem from="1678541412079" duration="77000" />
+      <workItem from="1678626442454" duration="184000" />
+      <workItem from="1678627014122" duration="8848000" />
+      <workItem from="1678686535076" duration="7615000" />
+      <workItem from="1678717982786" duration="69000" />
+      <workItem from="1678720584123" duration="199000" />
+      <workItem from="1678785519649" duration="9039000" />
+      <workItem from="1678803422632" duration="397000" />
     </task>
     <task id="LOCAL-00001" summary="add expand_dims">
       <created>1664824935314</created>
@@ -277,20 +329,8 @@
     <MESSAGE value="add expand_dims" />
     <option name="LAST_COMMIT_MESSAGE" value="add expand_dims" />
   </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/test/ut/TensorTest.cpp</url>
-          <line>188</line>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/include/Nconpp.h</url>
-          <line>155</line>
-          <option name="timeStamp" value="6" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>

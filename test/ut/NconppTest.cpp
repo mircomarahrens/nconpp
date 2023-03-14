@@ -30,11 +30,11 @@ TEST(NconppTest, tensorOperations) {
 }
 
 TEST(NconppTest, logicError_MoreThanTwoLegs) {
-    std::vector<Tensor<std::complex<double>>> tensorList =
+    std::vector<nc::tensor<std::complex<double>>> tensorList =
             {
-                    Tensor<std::complex<double>>({3, 4, 5}),
-                    Tensor<std::complex<double>>({5, 3, 6, 7, 6}),
-                    Tensor<std::complex<double>>({7, 2})
+                    nc::tensor<std::complex<double>>({3, 4, 5}),
+                    nc::tensor<std::complex<double>>({5, 3, 6, 7, 6}),
+                    nc::tensor<std::complex<double>>({7, 2})
             };
 
     std::vector<std::vector<int>> legLinks =
@@ -46,24 +46,24 @@ TEST(NconppTest, logicError_MoreThanTwoLegs) {
 
     EXPECT_THROW(
             try {
-                Tensor<std::complex<double>> finalTensor =
+                nc::tensor<std::complex<double>> finalTensor =
                         Nconpp::contract(tensorList, legLinks);
             }
             catch (const std::logic_error &ex) {
-                EXPECT_EQ(ERROR_MESSAGES::MISMATCH, ex.what());
+                EXPECT_EQ(ERROR_MESSAGES::CONSTRAINT_LEGPAIRS, ex.what());
                 throw;
             }, std::logic_error);
 }
 
 TEST(NconppTest, contract) {
-    std::vector<Tensor<std::complex<double>>> tensorList =
+    std::vector<nc::tensor<std::complex<double>>> tensorList =
             {
-                    Tensor<std::complex<double>>({3, 4, 5}),
-                    Tensor<std::complex<double>>({5, 3, 6, 7, 6}),
-                    Tensor<std::complex<double>>({7, 2}),
-                    Tensor<std::complex<double>>({8}),
-                    Tensor<std::complex<double>>({8, 9}),
-                    Tensor<std::complex<double>>({9, 9})
+                    nc::tensor<std::complex<double>>({3, 4, 5}),
+                    nc::tensor<std::complex<double>>({5, 3, 6, 7, 6}),
+                    nc::tensor<std::complex<double>>({7, 2}),
+                    nc::tensor<std::complex<double>>({8}),
+                    nc::tensor<std::complex<double>>({8, 9}),
+                    nc::tensor<std::complex<double>>({9, 9})
             };
 
     std::vector<std::vector<int>> legLinks =
@@ -76,10 +76,10 @@ TEST(NconppTest, contract) {
                     {6, 6}
             };
 
-    Tensor<std::complex<double>> finalTensor =
+    nc::tensor<std::complex<double>> finalTensor =
             Nconpp::contract(tensorList, legLinks);
 
-    xt::xarray<std::size_t>::shape_type Shape = {2, 4, 9};
+    nc::shape_type Shape = {2, 4, 9};
     ASSERT_EQ(finalTensor.shape(), Shape);
 }
 

@@ -1,5 +1,6 @@
 {
   "dependencies": [
+    "boost-graph",
     "lapack",
     "openblas",
     "xtensor",

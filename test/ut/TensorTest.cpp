@@ -269,26 +269,26 @@ class TensorTest : public testing::Test {
 //}
 
 TEST(TensorTest, tensordot) {
-    Shape shapeA = {4, 3, 2, 8};
-    Tensor<std::complex<double>> A(shapeA);
+    nc::shape_type shapeA = {4, 3, 2, 8};
+    nc::tensor<std::complex<double>> A(shapeA);
 
-    Shape shapeB = {8, 4, 2, 1, 3};
-    Tensor<std::complex<double>> B(shapeB);
+    nc::shape_type shapeB = {8, 4, 2, 1, 3};
+    nc::tensor<std::complex<double>> B(shapeB);
 
-    auto C = xt::linalg::tensordot(A, B, {0,2,3}, {1,2,0});
+    auto C = nc::linalg::tensordot(A, B, {0,2,3}, {1,2,0});
 }
 
 TEST(TensorTest, xtensor_tensordot) {
-    xt::xarray<std::complex<double>>::shape_type shapeA = {4, 3, 2, 8};
-    xt::xarray<std::complex<double>> A(shapeA);
+    nc::shape_type shapeA = {4, 3, 2, 8};
+    nc::tensor<std::complex<double>> A(shapeA);
 
 // A.randomize();
 
-    xt::xarray<std::complex<double>>::shape_type shapeB = {8, 4, 2, 1, 3};
-    xt::xarray<std::complex<double>> B(shapeB);
+    nc::shape_type shapeB = {8, 4, 2, 1, 3};
+    nc::tensor<std::complex<double>> B(shapeB);
 //    B.randomize();
 
-    auto C = xt::linalg::tensordot(A, B, {0,2,3}, {1,2,0});
+    auto C = nc::linalg::tensordot(A, B, {0,2,3}, {1,2,0});
 
 //    auto B = xt::random::rand<double>();
 //    auto C = TensorOperations::tensordot(A, B, {1}, {1});

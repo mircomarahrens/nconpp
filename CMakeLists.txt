@@ -9,11 +9,13 @@ project(nconpp CXX)
 set(VCPKG_FEATURE_FLAGS "versions")
 
 # cmake flags
-set(CMAKE_CXX_STANDARD 17
-    CMAKE_CXX_STANDARD_REQUIRED ON
-    CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_STANDARD 20
+        CMAKE_CXX_STANDARD_REQUIRED ON
+        CMAKE_CXX_EXTENSIONS OFF)
 
 # dependencies
+#find_package(Boost REQUIRED [COMPONENTS <libs>...])
+#target_link_libraries(main PRIVATE Boost::boost Boost::<lib1> Boost::<lib2> ...)
 find_package(BLAS REQUIRED)
 set(BLAS_INCLUDE_DIR ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include/openblas)
 message(STATUS "cblas.h is located in " ${BLAS_INCLUDE_DIR})
@@ -22,19 +24,19 @@ find_package(xtensor CONFIG REQUIRED)
 find_package(xtensor-blas CONFIG REQUIRED)
 
 set(NCONPP_DEPENDENCIES
-    ${BLAS_LIBRARIES}
-    ${LAPACK_LIBRARIES}
-    xtensor
-    xtensor::optimize
-    xtensor-blas)
+        ${BLAS_LIBRARIES}
+        ${LAPACK_LIBRARIES}
+        xtensor
+        xtensor::optimize
+        xtensor-blas)
 
 set(NCONPP_INCLUDE
-    include/ErrorMessages.h
-    include/Graph.h
-    include/Nconpp.h
-    include/Tensor.h
-    include/TensorNetwork.h
-    )
+        include/ErrorMessages.h
+        include/Graph.h
+        include/Nconpp.h
+        include/Tensor.h
+        include/TensorNetwork.h
+        )
 
 # test via gtest
 if (CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
@@ -46,23 +48,23 @@ if (CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
     enable_testing()
 
     add_executable(nconpp_test
-        test/nconpp_test.cpp
-        test/ut/GraphTest.cpp
-        test/ut/NconppTest.cpp
-        test/ut/TensorNetworkTest.cpp
-        test/ut/TensorTest.cpp)
+            test/nconpp_test.cpp
+            test/ut/GraphTest.cpp
+            test/ut/NconppTest.cpp
+            test/ut/TensorNetworkTest.cpp
+            test/ut/TensorTest.cpp)
 
     target_include_directories(nconpp_test PUBLIC
-        include/
-        ${BLAS_INCLUDE_DIR})
+            include/
+            ${BLAS_INCLUDE_DIR})
 
     target_link_libraries(nconpp_test
-        ${CMAKE_THREAD_LIBS_INIT}
-        ${NCONPP_DEPENDENCIES}
-        gmock
-        gtest
-        gmock_main
-        gtest_main)
+            ${CMAKE_THREAD_LIBS_INIT}
+            ${NCONPP_DEPENDENCIES}
+            gmock
+            gtest
+            gmock_main
+            gtest_main)
 
     include(GoogleTest)
     gtest_discover_tests(nconpp_test)
