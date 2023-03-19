@@ -4,7 +4,7 @@
 #include <set>
 #include <vector>
 
-#include "ErrorMessages.h"
+#include "Error.h"
 #include "Tensor.h"
 #include "TensorNetwork.h"
 
@@ -48,58 +48,60 @@ public:
     // @return:
     //  the final contracted tensor
     template<class T>
-    static nc::tensor<T> contract(std::vector<nc::tensor<T>> &tensorList,
-                              std::vector<std::vector<int>> subscriptVectorList,
-                              std::vector<int> contractionSequence = {},
-                              std::vector<int> finalOrder = {}) {
+    static npp::tensor<T> contract(std::vector<npp::array_type<T>> &tensorList,
+                                   std::vector<std::vector<int>> subscriptVectorList,
+                                   std::vector<int> contractionSequence = {},
+                                   std::vector<int> finalOrder = {}) {
 
-        // retrieve unique values for legs
-        std::set<int> negLegs = {};
-        std::set<int> posLegs = {};
-
-        std::unordered_map<int, std::pair<std::size_t, std::size_t>> legsTensorPair;
-        std::pair<std::size_t, std::size_t> tensorPair(0,0);
-        std::size_t index = 0;
-        while (index < subscriptVectorList.size()) {
-            auto data = subscriptVectorList.at(index);
-            for (int ledId: data) {
-                // store negative and positive values in sets
-                if (ledId < 0) {
-                    negLegs.insert(ledId);
-                }
-                if (ledId > 0) {
-                    posLegs.insert(ledId);
-
-                    if(legsTensorPair.find(ledId) != legsTensorPair.end()) {
-//                        if (legsTensorPair[ledId].second != 0) {
-//                            throw std::invalid_argument(ERROR_MESSAGES::CONSTRAINT_LEGPAIRS);
-//                        }
-                        legsTensorPair[ledId].second = index;
-                        tensorPair.first = 0; tensorPair.second = 0;
-                    } else {
-                        tensorPair.first = index;
-                        legsTensorPair[ledId] = tensorPair;
-                    }
-
-                }
-            }
-            index++;
-        }
-
-        // fill contraction sequence with positive legs if initially empty
-        if(contractionSequence.empty()) {
-            contractionSequence.insert(contractionSequence.begin(), posLegs.begin(), posLegs.end());
-        }
-
-        // fill final order with negative legs if initially empty
-        if (finalOrder.empty()) {
-            finalOrder.insert(finalOrder.end(), negLegs.begin(), negLegs.end());
-        }
+//        // retrieve unique values for legs
+//        std::set<int> negLegs = {};
+//        std::set<int> posLegs = {};
+//
+//        std::unordered_map<int, std::pair<std::size_t, std::size_t>> legsTensorPair;
+//        std::pair<std::size_t, std::size_t> tensorPair(0,0);
+//        std::size_t index = 0;
+//        while (index < subscriptVectorList.size()) {
+//            auto data = subscriptVectorList.at(index);
+//            for (int ledId: data) {
+//                // store negative and positive values in sets
+//                if (ledId < 0) {
+//                    negLegs.insert(ledId);
+//                }
+//                if (ledId > 0) {
+//                    posLegs.insert(ledId);
+//
+//                    if(legsTensorPair.find(ledId) != legsTensorPair.end()) {
+////                        if (legsTensorPair[ledId].second != 0) {
+////                            throw std::invalid_argument(ERROR_MESSAGES::CONSTRAINT_LEGPAIRS);
+////                        }
+//                        legsTensorPair[ledId].second = index;
+//                        tensorPair.first = 0; tensorPair.second = 0;
+//                    } else {
+//                        tensorPair.first = index;
+//                        legsTensorPair[ledId] = tensorPair;
+//                    }
+//
+//                }
+//            }
+//            index++;
+//        }
+//
+//        // fill contraction sequence with positive legs if initially empty
+//        if(contractionSequence.empty()) {
+//            contractionSequence.insert(contractionSequence.begin(), posLegs.begin(), posLegs.end());
+//        }
+//
+//        // fill final order with negative legs if initially empty
+//        if (finalOrder.empty()) {
+//            finalOrder.insert(finalOrder.end(), negLegs.begin(), negLegs.end());
+//        }
 
         // TODO refactor this method into ??? --> tensorNetwork
         connectDisconnectedComponents(tensorList, subscriptVectorList, contractionSequence);
 
         TensorNetwork<T> tensorNetwork{tensorList, subscriptVectorList};
+
+        auto connectedComponents = tensorNetwork.getConnectedComponents();
 
         return tensorNetwork.contract(contractionSequence);
     };
@@ -207,13 +209,13 @@ private:
     template<class T>
     static void expandRawTensorNetwork(int vertexIndex,
                                        int legIndex,
-                                       std::vector<nc::tensor<T>> &tensorList,
+                                       std::vector<npp::tensor<T>> &tensorList,
                                        std::vector<std::vector<int>> &subscriptVectorList) {
 
         auto &container_type = tensorList[vertexIndex];
 
-        std::size_t dim = nc::dimension(container_type);
-        container_type = nc::expand_dims(container_type, dim);
+        std::size_t dim = npp::dimension(container_type);
+        container_type = npp::expand_dims(container_type, dim);
 
         subscriptVectorList[vertexIndex].push_back(legIndex);
 

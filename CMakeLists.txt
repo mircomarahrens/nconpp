@@ -31,7 +31,7 @@ set(NCONPP_DEPENDENCIES
         xtensor-blas)
 
 set(NCONPP_INCLUDE
-        include/ErrorMessages.h
+        include/Error.h
         include/Graph.h
         include/Nconpp.h
         include/Tensor.h
@@ -41,33 +41,30 @@ set(NCONPP_INCLUDE
 # test via gtest
 if (CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
     message(STATUS "GoogleTest process triggered.")
+    project(nconpp_tests)
     # GoogleTest: git clone https://github.com/google/googletest.git
     add_subdirectory(googletest)
     include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
     enable_testing()
 
-    add_executable(nconpp_test
-            test/nconpp_test.cpp
+    add_executable(nconpp_tests_run
+            test/google_tests_run.cpp
             test/ut/GraphTest.cpp
-            test/ut/NconppTest.cpp
             test/ut/TensorNetworkTest.cpp
             test/ut/TensorTest.cpp)
 
-    target_include_directories(nconpp_test PUBLIC
+    target_include_directories(nconpp_tests_run PUBLIC
             include/
             ${BLAS_INCLUDE_DIR})
 
-    target_link_libraries(nconpp_test
+    target_link_libraries(nconpp_tests_run
             ${CMAKE_THREAD_LIBS_INIT}
             ${NCONPP_DEPENDENCIES}
             gmock
             gtest
             gmock_main
             gtest_main)
-
-    include(GoogleTest)
-    gtest_discover_tests(nconpp_test)
 endif ()
 
 ## python via python

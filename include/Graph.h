@@ -8,14 +8,35 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/connected_components.hpp>
 #include <boost/graph/properties.hpp>
+#include <boost/property_map/property_map.hpp>
 
 class Graph {
+protected:
+    struct vertex_properties {
+        std::size_t id{};
+        std::vector<int> leg_ids;
+    };
+
+//    struct leg_id_property_t {
+//        typedef boost::edge_property_tag leg_id;
+//    };
+//
+//    typedef boost::property<leg_id_property_t, std::size_t> edge_properties;
+
+    struct edge_properties {
+        std::size_t leg_id;
+    };
+
     typedef boost::adjacency_list
-            <
-                    boost::vecS,
-                    boost::vecS,
-                    boost::undirectedS
-            > boost_Graph;
+        <boost::vecS,
+        boost::vecS,
+        boost::undirectedS,
+        vertex_properties,
+        edge_properties>
+        graph_t;
+
+    graph_t graph;
+
 public:
     /**
      * Default constructor.
@@ -26,13 +47,13 @@ public:
      * Constructor for a graph with n nodes.
      * @param N
      */
-    explicit Graph(std::size_t N) : g(N) {}
+    explicit Graph(std::size_t N) : graph(N) {}
 
     /**
      * Add a new vertex to the graph.
      */
     std::size_t addVertex() {
-        auto v = boost::add_vertex(g);
+        auto v = boost::add_vertex(graph);
         return v;
     }
 
@@ -41,21 +62,21 @@ public:
      * @param index
      */
     void removeVertex(std::size_t index) {
-        auto v = boost::vertex(index, g);
-        boost::clear_vertex(v, g); // ensure all edges to vertex are removed beforehand
-        boost::remove_vertex(v, g);
+        auto v = boost::vertex(index, graph);
+        boost::clear_vertex(v, graph); // ensure all edges to vertex are removed beforehand
+        boost::remove_vertex(v, graph);
     }
 
     /**
      * Remove all vertices from the graph. All edges corresponding to the vertex are removed beforehand.
      */
     void removeAllVertices() {
-        boost::graph_traits<boost_Graph>::vertex_iterator vi, vi_end, next;
-        boost::tie(vi, vi_end) = boost::vertices(g);
+        boost::graph_traits<graph_t>::vertex_iterator vi, vi_end, next;
+        boost::tie(vi, vi_end) = boost::vertices(graph);
         for (next = vi; vi != vi_end; vi = next) {
             ++next;
-            boost::clear_vertex(*vi, g); // ensure all edges to vertex are removed beforehand
-            boost::remove_vertex(*vi, g);
+            boost::clear_vertex(*vi, graph); // ensure all edges to vertex are removed beforehand
+            boost::remove_vertex(*vi, graph);
         }
     }
 
@@ -67,16 +88,16 @@ public:
         std::vector<std::size_t> result = {};
 
         // get the property map for vertex id
-        typedef boost::property_map<boost_Graph, boost::vertex_index_t>::type VertexIdMap;
-        VertexIdMap vertex_id = boost::get(boost::vertex_index, g);
+        typedef boost::property_map<graph_t, boost::vertex_index_t>::type InternalVertexIdMap;
+        InternalVertexIdMap vertex = boost::get(boost::vertex_index, graph);
 
         // tie vertex iterators
-        boost::graph_traits<boost_Graph>::vertex_iterator vi, vi_end, next;
-        boost::tie(vi, vi_end) = boost::vertices(g);
+        boost::graph_traits<graph_t>::vertex_iterator vi, vi_end, next;
+        boost::tie(vi, vi_end) = boost::vertices(graph);
 
         for (next = vi; vi != vi_end; vi = next) {
             ++next;
-            result.emplace_back(vertex_id[*vi]);
+            result.emplace_back(vertex[*vi]);
         }
 
         return std::move(result);
@@ -87,12 +108,12 @@ public:
      * @param src
      * @param dest
      */
-    std::pair<std::size_t, std::size_t> addEdge(std::size_t src, std::size_t dest) {
-        auto s = boost::vertex(src, g);
-        auto d = boost::vertex(dest, g);
-        auto e = boost::add_edge(s, d, g);
+    auto addEdge(std::size_t src, std::size_t dest) {
+        auto s = boost::vertex(src, graph);
+        auto d = boost::vertex(dest, graph);
+        auto e = boost::add_edge(s, d, graph);
         assert(e.second == true);
-        return std::make_pair(s, d);
+        return e.first;
     }
 
     /**
@@ -101,9 +122,9 @@ public:
      * @param dest
      */
     void removeEdge(std::size_t src, std::size_t dest) {
-        auto s = boost::vertex(src, g);
-        auto d = boost::vertex(dest, g);
-        boost::remove_edge(s, d, g);
+        auto s = boost::vertex(src, graph);
+        auto d = boost::vertex(dest, graph);
+        boost::remove_edge(s, d, graph);
     }
 
     /**
@@ -111,23 +132,23 @@ public:
      * @return
      */
     std::vector<std::pair<std::size_t, std::size_t>> getEdges() {
-        std::vector<std::pair<std::size_t, std::size_t>> result = {};
-
         // get the property map for vertex id
-        typedef boost::property_map<boost_Graph, boost::vertex_index_t>::type VertexIdMap;
-        VertexIdMap vertex_id = boost::get(boost::vertex_index, g);
+        typedef boost::property_map<graph_t, boost::vertex_index_t>::type VertexIdMap;
+        VertexIdMap vertex_id = boost::get(boost::vertex_index, graph);
 
         // tie vertex iterators
-        boost::graph_traits<boost_Graph>::vertex_iterator vi, vi_end, next;
-        boost::tie(vi, vi_end) = boost::vertices(g);
+        boost::graph_traits<graph_t>::vertex_iterator vi, vi_end, next;
+        boost::tie(vi, vi_end) = boost::vertices(graph);
+
+        std::vector<std::pair<std::size_t, std::size_t>> result(boost::num_vertices(graph));
 
         // iterate through vertices
         for (next = vi; vi != vi_end; vi = next) {
             ++next;
 
             // iterate through adjacent vertices
-            boost::graph_traits<boost_Graph>::adjacency_iterator ai, ai_end;
-            for (boost::tie(ai, ai_end) = boost::adjacent_vertices(*vi, g); ai != ai_end; ++ai) {
+            boost::graph_traits<graph_t>::adjacency_iterator ai, ai_end;
+            for (boost::tie(ai, ai_end) = boost::adjacent_vertices(*vi, graph); ai != ai_end; ++ai) {
                 result.emplace_back(vertex_id[*vi], vertex_id[*ai]);
             }
         }
@@ -136,16 +157,14 @@ public:
     }
 
     /**
-     * Retrieve current connected components of the graph.
+     * Retrieve current connected components of the (undirected) graph.
      * @return
      */
     std::vector<std::vector<std::size_t>> getConnectedComponents() {
-        // Assume g is a graph object of type boost::adjacency_list
-        std::vector<std::size_t> component(boost::num_vertices(g)); // Create an array for storing component numbers
-
-        std::size_t num_components = boost::connected_components(g, &component[0]); // Calculate the connected components
-
-        std::vector<std::vector<std::size_t>> result(num_components); // Create a vector of vectors for storing the result
+        // Assume graph is a undirected graph object of type boost::adjacency_list
+        std::vector<std::size_t> component(boost::num_vertices(graph));
+        std::size_t num_components = boost::connected_components(graph, &component[0]);
+        std::vector<std::vector<std::size_t>> result(num_components);
 
         for (std::size_t i = 0; i < component.size(); ++i) { // Loop over the component array
             result[component[i]].push_back(i); // Push the vertex index into the corresponding vector
@@ -153,9 +172,6 @@ public:
 
         return result;
     }
-
-private:
-    boost_Graph g;
 };
 
 #endif //NCONPP_GRAPH_H

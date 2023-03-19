@@ -5,7 +5,7 @@
 #ifndef NCONPP_TENSORNETWORK_H
 #define NCONPP_TENSORNETWORK_H
 
-#include "ErrorMessages.h"
+#include "Error.h"
 #include "Graph.h"
 #include "Tensor.h"
 
@@ -22,9 +22,9 @@ public:
      * @param tensorList
      * @param subscriptVectorList
      */
-    explicit TensorNetwork(std::vector<nc::tensor<T>> &tensorList,
+    explicit TensorNetwork(std::vector<npp::array_type<T>> &tensorList,
                            std::vector<std::vector<int>> &subscriptVectorList) :
-            Graph() {
+            Graph(tensorList.size()), mTensorList(tensorList) {
 
         if (tensorList.size() != subscriptVectorList.size()) {
             throw std::invalid_argument(
@@ -34,47 +34,85 @@ public:
                     std::to_string(subscriptVectorList.size()) + ".");
         }
 
-        std::size_t dest = 0; std::unordered_map<std::size_t, std::size_t> counts;
-        for (auto sv : subscriptVectorList) {
-            // create a new vertex
-            auto src = addVertex();
+        std::size_t src_id = 0; std::size_t dest_id = 0;
+        // counting occurrence of legs to check constraints
+        std::unordered_map<std::size_t, std::size_t> _vertex_leg_map;
+        for (const auto& led_ids: subscriptVectorList) {
+            // set stable vertex properties
+            graph[src_id].id = src_id;
+            graph[src_id].leg_ids = led_ids;
 
-            for (int legId: sv) {
+            for (int leg_id: led_ids) {
                 // 0 is an invalid leg index by convention
-                if (legId == 0) {
-                    throw std::invalid_argument(ERROR_MESSAGES::CONSTRAINT_INVALIDLEG);
+                if (leg_id == 0) {
+                    throw std::invalid_argument(ERROR::CONSTRAINT_INVALIDLEG);
                 }
 
-                // store negative and positive legIds in sets
-                if (legId < 0) {
-                    if (mNegLegs.contains(legId)) {
-                        throw std::invalid_argument(ERROR_MESSAGES::CONSTRAINT_UNIQUELEGS);
+                // store negative leg ids as dangling legs
+                if (leg_id < 0) {
+                    if (mDanglingLegs.contains(leg_id)) {
+                        throw std::invalid_argument(ERROR::CONSTRAINT_UNIQUELEGS);
                     }
-                    mNegLegs.insert(legId);
-                    counts[legId] += 1;
+                    mDanglingLegs.insert(leg_id);
                 }
 
-                if (legId > 0) {
-                    if (mPosLegs.contains(legId) && counts[legId] < 2) {
-                        mLegToEdge[legId] = addEdge(src, dest);
-                        counts[legId] += 1;
-                    } else if (counts[legId] > 1) {
-                        throw std::invalid_argument(ERROR_MESSAGES::CONSTRAINT_LEGPAIRS);
+                // store positive legs as edge legs
+                if (leg_id > 0) {
+                    // if leg_id has already been seen -> form an edge
+                    if (mEdgeLegs.contains(leg_id)) {
+                        // obtain previous src_id from map
+                        auto prev_id = _vertex_leg_map[leg_id];
+
+                        // add edge between previous src_id and dest_id (the current src_id)
+                        auto edge = addEdge(prev_id, src_id);
+
+                        // set stable edge properties
+                        graph[edge].leg_id = leg_id;
+
+                        // store to leg-to-edge map
+                        mLegToEdge[leg_id] = edge;
+
+                        // erase entry from map
+                        _vertex_leg_map.erase(leg_id);
                     } else {
-                        src = dest;
-                        mPosLegs.insert(legId);
-                        counts[legId] += 1;
+                        // store mapping leg_id to src_id
+                        _vertex_leg_map[leg_id] = src_id;
+
+                        // store edge leg
+                        mEdgeLegs.insert(leg_id);
                     }
                 }
             }
-            dest++;
+            src_id++;
         }
 
-        mTensorList = tensorList;
-        mSubscriptVectorList = subscriptVectorList;
+        // if the map is not empty we have an error by our restrictions
+        if (!_vertex_leg_map.empty()) {
+            throw std::invalid_argument(ERROR::CONSTRAINT_LEGPAIRS);
+        }
+
+        mConnectedComponents = getConnectedComponents();
     };
 
     ~TensorNetwork() = default;
+
+    /**
+     * Trivially connect disconnected components by taking the shortest elements of the sub vector index lists in the
+     * components and expand them by a new index of dimension one.
+     */
+    void connectDisconnectedComponents() {
+        std::size_t _num_components = mConnectedComponents.size();
+        if (_num_components > 1) {
+            for (std::size_t c = 0; c != _num_components; c++) {
+                // TODO
+                // odd or even number of components
+                // get new legs aka extend mEdgeLegs
+                // extend "shortest" tensors
+                // extend vertices corresponding to tensor
+                // add new leg to mEdgeLegs
+            }
+        }
+    }
 
     /**
      * TODO add comment
@@ -82,24 +120,29 @@ public:
      * @param contractionSequence
      * @return
      */
-    nc::tensor<T> contract(std::vector<int> contractionSequence = {}, std::vector<int> finalOrder = {}) {
+    npp::array_type<T> contract(std::vector<int> contractionSequence = {}, std::vector<int> finalOrder = {}) {
+
+        // throw error if the tensor network consists of multiple disconnected components
+        if (mConnectedComponents.size() != 1) {
+            throw std::logic_error(ERROR::DISCONNECTED_NETWORKS);
+        }
 
         // fill contraction sequence with positive legs if initially empty
-        if(contractionSequence.empty()) {
-            contractionSequence.insert(contractionSequence.begin(), mPosLegs.begin(), mPosLegs.end());
+        if (contractionSequence.empty()) {
+            contractionSequence.insert(contractionSequence.begin(), mEdgeLegs.begin(), mEdgeLegs.end());
         }
 
         // fill final order with negative legs if initially empty
         if (finalOrder.empty()) {
-            finalOrder.insert(finalOrder.end(), mNegLegs.begin(), mNegLegs.end());
+            finalOrder.insert(finalOrder.end(), mDanglingLegs.begin(), mDanglingLegs.end());
         }
 
-        for (int li : contractionSequence) {
-            const auto& edge = mLegToEdge[li];
-            if(edge.first == edge.second) {
-                trace(li, edge);
+        for (int leg_id: contractionSequence) {
+            auto edge = mLegToEdge[leg_id];
+            if (graph[edge.m_source].id == graph[edge.m_target].id) {
+                trace(leg_id);
             } else {
-                tensordot(li, edge);
+                tensordot(leg_id);
             }
         }
 
@@ -114,36 +157,37 @@ public:
     };
 
 private:
-    std::vector<nc::tensor<T>> mTensorList;
-    std::vector<std::vector<int>> mSubscriptVectorList;
+    std::vector<npp::array_type<T>> mTensorList;
 
     // store negative and positive legIds in separate sets
-    std::set<std::size_t> mNegLegs = {};
-    std::set<std::size_t> mPosLegs = {};
+    std::set<int> mDanglingLegs = {};
+    std::set<int> mEdgeLegs = {};
 
-    // store mapping legId to Edge, only one Edge per legId is possible by convention
-    std::unordered_map<std::size_t, std::pair<std::size_t, std::size_t>> mLegToEdge;
+    // store mapping legId to edge
+    std::unordered_map<std::size_t, graph_t::edge_descriptor> mLegToEdge = {};
+
+    std::vector<std::vector<std::size_t>> mConnectedComponents = {};
 
     /**
      * TODO add comment
      * inplace manipulation of tensors
      *
      */
-    void trace(int legId, std::pair<std::size_t, std::size_t> edge) {
-        std::size_t src = edge.first; std::vector<std::size_t> axes;
+    void trace(int legId) {
+        auto src = graph[mLegToEdge[legId].m_source];
 
-        auto& legs = mSubscriptVectorList[src];
+        auto &legs = src.leg_ids;
 
+        std::vector<std::size_t> axes(2);
+        int c = 0;
         for (std::size_t axis = 0; axis < legs.size(); axis++) {
             if (legs[axis] == legId) {
-                axes.emplace_back(axis);
+                axes[c] = axis; c++;
             }
         }
-
         assert(axes.size() == 2);
 
-        auto &tensor = mTensorList[src];
-        nc::linalg::trace(tensor, axes[0], axes[1]);
+        npp::linalg::trace(mTensorList[src.id], 0, axes[0], axes[1]);
 
         legs.erase(legs.begin() + axes[0]);
         legs.erase(legs.begin() + axes[1]);
@@ -158,12 +202,15 @@ private:
      * @param axisA
      * @param axisB
      */
-    void tensordot(int legId, std::pair<std::size_t, std::size_t> edge) {
-        std::size_t indexA = edge.first;
-        std::size_t indexB = edge.second;
+    void tensordot(int legId) {
+        auto src = graph[mLegToEdge[legId].m_source];
+        auto dest = graph[mLegToEdge[legId].m_target];
 
-        auto& legsA = mSubscriptVectorList[indexA];
-        auto& legsB = mSubscriptVectorList[indexB];
+        std::size_t indexA = src.id;
+        std::size_t indexB = dest.id;
+
+        auto &legsA = src.leg_ids;
+        auto &legsB = dest.leg_ids;
 
         std::vector<std::size_t> axesA;
         std::vector<std::size_t> axesB;
@@ -185,7 +232,7 @@ private:
         auto &tensorA = mTensorList[indexA];
         auto &tensorB = mTensorList[indexB];
 
-        auto newTensor = nc::linalg::tensordot(tensorA, tensorB, axesA, axesB);
+        auto newTensor = npp::linalg::tensordot(tensorA, tensorB, axesA, axesB);
 
         mTensorList.erase(mTensorList.begin() + indexA);
         mTensorList.erase(mTensorList.begin() + indexB);
@@ -196,10 +243,10 @@ private:
         newLegs.insert(newLegs.begin(), legsA.begin(), legsA.end());
         newLegs.insert(newLegs.end(), legsB.begin(), legsB.end());
 
-        mSubscriptVectorList.erase(mSubscriptVectorList.begin() + (int)indexA);
-        mSubscriptVectorList.erase(mSubscriptVectorList.begin() + (int)indexB + 1);
-
-        mSubscriptVectorList.emplace_back(newLegs);
+//        mSubscriptVectorList.erase(mSubscriptVectorList.begin() + (int) indexA);
+//        mSubscriptVectorList.erase(mSubscriptVectorList.begin() + (int) indexB + 1);
+//
+//        mSubscriptVectorList.emplace_back(newLegs);
 
         // TODO update graph
 //        mVertices.erase(mVertices.begin() + axesA[0]);

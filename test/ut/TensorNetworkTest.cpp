@@ -9,28 +9,58 @@ class TensorNetworkTest : public testing::Test {
     ~TensorNetworkTest() override = default;
 };
 
-TEST(TensorNetworkTest, tensorNetwork) {
-//    std::vector<xt::xarray<std::complex<double>>> tensorList =
-//            {
-//                    xt::random::rand<double>({3, 4, 5}),
-//                    xt::random::rand<double>({5, 3, 6, 7, 6}),
-//                    xt::random::rand<double>({7, 2}),
-//                    xt::random::rand<double>({8}),
-//                    xt::random::rand<double>({8, 9}),
-//                    xt::random::rand<double>({9, 9})
-//            };
+TEST(TensorNetworkTest, logicError_MoreThanTwoLegs) {
+    std::vector<npp::array_type<std::complex<double>>> tensorList =
+            {
+                    npp::tensor<std::complex<double>>({3, 4, 5}),
+                    npp::tensor<std::complex<double>>({5, 3, 6, 7, 6}),
+                    npp::tensor<std::complex<double>>({7, 2})
+            };
+
+    std::vector<std::vector<int>> legLinks =
+            {
+                    {3, -2, 2},
+                    {2, 3,  1, 3, 1},
+                    {4, -1},
+            };
+
+    EXPECT_THROW(
+            try {
+                TensorNetwork tn(tensorList, legLinks);
+            }
+            catch (const std::logic_error &ex) {
+                EXPECT_EQ(ERROR::CONSTRAINT_LEGPAIRS, ex.what());
+                throw;
+            }, std::logic_error);
+}
+
+TEST(TensorNetworkTest, contract) {
+    std::vector<npp::array_type<std::complex<double>>> tensorList =
+            {
+                    xt::random::rand<double>({3, 4, 5}),
+                    xt::random::rand<double>({5, 3, 6, 7, 6}),
+                    xt::random::rand<double>({7, 2}),
+                    xt::random::rand<double>({8}),
+                    xt::random::rand<double>({8, 9}),
+                    xt::random::rand<double>({9, 9})
+            };
+
+    std::vector<std::vector<int>> legLinks =
+            {
+                    {3, -2, 2},
+                    {2, 3,  1, 4, 1},
+                    {4, -1},
+                    {5},
+                    {5, -3},
+                    {6, 6}
+            };
+
+    TensorNetwork tn(tensorList, legLinks);
+
+    npp::tensor<std::complex<double>> ft = tn.contract();
 //
-//    std::vector<std::vector<int>> legLinks =
-//            {
-//                    {3, -2, 2},
-//                    {2, 3,  1, 4, 1},
-//                    {4, -1},
-//                    {5},
-//                    {5, -3},
-//                    {6, 6}
-//            };
-//
-//    TensorNetwork tensorNetwork{tensorList, legLinks};
+//    npp::shape_type Shape = {2, 4, 9};
+//    ASSERT_EQ(ft.shape(), Shape);
 }
 
 TEST(TensorTest, svd) {

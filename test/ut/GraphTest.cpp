@@ -3,16 +3,14 @@
 
 #include "Graph.h"
 
-using namespace std;
-
 class GraphTest : public testing::Test {
     GraphTest() = default;
 
     ~GraphTest() override = default;
 
 public:
-    static std::set<int> createRangeSet(size_t size) {
-        std::vector<int> vec(size);
+    static std::set<std::size_t> createRangeSet(std::size_t size) {
+        std::vector<std::size_t> vec(size);
         std::iota(vec.begin(), vec.end(), 0);
         return {vec.begin(), vec.end()};
     }
@@ -50,6 +48,30 @@ TEST(GraphTest, addVertex) {
     }
 }
 
+TEST(GraphTest, removeVertex) {
+    size_t N = 5;
+    Graph graph(N);
+    ASSERT_EQ(N, graph.getVertices().size());
+
+    auto rangeSet1 = GraphTest::createRangeSet(N);
+    for (auto v_id: graph.getVertices()) {
+        ASSERT_TRUE(rangeSet1.find(v_id) != rangeSet1.end());
+    }
+
+    // remove the vertex with id 2
+    graph.removeVertex(2);
+
+    auto vs = graph.getVertices();
+
+    ASSERT_TRUE(vs.size() == N-1);
+
+    // boost ensures that the identifiers of the vertices in the graph are still in ascending order [0, num_vertices)
+    auto rangeSet2 = GraphTest::createRangeSet(N-1);
+    for (auto v_id: graph.getVertices()) {
+        ASSERT_TRUE(rangeSet2.find(v_id) != rangeSet2.end());
+    }
+}
+
 TEST(GraphTest, addEdges) {
     size_t N = 5;
     Graph graph(N);
@@ -61,7 +83,7 @@ TEST(GraphTest, addEdges) {
         ASSERT_TRUE(rangeSet.find(v_id) != rangeSet.end());
     }
 
-    vector<std::pair<std::size_t, std::size_t>> edges = {};
+    std::vector<std::pair<std::size_t, std::size_t>> edges = {};
     std::pair<std::size_t, std::size_t> edge1{vertices[0], vertices[1]};
     std::pair<std::size_t, std::size_t> edge2{vertices[1], vertices[3]};
     std::pair<std::size_t, std::size_t> edge3{vertices[2], vertices[4]};

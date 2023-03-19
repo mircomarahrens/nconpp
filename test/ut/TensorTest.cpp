@@ -268,32 +268,23 @@ class TensorTest : public testing::Test {
 ////    auto C = nlinalg::dot(A, B);
 //}
 
-TEST(TensorTest, tensordot) {
-    nc::shape_type shapeA = {4, 3, 2, 8};
-    nc::tensor<std::complex<double>> A(shapeA);
-
-    nc::shape_type shapeB = {8, 4, 2, 1, 3};
-    nc::tensor<std::complex<double>> B(shapeB);
-
-    auto C = nc::linalg::tensordot(A, B, {0,2,3}, {1,2,0});
+TEST(TensorTest, trace) {
+    npp::shape_type shapeA = {4, 3, 2, 8, 2};
+    npp::tensor<std::complex<double>> A = npp::random::rand<double>(shapeA) + 1j * npp::random::rand<double>(shapeA);
+    npp::linalg::trace(A, 0, 3, 4);
 }
 
-TEST(TensorTest, xtensor_tensordot) {
-    nc::shape_type shapeA = {4, 3, 2, 8};
-    nc::tensor<std::complex<double>> A(shapeA);
+TEST(TensorTest, tensordot) {
+    npp::shape_type shapeA = {4, 3, 2, 8};
+    npp::tensor<std::complex<double>> A = npp::random::rand<double>(shapeA) + 1j * npp::random::rand<double>(shapeA);
 
-// A.randomize();
+    npp::shape_type shapeB = {8, 4, 2, 1, 3};
+    npp::tensor<std::complex<double>> B = npp::random::rand<double>(shapeB) + 1j * npp::random::rand<double>(shapeB);
 
-    nc::shape_type shapeB = {8, 4, 2, 1, 3};
-    nc::tensor<std::complex<double>> B(shapeB);
-//    B.randomize();
+    auto C = npp::linalg::tensordot(A, B, {0, 2, 3}, {1, 2, 0});
 
-    auto C = nc::linalg::tensordot(A, B, {0,2,3}, {1,2,0});
-
-//    auto B = xt::random::rand<double>();
-//    auto C = TensorOperations::tensordot(A, B, {1}, {1});
-//    TensorOperations::shape_type shapeC = ;
-//    ASSERT_EQ(TensorOperations::Shape(C), shapeC);
+    npp::shape_type shapeC = {3, 1, 3};
+    ASSERT_EQ(npp::shape(C), shapeC);
 //
 //    TensorOperations::array_type<std::complex<double>> D = TensorOperations::trace(C, 0, 4, 5);
 //
