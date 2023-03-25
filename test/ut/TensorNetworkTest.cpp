@@ -57,7 +57,7 @@ TEST(TensorNetworkTest, contract) {
 
     TensorNetwork tn(tensorList, legLinks);
 
-    npp::tensor<std::complex<double>> ft = tn.contract();
+    tn.contract();
 //
 //    npp::shape_type Shape = {2, 4, 9};
 //    ASSERT_EQ(ft.shape(), Shape);

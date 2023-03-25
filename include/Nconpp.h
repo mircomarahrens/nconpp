@@ -4,7 +4,7 @@
 #include <set>
 #include <vector>
 
-#include "Error.h"
+#include "LogMessages.h"
 #include "Tensor.h"
 #include "TensorNetwork.h"
 

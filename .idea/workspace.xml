@@ -25,18 +25,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="148f9fc6-1df1-44f3-b719-7198d20c4a96" name="Changes" comment="add expand_dims">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/ErrorMessages.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/Error.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/Graph.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/Graph.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/Doxyfile" beforeDir="false" afterPath="$PROJECT_DIR$/docs/Doxyfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/graphs.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/graphs.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/googletest" beforeDir="false" afterPath="$PROJECT_DIR$/googletest" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/Error.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/LogMessages.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/Graph.h" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/include/Nconpp.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/Nconpp.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/include/Tensor.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/Tensor.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/include/TensorNetwork.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/TensorNetwork.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/nconpp_test.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/test/google_tests_run.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/ut/GraphTest.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/test/ut/GraphTest.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/ut/NconppTest.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/ut/GraphTest.cpp" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/test/ut/TensorNetworkTest.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/test/ut/TensorNetworkTest.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/ut/TensorTest.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/test/ut/TensorTest.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,6 +46,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="ClangdSettings">
+    <option name="clangTidyViaClangd" value="false" />
     <option name="formatViaClangd" value="false" />
   </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
@@ -102,6 +105,7 @@
 }</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="\\wsl$\Ubuntu\home\mircomarahrens\github\mircomarahrens\nconpp\.resources" />
       <recent name="\\wsl$\Ubuntu\home\mircomarahrens\github\mircomarahrens\nconpp\include" />
       <recent name="\\wsl$\Ubuntu\home\mircomarahrens\github\mircomarahrens\nconpp\lib" />
     </key>
@@ -113,6 +117,12 @@
       </method>
     </configuration>
     <configuration name="TensorNetworkTest" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nconpp_tests" TARGET_NAME="nconpp_tests_run" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="nconpp_tests" RUN_TARGET_NAME="nconpp_tests_run" TEST_PATTERN="TensorNetworkTest.*:TensorNetworkTest/*.*:TensorNetworkTest.*/*:*/TensorNetworkTest.*/*:*/TensorNetworkTest/*.*" TEST_MODE="PATTERN">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="BeforeTestRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="TensorNetworkTest.contract" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nconpp_tests" TARGET_NAME="nconpp_tests_run" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="nconpp_tests" RUN_TARGET_NAME="nconpp_tests_run" TEST_CLASS="TensorNetworkTest" TEST_METHOD="contract" TEST_MODE="SUITE_TEST">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
         <option name="BeforeTestRunTask" enabled="true" />
@@ -169,12 +179,14 @@
       <item itemvalue="CMake Application.gtest_main" />
       <item itemvalue="CTest Application.All CTest" />
       <item itemvalue="Google Test.nconpp_tests_run" />
+      <item itemvalue="Google Test.TensorNetworkTest.contract" />
       <item itemvalue="Google Test.TensorNetworkTest" />
       <item itemvalue="Google Test.TensorNetworkTest.tensorNetwork" />
       <item itemvalue="Google Test.TensorTest.tensordot" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Google Test.TensorNetworkTest.contract" />
         <item itemvalue="Google Test.TensorTest.tensordot" />
         <item itemvalue="Google Test.TensorNetworkTest" />
         <item itemvalue="Google Test.TensorNetworkTest.tensorNetwork" />
@@ -289,7 +301,20 @@
       <workItem from="1679065102427" duration="2927000" />
       <workItem from="1679125701584" duration="5214000" />
       <workItem from="1679152496943" duration="3368000" />
-      <workItem from="1679238042985" duration="1662000" />
+      <workItem from="1679238042985" duration="1761000" />
+      <workItem from="1679241055622" duration="959000" />
+      <workItem from="1679299707051" duration="3666000" />
+      <workItem from="1679310255225" duration="89000" />
+      <workItem from="1679476607993" duration="2278000" />
+      <workItem from="1679479582373" duration="1164000" />
+      <workItem from="1679487797924" duration="63000" />
+      <workItem from="1679488648243" duration="1637000" />
+      <workItem from="1679498376564" duration="2033000" />
+      <workItem from="1679539955857" duration="5265000" />
+      <workItem from="1679577103497" duration="3675000" />
+      <workItem from="1679669109137" duration="174000" />
+      <workItem from="1679671617631" duration="630000" />
+      <workItem from="1679714064471" duration="1583000" />
     </task>
     <task id="LOCAL-00001" summary="add expand_dims">
       <created>1664824935314</created>

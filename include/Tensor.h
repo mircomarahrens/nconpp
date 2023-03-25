@@ -74,7 +74,6 @@ namespace npp {
     }
 
     namespace linalg {
-
         // tensordot
         template<typename T, typename O>
         static inline auto
