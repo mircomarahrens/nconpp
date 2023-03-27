@@ -29,24 +29,7 @@ public:
 
     ~Nconpp() = default;
 
-    // contracts multiple tensors to one tensor, if possible.
-    //
-    // @params:
-    //  tensorList:
-    //      a list of tensors
-    //  subscriptVectorList:
-    //      - aka LegsList
-    //      - Nomenclature of the legs of the tensor in tensorList:
-    //          - the legs are named by integers
-    //          - contractible legs have the same positive integer as name, hence occurring in pairs
-    //          - legs with negative integers won't be contracted, so-called dangling legs
-    //  contractionSequenceLegs (optional):
-    //      order by legs in which the tensors shall be contracted
-    //  finalOrder (optional):
-    //      Permutation of the legs of the final tensor.
-    //
-    // @return:
-    //  the final contracted tensor
+
     template<class T>
     static npp::tensor<T> contract(std::vector<npp::array_type<T>> &tensorList,
                                    std::vector<std::vector<int>> subscriptVectorList,

@@ -9,6 +9,81 @@ class TensorNetworkTest : public testing::Test {
     ~TensorNetworkTest() override = default;
 };
 
+TEST(TensorNetworkTest, Graph) {
+    struct vertex_properties {
+        std::vector<int> legs = {1, 2, 3};
+    };
+
+    typedef boost::adjacency_list
+            <
+                    boost::vecS,
+                    boost::vecS,
+                    boost::undirectedS,
+                    vertex_properties,
+                    boost::property<boost::edge_index_t, std::size_t>
+            >
+            graph_t;
+
+    typedef boost::graph_traits<graph_t>::edge_descriptor edge_d;
+    typedef boost::property_map<graph_t, boost::edge_index_t>::type edge_index_pm;
+    typedef boost::graph_traits<graph_t>::edge_iterator edge_it;
+    typedef boost::graph_traits<graph_t>::vertex_descriptor vertex_d;
+    typedef boost::graph_traits<graph_t>::vertex_iterator vertex_it;
+    typedef boost::graph_traits<graph_t>::adjacency_iterator adjacency_it;
+
+    std::size_t N = 5;
+    graph_t G(N);
+
+    ASSERT_TRUE(boost::num_vertices(G) == N);
+
+    typedef std::pair<int, int> Pair;
+    Pair edge_array[11] = {Pair(0, 1), Pair(0, 2), Pair(0, 3),
+                           Pair(0, 4), Pair(2, 0), Pair(3, 0),
+                           Pair(2, 4), Pair(3, 1), Pair(3, 4),
+                           Pair(4, 0), Pair(4, 1)};
+
+    int NE = 11;
+    for (int i = 0; i < NE; ++i) {
+        auto e = boost::add_edge(edge_array[i].first, edge_array[i].second, i + 1, G);
+        ASSERT_TRUE(e.second == true);
+    }
+    ASSERT_TRUE(boost::num_edges(G) == NE);
+
+    edge_index_pm edge_id = boost::get(boost::edge_index_t(), G);
+
+    std::pair<edge_it, edge_it> edge_its = boost::edges(G);
+
+    edge_it first = edge_its.first;
+    edge_it last = edge_its.second;
+
+    while (first != last) {
+        std::size_t _leg = edge_id[*first];
+        std::cout << _leg << std::endl;
+        if (_leg == 5) {
+            boost::remove_edge(*first, G);
+            break;
+        }
+        first++;
+    }
+
+    std::cout << std::endl;
+
+    edge_id = boost::get(boost::edge_index_t(), G);
+
+    edge_its = boost::edges(G);
+
+    first = edge_its.first;
+    last = edge_its.second;
+
+    while (first != last) {
+        std::size_t _leg = edge_id[*first];
+        std::cout << _leg << std::endl;
+        first++;
+    }
+
+}
+
+
 TEST(TensorNetworkTest, logicError_MoreThanTwoLegs) {
     std::vector<npp::array_type<std::complex<double>>> tensorList =
             {

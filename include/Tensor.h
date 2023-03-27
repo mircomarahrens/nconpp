@@ -6,7 +6,7 @@
 #include <xtensor/xrandom.hpp>
 #include <xtensor-blas/xlinalg.hpp>
 
-// Wrapper for tensor operations used by nconpp based on xtensor.
+// wrapper for tensor operations used by nconpp based on xtensor.
 namespace npp {
     using namespace xt::placeholders;
 
@@ -90,9 +90,9 @@ namespace npp {
             auto d = xt::diagonal(vM, offset, std::size_t(axis1), std::size_t(axis2));
             std::size_t dim = d.dimension();
             if (dim == 1) {
-                return xt::xarray<T>(xt::sum(d)());
+                return xt::xarray<std::complex<double>>(xt::sum(d)());
             } else {
-                return xt::xarray<T>(xt::sum(d, {dim - 1}));
+                return xt::xarray<std::complex<double>>(xt::sum(d, {dim - 1}));
             }
         }
 

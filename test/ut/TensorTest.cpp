@@ -269,17 +269,19 @@ class TensorTest : public testing::Test {
 //}
 
 TEST(TensorTest, trace) {
+    using namespace std::complex_literals;
     npp::shape_type shapeA = {4, 3, 2, 8, 2};
-    npp::tensor<std::complex<double>> A = npp::random::rand<double>(shapeA) + 1j * npp::random::rand<double>(shapeA);
+    npp::tensor<std::complex<double>> A = npp::random::rand<double>(shapeA) + 1i * npp::random::rand<double>(shapeA);
     npp::linalg::trace(A, 0, 3, 4);
 }
 
 TEST(TensorTest, tensordot) {
+    using namespace std::complex_literals;
     npp::shape_type shapeA = {4, 3, 2, 8};
-    npp::tensor<std::complex<double>> A = npp::random::rand<double>(shapeA) + 1j * npp::random::rand<double>(shapeA);
+    npp::tensor<std::complex<double>> A = npp::random::rand<double>(shapeA) + 1i * npp::random::rand<double>(shapeA);
 
     npp::shape_type shapeB = {8, 4, 2, 1, 3};
-    npp::tensor<std::complex<double>> B = npp::random::rand<double>(shapeB) + 1j * npp::random::rand<double>(shapeB);
+    npp::tensor<std::complex<double>> B = npp::random::rand<double>(shapeB) + 1i * npp::random::rand<double>(shapeB);
 
     auto C = npp::linalg::tensordot(A, B, {0, 2, 3}, {1, 2, 0});
 

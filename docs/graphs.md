@@ -6,7 +6,7 @@ Source: <https://towardsdatascience.com/10-mGraph-algorithms-visually-explained-
 
 **Order**: The number of vertices in the mGraph
 **Size**: The number of edges in the mGraph
-**Vertex degree**: The number of edges that are incident to a vertex
+**vertex degree**: The number of edges that are incident to a vertex
 **Isolated vertex**: A vertex that is not connected to any other vertices in the mGraph
 **Self-loop**: An edge from a vertex to itself
 **Directed mGraph**: A mGraph where all the edges have a direction indicating what is the start vertex and what is the end vertex
@@ -115,7 +115,7 @@ Topological sorting of a mGraph is a linear ordering of its vertices so that for
 
 ## 8. Graph colouring
 
-Graph colouring assigns colours to elements of a mGraph while ensuring certain conditions. Vertex colouring is the most commonly used mGraph colouring technique. In vertex colouring, we try to colour the vertices of a mGraph using k colours and any two adjacent vertices should not have the same colour. Other colouring techniques include edge colouring and face colouring.
+Graph colouring assigns colours to elements of a mGraph while ensuring certain conditions. vertex colouring is the most commonly used mGraph colouring technique. In vertex colouring, we try to colour the vertices of a mGraph using k colours and any two adjacent vertices should not have the same colour. Other colouring techniques include edge colouring and face colouring.
 
 The chromatic number of a mGraph is the smallest number of colours needed to colour the mGraph.
 
