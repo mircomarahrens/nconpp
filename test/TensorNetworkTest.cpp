@@ -48,44 +48,11 @@ TEST(TensorNetworkTest, Graph) {
         ASSERT_TRUE(e.second == true);
     }
     ASSERT_TRUE(boost::num_edges(G) == NE);
-
-    edge_index_pm edge_id = boost::get(boost::edge_index_t(), G);
-
-    std::pair<edge_it, edge_it> edge_its = boost::edges(G);
-
-    edge_it first = edge_its.first;
-    edge_it last = edge_its.second;
-
-    while (first != last) {
-        std::size_t _leg = edge_id[*first];
-        std::cout << _leg << std::endl;
-        if (_leg == 5) {
-            boost::remove_edge(*first, G);
-            break;
-        }
-        first++;
-    }
-
-    std::cout << std::endl;
-
-    edge_id = boost::get(boost::edge_index_t(), G);
-
-    edge_its = boost::edges(G);
-
-    first = edge_its.first;
-    last = edge_its.second;
-
-    while (first != last) {
-        std::size_t _leg = edge_id[*first];
-        std::cout << _leg << std::endl;
-        first++;
-    }
-
 }
 
 
 TEST(TensorNetworkTest, logicError_MoreThanTwoLegs) {
-    std::vector<npp::array_type<std::complex<double>>> tensorList =
+    std::vector<npp::tensor<std::complex<double>>> tensorList =
             {
                     npp::tensor<std::complex<double>>({3, 4, 5}),
                     npp::tensor<std::complex<double>>({5, 3, 6, 7, 6}),
@@ -110,7 +77,7 @@ TEST(TensorNetworkTest, logicError_MoreThanTwoLegs) {
 }
 
 TEST(TensorNetworkTest, contract) {
-    std::vector<npp::array_type<std::complex<double>>> tensorList =
+    std::vector<npp::tensor<std::complex<double>>> tensorList =
             {
                     xt::random::rand<double>({3, 4, 5}),
                     xt::random::rand<double>({5, 3, 6, 7, 6}),
@@ -133,9 +100,21 @@ TEST(TensorNetworkTest, contract) {
     TensorNetwork tn(tensorList, legLinks);
 
     tn.contract();
-//
-//    npp::shape_type Shape = {2, 4, 9};
-//    ASSERT_EQ(ft.shape(), Shape);
+
+    auto nt = tn.num_tensors();
+
+    ASSERT_TRUE(nt == 3);
+
+    tn.connect();
+
+    nt = tn.num_tensors();
+
+    ASSERT_TRUE(nt == 1);
+
+    tensorList = tn.getTensorList();
+
+    npp::shape_type shape = {4, 2, 9};
+    ASSERT_EQ(tensorList[0].shape(), shape);
 }
 
 TEST(TensorTest, svd) {
