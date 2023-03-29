@@ -8,6 +8,8 @@
 #include <complex>
 #include <random>
 
+using namespace std::complex_literals;
+
 class TensorTest : public testing::Test {
     TensorTest() = default;
 
@@ -269,14 +271,15 @@ class TensorTest : public testing::Test {
 //}
 
 TEST(TensorTest, trace) {
-    using namespace std::complex_literals;
     npp::shape_type shapeA = {4, 3, 2, 8, 2};
     npp::tensor<std::complex<double>> A = npp::random::rand<double>(shapeA) + 1i * npp::random::rand<double>(shapeA);
-    npp::linalg::trace(A, 0, 3, 4);
+    A = npp::linalg::trace(A, 0, 3, 4);
+
+    shapeA = {4, 3, 2};
+    ASSERT_EQ(npp::shape(A), shapeA);
 }
 
 TEST(TensorTest, tensordot) {
-    using namespace std::complex_literals;
     npp::shape_type shapeA = {4, 3, 2, 8};
     npp::tensor<std::complex<double>> A = npp::random::rand<double>(shapeA) + 1i * npp::random::rand<double>(shapeA);
 
@@ -287,9 +290,9 @@ TEST(TensorTest, tensordot) {
 
     npp::shape_type shapeC = {3, 1, 3};
     ASSERT_EQ(npp::shape(C), shapeC);
-//
-//    TensorOperations::array_type<std::complex<double>> D = TensorOperations::trace(C, 0, 4, 5);
-//
-//    TensorOperations::shape_type shapeD = {4, 8, 2, 1};
-//    ASSERT_EQ(TensorOperations::Shape(D), shapeD);
+
+    npp::tensor<std::complex<double>> D = npp::linalg::trace(C, 0, 0, 2);
+
+    npp::shape_type shapeD = {1};
+    ASSERT_EQ(npp::shape(D), shapeD);
 }

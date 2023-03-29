@@ -223,6 +223,32 @@ private:
         mGraph[src].legs = std::move(newLegs);
     };
 
+    /**
+     * Perform an outer product of two vertices.
+     * @param src
+     * @param dest
+     */
+    void outer(vertex src, vertex dest) {
+        auto legsA = mGraph[src].legs;
+        auto legsB = mGraph[dest].legs;
+
+        auto tensorA = mGraph[src].tensor;
+        auto tensorB = mGraph[dest].tensor;
+
+        auto newTensor = npp::linalg::outer(tensorA, tensorB);
+
+        std::vector<int> newLegs = {};
+        newLegs.insert(newLegs.end(), legsA.begin(), legsA.end());
+        newLegs.insert(newLegs.end(), legsB.begin(), legsB.end());
+
+        mGraph[src].tensor = std::move(newTensor);
+        mGraph[src].legs = std::move(newLegs);
+
+        // clear and remove dest vertex
+        boost::clear_vertex(dest, mGraph);
+        boost::remove_vertex(dest, mGraph);
+    }
+
 public:
     /**
      * Explicit constructor with given parameters.
@@ -236,7 +262,7 @@ public:
      *      - contractible legs have the same positive integer as name, hence occurring in pairs
      *      - legs with negative integers won't be contracted, so-called dangling legs
      */
-    explicit TensorNetwork(std::vector<npp::array_type<T>> &tensorList,
+    explicit TensorNetwork(std::vector<npp::tensor<T>> &tensorList,
                            std::vector<std::vector<int>> &subscriptVectorList) :
             mGraph(tensorList.size()) {
 
@@ -294,7 +320,6 @@ public:
             index++;
         }
 
-        // if the map is not empty we have an error by our restrictions
         if (!_vertex_leg_map.empty()) {
             throw std::invalid_argument(ERROR::CONSTRAINT_LEGPAIRS);
         }
@@ -381,7 +406,7 @@ public:
                             f_it++;
                         }
 
-                        // clear and remove src vertex
+                        // clear and remove dest vertex
                         boost::clear_vertex(dest, mGraph);
                         boost::remove_vertex(dest, mGraph);
                     }
@@ -398,6 +423,37 @@ public:
                     std::to_string(contractionSequence.size()) +
                     ", is not empty.");
         }
+    }
+
+    void connect() {
+        auto nv = boost::num_vertices(mGraph);
+        while (nv > 1) {
+            auto src = boost::vertex(0, mGraph);
+            auto dest = boost::vertex(1, mGraph);
+            outer(src, dest);
+            nv--;
+        }
+    }
+
+    /**
+     *
+     * @return
+     */
+    std::size_t num_tensors() {
+        return boost::num_vertices(mGraph);
+    }
+
+    /**
+     *
+     * @return
+     */
+    std::vector<npp::tensor<T>> getTensorList() {
+        std::vector<npp::tensor<T>> result = {};
+        typename graph_t::vertex_iterator v, vend;
+        for (boost::tie(v, vend) = boost::vertices(mGraph); v != vend; ++v) {
+            result.emplace_back(mGraph[*v].tensor);
+        }
+        return result;
     }
 };
 

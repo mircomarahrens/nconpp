@@ -10,12 +10,13 @@ set(VCPKG_FEATURE_FLAGS "versions")
 
 # cmake flags
 set(CMAKE_CXX_STANDARD 20
-        CMAKE_CXX_STANDARD_REQUIRED ON
-        CMAKE_CXX_EXTENSIONS OFF)
+    CMAKE_CXX_STANDARD_REQUIRED ON
+    CMAKE_CXX_EXTENSIONS OFF)
+
+set(Boost_NO_WARN_NEW_VERSIONS 1)
 
 # dependencies
-#find_package(Boost REQUIRED [COMPONENTS <libs>...])
-#target_link_libraries(main PRIVATE Boost::boost Boost::<lib1> Boost::<lib2> ...)
+find_package(Boost REQUIRED graph)
 find_package(BLAS REQUIRED)
 set(BLAS_INCLUDE_DIR ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include/openblas)
 message(STATUS "cblas.h is located in " ${BLAS_INCLUDE_DIR})
@@ -32,7 +33,6 @@ set(NCONPP_DEPENDENCIES
 
 set(NCONPP_INCLUDE
         include/LogMessages.h
-        include/Nconpp.h
         include/Tensor.h
         include/TensorNetwork.h
         )
@@ -49,8 +49,8 @@ if (CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
 
     add_executable(nconpp_tests_run
             test/nconpp_tests_run.cpp
-            test/ut/TensorNetworkTest.cpp
-            test/ut/TensorTest.cpp)
+            test/TensorNetworkTest.cpp
+            test/TensorTest.cpp)
 
     target_include_directories(nconpp_tests_run PUBLIC
             include/

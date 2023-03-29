@@ -109,5 +109,15 @@ namespace npp {
             auto &&dM = M.derived_cast();
             return xt::linalg::svd(dM, full_matrices, compute_uv);
         }
+
+        // outer, workaround
+        template<typename T>
+        static inline auto outer(expression_type <T> &M, expression_type <T> &W) {
+            auto &&dM = M.derived_cast(); auto &&dW = W.derived_cast();
+            shape_type shapeM = shape(M);
+            dM = expand_dims(dM, shapeM.size());
+            dW = expand_dims(dW, 0);
+            return tensordot(dM, dW, {shapeM.size()}, {0});;
+        }
     }
 };
