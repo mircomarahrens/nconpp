@@ -1,18 +1,18 @@
 # Graph algorithms
 
-Source: <https://towardsdatascience.com/10-graph-algorithms-visually-explained-e57faa1336f3>
+Source: <https://towardsdatascience.com/10-mGraph-algorithms-visually-explained-e57faa1336f3>
 
 ## Glossary
 
-**Order**: The number of vertices in the graph
-**Size**: The number of edges in the graph
-**Vertex degree**: The number of edges that are incident to a vertex
-**Isolated vertex**: A vertex that is not connected to any other vertices in the graph
+**Order**: The number of vertices in the mGraph
+**Size**: The number of edges in the mGraph
+**vertex degree**: The number of edges that are incident to a vertex
+**Isolated vertex**: A vertex that is not connected to any other vertices in the mGraph
 **Self-loop**: An edge from a vertex to itself
-**Directed graph**: A graph where all the edges have a direction indicating what is the start vertex and what is the end vertex
-**Undirected graph**: A graph with edges that have no direction
-**Weighted graph**: Edges of the graph has weights
-**Unweighted graph**: Edges of the graph has no weights
+**Directed mGraph**: A mGraph where all the edges have a direction indicating what is the start vertex and what is the end vertex
+**Undirected mGraph**: A mGraph with edges that have no direction
+**Weighted mGraph**: Edges of the mGraph has weights
+**Unweighted mGraph**: Edges of the mGraph has no weights
 
 ## 1. Breadth-first search
 
@@ -32,13 +32,13 @@ In depth-first search (DFS) we start from a particular vertex and explore as far
 ### Applications
 
 * Used to find a path between two vertices.
-* Used to detect cycles in a graph.
+* Used to detect cycles in a mGraph.
 * Used in topological sorting.
 * Used to solve puzzles having only one solution (e.g., mazes)
 
 ## 3. Shortest Path
 
-The shortest path from one vertex to another vertex is a path in the graph such that the sum of the weights of the edges that should be travelled is minimum.
+The shortest path from one vertex to another vertex is a path in the mGraph such that the sum of the weights of the edges that should be travelled is minimum.
 
 ### Algorithms
 
@@ -53,7 +53,7 @@ The shortest path from one vertex to another vertex is a path in the graph such 
 
 ## 4. Cycle detection
 
-A cycle is a path in a graph where the first and last vertices are the same. If we start from one vertex, travel along a path and end up array_type the starting vertex, then this path is a cycle. Cycle detection is the process of detecting these cycles.
+A cycle is a path in a mGraph where the first and last vertices are the same. If we start from one vertex, travel along a path and end up array_type the starting vertex, then this path is a cycle. Cycle detection is the process of detecting these cycles.
 
 ### Algorithms
 
@@ -69,7 +69,7 @@ A cycle is a path in a graph where the first and last vertices are the same. If 
 
 ## 5. Minimum spanning tree
 
-A minimum spanning tree is a subset of the edges of a graph that connects all the vertices with the minimum sum of edge weights and consists of no cycles.
+A minimum spanning tree is a subset of the edges of a mGraph that connects all the vertices with the minimum sum of edge weights and consists of no cycles.
 
 ### Algorithms
 
@@ -79,13 +79,13 @@ A minimum spanning tree is a subset of the edges of a graph that connects all th
 ### Applications
 
 * Used to construct trees for broadcasting in computer networks.
-* Used in graph-based cluster analysis.
+* Used in mGraph-based cluster analysis.
 * Used in image segmentation.
 * Used in regionalisation of socio-geographic areas, where regions are grouped into contiguous regions.
 
 ## 6. Strongly connected components
 
-A graph is said to be strongly connected if every vertex in the graph is reachable from every other vertex.
+A mGraph is said to be strongly connected if every vertex in the mGraph is reachable from every other vertex.
 
 ### Algorithms
 
@@ -94,12 +94,12 @@ A graph is said to be strongly connected if every vertex in the graph is reachab
 
 ### Applications
 
-* Used to compute the Dulmage–Mendelsohn decomposition, which is a classification of the edges of a bipartite graph.
+* Used to compute the Dulmage–Mendelsohn decomposition, which is a classification of the edges of a bipartite mGraph.
 * Used in social networks to find a group of people who are strongly connected and make recommendations based on common interests.
 
 ## 7. Topological sorting
 
-Topological sorting of a graph is a linear ordering of its vertices so that for each directed edge (u, v) in the ordering, vertex u comes before v.
+Topological sorting of a mGraph is a linear ordering of its vertices so that for each directed edge (u, v) in the ordering, vertex u comes before v.
 
 ### Algorithms
 
@@ -115,9 +115,9 @@ Topological sorting of a graph is a linear ordering of its vertices so that for 
 
 ## 8. Graph colouring
 
-Graph colouring assigns colours to elements of a graph while ensuring certain conditions. Vertex colouring is the most commonly used graph colouring technique. In vertex colouring, we try to colour the vertices of a graph using k colours and any two adjacent vertices should not have the same colour. Other colouring techniques include edge colouring and face colouring.
+Graph colouring assigns colours to elements of a mGraph while ensuring certain conditions. vertex colouring is the most commonly used mGraph colouring technique. In vertex colouring, we try to colour the vertices of a mGraph using k colours and any two adjacent vertices should not have the same colour. Other colouring techniques include edge colouring and face colouring.
 
-The chromatic number of a graph is the smallest number of colours needed to colour the graph.
+The chromatic number of a mGraph is the smallest number of colours needed to colour the mGraph.
 
 ### Algorithms
 
@@ -129,12 +129,12 @@ The chromatic number of a graph is the smallest number of colours needed to colo
 * Used to schedule timetable.
 * Used to assign mobile radio frequencies.
 * Used to model and solve games such as Sudoku.
-* Used to check if a graph is bipartite.
+* Used to check if a mGraph is bipartite.
 * Used to colour geographical maps of countries or states where adjacent countries or states have different colours.
 
 ## 9. Maximum flow
 
-We can model a graph as a flow network with edge weights as flow capacities. In the maximum flow problem, we have to find a flow path that can obtain the maximum possible flow rate.
+We can model a mGraph as a flow network with edge weights as flow capacities. In the maximum flow problem, we have to find a flow path that can obtain the maximum possible flow rate.
 
 ### Algorithms
 
@@ -150,7 +150,7 @@ We can model a graph as a flow network with edge weights as flow capacities. In 
 
 ## 10. Matching
 
-A matching in a graph is a set of edges that does not have common vertices (i.e., no two edges share a common vertex). A matching is called a maximum matching if it contains the largest possible number of edges matching as many vertices as possible.
+A matching in a mGraph is a set of edges that does not have common vertices (i.e., no two edges share a common vertex). A matching is called a maximum matching if it contains the largest possible number of edges matching as many vertices as possible.
 
 ### Algorithms
 

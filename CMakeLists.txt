@@ -2,15 +2,6 @@
 
 cmake_minimum_required(VERSION 3.20)
 
-#set(CMAKE_TOOLCHAIN_FILE /home/mircomarahrens/vcpkg/scripts/buildsystems/vcpkg.cmake)
-
-# avoid infinite recursion
-if(DEFINED NCONPP_CORE_PROJECT)
-    message(STATUS "NCONPP_CORE_PROJECT already called. Go next.")
-    return()
-endif()
-set(NCONPP_CORE_PROJECT ON)
-
 project(nconpp CXX)
 
 # git clone https://github.com/microsoft/vcpkg.git
@@ -18,84 +9,60 @@ project(nconpp CXX)
 set(VCPKG_FEATURE_FLAGS "versions")
 
 # cmake flags
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_STANDARD 20
+        CMAKE_CXX_STANDARD_REQUIRED ON
+        CMAKE_CXX_EXTENSIONS OFF)
 
 # dependencies
+#find_package(Boost REQUIRED [COMPONENTS <libs>...])
+#target_link_libraries(main PRIVATE Boost::boost Boost::<lib1> Boost::<lib2> ...)
 find_package(BLAS REQUIRED)
 set(BLAS_INCLUDE_DIR ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include/openblas)
 message(STATUS "cblas.h is located in " ${BLAS_INCLUDE_DIR})
 find_package(LAPACK REQUIRED)
+find_package(xtensor CONFIG REQUIRED)
+find_package(xtensor-blas CONFIG REQUIRED)
 
 set(NCONPP_DEPENDENCIES
         ${BLAS_LIBRARIES}
-        ${LAPACK_LIBRARIES})
-
-set(NCONPP_LIB
-        lib/Nconpp.h
-        lib/Nconpp.cpp)
+        ${LAPACK_LIBRARIES}
+        xtensor
+        xtensor::optimize
+        xtensor-blas)
 
 set(NCONPP_INCLUDE
-        include/ErrorMessages.h
-        include/Graph.h
+        include/LogMessages.h
+        include/Nconpp.h
         include/Tensor.h
-        include/nlinalg.h
         include/TensorNetwork.h
-        include/nblas.h)
-
-set(NCONPP_SRC
-        src/Graph.cpp
-        src/Tensor.cpp
-        src/TensorNetwork.cpp)
-
-add_library(nconpp SHARED
-        ${NCONPP_LIB}
-        ${NCONPP_INCLUDE}
-        ${NCONPP_SRC})
-
-target_include_directories(nconpp PRIVATE
-        lib/
-        include/
-        src/
-        ${BLAS_INCLUDE_DIR})
-
-target_link_libraries(nconpp
-        ${NCONPP_DEPENDENCIES})
+        )
 
 # test via gtest
 if (CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
     message(STATUS "GoogleTest process triggered.")
+    project(nconpp_tests)
     # GoogleTest: git clone https://github.com/google/googletest.git
     add_subdirectory(googletest)
     include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
     enable_testing()
 
-    add_executable(nconpp_test
-            test/nconpp_test.cpp
-            test/ut/NconppTest.cpp
-            test/ut/GraphTest.cpp
-            test/ut/TensorTest.cpp
-            test/ut/TensorNetworkTest.cpp)
+    add_executable(nconpp_tests_run
+            test/nconpp_tests_run.cpp
+            test/ut/TensorNetworkTest.cpp
+            test/ut/TensorTest.cpp)
 
-    target_include_directories(nconpp_test PUBLIC
-            lib/
+    target_include_directories(nconpp_tests_run PUBLIC
             include/
-            src/
             ${BLAS_INCLUDE_DIR})
 
-    target_link_libraries(nconpp_test
+    target_link_libraries(nconpp_tests_run
             ${CMAKE_THREAD_LIBS_INIT}
             ${NCONPP_DEPENDENCIES}
             gmock
             gtest
             gmock_main
-            gtest_main
-            nconpp)
-
-    include(GoogleTest)
-    gtest_discover_tests(nconpp_test)
+            gtest_main)
 endif ()
 
 ## python via python
