@@ -27,14 +27,10 @@
     <list default="true" id="148f9fc6-1df1-44f3-b719-7198d20c4a96" name="Changes" comment="add expand_dims">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/graphs.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/graphs.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/googletest" beforeDir="false" afterPath="$PROJECT_DIR$/googletest" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/Nconpp.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/Nconpp.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/include/Tensor.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/Tensor.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/include/TensorNetwork.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/TensorNetwork.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/google_tests_run.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/test/nconpp_tests_run.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/ut/TensorNetworkTest.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/test/ut/TensorNetworkTest.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/ut/TensorTest.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/test/ut/TensorTest.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/TensorNetworkTest.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/test/TensorNetworkTest.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/TensorTest.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/test/TensorTest.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -106,7 +102,12 @@
       <recent name="\\wsl$\Ubuntu\home\mircomarahrens\github\mircomarahrens\nconpp\lib" />
     </key>
   </component>
-  <component name="RunManager" selected="Google Test.TensorNetworkTest.contract">
+  <component name="RunManager" selected="Google Test.All Tests">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="All Tests" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" nameIsGenerated="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nconpp_tests" TARGET_NAME="nconpp_tests_run" CONFIG_NAME="Debug-MSVC" RUN_TARGET_PROJECT_NAME="nconpp_tests" RUN_TARGET_NAME="nconpp_tests_run" TEST_MODE="SUITE_TEST">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -119,7 +120,7 @@
         <option name="BeforeTestRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="TensorNetworkTest.Graph" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nconpp_tests" TARGET_NAME="nconpp_tests_run" RUN_TARGET_PROJECT_NAME="nconpp_tests" RUN_TARGET_NAME="nconpp_tests_run" TEST_CLASS="TensorNetworkTest" TEST_METHOD="Graph" TEST_MODE="SUITE_TEST">
+    <configuration name="TensorNetworkTest.Graph" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nconpp_tests" TARGET_NAME="nconpp_tests_run" CONFIG_NAME="Debug-MSVC" RUN_TARGET_PROJECT_NAME="nconpp_tests" RUN_TARGET_NAME="nconpp_tests_run" TEST_CLASS="TensorNetworkTest" TEST_METHOD="Graph" TEST_MODE="SUITE_TEST">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
         <option name="BeforeTestRunTask" enabled="true" />
@@ -347,7 +348,19 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="tensor" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
           </value>
         </entry>
       </map>
