@@ -1,82 +1,113 @@
 #pragma once
 
-#ifndef TEST_FRIENDS
-#define TEST_FRIENDS
-#endif
+#include <xtensor/xarray.hpp>
+#include <xtensor/xexpression.hpp>
+#include <xtensor/xlayout.hpp>
+#include <xtensor/xrandom.hpp>
+#include <xtensor-blas/xlinalg.hpp>
 
-#include <vector>
-#include <utility>
-#include <unordered_map>
+// wrapper for tensor operations used by nconpp based on xtensor.
+namespace npp {
+    using namespace xt::placeholders;
 
-/**
- * This class is inspired by xtensor (https://github.com/xtensor-stack/xtensor) and the articles within
- * https://johan-mabille.medium.com/how-we-wrote-xtensor-9365952372d9.
- *
- * @tparam T
- */
-template<class T>
-class Tensor {
-public:
-    explicit Tensor(std::vector<T> data, std::vector<std::size_t> shape);
+    // array
+    template<typename T>
+    using array_type = xt::xarray<T, xt::layout_type::dynamic>;
 
-    explicit Tensor(std::vector<std::size_t> shape);
+    // shape_type
+    using shape_type = xt::xarray<std::size_t>::shape_type;
 
-    Tensor(std::initializer_list<std::size_t> shape);
+    // general multi-dimensional object
+    template<typename T>
+    using expression_type = xt::xexpression<T>;
 
-    ~Tensor() = default;
+    template<typename T>
+    using tensor = xt::xarray<T>;
 
-    [[nodiscard]] std::size_t dimension() const;
+    // reshape
+    template<typename T>
+    static inline auto reshape(const expression_type<T> &M, shape_type shape) {
+        auto &&dM = M.derived_cast();
+        return dM.reshape(shape);
+    }
 
-    [[nodiscard]] std::size_t size() const;
+    // prod
+    template<typename T>
+    static inline auto prod(const expression_type<T> &M, std::size_t axis) {
+        auto &&dM = M.derived_cast();
+        return xt::prod(dM, axis);
+    }
 
-    const std::vector<std::size_t> &shape();
+    // range
+    template<class A, class B>
+    static inline auto range(A start_val, B stop_val) {
+        return xt::range(start_val, stop_val);
+    }
 
-    void reshape(const std::vector<std::size_t> &shape);
+    // shape
+    template<typename T>
+    static inline auto shape(const expression_type<T> &M) {
+        auto &&dM = M.derived_cast();
+        return dM.shape();
+    }
 
-    void randomize(double lower = 0, double upper = 1.0);
+    // dimension
+    template<typename T>
+    static inline auto dimension(const expression_type<T> &M) {
+        auto &&dM = M.derived_cast();
+        return dM.dimension();
+    }
 
-    T prod(std::size_t axis);
+    // expand_dims
+    template<typename T>
+    static inline auto expand_dims(expression_type<T> &M, std::size_t axis) {
+        auto &&dM = M.derived_cast();
+        return xt::expand_dims(dM, axis);
+    }
 
-    std::vector<T> prod(const std::vector<std::size_t> &axes);
+    namespace random {
+        // random array
+        template<class T, class E = xt::random::default_engine_type>
+        static inline auto rand(shape_type shape, T lower = 0, T upper = 1, E &engine = xt::random::get_default_random_engine()) {
+            return xt::random::rand(shape, lower, upper, engine);
+        }
+    }
 
-    void expand_dims(std::size_t axis);
+    namespace linalg {
+        // tensordot
+        template<typename T, typename O>
+        static inline auto
+        tensordot(const expression_type <T> &xa, const expression_type <O> &xb, const std::vector<std::size_t> &ax_a,
+                  const std::vector<std::size_t> &ax_b) -> decltype(xt::linalg::tensordot(xa, xb, ax_a, ax_b)) {
+            return xt::linalg::tensordot(xa, xb, ax_a, ax_b);
+        }
 
-    void transpose(const std::vector<std::size_t> &perm);
+        // trace
+        template<typename T>
+        static inline auto
+        trace(const expression_type <T> &M, int offset = 0, std::size_t axis1 = 0, std::size_t axis2 = 1) {
+            auto &&vM = xt::view_eval<T::static_layout>(M.derived_cast());
+            auto d = xt::diagonal(vM, offset, std::size_t(axis1), std::size_t(axis2));
+            std::size_t dim = d.dimension();
+            if (dim == 1) {
+                return xt::xarray<std::complex<double>>(xt::sum(d)());
+            } else {
+                return xt::xarray<std::complex<double>>(xt::sum(d, {dim - 1}));
+            }
+        }
 
-    const auto &getData();
+        // transpose
+        template<typename T>
+        static inline auto transpose(const expression_type <T> &M, const std::vector<int> &perm) {
+            auto &&dM = M.derived_cast();
+            return xt::transpose(dM, perm);
+        }
 
-    auto& strides();
-
-    template<class... I>
-    T &operator()(I... i);
-
-    template<class... I>
-    const T &operator()(I... i) const;
-
-private:
-    TEST_FRIENDS;
-    std::vector<T> mData;
-    std::vector<std::size_t> mShape;
-    std::vector<std::size_t> mStrides;
-
-    template<typename... Args>
-    std::size_t flatten(Args... args);
-
-    std::size_t flatten(std::vector<std::size_t> indices);
-
-    std::size_t flatten_details(std::size_t size, std::vector<std::size_t> indices);
-
-    void reorder(std::vector<std::size_t> &v, const std::vector<std::size_t> &order);
-
-    void compute_strides(const std::vector<std::size_t> &shape);
-
-    void check_index_size(std::size_t index_size);
-
-    void check_index(std::size_t index, std::size_t axis);
-
-    void check_perm(const std::vector<std::size_t> &perm);
-
-    void check_number_elements(std::size_t num_elements, std::size_t data_size);
-
-    void check_new_shape(std::vector<std::size_t> s1, std::vector<std::size_t> s2);
+        // svd
+        template<typename T>
+        static inline auto svd(const expression_type <T> &M, bool full_matrices = true, bool compute_uv = true) {
+            auto &&dM = M.derived_cast();
+            return xt::linalg::svd(dM, full_matrices, compute_uv);
+        }
+    }
 };
