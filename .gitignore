@@ -32,6 +32,3 @@ nconpp-venv
 nconpp.egg-info/
 nconpp-python/nconpp.egg-info
 _skbuild/
-
-/python/pybind11/
-/python/xtensor-python/
