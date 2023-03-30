@@ -37,13 +37,21 @@ set(NCONPP_INCLUDE
         include/TensorNetwork.h
         )
 
-# test via gtest
+include(FetchContent)
+
+# tests
 if (CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
     message(STATUS "GoogleTest process triggered.")
     project(nconpp_tests)
-    # GoogleTest: git clone https://github.com/google/googletest.git
-    add_subdirectory(googletest)
-    include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
+
+    FetchContent_Declare(
+            googletest
+            GIT_REPOSITORY https://github.com/google/googletest
+            GIT_TAG v1.13.0
+    )
+    # For Windows: Prevent overriding the parent project's compiler/linker settings
+    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+    FetchContent_MakeAvailable(googletest)
 
     enable_testing()
 
@@ -59,8 +67,6 @@ if (CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
     target_link_libraries(nconpp_tests_run
             ${CMAKE_THREAD_LIBS_INIT}
             ${NCONPP_DEPENDENCIES}
-            gmock
-            gtest
             gmock_main
             gtest_main)
 endif ()
