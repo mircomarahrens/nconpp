@@ -28,7 +28,5 @@ cmake-build-*/
 *.code-workspace
 
 # python
-nconpp-venv
-nconpp.egg-info/
-nconpp-python/nconpp.egg-info
-_skbuild/
+/_skbuild/
+/venv/

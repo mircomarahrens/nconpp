@@ -6,7 +6,7 @@ from setuptools import find_packages
 # cmake specific
 __cmake_args__= []
 
-__toolchain__ = "/home/mircomarahrens/Development/vcpkg/scripts/buildsystems/vcpkg.cmake"
+__toolchain__ = "C:/Repositories/vcpkg/scripts/buildsystems/vcpkg.cmake"
 __cmake_args__.append("-DCMAKE_TOOLCHAIN_FILE={}".format(__toolchain__))
 
 #__python_library_dir__ = "/home/mircomarahrens/Repositories/nconpp/nconpp-venv/lib/python3.10/site-packages"

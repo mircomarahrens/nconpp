@@ -8,27 +8,14 @@
 #include <complex>
 #include <optional>
 
-#include "Nconpp.h"
+#include "TensorNetwork.h"
 
 namespace py = pybind11;
 
 template <class T>
-T contract_wrapper(std::vector<T>& containerList,
-	std::vector<std::vector<int>> legsList,
-	bool skipValidation,
-	std::optional<std::vector<int>> contractionSequenceLegs,
-	std::optional<std::vector<int>> finalOrder)
+T tensornetwork_wrapper(std::vector<npp::tensor<T>>& tensorList,
+	std::vector<std::vector<int>> subscriptVectorList)
 {
-	std::vector<int> _contractionSequenceLegs = {};
-	if (contractionSequenceLegs.has_value()) {
-		_contractionSequenceLegs = contractionSequenceLegs.value();
-	}
-	std::vector<int> _finalOrder = {};
-	if (finalOrder.has_value())
-	{
-		_finalOrder = finalOrder.value();
-	}
-
 	return Nconpp::contract(
 		containerList,
 		legsList,
