@@ -4,14 +4,15 @@ cmake_minimum_required(VERSION 3.20)
 
 project(nconpp CXX)
 
+# cmake flags
+set(CMAKE_CXX_STANDARD 20
+    CMAKE_FIND_PACKAGE_TARGETS_GLOBAL ON
+    CMAKE_CXX_STANDARD_REQUIRED ON
+    CMAKE_CXX_EXTENSIONS OFF)
+
 # git clone https://github.com/microsoft/vcpkg.git
 # activate vcpkg manifest mode
 set(VCPKG_FEATURE_FLAGS "versions")
-
-# cmake flags
-set(CMAKE_CXX_STANDARD 20
-    CMAKE_CXX_STANDARD_REQUIRED ON
-    CMAKE_CXX_EXTENSIONS OFF)
 
 set(Boost_NO_WARN_NEW_VERSIONS 1)
 
@@ -21,8 +22,11 @@ find_package(BLAS REQUIRED)
 set(BLAS_INCLUDE_DIR ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include/openblas)
 message(STATUS "cblas.h is located in " ${BLAS_INCLUDE_DIR})
 find_package(LAPACK REQUIRED)
-find_package(xtensor CONFIG REQUIRED)
-find_package(xtensor-blas CONFIG REQUIRED)
+
+find_package(XTENSOR REQUIRED)
+message(STATUS "xtensor version is " ${XTENSOR_VERSION} ".")
+find_package(XTENSOR-BLAS REQUIRED)
+message(STATUS "xtensor-blas version is " ${XTENSOR-BLAS_VERSION} ".")
 
 set(NCONPP_DEPENDENCIES
         ${BLAS_LIBRARIES}
@@ -75,49 +79,49 @@ endif ()
 if (NOT CMAKE_BUILD_TYPE MATCHES Debug AND SKBUILD)
     message(STATUS "Skbuild process triggered.")
 
-    set(PYBIND_MAIN python/main.cpp)
-    set(PYBIND_MODULE _nconpp)
+    project(nconpp_python LANGUAGES CXX)
 
-    include(FetchContent)
-    FetchContent_Declare(
-            pybind11
-            GIT_REPOSITORY https://github.com/pybind/pybind11
-            GIT_TAG v2.10.4
-    )
+    set(Python_FIND_VIRTUALENV FIRST)
+    set(Python_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/venv)
+    find_package(Python COMPONENTS Interpreter Development.Module NumPy REQUIRED)
 
-    FetchContent_Declare(
-            xtensor-python
-            GIT_REPOSITORY https://github.com/xtensor-stack/xtensor-python
-            GIT_TAG 0.26.1
-    )
-
-    FetchContent_MakeAvailable(pybind11 xtensor-python)
-
-    set(Python_FIND_VIRTUALENV FIRST) # needed for poetry's virtualenv
-    find_package(Python REQUIRED COMPONENTS Interpreter Development NumPy)
     message(STATUS "Use NumPy include dir: ${Python_NumPy_INCLUDE_DIRS}")
+    message(STATUS "Use Python executable: ${PYTHON_EXECUTABLE}")
+    set(PYTHON_EXECUTABLE ${Python_EXECUTABLE})
+    message(STATUS "Use Python venv executable: ${Python_EXECUTABLE}")
 
-    pybind11_add_module(${PYBIND_MODULE}
-            ${PYBIND_MAIN}
-            ${NCONPP_INCLUDE}
-            ${NCONPP_SRC})
+#    get_cmake_property(_variableNames VARIABLES)
+#    list (SORT _variableNames)
+#    foreach (_variableName ${_variableNames})
+#        message(STATUS "${_variableName}=${${_variableName}}")
+#    endforeach()
 
-    target_include_directories(${PYBIND_MODULE} PRIVATE
-            ${NCONPP_CORE_DIR}
-            ${NCONPP_INCLUDE_DIR}
-            ${NCONPP_SRC_DIR}
+    add_subdirectory(python/extern/pybind11)
+
+    # pybind11
+    set(PYBIND11_NEWPYTHON ON)
+    set(PYBIND11_MAIN python/main.cpp)
+    set(PYBIND11_MODULE nconpp)
+
+    add_subdirectory(python/extern/xtensor-python)
+
+    pybind11_add_module(${PYBIND11_MODULE}
+            ${PYBIND11_MAIN}
+            ${NCONPP_INCLUDE})
+
+    target_include_directories(${PYBIND11_MODULE} PRIVATE
+            include/
             ${Python_NumPy_INCLUDE_DIRS})
 
-    target_link_libraries(${PYBIND_MODULE} PRIVATE
+    target_link_libraries(${PYBIND11_MODULE} PUBLIC
             ${NCONPP_DEPENDENCIES}
-            xtensor-python)
+            pybind11::module
+            xtensor-python
+            Python::NumPy)
 
-    target_compile_definitions(${PYBIND_MODULE} PRIVATE
+    target_compile_definitions(${PYBIND11_MODULE} PRIVATE
             VERSION_INFO=${VERSION_INFO})
 
-    message(STATUS "PYTHON_LIBRARY_DIR is ${PYTHON_LIBRARY_DIR}")
-
-    install(TARGETS ${PYBIND_MODULE}
-            COMPONENT python
+    install(TARGETS ${PYBIND11_MODULE}
             LIBRARY DESTINATION .)
 endif()

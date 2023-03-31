@@ -5,20 +5,20 @@ inspired by the matlab library NCON (<https://arxiv.org/abs/1402.0939>) and leve
 
 ## Install the Python module
 
-Execute the following commands if you wish to install ``nconpp`` in a virtual environment. 
+Execute the following commands if you wish to install ``nconpp`` in a virtual environment.
 
 * Linux
 
 ```bash
-python -m venv nconpp-venv # or python3
-source ./nconpp-venv/bin/activate
+python -m venv venv # or python3
+source ./venv/bin/activate
 python -m pip install $PATH_TO_NCONPP # $PATH_TO_NCONPP = ., if in root dir of nconpp
 ```
 
 * Windows with `pylauncher`
 
 ```bash
-py -m venv nconpp-venv
-.\nconpp-venv\Scripts\activate
+py -m venv venv
+.\venv\Scripts\activate
 pip install $PATH_TO_NCONPP # $PATH_TO_NCONPP = ., if in root dir of nconpp
 ```

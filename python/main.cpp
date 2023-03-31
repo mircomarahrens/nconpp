@@ -12,19 +12,7 @@
 
 namespace py = pybind11;
 
-template <class T>
-T tensornetwork_wrapper(std::vector<npp::tensor<T>>& tensorList,
-	std::vector<std::vector<int>> subscriptVectorList)
-{
-	return Nconpp::contract(
-		containerList,
-		legsList,
-		skipValidation,
-		_contractionSequenceLegs,
-		_finalOrder);
-};
-
-PYBIND11_MODULE(_nconpp, m)
+PYBIND11_MODULE(nconpp, m)
 {
     xt::import_numpy();
 
@@ -52,11 +40,11 @@ PYBIND11_MODULE(_nconpp, m)
 	     the final contracted container
     )pbdoc";
 
-    m.def("contract",
-        &contract_wrapper<xt::pyarray<std::complex<double>>>,
-        py::arg("containerList"),
-        py::arg("legsList"),
-        py::arg("skipValidation"),
-        py::arg("contractionSequenceLegs") = py::none(),
-        py::arg("finalOrder") = py::none());
+//    m.def("contract",
+//        &contract_wrapper<xt::pyarray<std::complex<double>>>,
+//        py::arg("containerList"),
+//        py::arg("legsList"),
+//        py::arg("skipValidation"),
+//        py::arg("contractionSequenceLegs") = py::none(),
+//        py::arg("finalOrder") = py::none());
 }

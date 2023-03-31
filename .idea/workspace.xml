@@ -11,28 +11,36 @@
   </component>
   <component name="CMakeRunConfigurationManager">
     <generated>
-      <config projectName="nconpp" targetName="nconpp_tests_run" />
-      <config projectName="nconpp" targetName="gtest_main" />
-      <config projectName="nconpp" targetName="gmock" />
-      <config projectName="nconpp" targetName="gtest" />
-      <config projectName="nconpp" targetName="gmock_main" />
+      <config projectName="nconpp_python" targetName="gmock" />
+      <config projectName="nconpp_python" targetName="nconpp" />
+      <config projectName="nconpp_python" targetName="nconpp_tests_run" />
+      <config projectName="nconpp_python" targetName="gtest_main" />
+      <config projectName="nconpp_python" targetName="gmock_main" />
+      <config projectName="nconpp_python" targetName="gtest" />
     </generated>
   </component>
   <component name="CMakeSettings" AUTO_RELOAD="true">
     <configurations>
-      <configuration PROFILE_NAME="Debug-MSVC" ENABLED="true" CONFIG_NAME="Debug" GENERATION_OPTIONS="-G Ninja -DCMAKE_TOOLCHAIN_FILE=C:\Repositories\vcpkg\scripts\buildsystems\vcpkg.cmake" BUILD_OPTIONS="-- -j 12" />
+      <configuration PROFILE_NAME="Debug" ENABLED="true" CONFIG_NAME="Debug" GENERATION_OPTIONS="-G Ninja -DCMAKE_TOOLCHAIN_FILE=C:\Repositories\vcpkg\scripts\buildsystems\vcpkg.cmake" BUILD_OPTIONS="-- -j 12" />
       <configuration PROFILE_NAME="Release" ENABLED="true" CONFIG_NAME="Release" GENERATION_OPTIONS="-G Ninja -DCMAKE_TOOLCHAIN_FILE=C:\Repositories\vcpkg\scripts\buildsystems\vcpkg.cmake" BUILD_OPTIONS="-- -j 12" />
+      <configuration PROFILE_NAME="Python" ENABLED="true" CONFIG_NAME="Release" GENERATION_OPTIONS="-G Ninja -DCMAKE_TOOLCHAIN_FILE=C:/Repositories/vcpkg/scripts/buildsystems/vcpkg.cmake -DSKBUILD=2" BUILD_OPTIONS="-- -j 12" />
     </configurations>
   </component>
   <component name="ChangeListManager">
     <list default="true" id="148f9fc6-1df1-44f3-b719-7198d20c4a96" name="Changes" comment="add expand_dims">
+      <change afterPath="$PROJECT_DIR$/python/extern/pybind11" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python/extern/xtensor-python" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/nconpp.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/nconpp.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitmodules" beforeDir="false" afterPath="$PROJECT_DIR$/.gitmodules" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pyproject.toml" beforeDir="false" afterPath="$PROJECT_DIR$/pyproject.toml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/python/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/python/main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python/nconpp/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/setup.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/vcpkg.json" beforeDir="false" afterPath="$PROJECT_DIR$/vcpkg.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,7 +51,14 @@
     <option name="clangTidyViaClangd" value="false" />
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug-MSVC" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="CMakeLists.txt" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
@@ -86,67 +101,76 @@
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
     "ctest.advertisement.all.test.configuration.is.created": "true",
+    "ignore.virus.scanning.warn.message": "true",
     "last_opened_file_path": "C:/Repositories/vcpkg",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "CMakeSettings",
+    "settings.editor.selected.configurable": "preferences.lookFeel",
     "structure.view.defaults.are.configured": "true",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Repositories\nconpp" />
+      <recent name="C:\Repositories\nconpp\python" />
       <recent name="\\wsl$\Ubuntu\home\mircomarahrens\github\mircomarahrens\nconpp\.resources" />
       <recent name="\\wsl$\Ubuntu\home\mircomarahrens\github\mircomarahrens\nconpp\include" />
       <recent name="\\wsl$\Ubuntu\home\mircomarahrens\github\mircomarahrens\nconpp\lib" />
     </key>
   </component>
   <component name="RunManager" selected="Google Test.All Tests">
-    <configuration name="All Tests" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" nameIsGenerated="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nconpp" TARGET_NAME="nconpp_tests_run" CONFIG_NAME="Debug-MSVC" RUN_TARGET_PROJECT_NAME="nconpp" RUN_TARGET_NAME="nconpp_tests_run" TEST_MODE="SUITE_TEST">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="All Tests" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" nameIsGenerated="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nconpp_python" TARGET_NAME="nconpp_tests_run" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="nconpp_python" RUN_TARGET_NAME="nconpp_tests_run" TEST_MODE="SUITE_TEST">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
         <option name="BeforeTestRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="TensorNetworkTest" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nconpp" TARGET_NAME="nconpp_tests_run" CONFIG_NAME="Debug-MSVC" RUN_TARGET_PROJECT_NAME="nconpp" RUN_TARGET_NAME="nconpp_tests_run" TEST_PATTERN="TensorNetworkTest.*:TensorNetworkTest/*.*:TensorNetworkTest.*/*:*/TensorNetworkTest.*/*:*/TensorNetworkTest/*.*" TEST_MODE="PATTERN">
+    <configuration name="TensorNetworkTest" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nconpp_python" TARGET_NAME="nconpp_tests_run" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="nconpp_python" RUN_TARGET_NAME="nconpp_tests_run" TEST_PATTERN="TensorNetworkTest.*:TensorNetworkTest/*.*:TensorNetworkTest.*/*:*/TensorNetworkTest.*/*:*/TensorNetworkTest/*.*" TEST_MODE="PATTERN">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
         <option name="BeforeTestRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="TensorNetworkTest.Graph" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nconpp" TARGET_NAME="nconpp_tests_run" CONFIG_NAME="Debug-MSVC" RUN_TARGET_PROJECT_NAME="nconpp" RUN_TARGET_NAME="nconpp_tests_run" TEST_CLASS="TensorNetworkTest" TEST_METHOD="Graph" TEST_MODE="SUITE_TEST">
+    <configuration name="TensorNetworkTest.Graph" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nconpp_python" TARGET_NAME="nconpp_tests_run" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="nconpp_python" RUN_TARGET_NAME="nconpp_tests_run" TEST_CLASS="TensorNetworkTest" TEST_METHOD="Graph" TEST_MODE="SUITE_TEST">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
         <option name="BeforeTestRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="TensorNetworkTest.contract" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nconpp" TARGET_NAME="nconpp_tests_run" CONFIG_NAME="Debug-MSVC" RUN_TARGET_PROJECT_NAME="nconpp" RUN_TARGET_NAME="nconpp_tests_run" TEST_CLASS="TensorNetworkTest" TEST_METHOD="contract" TEST_MODE="SUITE_TEST">
+    <configuration name="TensorNetworkTest.contract" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nconpp_python" TARGET_NAME="nconpp_tests_run" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="nconpp_python" RUN_TARGET_NAME="nconpp_tests_run" TEST_CLASS="TensorNetworkTest" TEST_METHOD="contract" TEST_MODE="SUITE_TEST">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
         <option name="BeforeTestRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="TensorNetworkTest.tensorNetwork" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nconpp" TARGET_NAME="nconpp_tests_run" CONFIG_NAME="Debug-MSVC" RUN_TARGET_PROJECT_NAME="nconpp" RUN_TARGET_NAME="nconpp_tests_run" TEST_PATTERN="TensorNetworkTest.tensorNetwork:TensorNetworkTest/*.tensorNetwork:TensorNetworkTest.tensorNetwork/*:*/TensorNetworkTest.tensorNetwork/*:*/TensorNetworkTest/*.tensorNetwork" TEST_MODE="PATTERN">
+    <configuration name="TensorNetworkTest.tensorNetwork" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nconpp_python" TARGET_NAME="nconpp_tests_run" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="nconpp_python" RUN_TARGET_NAME="nconpp_tests_run" TEST_PATTERN="TensorNetworkTest.tensorNetwork:TensorNetworkTest/*.tensorNetwork:TensorNetworkTest.tensorNetwork/*:*/TensorNetworkTest.tensorNetwork/*:*/TensorNetworkTest/*.tensorNetwork" TEST_MODE="PATTERN">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
         <option name="BeforeTestRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="TensorTest.tensordot" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nconpp" TARGET_NAME="nconpp_tests_run" CONFIG_NAME="Debug-MSVC" RUN_TARGET_PROJECT_NAME="nconpp" RUN_TARGET_NAME="nconpp_tests_run" TEST_CLASS="TensorTest" TEST_METHOD="tensordot" TEST_MODE="SUITE_TEST">
+    <configuration name="TensorTest.tensordot" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nconpp_python" TARGET_NAME="nconpp_tests_run" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="nconpp_python" RUN_TARGET_NAME="nconpp_tests_run" TEST_CLASS="TensorTest" TEST_METHOD="tensordot" TEST_MODE="SUITE_TEST">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
         <option name="BeforeTestRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+    <configuration name="nconpp" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nconpp_python" TARGET_NAME="nconpp" CONFIG_NAME="Python">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
     <list>
+      <item itemvalue="CMake Application.nconpp" />
       <item itemvalue="Google Test.All Tests" />
       <item itemvalue="Google Test.TensorNetworkTest.Graph" />
       <item itemvalue="Google Test.TensorNetworkTest.contract" />
@@ -156,11 +180,11 @@
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Google Test.TensorTest.tensordot" />
+        <item itemvalue="Google Test.TensorNetworkTest.tensorNetwork" />
         <item itemvalue="Google Test.TensorNetworkTest.contract" />
         <item itemvalue="Google Test.TensorNetworkTest.Graph" />
-        <item itemvalue="Google Test.TensorTest.tensordot" />
         <item itemvalue="Google Test.TensorNetworkTest" />
-        <item itemvalue="Google Test.TensorNetworkTest.tensorNetwork" />
       </list>
     </recent_temporary>
   </component>
@@ -295,7 +319,11 @@
       <workItem from="1679906731763" duration="2901000" />
       <workItem from="1680167393242" duration="67000" />
       <workItem from="1680167499683" duration="835000" />
-      <workItem from="1680168357464" duration="695000" />
+      <workItem from="1680168357464" duration="814000" />
+      <workItem from="1680180092973" duration="2553000" />
+      <workItem from="1680227321971" duration="12144000" />
+      <workItem from="1680245079234" duration="7524000" />
+      <workItem from="1680266380962" duration="3359000" />
     </task>
     <task id="LOCAL-00001" summary="add expand_dims">
       <created>1664824935314</created>
@@ -318,7 +346,7 @@
     <option name="version" value="3" />
   </component>
   <component name="VCPKGProject">
-    <isAutomaticEditVcpkgJson value="false" />
+    <isAutomaticEditVcpkgJson value="true" />
     <isAutomaticCheckingOnLaunch value="false" />
     <isAutomaticFoundErrors value="true" />
     <isAutomaticFoundErrors value="true" />

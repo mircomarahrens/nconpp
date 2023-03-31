@@ -1,11 +1,21 @@
 {
-  "dependencies": [
-    "boost-graph",
-    "lapack",
-    "openblas",
-    "xtensor",
-    "xtensor-blas"
-  ],
-  "name": "nconpp-core",
-  "version": "0.0.1"
+  "dependencies" : [ {
+    "name" : "xtensor",
+    "version>=" : "0.24.3"
+  }, {
+    "name" : "xtensor-blas",
+    "version>=" : "0.20.0"
+  }, {
+    "name" : "openblas",
+    "version>=" : "0.3.21#1"
+  }, {
+    "name" : "lapack",
+    "version>=" : "2022-02-22"
+  }, {
+    "name" : "boost-graph",
+    "version>=" : "1.81.0#2"
+  } ],
+  "builtin-baseline" : "c9f906558f9bb12ee9811d6edc98ec9255c6cda5",
+  "name" : "nconpp-core",
+  "version" : "0.0.1"
 }
