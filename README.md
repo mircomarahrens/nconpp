@@ -30,3 +30,7 @@ pip install $PATH_TO_NCONPP # $PATH_TO_NCONPP = ., if in root dir of nconpp
 - [vcpkg](https://vcpkg.io/en/)
 - [scikit-build-core](https://scikit-build-core.readthedocs.io/)
 - [xtensor](https://xtensor.readthedocs.io/)
+
+## Licensing
+
+...
