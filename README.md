@@ -22,3 +22,11 @@ py -m venv venv
 .\venv\Scripts\activate
 pip install $PATH_TO_NCONPP # $PATH_TO_NCONPP = ., if in root dir of nconpp
 ```
+
+## References
+
+- [BGL (Boost Graph Library)](https://www.boost.org/doc/libs/1_80_0/libs/graph/doc/index.html)
+- [pybind11](https://pybind11.readthedocs.io/)
+- [vcpkg](https://vcpkg.io/en/)
+- [scikit-build-core](https://scikit-build-core.readthedocs.io/)
+- [xtensor](https://xtensor.readthedocs.io/)

@@ -337,6 +337,7 @@ public:
      *  - permutation of the legs of the final tensors
      */
     void contract(std::vector<int> contractionSequence = {}, std::vector<int> finalOrder = {}) {
+        // TODO optimization: flatten edges
 
         // fill contraction sequence with positive legs if initially empty
         if (contractionSequence.empty()) {
@@ -439,7 +440,7 @@ public:
      *
      * @return
      */
-    std::size_t num_tensors() {
+    std::size_t num_tensors() const {
         return boost::num_vertices(mGraph);
     }
 
