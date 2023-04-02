@@ -1,7 +1,7 @@
 # Efficient tensor network contraction and decomposition with ``nconpp``
 
 This module shall help to perform efficient contractions and decomposition of tensor networks. The module is
-inspired by the matlab library NCON (<https://arxiv.org/abs/1402.0939>) and leverages strongly on mGraph algorithms.
+inspired by the matlab library NCON (<https://arxiv.org/abs/1402.0939>) and leverages strongly on graph algorithms.
 
 ## Install as Python module
 
