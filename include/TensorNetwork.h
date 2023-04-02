@@ -249,32 +249,6 @@ private:
         boost::remove_vertex(dest, mGraph);
     }
 
-    /**
-     * Perform an outer product of two vertices.
-     * @param src
-     * @param dest
-     */
-    void outer(vertex src, vertex dest) {
-        auto legsA = mGraph[src].legs;
-        auto legsB = mGraph[dest].legs;
-
-        auto tensorA = mGraph[src].tensor;
-        auto tensorB = mGraph[dest].tensor;
-
-        auto newTensor = npp::linalg::outer(tensorA, tensorB);
-
-        std::vector<int> newLegs = {};
-        newLegs.insert(newLegs.end(), legsA.begin(), legsA.end());
-        newLegs.insert(newLegs.end(), legsB.begin(), legsB.end());
-
-        mGraph[src].tensor = std::move(newTensor);
-        mGraph[src].legs = std::move(newLegs);
-
-        // clear and remove dest vertex
-        boost::clear_vertex(dest, mGraph);
-        boost::remove_vertex(dest, mGraph);
-    }
-
 public:
     /**
      * Explicit constructor with given parameters.
@@ -288,7 +262,6 @@ public:
      *      - contractible legs have the same positive integer as name, hence occurring in pairs
      *      - legs with negative integers won't be contracted, so-called dangling legs
      */
-    explicit TensorNetwork(std::vector<npp::tensor<T>> &tensorList,
     explicit TensorNetwork(std::vector<npp::tensor<T>> &tensorList,
                            std::vector<std::vector<int>> &subscriptVectorList) :
             mGraph(tensorList.size()) {

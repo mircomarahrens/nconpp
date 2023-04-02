@@ -65,8 +65,6 @@ if (CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
             test/nconpp_tests_run.cpp
             test/TensorNetworkTest.cpp
             test/TensorTest.cpp)
-            test/TensorNetworkTest.cpp
-            test/TensorTest.cpp)
 
     target_include_directories(nconpp_tests_run PUBLIC
             include/
