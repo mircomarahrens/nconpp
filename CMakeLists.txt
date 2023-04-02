@@ -6,7 +6,6 @@ project(nconpp CXX)
 
 # cmake flags
 set(CMAKE_CXX_STANDARD 20
-    CMAKE_FIND_PACKAGE_TARGETS_GLOBAL ON
     CMAKE_CXX_STANDARD_REQUIRED ON
     CMAKE_CXX_EXTENSIONS OFF)
 
@@ -76,7 +75,7 @@ if (CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
 endif ()
 
 # python
-if (NOT CMAKE_BUILD_TYPE MATCHES Debug AND SKBUILD)
+if (CMAKE_BUILD_TYPE MATCHES Python AND SKBUILD)
     message(STATUS "Skbuild process triggered.")
 
     project(nconpp_python LANGUAGES CXX)

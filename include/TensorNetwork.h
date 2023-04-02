@@ -440,7 +440,7 @@ public:
      *
      * @return
      */
-    std::size_t num_tensors() const {
+    [[nodiscard]] std::size_t num_tensors() const {
         return boost::num_vertices(mGraph);
     }
 

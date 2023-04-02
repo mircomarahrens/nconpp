@@ -1,8 +1,8 @@
 # Custom
-.resources/
+/out/
 
 # JetBrains
-build/
+/.idea/
 
 # CMake
 CMakeLists.txt.user

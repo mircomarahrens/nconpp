@@ -17,11 +17,10 @@ void class_wrapper(py::module &m) {
     py::class_<TensorNetwork<T>>(m, "tensornetwork")
         .def(py::init<std::vector<npp::tensor<T>> &, std::vector<std::vector<int>> &>(),
                 py::arg("tensorList"), py::arg("legsList"))
-        .def("contract", &TensorNetwork<T>::contract,
-             py::arg("contractionSequence"), py::arg("finalOrder"))
+//        .def("contract", &TensorNetwork<T>::contract,
+//             py::arg("contractionSequence"), py::arg("finalOrder"))
         .def("connect", &TensorNetwork<T>::connect)
         .def_property_readonly("num_tensors", &TensorNetwork<T>::num_tensors);
-//        .def("getTensorList", TensorNetwork<T>::getTensorList());
 }
 
 PYBIND11_MODULE(nconpp, m)
