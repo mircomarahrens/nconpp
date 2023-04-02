@@ -19,7 +19,7 @@ void class_wrapper(py::module &m) {
                 py::arg("tensorList"), py::arg("legsList"))
 //        .def("contract", &TensorNetwork<T>::contract,
 //             py::arg("contractionSequence"), py::arg("finalOrder"))
-        .def("connect", &TensorNetwork<T>::connect)
+        // .def("connect", &TensorNetwork<T>::connect)
         .def_property_readonly("num_tensors", &TensorNetwork<T>::num_tensors);
 }
 
