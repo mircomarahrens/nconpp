@@ -15,7 +15,10 @@ set(VCPKG_FEATURE_FLAGS "versions")
 
 set(Boost_NO_WARN_NEW_VERSIONS 1)
 
+set(Boost_NO_WARN_NEW_VERSIONS 1)
+
 # dependencies
+find_package(Boost REQUIRED graph)
 find_package(Boost REQUIRED graph)
 find_package(BLAS REQUIRED)
 set(BLAS_INCLUDE_DIR ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include/openblas)
@@ -60,6 +63,8 @@ if (CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
 
     add_executable(nconpp_tests_run
             test/nconpp_tests_run.cpp
+            test/TensorNetworkTest.cpp
+            test/TensorTest.cpp)
             test/TensorNetworkTest.cpp
             test/TensorTest.cpp)
 
