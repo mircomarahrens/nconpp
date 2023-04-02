@@ -1,5 +1,6 @@
 # Custom
 /out/
+/venv/
 
 # JetBrains
 /.idea/
@@ -26,8 +27,3 @@ cmake-build-*/
 .vscode/launch.json
 .vscode/extensions.json
 *.code-workspace
-
-# python
-/_skbuild/
-/venv/
-/nconpp-py/
