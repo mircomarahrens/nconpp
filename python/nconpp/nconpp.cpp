@@ -6,7 +6,7 @@
 #include "xtensor-python/pyvectorize.hpp"
 
 #include <complex>
-#include <optional>
+#include <vector>
 
 #include "TensorNetwork.h"
 
@@ -19,12 +19,12 @@ void class_wrapper(py::module &m)
 		.def(py::init<std::vector<npp::tensor<T>> &, std::vector<std::vector<int>> &>(),
 			 py::arg("tensorList"), py::arg("legsList"))
 		// .def("contract", &TensorNetwork<T>::contract,
-		// 	 py::arg("contractionSequence") = std::vector<int>(), py::arg("finalOrder") = std::vector<int>())
+		// 	 py::arg("contractionSequence") = py::none(), py::arg("finalOrder") = py::none())
 		.def("connect", &TensorNetwork<T>::connect)
 		.def_property_readonly("num_tensors", &TensorNetwork<T>::num_tensors);
 }
 
-PYBIND11_MODULE(nconpp, m)
+PYBIND11_MODULE(_nconpp, m)
 {
 	xt::import_numpy();
 
@@ -52,14 +52,6 @@ PYBIND11_MODULE(nconpp, m)
 	     the final contracted container
     )pbdoc";
 
-	//    class_wrapper<std::complex<double>>(m);
+	class_wrapper<std::complex<double>>(m);
 	class_wrapper<double>(m);
-
-	//    m.def("contract",
-	//        &contract_wrapper<xt::pyarray<std::complex<double>>>,
-	//        py::arg("containerList"),
-	//        py::arg("legsList"),
-	//        py::arg("skipValidation"),
-	//        py::arg("contractionSequenceLegs") = py::none(),
-	//        py::arg("finalOrder") = py::none());
 }

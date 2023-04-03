@@ -107,17 +107,21 @@ if (CMAKE_BUILD_TYPE MATCHES Python AND SKBUILD)
             message(FATAL_ERROR "Could not find DLL directory.")
         endif()
 
-        file(WRITE python/__init__.py 
+        file(WRITE python/nconpp/__init__.py 
 "import os, sys
 
 if (sys.platform == 'win32'):
-    os.add_dll_directory(\"${VCPKG_INSTALLED_DIR_DLL_DIR}\")")
+    os.add_dll_directory(\"${VCPKG_INSTALLED_DIR_DLL_DIR}\")
+
+from ._nconpp import TensorNetwork
+
+__all__ = (\"TensorNetwork\")")
     endif()
 
     # pybind11
     set(PYBIND11_NEWPYTHON ON)
-    set(PYBIND11_MAIN python/main.cpp)
-    set(PYBIND11_MODULE nconpp)
+    set(PYBIND11_MAIN python/nconpp/nconpp.cpp)
+    set(PYBIND11_MODULE _nconpp)
 
     add_subdirectory(python/extern/xtensor-python)
 
@@ -139,7 +143,7 @@ if (sys.platform == 'win32'):
     target_compile_definitions(${PYBIND11_MODULE} PRIVATE
         VERSION_INFO=${VERSION_INFO})
 
-    install(FILES python/__init__.py DESTINATION .)
+    install(FILES python/nconpp/__init__.py DESTINATION .)
     install(TARGETS ${PYBIND11_MODULE}
         LIBRARY DESTINATION .)
 endif()
