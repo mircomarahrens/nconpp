@@ -12,22 +12,23 @@
 
 namespace py = pybind11;
 
-template<typename T>
-void class_wrapper(py::module &m) {
-    py::class_<TensorNetwork<T>>(m, "tensornetwork")
-        .def(py::init<std::vector<npp::tensor<T>> &, std::vector<std::vector<int>> &>(),
-                py::arg("tensorList"), py::arg("legsList"))
-//        .def("contract", &TensorNetwork<T>::contract,
-//             py::arg("contractionSequence"), py::arg("finalOrder"))
-        // .def("connect", &TensorNetwork<T>::connect)
-        .def_property_readonly("num_tensors", &TensorNetwork<T>::num_tensors);
+template <typename T>
+void class_wrapper(py::module &m)
+{
+	py::class_<TensorNetwork<T>>(m, "TensorNetwork")
+		.def(py::init<std::vector<npp::tensor<T>> &, std::vector<std::vector<int>> &>(),
+			 py::arg("tensorList"), py::arg("legsList"))
+		// .def("contract", &TensorNetwork<T>::contract,
+		// 	 py::arg("contractionSequence") = std::vector<int>(), py::arg("finalOrder") = std::vector<int>())
+		.def("connect", &TensorNetwork<T>::connect)
+		.def_property_readonly("num_tensors", &TensorNetwork<T>::num_tensors);
 }
 
 PYBIND11_MODULE(nconpp, m)
 {
-    xt::import_numpy();
+	xt::import_numpy();
 
-    m.doc() = R"pbdoc(
+	m.doc() = R"pbdoc(
         Library for Tensor Network contraction.
 
 	    Contracts multiple tensors to one tensor, if possible.
@@ -51,14 +52,14 @@ PYBIND11_MODULE(nconpp, m)
 	     the final contracted container
     )pbdoc";
 
-//    class_wrapper<std::complex<double>>(m);
-    class_wrapper<double>(m);
+	//    class_wrapper<std::complex<double>>(m);
+	class_wrapper<double>(m);
 
-//    m.def("contract",
-//        &contract_wrapper<xt::pyarray<std::complex<double>>>,
-//        py::arg("containerList"),
-//        py::arg("legsList"),
-//        py::arg("skipValidation"),
-//        py::arg("contractionSequenceLegs") = py::none(),
-//        py::arg("finalOrder") = py::none());
+	//    m.def("contract",
+	//        &contract_wrapper<xt::pyarray<std::complex<double>>>,
+	//        py::arg("containerList"),
+	//        py::arg("legsList"),
+	//        py::arg("skipValidation"),
+	//        py::arg("contractionSequenceLegs") = py::none(),
+	//        py::arg("finalOrder") = py::none());
 }

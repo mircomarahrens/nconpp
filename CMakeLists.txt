@@ -15,14 +15,12 @@ set(VCPKG_FEATURE_FLAGS "versions")
 
 set(Boost_NO_WARN_NEW_VERSIONS 1)
 
-set(Boost_NO_WARN_NEW_VERSIONS 1)
-
 # dependencies
-find_package(Boost REQUIRED graph)
 find_package(Boost REQUIRED graph)
 find_package(BLAS REQUIRED)
 set(BLAS_INCLUDE_DIR ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include/openblas)
 message(STATUS "cblas.h is located in " ${BLAS_INCLUDE_DIR})
+message(STATUS "Blas libraries " ${BLAS_LIBRARIES})
 find_package(LAPACK REQUIRED)
 
 find_package(XTENSOR REQUIRED)
@@ -31,29 +29,30 @@ find_package(XTENSOR-BLAS REQUIRED)
 message(STATUS "xtensor-blas version is " ${XTENSOR-BLAS_VERSION} ".")
 
 set(NCONPP_DEPENDENCIES
-        ${BLAS_LIBRARIES}
-        ${LAPACK_LIBRARIES}
-        xtensor
-        xtensor::optimize
-        xtensor-blas)
+    ${BLAS_LIBRARIES}
+    ${LAPACK_LIBRARIES}
+    xtensor
+    xtensor::optimize
+    xtensor-blas)
 
 set(NCONPP_INCLUDE
-        include/LogMessages.h
-        include/Tensor.h
-        include/TensorNetwork.h
-        )
+    include/LogMessages.h
+    include/Tensor.h
+    include/TensorNetwork.h
+    )
 
-include(FetchContent)
 
-# debug
+        # debug
 if (CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
     message(STATUS "GoogleTest process triggered.")
     project(nconpp_tests)
 
+    include(FetchContent)
+
     FetchContent_Declare(
-            googletest
-            GIT_REPOSITORY https://github.com/google/googletest
-            GIT_TAG v1.13.0
+        googletest
+        GIT_REPOSITORY https://github.com/google/googletest
+        GIT_TAG v1.13.0
     )
     # For Windows: Prevent overriding the parent project's compiler/linker settings
     set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
@@ -62,19 +61,19 @@ if (CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
     enable_testing()
 
     add_executable(nconpp_tests_run
-            test/nconpp_tests_run.cpp
-            test/TensorNetworkTest.cpp
-            test/TensorTest.cpp)
+        test/nconpp_tests_run.cpp
+        test/TensorNetworkTest.cpp
+        test/TensorTest.cpp)
 
     target_include_directories(nconpp_tests_run PUBLIC
-            include/
-            ${BLAS_INCLUDE_DIR})
+        include/
+        ${BLAS_INCLUDE_DIR})
 
     target_link_libraries(nconpp_tests_run
-            ${CMAKE_THREAD_LIBS_INIT}
-            ${NCONPP_DEPENDENCIES}
-            gmock_main
-            gtest_main)
+        ${CMAKE_THREAD_LIBS_INIT}
+        ${NCONPP_DEPENDENCIES}
+        gmock_main
+        gtest_main)
 endif ()
 
 # python
@@ -88,7 +87,6 @@ if (CMAKE_BUILD_TYPE MATCHES Python AND SKBUILD)
     find_package(Python COMPONENTS Interpreter Development.Module NumPy REQUIRED)
 
     message(STATUS "Use NumPy include dir: ${Python_NumPy_INCLUDE_DIRS}")
-    message(STATUS "Use Python executable: ${PYTHON_EXECUTABLE}")
     set(PYTHON_EXECUTABLE ${Python_EXECUTABLE})
     message(STATUS "Use Python venv executable: ${Python_EXECUTABLE}")
 
@@ -100,6 +98,22 @@ if (CMAKE_BUILD_TYPE MATCHES Python AND SKBUILD)
 
     add_subdirectory(python/extern/pybind11)
 
+    if (WIN32)
+        set(VCPKG_INSTALLED_DIR_DLL_DIR ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/)
+
+        if (EXISTS ${VCPKG_INSTALLED_DIR_DLL_DIR})
+            message(STATUS "Found DLL directory: " ${VCPKG_INSTALLED_DIR_DLL_DIR})
+        else() 
+            message(FATAL_ERROR "Could not find DLL directory.")
+        endif()
+
+        file(WRITE python/__init__.py 
+"import os, sys
+
+if (sys.platform == 'win32'):
+    os.add_dll_directory(\"${VCPKG_INSTALLED_DIR_DLL_DIR}\")")
+    endif()
+
     # pybind11
     set(PYBIND11_NEWPYTHON ON)
     set(PYBIND11_MAIN python/main.cpp)
@@ -108,22 +122,24 @@ if (CMAKE_BUILD_TYPE MATCHES Python AND SKBUILD)
     add_subdirectory(python/extern/xtensor-python)
 
     pybind11_add_module(${PYBIND11_MODULE}
-            ${PYBIND11_MAIN}
-            ${NCONPP_INCLUDE})
+        ${PYBIND11_MAIN}
+        ${NCONPP_INCLUDE})
 
     target_include_directories(${PYBIND11_MODULE} PRIVATE
-            include/
-            ${Python_NumPy_INCLUDE_DIRS})
+        include/
+        ${Python_NumPy_INCLUDE_DIRS}
+        ${BLAS_INCLUDE_DIR})
 
-    target_link_libraries(${PYBIND11_MODULE} PUBLIC
-            ${NCONPP_DEPENDENCIES}
-            pybind11::module
-            xtensor-python
-            Python::NumPy)
+    target_link_libraries(${PYBIND11_MODULE} PRIVATE
+        ${NCONPP_DEPENDENCIES}
+        pybind11::module
+        xtensor-python
+        Python::NumPy)
 
     target_compile_definitions(${PYBIND11_MODULE} PRIVATE
-            VERSION_INFO=${VERSION_INFO})
+        VERSION_INFO=${VERSION_INFO})
 
+    install(FILES python/__init__.py DESTINATION .)
     install(TARGETS ${PYBIND11_MODULE}
-            LIBRARY DESTINATION .)
+        LIBRARY DESTINATION .)
 endif()

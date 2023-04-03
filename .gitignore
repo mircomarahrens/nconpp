@@ -1,6 +1,7 @@
 # Custom
 /out/
 /venv/
+/python/__init__.py
 
 # JetBrains
 /.idea/

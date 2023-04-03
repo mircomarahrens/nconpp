@@ -27,7 +27,9 @@ classifiers = [
 ]
 
 [tool.scikit-build]
+wheel.install-dir = "nconpp"
 minimum-version = "0.2.2"
+build-dir = "out/build/python"
 cmake.args = [
     "-DCMAKE_TOOLCHAIN_FILE=C:/Repositories/vcpkg/scripts/buildsystems/vcpkg.cmake",
     "-DCMAKE_BUILD_TYPE=Python"
