@@ -15,6 +15,7 @@
 
 #include <algorithm>
 #include <complex>
+#include <optional>
 
 template <typename T>
 class TensorNetwork
@@ -437,9 +438,22 @@ public:
      * @param finalOrder
      *  - permutation of the legs of the final tensors
      */
-    void contract(std::vector<int> contractionSequence = {}, std::vector<int> finalOrder = {})
+    void contract(std::optional<std::vector<int>> opt_contractionSequence = std::nullopt, std::optional<std::vector<int>> opt_finalOrder = std::nullopt)
     {
-        // TODO optimization: flatten edges
+        // TODO optimization:
+        //  - flatten edges
+        //  - revisit std::optional
+        std::vector<int> contractionSequence = {};
+        if (opt_contractionSequence.has_value())
+        {
+            contractionSequence = opt_contractionSequence.value();
+        }
+
+        std::vector<int> finalOrder = {};
+        if (opt_finalOrder.has_value())
+        {
+            finalOrder = opt_finalOrder.value();
+        }
 
         // fill contraction sequence with positive legs if initially empty
         if (contractionSequence.empty())

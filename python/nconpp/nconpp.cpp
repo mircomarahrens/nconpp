@@ -17,15 +17,17 @@ template <typename T>
 void class_wrapper(py::module &m, const std::string &typestr = std::string())
 {
 	std::string pyclass_name = std::string("TensorNetwork");
-	if (!typestr.empty())
+	if (!typestr.empty()) {
 		pyclass_name += typestr;
+	}
+
 	py::class_<TensorNetwork<T>>(m, pyclass_name.c_str(), py::buffer_protocol(), py::dynamic_attr())
 		.def(py::init<std::vector<npp::tensor<T>> &, std::vector<std::vector<int>> &>(),
 			 py::arg("tensorList"), py::arg("legsList"))
-		// .def(py::init<std::vector<npp::tensor<T>> &&, std::vector<std::vector<int>> &&>(),
-		// 	 py::arg("tensorList"), py::arg("legsList"))
-		// .def("contract", &TensorNetwork<T>::contract,
-		// 	 py::arg("contractionSequence") = py::none(), py::arg("finalOrder") = py::none())
+		.def(py::init<std::vector<npp::tensor<T>> &&, std::vector<std::vector<int>> &&>(),
+			 py::arg("tensorList"), py::arg("legsList"))
+		.def("contract", &TensorNetwork<T>::contract,
+			 py::arg("contractionSequence") = py::none(), py::arg("finalOrder") = py::none())
 		.def("connect", &TensorNetwork<T>::connect)
 		.def_property_readonly("num_tensors", &TensorNetwork<T>::num_tensors);
 }
@@ -59,6 +61,6 @@ PYBIND11_MODULE(_nconpp, m)
     )pbdoc";
 
 	class_wrapper<std::complex<double>>(m);
-	// TODO define derived (?) class for Pybind with different data types (aka dtype)
+	// TODO define derived (?) class for Pybind11 with different data types (aka dtype)
 	//class_wrapper<double>(m);
 }
