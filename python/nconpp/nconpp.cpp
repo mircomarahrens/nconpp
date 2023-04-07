@@ -7,17 +7,23 @@
 
 #include <complex>
 #include <vector>
+#include <string>
 
 #include "TensorNetwork.h"
 
 namespace py = pybind11;
 
 template <typename T>
-void class_wrapper(py::module &m)
+void class_wrapper(py::module &m, const std::string &typestr = std::string())
 {
-	py::class_<TensorNetwork<T>>(m, "TensorNetwork")
+	std::string pyclass_name = std::string("TensorNetwork");
+	if (!typestr.empty())
+		pyclass_name += typestr;
+	py::class_<TensorNetwork<T>>(m, pyclass_name.c_str(), py::buffer_protocol(), py::dynamic_attr())
 		.def(py::init<std::vector<npp::tensor<T>> &, std::vector<std::vector<int>> &>(),
 			 py::arg("tensorList"), py::arg("legsList"))
+		// .def(py::init<std::vector<npp::tensor<T>> &&, std::vector<std::vector<int>> &&>(),
+		// 	 py::arg("tensorList"), py::arg("legsList"))
 		// .def("contract", &TensorNetwork<T>::contract,
 		// 	 py::arg("contractionSequence") = py::none(), py::arg("finalOrder") = py::none())
 		.def("connect", &TensorNetwork<T>::connect)
@@ -53,5 +59,6 @@ PYBIND11_MODULE(_nconpp, m)
     )pbdoc";
 
 	class_wrapper<std::complex<double>>(m);
-	class_wrapper<double>(m);
+	// TODO define derived (?) class for Pybind with different data types (aka dtype)
+	//class_wrapper<double>(m);
 }
