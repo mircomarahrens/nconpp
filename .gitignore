@@ -1,8 +1,10 @@
 # Custom
-/.resources/
+/out/
+/venv/
+/python/__init__.py
 
 # JetBrains
-build/
+/.idea/
 
 # CMake
 CMakeLists.txt.user
@@ -26,9 +28,3 @@ cmake-build-*/
 .vscode/launch.json
 .vscode/extensions.json
 *.code-workspace
-
-# python
-nconpp-venv
-nconpp.egg-info/
-nconpp-python/nconpp.egg-info
-_skbuild/
