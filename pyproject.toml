@@ -1,15 +1,44 @@
+# https://scikit-build-core.readthedocs.io/
 [build-system]
 requires = [
-    "cmake>=3.19.0",
-    "pip>=21.3.1",
-    "pybind11>=2.9.0",
-    "wheel>=0.37.1",
-    "scikit-build>=0.12.0",
-    "ninja>=1.10.2",
-    "numpy>=1.21.4",
+    "scikit-build-core>=0.2.2",
+    "numpy>=1.24.2"
+]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "nconpp"
+version = "0.0.1"
+description="Library for Tensor Network calculations."
+readme = "README.md"
+authors = [
+    { name = "Mirco Marahrens", email = "mirco.marahrens@googlemail.com" },
+]
+requires-python = ">=3.7"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
 ]
 
-build-backend = "setuptools.build_meta"
+[tool.scikit-build]
+wheel.install-dir = "nconpp"
+minimum-version = "0.2.2"
+build-dir = "out/build/python"
+cmake.args = [
+    "-DCMAKE_TOOLCHAIN_FILE=C:/Repositories/vcpkg/scripts/buildsystems/vcpkg.cmake",
+    "-DCMAKE_BUILD_TYPE=Python"
+    ]
+cmake.minimum-version = "3.26.1"
+cmake.verbose = true
+ninja.make-fallback = false
+ninja.minimum-version = "1.11"
+logging.level = "INFO"
 
 [tool.isort]
 profile = "black"
