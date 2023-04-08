@@ -74,6 +74,9 @@ if (CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
         ${NCONPP_DEPENDENCIES}
         gmock_main
         gtest_main)
+
+    include(GoogleTest)
+    gtest_discover_tests(nconpp_tests_run)
 endif ()
 
 # python
