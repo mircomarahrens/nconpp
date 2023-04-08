@@ -56,8 +56,7 @@
             "name": "googletests",
             "description": "",
             "displayName": "",
-            "configurePreset": "debug",
-            "configuration": "Debug"
+            "configurePreset": "debug"
         }
     ],
     "buildPresets": [
