@@ -24,6 +24,12 @@ namespace npp {
     template<typename T>
     using tensor = xt::xarray<T>;
 
+    // allclose
+    template<class E1, class E2>
+    static inline auto allclose(E1 &&e1, E2 &&e2, double rtol = 1e-05, double atol = 1e-08) noexcept {
+        return xt::allclose(e1, e2, rtol, atol);
+    }
+
     // reshape
     template<typename T>
     static inline auto reshape(const expression_type<T> &M, shape_type shape) {
