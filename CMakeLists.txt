@@ -42,7 +42,7 @@ set(NCONPP_INCLUDE
     )
 
 
-        # debug
+# debug
 if (CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
     message(STATUS "GoogleTest process triggered.")
     project(nconpp_tests)

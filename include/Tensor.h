@@ -22,7 +22,7 @@ namespace npp {
     using expression_type = xt::xexpression<T>;
 
     template<typename T>
-    using tensor = xt::xarray<T>;
+    using tensor_type = xt::xarray<T>;
 
     // allclose
     template<class E1, class E2>
@@ -32,7 +32,7 @@ namespace npp {
 
     // reshape
     template<typename T>
-    static inline auto reshape(const expression_type<T> &M, shape_type shape) {
+    static inline auto reshape(expression_type<T> &M, shape_type shape) {
         auto &&dM = M.derived_cast();
         return dM.reshape(shape);
     }

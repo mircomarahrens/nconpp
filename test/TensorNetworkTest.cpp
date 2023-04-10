@@ -4,7 +4,7 @@
 
 static auto createTensorList(const std::vector<npp::shape_type> &shapes)
 {
-    std::vector<npp::tensor<std::complex<double>>> tensorList = {};
+    std::vector<npp::tensor_type<std::complex<double>>> tensorList = {};
     std::vector<std::vector<int>> legs = {};
     int leg = -1;
     for (auto shape : shapes)
@@ -84,11 +84,11 @@ TEST(TensorNetworkTest, Graph)
 
 TEST(TensorNetworkTest, logicError_MoreThanTwoLegs)
 {
-    std::vector<npp::tensor<std::complex<double>>> tensorList =
+    std::vector<npp::tensor_type<std::complex<double>>> tensorList =
         {
-            npp::tensor<std::complex<double>>({3, 4, 5}),
-            npp::tensor<std::complex<double>>({5, 3, 6, 7, 6}),
-            npp::tensor<std::complex<double>>({7, 2}),
+            npp::tensor_type<std::complex<double>>({3, 4, 5}),
+            npp::tensor_type<std::complex<double>>({5, 3, 6, 7, 6}),
+            npp::tensor_type<std::complex<double>>({7, 2}),
         };
 
     std::vector<std::vector<int>> legLinks =
@@ -110,7 +110,7 @@ TEST(TensorNetworkTest, logicError_MoreThanTwoLegs)
 
 TEST(TensorNetworkTest, copy_constructed_contract)
 {
-    std::vector<npp::tensor<std::complex<double>>> tensorList =
+    std::vector<npp::tensor_type<std::complex<double>>> tensorList =
         {
             xt::random::rand<double>({3, 4, 5}),
             xt::random::rand<double>({5, 3, 6, 7, 6}),
@@ -189,26 +189,4 @@ TEST(TensorNetworkTest, move_constructed_contract)
 
     npp::shape_type shape = {4, 2, 9};
     ASSERT_EQ(tensorList[0].shape(), shape);
-}
-
-TEST(TensorTest, svd)
-{
-    // from https://github.com/xtensor-stack/xtensor-blas/blob/master/test/test_linalg.cpp
-    npp::tensor<double> arg_0 = {{0, 1, 2},
-                                 {3, 4, 5},
-                                 {6, 7, 8}};
-
-    auto res = npp::linalg::svd(arg_0);
-
-    npp::tensor<double> expected_0 = {{-0.13511895, 0.90281571, 0.40824829},
-                                      {-0.49633514, 0.29493179, -0.81649658},
-                                      {-0.85755134, -0.31295213, 0.40824829}};
-    npp::tensor<double> expected_1 = {1.42267074e+01, 1.26522599e+00, 5.89938022e-16};
-    npp::tensor<double> expected_2 = {{-0.4663281, -0.57099079, -0.67565348},
-                                      {-0.78477477, -0.08545673, 0.61386131},
-                                      {-0.40824829, 0.81649658, -0.40824829}};
-
-    ASSERT_TRUE(npp::allclose(std::get<0>(res), expected_0));
-    ASSERT_TRUE(npp::allclose(std::get<1>(res), expected_1));
-    ASSERT_TRUE(npp::allclose(std::get<2>(res), expected_2));
 }

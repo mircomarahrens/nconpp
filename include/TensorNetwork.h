@@ -23,7 +23,7 @@ private:
     struct vertex_properties
     {
         std::vector<int> legs;
-        npp::tensor<T> tensor;
+        npp::tensor_type<T> tensor;
     };
 
     typedef typename boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS, vertex_properties, boost::property<boost::edge_index_t, std::size_t>> graph_t;
@@ -278,7 +278,7 @@ public:
      *      - contractible legs have the same positive integer as name, hence occurring in pairs
      *      - legs with negative integers won't be contracted, so-called dangling legs
      */
-    explicit TensorNetwork(const std::vector<npp::tensor<T>> &tensorList,
+    explicit TensorNetwork(const std::vector<npp::tensor_type<T>> &tensorList,
                            const std::vector<std::vector<int>> &subscriptVectorList) : mGraph(tensorList.size())
     {
         if (tensorList.size() != subscriptVectorList.size())
@@ -353,7 +353,7 @@ public:
         mConnectedComponents = getConnectedComponents();
     };
 
-    explicit TensorNetwork(std::vector<npp::tensor<T>> &&tensorList,
+    explicit TensorNetwork(std::vector<npp::tensor_type<T>> &&tensorList,
                            std::vector<std::vector<int>> &&subscriptVectorList) : mGraph(tensorList.size())
     {
         if (tensorList.size() != subscriptVectorList.size())
@@ -571,15 +571,45 @@ public:
      *
      * @return
      */
-    std::vector<npp::tensor<T>> getTensorList()
+    std::vector<npp::tensor_type<T>> getTensorList()
     {
-        std::vector<npp::tensor<T>> result = {};
+        std::vector<npp::tensor_type<T>> result = {};
         typename graph_t::vertex_iterator v, vend;
         for (boost::tie(v, vend) = boost::vertices(mGraph); v != vend; ++v)
         {
             result.emplace_back(mGraph[*v].tensor);
         }
         return result;
+    }
+    
+
+    void split(std::size_t pos, std::size_t vertex_pos = 0) {
+        auto vertex = boost::vertex(vertex_pos, mGraph);
+        auto tensor = vertex.tensor;
+        auto legs = vertex.legs;
+
+        if (pos < legs.size()) {
+
+            auto shape = npp::shape(tensor);
+            auto left_shape = std::vector(shape.begin(), shape.begin() + pos);
+            auto right_shape = std::vector(shape.begin() + pos, shape.end());
+
+            int left = 1;
+            for (auto l : left_shape) {
+                left *= l;
+            }
+
+            int right = 1;
+            for (auto r : right_shape) {
+                right *= r;
+            }
+
+            npp::reshape(tensor, npp::shape_type(left, right));
+            // auto res = npp::linalg::svd(ten)
+        } else {
+            throw std::invalid_argument(ERROR::OUT_OF_SIZE);
+        }
+
     }
 };
 
