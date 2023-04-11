@@ -24,6 +24,12 @@ namespace npp {
     template<typename T>
     using tensor_type = xt::xarray<T>;
 
+    // zeros
+    template<class T>
+    static inline auto zeros(shape_type shape) {
+        return xt::zeros<T>(shape);
+    }
+
     // allclose
     template<class E1, class E2>
     static inline auto allclose(E1 &&e1, E2 &&e2, double rtol = 1e-05, double atol = 1e-08) noexcept {
@@ -32,9 +38,9 @@ namespace npp {
 
     // reshape
     template<typename T>
-    static inline auto reshape(expression_type<T> &M, shape_type shape) {
+    void reshape(expression_type<T> &M, shape_type shape) {
         auto &&dM = M.derived_cast();
-        return dM.reshape(shape);
+        dM.reshape(shape);
     }
 
     // prod
@@ -80,6 +86,13 @@ namespace npp {
     }
 
     namespace linalg {
+        // dot
+        template<typename T, typename O>
+        static inline auto
+        dot(const expression_type <T> &xa, const expression_type <O> &xb) -> decltype(xt::linalg::dot(xa, xb)) {
+            return xt::linalg::dot(xa, xb);
+        }        
+
         // tensordot
         template<typename T, typename O>
         static inline auto

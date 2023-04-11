@@ -190,3 +190,47 @@ TEST(TensorNetworkTest, move_constructed_contract)
     npp::shape_type shape = {4, 2, 9};
     ASSERT_EQ(tensorList[0].shape(), shape);
 }
+
+TEST(TensorNetworkTest, split_dryrun)
+{
+    npp::tensor_type<double> tensor = xt::random::rand<double>({3, 4, 5});
+
+    std::size_t pos = 2;
+
+    npp::shape_type shape = npp::shape(tensor);
+    npp::shape_type left_shape = std::vector(shape.begin(), shape.begin() + pos);
+    npp::shape_type right_shape = std::vector(shape.begin() + pos, shape.end());
+
+    size_t left = 1;
+    for (auto l : left_shape)
+    {
+        left *= l;
+    }
+
+    size_t right = 1;
+    for (auto r : right_shape)
+    {
+        right *= r;
+    }
+
+    tensor.reshape({left, right});
+    ASSERT_EQ(tensor.shape(), npp::shape_type({left, right}));
+
+    auto res = npp::linalg::svd(tensor);
+
+    npp::tensor_type<double> U = std::get<0>(res);
+    ASSERT_EQ(U.shape(), npp::shape_type({12, 12}));
+
+    npp::tensor_type<double> s = std::get<1>(res);
+    ASSERT_EQ(s.shape(), npp::shape_type({5}));
+
+    npp::tensor_type<double> V = std::get<2>(res);
+    ASSERT_EQ(V.shape(), npp::shape_type({5, 5}));
+
+    npp::tensor_type<double> smat = npp::zeros<double>({12, 5});
+    for (size_t i = 0; i < s.shape()[0]; i++)
+        smat(i, i) = s(i);
+
+    auto result = npp::linalg::dot(npp::linalg::dot(U, smat), V);
+    ASSERT_TRUE(npp::allclose(tensor, result));
+}
