@@ -15,7 +15,7 @@ namespace npp {
     using array_type = xt::xarray<T, xt::layout_type::dynamic>;
 
     // shape_type
-    using shape_type = xt::xarray<std::size_t>::shape_type;
+    using shape_type = xt::xarray<size_t>::shape_type;
 
     // general multi-dimensional object
     template<typename T>
@@ -28,6 +28,11 @@ namespace npp {
     template<class T>
     static inline auto zeros(shape_type shape) {
         return xt::zeros<T>(shape);
+    }
+
+    template<class E>
+    static inline auto diag(E& arr) {
+        return xt::diag(arr);
     }
 
     // allclose

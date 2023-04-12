@@ -15,6 +15,7 @@
 
 #include <algorithm>
 #include <complex>
+#include <tuple>
 
 template <typename T>
 class TensorNetwork
@@ -595,17 +596,22 @@ public:
             auto right_shape = std::vector(shape.begin() + pos, shape.end());
 
             int left = 1;
-            for (auto l : left_shape) {
+            for (auto l : left_shape)
                 left *= l;
-            }
 
             int right = 1;
-            for (auto r : right_shape) {
+            for (auto r : right_shape)
                 right *= r;
-            }
 
             npp::reshape(tensor, npp::shape_type(left, right));
-            // auto res = npp::linalg::svd(ten)
+            auto res = npp::linalg::svd(tensor);
+
+            npp::tensor_type<T> U,s,V;
+            std::tie(U,s,V) = res;
+
+            npp::reshape(U, left_shape);
+            npp::reshape(V, right_shape);
+
         } else {
             throw std::invalid_argument(ERROR::OUT_OF_SIZE);
         }
