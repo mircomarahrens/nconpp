@@ -589,19 +589,33 @@ public:
         auto tensor = vertex.tensor;
         auto legs = vertex.legs;
 
-        if (pos < legs.size()) {
+        std::size_t len = legs.size(); 
+        if (pos < len) {
 
             auto shape = npp::shape(tensor);
-            auto left_shape = std::vector(shape.begin(), shape.begin() + pos);
-            auto right_shape = std::vector(shape.begin() + pos, shape.end());
 
-            int left = 1;
-            for (auto l : left_shape)
-                left *= l;
+            std::size_t left = 1, right = 1;
+            npp::shape_type left_shape, right_shape;
+            for (std::size_t s = 0; s < len; s++) {
+                if (s < pos) {
+                    left *= shape[s];
+                    left_shape.push_back(shape[s]);
+                } else if (s == pos) {
+                    right *= shape[s];
 
-            int right = 1;
-            for (auto r : right_shape)
-                right *= r;
+                    // new shape after svd
+                    left_shape.push_back(left);
+                    right_shape.push_back(left);
+
+                    right_shape.push_back(shape[s]);
+                } else {
+                    right *= shape[s];
+
+                    right_shape.push_back(shape[s]);
+                }
+            }
+
+            left_shape.push_back(right_shape[0]);
 
             npp::reshape(tensor, npp::shape_type(left, right));
             auto res = npp::linalg::svd(tensor);
