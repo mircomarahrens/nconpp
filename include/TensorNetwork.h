@@ -64,17 +64,6 @@ private:
     }
 
     /**
-     *
-     *
-     * @param src
-     * @param dest
-     * @return
-     */
-    void contractVertices(vertex src, vertex dest)
-    {
-    }
-
-    /**
      * Remove all vertices from the graph. All edges corresponding to the vertex are removed beforehand.
      */
     void removeAllVertices()
@@ -582,25 +571,31 @@ public:
         }
         return result;
     }
-    
 
-    void split(std::size_t pos, std::size_t vertex_pos = 0) {
+    void split(std::size_t pos, std::size_t vertex_pos = 0)
+    {
         auto vertex = boost::vertex(vertex_pos, mGraph);
         auto tensor = vertex.tensor;
         auto legs = vertex.legs;
 
-        std::size_t len = legs.size(); 
-        if (pos < len) {
+        std::size_t len = legs.size();
+        if (pos < len)
+        {
 
             auto shape = npp::shape(tensor);
 
             std::size_t left = 1, right = 1;
             npp::shape_type left_shape, right_shape;
-            for (std::size_t s = 0; s < len; s++) {
-                if (s < pos) {
+            for (std::size_t s = 0; s < len; s++)
+            {
+                if (s < pos)
+                {
                     left *= shape[s];
+
                     left_shape.push_back(shape[s]);
-                } else if (s == pos) {
+                }
+                else if (s == pos)
+                {
                     right *= shape[s];
 
                     // new shape after svd
@@ -608,28 +603,35 @@ public:
                     right_shape.push_back(left);
 
                     right_shape.push_back(shape[s]);
-                } else {
+                }
+                else
+                {
                     right *= shape[s];
 
                     right_shape.push_back(shape[s]);
                 }
             }
 
-            left_shape.push_back(right_shape[0]);
-
             npp::reshape(tensor, npp::shape_type(left, right));
+
             auto res = npp::linalg::svd(tensor);
 
-            npp::tensor_type<T> U,s,V;
-            std::tie(U,s,V) = res;
+            npp::tensor_type<T> U, s, V;
+            std::tie(U, s, V) = res;
 
             npp::reshape(U, left_shape);
             npp::reshape(V, right_shape);
 
-        } else {
+            // TODO
+            // - add new vertex
+            // - split legs
+            // - add new leg
+            throw std::logic_error("Not implemented yet.");
+        }
+        else
+        {
             throw std::invalid_argument(ERROR::OUT_OF_SIZE);
         }
-
     }
 };
 
