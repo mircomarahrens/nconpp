@@ -190,5 +190,3 @@ TEST(TensorNetworkTest, move_constructed_contract)
     npp::shape_type shape = {4, 2, 9};
     ASSERT_EQ(tensorList[0].shape(), shape);
 }
-
-

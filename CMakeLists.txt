@@ -36,6 +36,7 @@ set(NCONPP_DEPENDENCIES
     xtensor-blas)
 
 set(NCONPP_INCLUDE
+    include/Graph.h
     include/LogMessages.h
     include/Tensor.h
     include/TensorNetwork.h
@@ -62,8 +63,9 @@ if (CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
 
     add_executable(nconpp_tests_run
         test/nconpp_tests_run.cpp
-        test/TensorNetworkTest.cpp
-        test/TensorTest.cpp)
+        test/GraphTest.cpp
+        test/TensorTest.cpp
+        test/TensorNetworkTest.cpp)
 
     target_include_directories(nconpp_tests_run PUBLIC
         include/

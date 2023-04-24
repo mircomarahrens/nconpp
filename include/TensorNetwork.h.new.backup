@@ -19,6 +19,7 @@ class TensorNetwork
 private:
     struct vertex_properties
     {
+        std::size_t vertex_index;
         std::vector<int> legs;
         npp::tensor_type<T> tensor;
     };
