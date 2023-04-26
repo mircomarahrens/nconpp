@@ -120,46 +120,32 @@ TEST(GraphTest, baseline)
     ASSERT_THAT(g.getEdges(), ElementsAre(-3, 0, 1, 2, 4, 5, 6));
 }
 
-TEST(GraphTest, custom_vertex_properties)
+TEST(GraphTest, custom_properties)
 {
     struct default_vertex_properties
     {
-        std::string name = "default-constructed-name";
-    };
-
-    Graph<default_vertex_properties> g(6);
-
-    for (std::size_t i = 0; i < 6; i++) {
-        ASSERT_TRUE(g[i].name == "default-constructed-name");
-    }
-}
-
-TEST(GraphTest, custom_edge_properties)
-{
-    struct default_vertex_properties
-    {
-        std::string name = "default-constructed-name";
+        std::string name = "default constructed name for vertices";
     };
 
     struct default_edge_properties
     {
-        std::string name = "default-constructed-name";
+        std::string name = "default constructed name for edges";
     };
 
     Graph<default_vertex_properties, default_edge_properties> g(6);
 
     // access vertices through index
     for (std::size_t i = 0; i < 6; i++) {
-        ASSERT_TRUE(g[i].name == "default-constructed-name");
+        ASSERT_TRUE(g[i].name == "default constructed name for vertices");
     }
 
     // access vertices and out edges through iterator
     auto vs = g.vertices();
     for(auto v = vs.first; v != vs.second; v++) {
-        ASSERT_TRUE(g[*v].name == "default-constructed-name");
+        ASSERT_TRUE(g[*v].name == "default constructed name for vertices");
         auto oes = g.outEdges(*v);
         for(auto e = oes.first; e != oes.second; e++) {
-            ASSERT_TRUE(g[*e].name == "default-constructed-name");
+            ASSERT_TRUE(g[*e].name == "default constructed name for edges");
         }
     }
 }
