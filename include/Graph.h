@@ -277,7 +277,12 @@ public:
         return result;
     }
 
-
+    /**
+     * @brief Get out edge iterators for begin and end.
+     * 
+     * @param v 
+     * @return std::pair<out_edge_iterator, out_edge_iterator> 
+     */
     std::pair<out_edge_iterator, out_edge_iterator> outEdges(const vertex_descriptor& v)
     {
         return boost::out_edges(v, graph_t);

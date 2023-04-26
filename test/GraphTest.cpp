@@ -148,12 +148,13 @@ TEST(GraphTest, custom_edge_properties)
 
     Graph<default_vertex_properties, default_edge_properties> g(6);
 
+    // access vertices through index
     for (std::size_t i = 0; i < 6; i++) {
         ASSERT_TRUE(g[i].name == "default-constructed-name");
     }
 
+    // access vertices and out edges through iterator
     auto vs = g.vertices();
-
     for(auto v = vs.first; v != vs.second; v++) {
         ASSERT_TRUE(g[*v].name == "default-constructed-name");
         auto oes = g.outEdges(*v);
