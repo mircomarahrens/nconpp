@@ -36,9 +36,42 @@ public:
     typedef typename boost::vertex_bundle_type<GraphContainer>::type Vertex;
     typedef typename boost::edge_bundle_type<GraphContainer>::type Edge;
 
-    Vertex operator[](std::size_t id)
+    typedef typename boost::graph_traits<GraphContainer>::vertex_descriptor vertex_descriptor;
+    typedef typename boost::graph_traits<GraphContainer>::edge_descriptor edge_descriptor;
+
+    typedef typename boost::graph_traits<GraphContainer>::vertex_iterator vertex_iterator;
+    typedef typename boost::graph_traits<GraphContainer>::edge_iterator edge_iterator;
+    typedef typename boost::graph_traits<GraphContainer>::out_edge_iterator out_edge_iterator;
+
+    /**
+     * @brief Operator to return the bundled vertex from a descriptor.
+     * 
+     * @param v 
+     * @return Vertex 
+     */
+    Vertex operator[](const vertex_descriptor& v) 
     {
-        return graph_t[id];
+        return graph_t[v];
+    }
+
+    /**
+     * @brief Operator to return the bundled edge from a descriptor.
+     * 
+     * @param e 
+     * @return Edge 
+     */
+    Edge operator[](const edge_descriptor& e)
+    {
+        return graph_t[e];
+    }
+
+    /**
+     * @brief Return the vertex iterators begin() and end() for the whole graph.
+     * 
+     * @return std::pair<vertex_iterator, vertex_iterator> 
+     */
+    std::pair<vertex_iterator, vertex_iterator> vertices() {
+        return boost::vertices(graph_t);
     }
 
     /**
@@ -242,6 +275,12 @@ public:
         }
 
         return result;
+    }
+
+
+    std::pair<out_edge_iterator, out_edge_iterator> outEdges(const vertex_descriptor& v)
+    {
+        return boost::out_edges(v, graph_t);
     }
 
     /**

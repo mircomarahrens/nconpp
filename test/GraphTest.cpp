@@ -129,7 +129,36 @@ TEST(GraphTest, custom_vertex_properties)
 
     Graph<default_vertex_properties> g(6);
 
-    for (int i = 0; i < 6; i++) {
+    for (std::size_t i = 0; i < 6; i++) {
         ASSERT_TRUE(g[i].name == "default-constructed-name");
+    }
+}
+
+TEST(GraphTest, custom_edge_properties)
+{
+    struct default_vertex_properties
+    {
+        std::string name = "default-constructed-name";
+    };
+
+    struct default_edge_properties
+    {
+        std::string name = "default-constructed-name";
+    };
+
+    Graph<default_vertex_properties, default_edge_properties> g(6);
+
+    for (std::size_t i = 0; i < 6; i++) {
+        ASSERT_TRUE(g[i].name == "default-constructed-name");
+    }
+
+    auto vs = g.vertices();
+
+    for(auto v = vs.first; v != vs.second; v++) {
+        ASSERT_TRUE(g[*v].name == "default-constructed-name");
+        auto oes = g.outEdges(*v);
+        for(auto e = oes.first; e != oes.second; e++) {
+            ASSERT_TRUE(g[*e].name == "default-constructed-name");
+        }
     }
 }
