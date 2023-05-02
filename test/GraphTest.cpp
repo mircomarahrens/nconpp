@@ -22,7 +22,7 @@ TEST(GraphTest, Boost)
 
     struct default_edge_properties
     {
-        std::size_t edge_index;
+        std::size_t edge_index_t;
     };
 
     typedef typename boost::adjacency_list<
@@ -122,17 +122,19 @@ TEST(GraphTest, baseline)
 
 TEST(GraphTest, custom_properties)
 {
-    struct default_vertex_properties
+    struct custom_vertex_properties
     {
         std::string name = "default constructed name for vertices";
     };
 
-    struct default_edge_properties
+    struct custom_edge_properties
     {
         std::string name = "default constructed name for edges";
     };
 
-    Graph<default_vertex_properties, default_edge_properties> g(6);
+    Graph<custom_vertex_properties, custom_edge_properties> g(6);
+
+    ASSERT_TRUE(g.numVertices() == 6);
 
     // access vertices through index
     for (std::size_t i = 0; i < 6; i++) {
@@ -148,4 +150,40 @@ TEST(GraphTest, custom_properties)
             ASSERT_TRUE(g[*e].name == "default constructed name for edges");
         }
     }
+
+    custom_vertex_properties prop{"manual constructed name for a vertex"};
+
+    g.addVertex(prop);
+
+    ASSERT_TRUE(g.numVertices() == 7);
+
+    ASSERT_TRUE(g[6].name == "manual constructed name for a vertex");
+
+    g.setVertexProperties(2, prop);
+
+    ASSERT_TRUE(g[2].name == "manual constructed name for a vertex");
+
+    // g.addEdge(0 , 1, 2);
+}
+
+TEST(GraphTest, mergeVertices)
+{
+    Graph<> g(6);
+
+    typedef std::tuple<std::pair<std::size_t, std::size_t>, int> Tuple;
+    std::list<Tuple> edgeList = {
+        Tuple({0, 2}, 1),
+        Tuple({1, 3}, 2),
+        Tuple({2, 0}, 3),
+        Tuple({3, 4}, 4),
+        Tuple({4, 1}, 5),
+    };   
+
+    g.addEdges(edgeList);
+
+    g.mergeVertices(0,1);
+
+    ASSERT_TRUE(g.numVertices() == 5);
+
+    //ASSERT_THAT(g.getVertices(), ElementsAre(0, 2, 3, 4, 5));
 }

@@ -14,13 +14,15 @@ namespace ERROR_MESSAGE
     const static std::string EDGE_INDEX_NOT_PRESENT = "Edge index not present.";
 }
 
+// TODO this defaults should always be used to initilize boost::adjacency_list.
+// Other template arguments should extend this. How to achieve this?
 struct default_vertex_properties
 {
 };
 
 struct default_edge_properties 
 {
-    std::size_t edge_index;
+    std::size_t edge_index_t;
 };
 
 template<typename V = default_vertex_properties, typename E = default_edge_properties>
@@ -42,6 +44,10 @@ public:
     typedef typename boost::graph_traits<GraphContainer>::vertex_iterator vertex_iterator;
     typedef typename boost::graph_traits<GraphContainer>::edge_iterator edge_iterator;
     typedef typename boost::graph_traits<GraphContainer>::out_edge_iterator out_edge_iterator;
+
+    typedef typename boost::graph_traits<GraphContainer>::adjacency_iterator adjacency_iterator;
+
+    // typedef boost::property_map<GraphContainer, edge_index_t>::type edge_index_property_map;
 
     /**
      * @brief Operator to return the bundled vertex from a descriptor.
@@ -102,8 +108,28 @@ public:
     }
 
     /**
-     * @brief Remove a vertex from the graph by id.
-     * All edges corresponding to the vertex are removed beforehand.
+     * @brief Add a new vertex with custom properties to the graph and return its id.
+     *
+     * @return std::size_t
+     */
+    std::size_t addVertex(V vertex_properties)
+    {
+        auto v = boost::add_vertex(vertex_properties, graph_t);
+        return v;
+    }
+
+    /**
+     * @brief Set for a given vertex the vertex properties.
+     * 
+     * @param vertex 
+     * @param vertex_properties 
+     */
+    void setVertexProperties(vertex_descriptor vertex, V vertex_properties) {
+        graph_t[vertex] = vertex_properties;
+    }
+
+    /**
+     * @brief Remove a vertex from the graph by its id. All edges corresponding to the vertex are removed beforehand.
      *
      * @param vertex_index
      */
@@ -122,83 +148,46 @@ public:
         return boost::num_vertices(graph_t);
     }
 
-    // /**
-    //  * @brief Merge edges of the second vertex into the first vertex.
-    //  *
-    //  * @param id1
-    //  * @param id2
-    //  */
-    // void mergeVertices(std::size_t id1, std::size_t id2)
-    // {
-    //     // obtain vertex descriptor
-    //     vertex_descriptor v1d = boost::vertex(id1, graph_t);
-    //     vertex_descriptor v2d = boost::vertex(id2, graph_t);
+    /**
+     * @brief Merge edges of the second vertex into the first vertex and delete the latter.
+     * The properties of the first vertex are preserved.
+     *
+     * @param src
+     * @param dest
+     */
+    void mergeVertices(std::size_t src, std::size_t dest)
+    {
+        // obtain vertex descriptor for src and dest
+        vertex_descriptor source = boost::vertex(src, graph_t);
+        vertex_descriptor target = boost::vertex(dest, graph_t);
 
-    //     // get iterator range for adjacent vertices of second vertex
-    //     adjacency_iterator ai, ai_end, next;
-    //     boost::tie(ai, ai_end) = boost::adjacent_vertices(v2d, graph_t);
+        // define and declare out edge iterators
+        out_edge_iterator oi, oi_end, next;
+        boost::tie(oi, oi_end) = boost::out_edges(target, graph_t);
 
-    //     auto edge_index_map = boost::get(boost::edge_index_t(), graph_t);
+        // iterate through iterators from begin to end via next
+        for (next = oi; oi != oi_end; oi = next)
+        {
+            ++next;
 
-    //     // iterate over adjacent vertices
-    //     for (next = ai; ai != ai_end; ai = next)
-    //     {
-    //         ++next;
+            // get the bundled edge property
+            auto edge_properties = graph_t[*oi];
 
-    //         // obtain the corresponding edge from vertices
-    //         std::pair<edge_descriptor, bool> e = boost::edge(v2d, *ai, graph_t);
-    //         edge_descriptor edge = e.first;
-
-    //         auto index = boost::get(edge_index_map, edge);
-
-    //         vertex_descriptor target = boost::target(edge, graph_t);
-    //         if (e.second && target != v1d)
-    //         {
-    //             vertex_descriptor source = boost::source(edge, graph_t);
-    //             boost::remove_edge(edge, graph_t);
-
-    //             e = boost::add_edge(v1d, target, graph_t);
-    //             boost::put(edge_index_map, e.first, index);
-    //         }
-    //     }
-
-    //     // clear and remove dest vertex
-    //     boost::clear_vertex(v2d, graph_t);
-    //     boost::remove_vertex(v2d, graph_t);
-    // }
-
-    // /**
-    //  * @brief Get current vertex ids.
-    //  *
-    //  * @return std::set<std::size_t>
-    //  */
-    // std::set<std::size_t> getVertices()
-    // {
-    //     std::set<std::size_t> result = {};
-
-    //     vertex_iterator vi, vi_end;
-    //     for (boost::tie(vi, vi_end) = boost::vertices(graph_t); vi != vi_end; ++vi)
-    //     {
-    //         result.insert(graph_t[*vi].id);
-    //     }
-
-    //     return result;
-    // }
-
-    // /**
-    //  * @brief Remove all vertices from the graph.
-    //  * All edges corresponding to the vertex are removed beforehand.
-    //  *
-    //  */
-    // void removeVertices()
-    // {
-    //     vertex_iterator vi, vi_end;
-    //     for (boost::tie(vi, vi_end) = boost::vertices(graph_t); vi != vi_end; ++vi)
-    //     {
-    //         boost::clear_vertex(*vi, graph_t); // ensure all edges to vertex are removed beforehand
-    //         boost::remove_vertex(*vi, graph_t);
-    //     }
-    // }
+            // edge(s) source to target needs to be removed 
+            if (boost::target(*oi, graph_t) == source)
+            {
+                removeEdge(edge_properties.edge_index_t);
+            } 
+            else // obtain the target_new to the new edge and 
+            {
+                auto target_new = boost::target(*oi, graph_t); 
+                auto new_edge = boost::add_edge(source, target_new, graph_t);
+                edgeMap[edge_properties.edge_index_t] = std::make_pair(source, target_new);
+                graph_t[new_edge.first] = edge_properties;
+            }
+        }
+        removeVertex(dest);
+    }
 
     /**
      * @brief Add a new edge to the graph with a (optionally) custom Id (default 0).
@@ -216,9 +205,19 @@ public:
         }
 
         auto e = boost::add_edge(src, dest, graph_t);
-        graph_t[e.first].edge_index = edge_index;
+        graph_t[e.first].edge_index_t = edge_index;
         assert(e.second == true);
         edgeMap[edge_index] = std::make_pair(src, dest);
+    }
+
+    /**
+     * @brief Set edge properties.
+     * 
+     * @param edge 
+     * @param edge_properties 
+     */
+    void setVertexProperties(edge_descriptor edge, E edge_properties) {
+        graph_t[edge] = edge_properties;
     }
 
     /**
@@ -239,7 +238,7 @@ public:
             }
 
             auto e = boost::add_edge(ep.first, ep.second, graph_t);
-            graph_t[e.first].edge_index = edge_index;
+            graph_t[e.first].edge_index_t = edge_index;
             assert(e.second == true);
             edgeMap[edge_index] = ep;
         }
@@ -310,24 +309,6 @@ private:
     GraphContainer graph_t;
 
     std::unordered_map<int, std::pair<std::size_t, std::size_t>> edgeMap;
-
-    
-    // typedef typename boost::graph_traits<GraphContainer>::vertex_descriptor vertex_descriptor;
-    // typedef typename boost::graph_traits<GraphContainer>::adjacency_iterator adjacency_iterator;
-    // typedef typename boost::graph_traits<GraphContainer>::vertex_iterator vertex_iterator;
-    // typedef typename boost::property_map<GraphContainer, boost::vertex_index_t>::type vertex_index_property_map_t;
-
-    // typedef typename boost::graph_traits<GraphContainer>::edge_descriptor edge_descriptor;
-    // typedef typename boost::graph_traits<GraphContainer>::edge_iterator edge_iterator;
-    // typedef typename boost::property_map<GraphContainer, boost::edge_index_t>::type edge_index_property_map_t;
-
-
-    // // store connected components
-    // std::vector<std::vector<std::size_t>> mConnectedComponents = {};
-
-    // typedef typename boost::property_map<graph_t, boost::edge_index_t>::type edge_index_pm;
-    // typedef typename boost::graph_traits<graph_t>::vertex_descriptor vertex;
-    // typedef typename boost::graph_traits<graph_t>::adjacency_iterator Adjacency_Iterator;
 };
 
 #endif // NCONPP_GRAPH_H

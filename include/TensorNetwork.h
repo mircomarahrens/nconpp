@@ -6,12 +6,8 @@
 #define NCONPP_TENSORNETWORK_H
 
 #include "LogMessages.h"
+#include "Graph.h"
 #include "Tensor.h"
-
-#include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/connected_components.hpp>
-#include <boost/graph/properties.hpp>
-#include <boost/property_map/property_map.hpp>
 
 #include <algorithm>
 #include <complex>
@@ -27,195 +23,44 @@ private:
         npp::tensor_type<T> tensor;
     };
 
-    typedef typename boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS, vertex_properties, boost::property<boost::edge_index_t, std::size_t>> graph_t;
+    struct edge_properties
+    {
+        std::size_t edge_index_t;
+    };
 
-    typedef typename boost::graph_traits<graph_t>::edge_descriptor edge;
-    typedef typename boost::property_map<graph_t, boost::edge_index_t>::type edge_index_pm;
-    typedef typename boost::graph_traits<graph_t>::edge_iterator edge_it;
-    typedef typename boost::graph_traits<graph_t>::vertex_descriptor vertex;
-    typedef typename boost::graph_traits<graph_t>::adjacency_iterator Adjacency_Iterator;
-
-    graph_t mGraph;
+    Graph<vertex_properties, edge_properties> mGraph;
 
     // store negative and positive legs in separate sets
     std::set<int> mDanglingLegs = {};
     std::set<int> mLegs = {};
 
-    // store connected components
-    std::vector<std::vector<std::size_t>> mConnectedComponents = {};
-
-    /**
-     * Add a new vertex to the graph.
-     */
-    std::size_t addVertex()
-    {
-        auto v = boost::add_vertex(mGraph);
-        return v;
-    }
-
-    /**
-     * Remove a vertex from the graph.  All edges corresponding to the vertex are removed beforehand.
-     * @param index
-     */
-    void removeVertex(boost::graph_traits<graph_t>::vertex_descriptor v)
-    {
-        boost::clear_vertex(v, mGraph); // ensure all edges to vertex are removed beforehand
-        boost::remove_vertex(v, mGraph);
-    }
-
-    /**
-     * Remove all vertices from the graph. All edges corresponding to the vertex are removed beforehand.
-     */
-    void removeAllVertices()
-    {
-        typename boost::graph_traits<graph_t>::vertex_iterator vi, vi_end, next;
-        boost::tie(vi, vi_end) = boost::vertices(mGraph);
-        for (next = vi; vi != vi_end; vi = next)
-        {
-            ++next;
-            boost::clear_vertex(*vi, mGraph); // ensure all edges to vertex are removed beforehand
-            boost::remove_vertex(*vi, mGraph);
-        }
-    }
-
-    /**
-     * Retrieve all current vertex indices.
-     * @return
-     */
-    std::vector<std::size_t> getVertices()
-    {
-        std::vector<std::size_t> result = {};
-
-        // get the property map for vertex id
-        typedef typename boost::property_map<graph_t, boost::vertex_index_t>::type InternalVertexIdMap;
-        InternalVertexIdMap vertex_indices = boost::get(boost::vertex_index, mGraph);
-
-        // tie vertex iterators
-        typename boost::graph_traits<graph_t>::vertex_iterator vi, vi_end, next;
-        boost::tie(vi, vi_end) = boost::vertices(mGraph);
-
-        for (next = vi; vi != vi_end; vi = next)
-        {
-            ++next;
-            result.emplace_back(vertex_indices[*vi]);
-        }
-
-        return std::move(result);
-    }
-
-    /**
-     * Add a new edge to the graph.
-     * @param src
-     * @param dest
-     */
-    auto addEdge(std::size_t src, std::size_t dest)
-    {
-        auto s = boost::vertex(src, mGraph);
-        auto d = boost::vertex(dest, mGraph);
-        auto e = boost::add_edge(s, d, mGraph);
-        assert(e.second == true);
-        return e.first;
-    }
-
-    /**
-     * Add a new edge to the graph.
-     * @param src
-     * @param dest
-     * @param leg
-     */
-    auto addEdge(std::size_t src, std::size_t dest, std::size_t leg)
-    {
-        auto s = boost::vertex(src, mGraph);
-        auto d = boost::vertex(dest, mGraph);
-        auto e = boost::add_edge(s, d, leg, mGraph);
-        assert(e.second == true);
-        return e.first;
-    }
-
-    /**
-     * Retrieve all edges as pair of vertex indices.
-     * @return
-     */
-    std::vector<std::pair<std::size_t, std::size_t>> getEdgeVertices()
-    {
-        // get the property map for vertex id
-        typedef typename boost::property_map<graph_t, boost::vertex_index_t>::type VertexIdMap;
-        VertexIdMap vertex_id = boost::get(boost::vertex_index, mGraph);
-
-        // tie vertex iterators
-        typename boost::graph_traits<graph_t>::vertex_iterator vi, vi_end, next;
-        boost::tie(vi, vi_end) = boost::vertices(mGraph);
-
-        std::vector<std::pair<std::size_t, std::size_t>> result(boost::num_vertices(mGraph));
-
-        // iterate through vertices
-        for (next = vi; vi != vi_end; vi = next)
-        {
-            ++next;
-
-            // iterate through adjacent vertices
-            typename boost::graph_traits<graph_t>::adjacency_iterator ai, ai_end;
-            for (boost::tie(ai, ai_end) = boost::adjacent_vertices(*vi, mGraph); ai != ai_end; ++ai)
-            {
-                result.emplace_back(vertex_id[*vi], vertex_id[*ai]);
-            }
-        }
-
-        return std::move(result);
-    }
-
-    /**
-     * Retrieve current connected components of the (undirected) graph.
-     * @return
-     */
-    std::vector<std::vector<std::size_t>> getConnectedComponents()
-    {
-        // Assume graph is a undirected graph object of type boost::adjacency_list
-        std::vector<std::size_t> component(boost::num_vertices(mGraph));
-        std::size_t num_components = boost::connected_components(mGraph, &component[0]);
-        std::vector<std::vector<std::size_t>> result(num_components);
-
-        for (std::size_t i = 0; i < component.size(); ++i)
-        {                                      // Loop over the component array
-            result[component[i]].push_back(i); // Push the vertex index into the corresponding vector
-        }
-
-        return result;
-    }
-
     /**
      * TODO add comment
-     * inplace manipulation of tensors
      *
      * @param leg_id
      *
      */
-    void trace(vertex vertex, std::size_t axesA, std::size_t axesB)
+    void trace(std::size_t vertex, std::size_t axesA, std::size_t axesB)
     {
         auto newTensor = npp::linalg::trace(mGraph[vertex].tensor, 0, axesA, axesB);
-        mGraph[vertex].tensor = newTensor;
 
-        auto legs = mGraph[vertex].legs;
-        legs.erase(legs.begin() + axesB);
-        legs.erase(legs.begin() + axesA);
-        mGraph[vertex].legs = std::move(legs);
+        auto newLegs = mGraph[vertex].legs;
+        newLegs.erase(newLegs.begin() + axesB);
+        newLegs.erase(newLegs.begin() + axesA);
+
+        mGraph.setVertexProperties(vertex, 
+            vertex_properties{std::move(newLegs), std::move(newTensor)});
     };
 
     /**
      * TODO add comment
-     * inplace manipulation of tensors
      *
      * @param leg_id
      */
-    void tensordot(vertex src, vertex dest, std::vector<std::size_t> axesA, std::vector<std::size_t> axesB)
+    void tensordot(std::size_t src, std::size_t dest, std::vector<std::size_t> axesA, std::vector<std::size_t> axesB)
     {
         auto legsA = mGraph[src].legs;
         auto legsB = mGraph[dest].legs;
-
-        auto tensorA = mGraph[src].tensor;
-        auto tensorB = mGraph[dest].tensor;
-
-        auto newTensor = npp::linalg::tensordot(tensorA, tensorB, axesA, axesB);
 
         legsA.erase(legsA.begin() + axesA[0]);
         legsB.erase(legsB.begin() + axesB[0]);
@@ -224,8 +69,15 @@ private:
         newLegs.insert(newLegs.end(), legsA.begin(), legsA.end());
         newLegs.insert(newLegs.end(), legsB.begin(), legsB.end());
 
-        mGraph[src].tensor = std::move(newTensor);
-        mGraph[src].legs = std::move(newLegs);
+        auto tensorA = mGraph[src].tensor;
+        auto tensorB = mGraph[dest].tensor;
+
+        auto newTensor = npp::linalg::tensordot(tensorA, tensorB, axesA, axesB);
+
+        mGraph.setVertexProperties(src, 
+            vertex_properties{std::move(newLegs), std::move(newTensor)});
+
+        mGraph.mergeVertices(src, dest);
     };
 
     /**
@@ -233,7 +85,7 @@ private:
      * @param src
      * @param dest
      */
-    void outer(vertex src, vertex dest)
+    void outer(std::size_t src, std::size_t dest)
     {
         auto legsA = mGraph[src].legs;
         auto legsB = mGraph[dest].legs;
@@ -251,8 +103,7 @@ private:
         mGraph[src].legs = std::move(newLegs);
 
         // clear and remove dest vertex
-        boost::clear_vertex(dest, mGraph);
-        boost::remove_vertex(dest, mGraph);
+        mGraph.removeVertex(dest);
     }
 
 public:
@@ -283,13 +134,9 @@ public:
         std::size_t index = 0;
         // counting occurrence of legs to check constraints
         std::unordered_map<std::size_t, std::size_t> _vertex_leg_map;
-        for (auto &legs : subscriptVectorList)
+        for (auto &subscriptVector : subscriptVectorList)
         {
-            // set stable vertex properties
-            mGraph[index].legs = legs;
-            mGraph[index].tensor = tensorList[index];
-
-            for (int leg : mGraph[index].legs)
+            for (int leg : subscriptVector)
             {
                 // 0 is an invalid leg index by convention
                 if (leg == 0)
@@ -317,7 +164,7 @@ public:
                         std::size_t prev = _vertex_leg_map[leg];
 
                         // add edge between previous src and dest (the current src)
-                        addEdge(prev, index, leg);
+                        mGraph.addEdge(prev, index, leg);
 
                         // erase entry from map
                         _vertex_leg_map.erase(leg);
@@ -332,15 +179,12 @@ public:
                     }
                 }
             }
+
+            mGraph.setVertexProperties(index, 
+                vertex_properties{subscriptVector, tensorList[index]});
+
             index++;
         }
-
-        if (!_vertex_leg_map.empty())
-        {
-            throw std::invalid_argument(ERROR::CONSTRAINT_LEGPAIRS);
-        }
-
-        mConnectedComponents = getConnectedComponents();
     };
 
     explicit TensorNetwork(std::vector<npp::tensor_type<T>> &&tensorList,
@@ -358,13 +202,9 @@ public:
         std::size_t index = 0;
         // counting occurrence of legs to check constraints
         std::unordered_map<std::size_t, std::size_t> _vertex_leg_map;
-        for (auto &legs : subscriptVectorList)
+        for (auto &subscriptVector : subscriptVectorList)
         {
-            // set stable vertex properties
-            mGraph[index].legs = std::move(legs);
-            mGraph[index].tensor = std::move(tensorList[index]);
-
-            for (int leg : mGraph[index].legs)
+            for (int leg : subscriptVector)
             {
                 // 0 is an invalid leg index by convention
                 if (leg == 0)
@@ -392,7 +232,7 @@ public:
                         std::size_t prev = _vertex_leg_map[leg];
 
                         // add edge between previous src and dest (the current src)
-                        addEdge(prev, index, leg);
+                        mGraph.addEdge(prev, index, leg);
 
                         // erase entry from map
                         _vertex_leg_map.erase(leg);
@@ -407,15 +247,12 @@ public:
                     }
                 }
             }
+
+            mGraph.setVertexProperties(index, 
+                vertex_properties{std::move(subscriptVector), std::move(tensorList[index])});
+
             index++;
         }
-
-        if (!_vertex_leg_map.empty())
-        {
-            throw std::invalid_argument(ERROR::CONSTRAINT_LEGPAIRS);
-        }
-
-        mConnectedComponents = getConnectedComponents();
     };
 
     ~TensorNetwork() = default;
@@ -447,84 +284,52 @@ public:
         while (!contractionSequence.empty())
         {
 
-            int leg = *contractionSequence.begin();
+            int legId = *contractionSequence.begin();
+            auto edge = mGraph.getEdge(legId);
 
-            edge_index_pm edge_id = boost::get(boost::edge_index_t(), mGraph);
+            auto src = edge.first;
+            auto dest = edge.second;
 
-            std::pair<edge_it, edge_it> edge_its = boost::edges(mGraph);
+            if (src == dest)
+            { // trace
 
-            edge_it first = edge_its.first;
-            edge_it last = edge_its.second;
-
-            while (first != last)
-            {
-                int _leg = edge_id[*first];
-
-                if (leg == _leg)
+                std::vector<std::size_t> axes = {};
+                for (auto axis = 0; axis < mGraph[dest].legs.size(); axis++)
                 {
-                    auto src = first->m_source;
-                    auto dest = first->m_target;
-
-                    if (src == dest)
-                    { // trace
-
-                        std::vector<std::size_t> axes = {};
-                        for (auto axis = 0; axis < mGraph[dest].legs.size(); axis++)
-                        {
-                            if (mGraph[dest].legs[axis] == leg)
-                            {
-                                axes.emplace_back(axis);
-                            }
-                        }
-
-                        trace(src, axes[0], axes[1]);
-
-                        boost::remove_edge(*first, mGraph);
+                    if (mGraph[dest].legs[axis] == legId)
+                    {
+                        axes.emplace_back(axis);
                     }
-                    else
-                    { // tensordot
-
-                        // TODO add multi axis tensor contraction?
-                        std::vector<std::size_t> axesA = {};
-                        std::vector<std::size_t> axesB = {};
-
-                        for (auto axis = 0; axis < mGraph[src].legs.size(); axis++)
-                        {
-                            if (mGraph[src].legs[axis] == leg)
-                            {
-                                axesA.emplace_back(axis);
-                            }
-                        }
-                        for (auto axis = 0; axis < mGraph[dest].legs.size(); axis++)
-                        {
-                            if (mGraph[dest].legs[axis] == leg)
-                            {
-                                axesB.emplace_back(axis);
-                            }
-                        }
-
-                        tensordot(src, dest, axesA, axesB);
-
-                        // add src edges to dest edges
-                        auto dest_edges = boost::out_edges(dest, mGraph);
-                        auto f_it = dest_edges.first;
-                        auto e_it = dest_edges.second;
-                        while (f_it != e_it)
-                        {
-                            int nleg = edge_id[*f_it];
-                            boost::add_edge(src, f_it->m_target, nleg, mGraph);
-                            f_it++;
-                        }
-
-                        // clear and remove dest vertex
-                        boost::clear_vertex(dest, mGraph);
-                        boost::remove_vertex(dest, mGraph);
-                    }
-                    contractionSequence.erase(contractionSequence.begin());
-                    break;
                 }
-                first++;
+
+                trace(src, axes[0], axes[1]);
             }
+            else
+            { // tensordot
+
+                // TODO add multi axis tensor contraction?
+                std::vector<std::size_t> axesA = {};
+                std::vector<std::size_t> axesB = {};
+
+                for (auto axis = 0; axis < mGraph[src].legs.size(); axis++)
+                {
+                    if (mGraph[src].legs[axis] == legId)
+                    {
+                        axesA.emplace_back(axis);
+                    }
+                }
+                for (auto axis = 0; axis < mGraph[dest].legs.size(); axis++)
+                {
+                    if (mGraph[dest].legs[axis] == legId)
+                    {
+                        axesB.emplace_back(axis);
+                    }
+                }
+
+                tensordot(src, dest, axesA, axesB);
+            }
+            contractionSequence.erase(contractionSequence.begin());
+            mGraph.removeEdge(legId);
         }
 
         if (!contractionSequence.empty())
@@ -536,14 +341,16 @@ public:
         }
     }
 
+    /**
+     * @brief Connect all remaining tensors into a single one by outer products.
+     * 
+     */
     void connect()
     {
-        auto nv = boost::num_vertices(mGraph);
+        auto nv = mGraph.numVertices();
         while (nv > 1)
         {
-            auto src = boost::vertex(0, mGraph);
-            auto dest = boost::vertex(1, mGraph);
-            outer(src, dest);
+            outer(0, 1);
             nv--;
         }
     }
@@ -552,9 +359,9 @@ public:
      *
      * @return
      */
-    [[nodiscard]] std::size_t num_tensors() const
+    std::size_t numTensors()
     {
-        return boost::num_vertices(mGraph);
+        return mGraph.numVertices();
     }
 
     /**
@@ -564,17 +371,17 @@ public:
     std::vector<npp::tensor_type<T>> getTensorList()
     {
         std::vector<npp::tensor_type<T>> result = {};
-        typename graph_t::vertex_iterator v, vend;
-        for (boost::tie(v, vend) = boost::vertices(mGraph); v != vend; ++v)
+        auto nv = mGraph.numVertices();
+        for (int i = 0; i < nv; i++)
         {
-            result.emplace_back(mGraph[*v].tensor);
+            result.emplace_back(mGraph[i].tensor);
         }
         return result;
     }
 
     void split(std::size_t pos, std::size_t vertex_pos = 0)
     {
-        auto vertex = boost::vertex(vertex_pos, mGraph);
+        auto vertex = mGraph[vertex_pos];
         auto tensor = vertex.tensor;
         auto legs = vertex.legs;
 
