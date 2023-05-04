@@ -17,18 +17,20 @@ template <typename T>
 class TensorNetwork
 {
 private:
-    struct vertex_properties
+    struct custom_vertex_properties
     {
         std::vector<int> legs;
         npp::tensor_type<T> tensor;
     };
 
-    struct edge_properties
+    struct custom_edge_properties
     {
-        std::size_t edge_index_t;
     };
 
-    Graph<vertex_properties, edge_properties> mGraph;
+    Graph<custom_vertex_properties, custom_edge_properties> mGraph;
+
+    typedef Graph<custom_vertex_properties, custom_edge_properties>::vertex_properties_t vertex_properties;
+    typedef Graph<custom_vertex_properties, custom_edge_properties>::edge_properties_t edge_properties;
 
     // store negative and positive legs in separate sets
     std::set<int> mDanglingLegs = {};
@@ -76,8 +78,6 @@ private:
 
         mGraph.setVertexProperties(src, 
             vertex_properties{std::move(newLegs), std::move(newTensor)});
-
-        mGraph.mergeVertices(src, dest);
     };
 
     /**
@@ -199,7 +199,7 @@ public:
                 std::to_string(subscriptVectorList.size()) + ".");
         }
 
-        std::size_t index = 0;
+        std::size_t vertex_index = 0;
         // counting occurrence of legs to check constraints
         std::unordered_map<std::size_t, std::size_t> _vertex_leg_map;
         for (auto &subscriptVector : subscriptVectorList)
@@ -232,7 +232,7 @@ public:
                         std::size_t prev = _vertex_leg_map[leg];
 
                         // add edge between previous src and dest (the current src)
-                        mGraph.addEdge(prev, index, leg);
+                        mGraph.addEdge(prev, vertex_index, leg);
 
                         // erase entry from map
                         _vertex_leg_map.erase(leg);
@@ -240,7 +240,7 @@ public:
                     else
                     {
                         // store mapping leg to src
-                        _vertex_leg_map[leg] = index;
+                        _vertex_leg_map[leg] = vertex_index;
 
                         // store edge leg
                         mLegs.insert(leg);
@@ -248,10 +248,10 @@ public:
                 }
             }
 
-            mGraph.setVertexProperties(index, 
-                vertex_properties{std::move(subscriptVector), std::move(tensorList[index])});
+            mGraph.setVertexProperties(vertex_index, 
+               vertex_properties{std::move(subscriptVector), std::move(tensorList[vertex_index])});
 
-            index++;
+            vertex_index++;
         }
     };
 
@@ -303,6 +303,8 @@ public:
                 }
 
                 trace(src, axes[0], axes[1]);
+                
+                mGraph.removeEdge(legId);
             }
             else
             { // tensordot
@@ -327,9 +329,10 @@ public:
                 }
 
                 tensordot(src, dest, axesA, axesB);
+                
+                mGraph.mergeVertices(src, dest);
             }
             contractionSequence.erase(contractionSequence.begin());
-            mGraph.removeEdge(legId);
         }
 
         if (!contractionSequence.empty())

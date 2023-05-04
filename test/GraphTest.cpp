@@ -48,6 +48,9 @@ TEST(GraphTest, baseline)
 {
     Graph<> g(6);
 
+    typedef Graph<>::vertex_properties_t vertex_properties;
+    typedef Graph<>::edge_properties_t edge_properties;
+
     ASSERT_TRUE(g.numVertices() == 6);
 
     // identifiers in g are in ascending contiguous order starting with 0
@@ -109,7 +112,7 @@ TEST(GraphTest, baseline)
     ASSERT_THAT(g.getEdges(), ElementsAre(-3, 0, 1, 2, 3, 4, 5, 6));
 
     // Retrieve edge by index
-    std::pair<std::size_t, std::size_t> edge = g.getEdge(2);
+    auto edge = g.getEdge(2);
 
     ASSERT_TRUE(edge.first == 0);  // source index
     ASSERT_TRUE(edge.second == 3); // target index
@@ -133,6 +136,9 @@ TEST(GraphTest, custom_properties)
     };
 
     Graph<custom_vertex_properties, custom_edge_properties> g(6);
+    
+    typedef Graph<custom_vertex_properties, custom_edge_properties>::vertex_properties_t vertex_properties;
+    typedef Graph<custom_vertex_properties, custom_edge_properties>::edge_properties_t edge_properties;
 
     ASSERT_TRUE(g.numVertices() == 6);
 
@@ -151,7 +157,7 @@ TEST(GraphTest, custom_properties)
         }
     }
 
-    custom_vertex_properties prop{"manual constructed name for a vertex"};
+    vertex_properties prop{"manual constructed name for a vertex"};
 
     g.addVertex(prop);
 
@@ -163,7 +169,7 @@ TEST(GraphTest, custom_properties)
 
     ASSERT_TRUE(g[2].name == "manual constructed name for a vertex");
 
-    // g.addEdge(0 , 1, 2);
+    g.addEdge(0 , 1, 2);
 }
 
 TEST(GraphTest, mergeVertices)
@@ -185,5 +191,5 @@ TEST(GraphTest, mergeVertices)
 
     ASSERT_TRUE(g.numVertices() == 5);
 
-    //ASSERT_THAT(g.getVertices(), ElementsAre(0, 2, 3, 4, 5));
+    ASSERT_THAT(g.getVertices(), ElementsAre(0, 1, 2, 3, 4));
 }

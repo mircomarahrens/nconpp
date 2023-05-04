@@ -95,7 +95,7 @@ TEST(TensorNetworkTest, copy_constructed_contract)
 
     tensorList = tn.getTensorList();
 
-    npp::shape_type shape = {4, 2, 9};
+    npp::shape_type shape = {2, 4, 9};
     ASSERT_EQ(tensorList[0].shape(), shape);
 }
 
@@ -136,6 +136,6 @@ TEST(TensorNetworkTest, move_constructed_contract)
 
     auto tensorList = tn.getTensorList();
 
-    npp::shape_type shape = {4, 2, 9};
+    npp::shape_type shape = {2, 4, 9};
     ASSERT_EQ(tensorList[0].shape(), shape);
 }
