@@ -37,7 +37,6 @@ set(NCONPP_DEPENDENCIES
 
 set(NCONPP_INCLUDE
     include/Graph.h
-    include/LogMessages.h
     include/Tensor.h
     include/TensorNetwork.h
     )
@@ -77,7 +76,7 @@ if (CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
         gmock_main
         gtest_main)
 
-    include(CTest)
+    # include(CTest)
     include(GoogleTest)
     gtest_discover_tests(nconpp_tests_run)
 endif ()
