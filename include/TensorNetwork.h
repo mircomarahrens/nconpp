@@ -99,8 +99,8 @@ private:
         newLegs.insert(newLegs.end(), legsA.begin(), legsA.end());
         newLegs.insert(newLegs.end(), legsB.begin(), legsB.end());
 
-        mGraph[src].tensor = std::move(newTensor);
-        mGraph[src].legs = std::move(newLegs);
+        mGraph.setVertexProperties(src, 
+            vertex_properties{std::move(newLegs), std::move(newTensor)});
 
         // clear and remove dest vertex
         mGraph.removeVertex(dest);

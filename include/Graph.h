@@ -175,10 +175,10 @@ public:
 
             // get the bundled edge property
             auto edge_properties = graph_t[*oi];
-
-            // edge(s) source to target needs to be removed
-            auto target_new = boost::target(*oi, graph_t);
-            boost::add_edge(source, target_new, edge_properties, graph_t);
+            auto target_old = boost::target(*oi, graph_t);
+            
+            // and add a new edge (source, target_old) with the given edge properties
+            boost::add_edge(source, target_old, edge_properties, graph_t);
         }
         removeVertex(dest);
     }

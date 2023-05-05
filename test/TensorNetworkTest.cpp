@@ -2,6 +2,13 @@
 
 #include "TensorNetwork.h"
 
+/**
+ * @brief Create a pair consists of randomize tensors and corresponding descending leg indices
+ * from a given vector of shapes.
+ * 
+ * @param shapes 
+ * @return auto 
+ */
 static auto createTensorList(const std::vector<npp::shape_type> &shapes)
 {
     std::vector<npp::tensor_type<std::complex<double>>> tensorList = {};
@@ -87,6 +94,14 @@ TEST(TensorNetworkTest, copy_constructed_contract)
 
     ASSERT_TRUE(nt == 3);
 
+    tensorList = tn.getTensorList();
+
+    // checks before connect
+    ASSERT_TRUE(tensorList.size() == 3);
+    ASSERT_EQ(tensorList[0].shape(), npp::shape_type({4, 2}));
+    ASSERT_EQ(tensorList[1].shape(), npp::shape_type({9}));
+    ASSERT_EQ(tensorList[2].shape(), npp::shape_type({}));
+
     tn.connect();
 
     nt = tn.numTensors();
@@ -95,8 +110,8 @@ TEST(TensorNetworkTest, copy_constructed_contract)
 
     tensorList = tn.getTensorList();
 
-    npp::shape_type shape = {2, 4, 9};
-    ASSERT_EQ(tensorList[0].shape(), shape);
+    ASSERT_TRUE(tensorList.size() == 1);
+    ASSERT_EQ(tensorList[0].shape(), npp::shape_type({4, 2, 9}));
 }
 
 TEST(TensorNetworkTest, move_constructed_contract)
@@ -128,14 +143,22 @@ TEST(TensorNetworkTest, move_constructed_contract)
 
     ASSERT_TRUE(nt == 3);
 
+    auto tensorList = tn.getTensorList();
+
+    // checks before connect
+    ASSERT_TRUE(tensorList.size() == 3);
+    ASSERT_EQ(tensorList[0].shape(), npp::shape_type({4, 2}));
+    ASSERT_EQ(tensorList[1].shape(), npp::shape_type({9}));
+    ASSERT_EQ(tensorList[2].shape(), npp::shape_type({}));
+
     tn.connect();
 
     nt = tn.numTensors();
 
     ASSERT_TRUE(nt == 1);
 
-    auto tensorList = tn.getTensorList();
+    tensorList = tn.getTensorList();
 
-    npp::shape_type shape = {2, 4, 9};
-    ASSERT_EQ(tensorList[0].shape(), shape);
+    ASSERT_TRUE(tensorList.size() == 1);
+    ASSERT_EQ(tensorList[0].shape(), npp::shape_type({4, 2, 9}));
 }
