@@ -3,8 +3,7 @@
 #include "TensorNetwork.h"
 
 /**
- * @brief Create a pair consists of randomize tensors and corresponding descending leg indices
- * from a given vector of shapes.
+ * @brief Create a pair consists of randomize tensors (first) and corresponding descending leg indices (second) from a given vector of shapes.
  * 
  * @param shapes 
  * @return auto 
