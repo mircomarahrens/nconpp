@@ -22,6 +22,8 @@ template <class V = default_t, class E = default_t>
 class Graph
 {
 public:
+    Graph() = default;
+
     Graph(std::size_t N) : graph_t(N){};
 
     ~Graph() = default;

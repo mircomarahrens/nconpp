@@ -12,36 +12,14 @@ class GraphTest : public testing::Test
     ~GraphTest() override = default;
 };
 
-TEST(GraphTest, Boost)
+TEST(GraphTest, EmptyGraph)
 {
-    int N = 6;
+    ASSERT_NO_THROW(Graph<> g);
+}
 
-    struct default_vertex_properties
-    {
-    };
-
-    struct default_edge_properties
-    {
-        std::size_t edge_index_t;
-    };
-
-    typedef typename boost::adjacency_list<
-        boost::multisetS,
-        boost::vecS, boost::undirectedS,
-        default_vertex_properties,
-        default_edge_properties>
-        graph_template;
-
-    graph_template g(N);
-
-    auto v = g[0];
-
-    auto pm = boost::get(boost::vertex_index, g);
-
-    for (std::size_t i = 0; i < N; i++)
-    {
-        ASSERT_TRUE(pm[i] == i);
-    }
+TEST(GraphTest, FiniteGraph)
+{
+    ASSERT_NO_THROW(Graph<> g(123));
 }
 
 TEST(GraphTest, baseline)
@@ -136,23 +114,26 @@ TEST(GraphTest, custom_properties)
     };
 
     Graph<custom_vertex_properties, custom_edge_properties> g(6);
-    
+
     typedef Graph<custom_vertex_properties, custom_edge_properties>::vertex_properties_t vertex_properties;
     typedef Graph<custom_vertex_properties, custom_edge_properties>::edge_properties_t edge_properties;
 
     ASSERT_TRUE(g.numVertices() == 6);
 
     // access vertices through index
-    for (std::size_t i = 0; i < 6; i++) {
+    for (std::size_t i = 0; i < 6; i++)
+    {
         ASSERT_TRUE(g[i].name == "default constructed name for vertices");
     }
 
     // access vertices and out edges through iterator
     auto vs = g.vertices();
-    for(auto v = vs.first; v != vs.second; v++) {
+    for (auto v = vs.first; v != vs.second; v++)
+    {
         ASSERT_TRUE(g[*v].name == "default constructed name for vertices");
         auto oes = g.outEdges(*v);
-        for(auto e = oes.first; e != oes.second; e++) {
+        for (auto e = oes.first; e != oes.second; e++)
+        {
             ASSERT_TRUE(g[*e].name == "default constructed name for edges");
         }
     }
@@ -169,7 +150,7 @@ TEST(GraphTest, custom_properties)
 
     ASSERT_TRUE(g[2].name == "manual constructed name for a vertex");
 
-    g.addEdge(0 , 1, 2);
+    g.addEdge(0, 1, 2);
 }
 
 TEST(GraphTest, mergeVertices)
@@ -183,11 +164,11 @@ TEST(GraphTest, mergeVertices)
         Tuple({2, 0}, 3),
         Tuple({3, 4}, 4),
         Tuple({4, 1}, 5),
-    };   
+    };
 
     g.addEdges(edgeList);
 
-    g.mergeVertices(0,1);
+    g.mergeVertices(0, 1);
 
     ASSERT_TRUE(g.numVertices() == 5);
 

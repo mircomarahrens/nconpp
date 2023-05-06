@@ -63,6 +63,7 @@ if (CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
     add_executable(nconpp_tests_run
         test/nconpp_tests_run.cpp
         test/GraphTest.cpp
+        test/GraphTest_F.cpp
         test/TensorTest.cpp
         test/TensorNetworkTest.cpp)
 
