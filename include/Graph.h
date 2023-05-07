@@ -148,7 +148,7 @@ public:
      * @brief Get the current number of vertives.
      *
      */
-    std::size_t numVertices()
+    std::size_t NumVertices()
     {
         return boost::num_vertices(graph_t);
     }

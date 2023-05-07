@@ -1,4 +1,9 @@
-#pragma once
+//
+// Created by mirco on 2/25/2023.
+//
+
+#ifndef NCONPP_TENSOR_H
+#define NCONPP_TENSOR_H
 
 #include <xtensor/xarray.hpp>
 #include <xtensor/xexpression.hpp>
@@ -145,3 +150,5 @@ namespace npp {
         }
     }
 };
+
+#endif // NCONPP_TENSOR_H

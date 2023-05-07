@@ -1,11 +1,5 @@
 #include <gtest/gtest.h>
 
-#define TEST_FRIENDS                       \
-    friend class TensorTest_flatten1_Test; \
-    friend class TensorTest_flatten2_Test; \
-    friend class TensorTest_flatten3_Test; \
-    friend class TensorTest_transpose2_Test;
-
 #include "Tensor.h"
 
 #include <complex>

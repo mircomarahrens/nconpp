@@ -29,20 +29,20 @@ TEST(GraphTest, baseline)
     typedef Graph<>::vertex_properties_t vertex_properties;
     typedef Graph<>::edge_properties_t edge_properties;
 
-    ASSERT_TRUE(g.numVertices() == 6);
+    ASSERT_TRUE(g.NumVertices() == 6);
 
-    // identifiers in g are in ascending contiguous order starting with 0
+    // identifiers in g are in ascending contiuous order starting with 0
     ASSERT_THAT(g.getVertices(), ElementsAre(0, 1, 2, 3, 4, 5));
 
     auto nv = g.addVertex();
 
     ASSERT_TRUE(nv == 6);
 
-    ASSERT_TRUE(g.numVertices() == 7);
+    ASSERT_TRUE(g.NumVertices() == 7);
 
     g.removeVertex(2);
 
-    ASSERT_TRUE(g.numVertices() == 6);
+    ASSERT_TRUE(g.NumVertices() == 6);
 
     // identifiers in graph are always in ascending contiguous order starting with 0
     ASSERT_THAT(g.getVertices(), ElementsAre(0, 1, 2, 3, 4, 5));
@@ -118,7 +118,7 @@ TEST(GraphTest, custom_properties)
     typedef Graph<custom_vertex_properties, custom_edge_properties>::vertex_properties_t vertex_properties;
     typedef Graph<custom_vertex_properties, custom_edge_properties>::edge_properties_t edge_properties;
 
-    ASSERT_TRUE(g.numVertices() == 6);
+    ASSERT_TRUE(g.NumVertices() == 6);
 
     // access vertices through index
     for (std::size_t i = 0; i < 6; i++)
@@ -142,7 +142,7 @@ TEST(GraphTest, custom_properties)
 
     g.addVertex(prop);
 
-    ASSERT_TRUE(g.numVertices() == 7);
+    ASSERT_TRUE(g.NumVertices() == 7);
 
     ASSERT_TRUE(g[6].name == "manual constructed name for a vertex");
 
@@ -170,7 +170,7 @@ TEST(GraphTest, mergeVertices)
 
     g.mergeVertices(0, 1);
 
-    ASSERT_TRUE(g.numVertices() == 5);
+    ASSERT_TRUE(g.NumVertices() == 5);
 
     ASSERT_THAT(g.getVertices(), ElementsAre(0, 1, 2, 3, 4));
 }
