@@ -266,3 +266,8 @@ TEST(TensorNetworkTest, move_constructed_contract)
     ASSERT_TRUE(tensorList.size() == 1);
     ASSERT_EQ(tensorList[0].shape(), npp::shape_type({4, 2, 9}));
 }
+
+TEST(TensorNetworkTest, split)
+{
+    
+}

@@ -35,16 +35,17 @@ public:
     struct edge_properties_t : E
     {
         std::size_t edge_index_t;
-        // put any default properties here
+        // put any default property here
     };
 
+    // custom typedefs
     typedef typename boost::adjacency_list<boost::multisetS, boost::vecS, boost::undirectedS, vertex_properties_t, edge_properties_t>
         GraphContainer;
-    typedef typename boost::vertex_bundle_type<GraphContainer>::type Vertex;
-    typedef typename boost::edge_bundle_type<GraphContainer>::type Edge;
+    typedef typename boost::vertex_bundle_type<GraphContainer>::type vertex_t;
+    typedef typename boost::edge_bundle_type<GraphContainer>::type edge_t;
 
-    typedef typename boost::graph_traits<GraphContainer>::vertex_descriptor vertex_descriptor;
-    typedef typename boost::graph_traits<GraphContainer>::edge_descriptor edge_descriptor;
+    typedef typename boost::graph_traits<GraphContainer>::vertex_descriptor vertex_descriptor_t;
+    typedef typename boost::graph_traits<GraphContainer>::edge_descriptor edge_descriptor_t;
 
     typedef typename boost::graph_traits<GraphContainer>::vertex_iterator vertex_iterator;
     typedef typename boost::graph_traits<GraphContainer>::edge_iterator edge_iterator;
@@ -58,7 +59,7 @@ public:
      * @param v
      * @return Vertex
      */
-    Vertex operator[](const vertex_descriptor &v)
+    vertex_t operator[](const vertex_descriptor_t &v)
     {
         return graph_t[v];
     }
@@ -69,7 +70,7 @@ public:
      * @param e
      * @return Edge
      */
-    Edge operator[](const edge_descriptor &e)
+    edge_t operator[](const edge_descriptor_t &e)
     {
         return graph_t[e];
     }
@@ -128,9 +129,10 @@ public:
      * @param vertex
      * @param vertex_properties
      */
-    void setVertexProperties(vertex_descriptor vertex, vertex_properties_t vertex_properties)
+    vertex_t setVertexProperties(vertex_descriptor_t vertex, vertex_properties_t vertex_properties)
     {
         graph_t[vertex] = vertex_properties;
+        return graph_t[vertex];
     }
 
     /**
@@ -163,8 +165,8 @@ public:
     void mergeVertices(std::size_t src, std::size_t dest)
     {
         // obtain vertex descriptor for src and dest
-        vertex_descriptor source = boost::vertex(src, graph_t);
-        vertex_descriptor target = boost::vertex(dest, graph_t);
+        vertex_descriptor_t source = boost::vertex(src, graph_t);
+        vertex_descriptor_t target = boost::vertex(dest, graph_t);
 
         // define and declare out edge iterators
         out_edge_iterator oi, oi_end, next;
@@ -178,7 +180,7 @@ public:
             // get the bundled edge property
             auto edge_properties = graph_t[*oi];
             auto target_old = boost::target(*oi, graph_t);
-            
+
             // and add a new edge (source, target_old) with the given edge properties
             boost::add_edge(source, target_old, edge_properties, graph_t);
         }
@@ -227,7 +229,7 @@ public:
      * @param edge
      * @param edge_properties
      */
-    void setVertexProperties(edge_descriptor edge, edge_properties_t edge_properties)
+    void setEdgeProperties(edge_descriptor_t edge, edge_properties_t edge_properties)
     {
         graph_t[edge] = edge_properties;
     }
@@ -310,10 +312,23 @@ public:
      * @param v
      * @return std::pair<out_edge_iterator, out_edge_iterator>
      */
-    std::pair<out_edge_iterator, out_edge_iterator> outEdges(const vertex_descriptor &v)
+    std::pair<out_edge_iterator, out_edge_iterator> outEdges(const vertex_descriptor_t &v)
     {
         return boost::out_edges(v, graph_t);
     }
+
+    // /**
+    //  * @brief Update an edge.
+    //  * 
+    //  * @param edge_index 
+    //  * @param new_src 
+    //  * @param new_dest 
+    //  */
+    // void updateEdge(edge_descriptor_t edge_descriptor, std::size_t new_src = -1, std::size_t new_dest = -1)
+    // {
+    //     // TODO
+    //     auto edge = graph_t[edge_descriptor];
+    // }
 
     /**
      * @brief Remove edge by index.

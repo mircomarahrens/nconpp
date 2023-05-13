@@ -35,11 +35,13 @@ template <typename T = std::complex<double>>
 class TensorNetwork
 {
 private:
+    // custom graph properties
     struct custom_vertex_properties
     {
         // place custom properties for vertices here
-        std::vector<int> legs;
+        std::vector<int> legs; // TODO should be a set
         npp::tensor_type<T> tensor;
+        bool singular_values = false;
     };
 
     struct custom_edge_properties
@@ -47,23 +49,25 @@ private:
         // place custom properties for edges here
     };
 
+    // TODO maybe inherit? TensorNetwork : public Graph
     // graph object for this class
     Graph<custom_vertex_properties, custom_edge_properties> mGraph;
 
     // custom typedefs
+    typedef Graph<custom_vertex_properties, custom_edge_properties>::out_edge_iterator out_edge_iterator;
     typedef Graph<custom_vertex_properties, custom_edge_properties>::vertex_properties_t vertex_properties;
     typedef Graph<custom_vertex_properties, custom_edge_properties>::edge_properties_t edge_properties;
 
     // store negative and positive legs in separate sets
     std::set<int> mDanglingLegs = {}; // negative leg indices
-    std::set<int> mLegs = {}; // positive leg indices
+    std::set<int> mLegs = {};         // positive leg indices
 
     /**
      * @brief Perform a trace on a specific vertex between axesA and axesB.
-     * 
-     * @param vertex_index 
-     * @param axesA 
-     * @param axesB 
+     *
+     * @param vertex_index
+     * @param axesA
+     * @param axesB
      */
     void trace(std::size_t vertex_index, std::size_t axesA, std::size_t axesB)
     {
@@ -79,11 +83,11 @@ private:
 
     /**
      * @brief Perform a tensordot on specific vertices between axesA and axesB.
-     * 
-     * @param src 
-     * @param dest 
-     * @param axesA 
-     * @param axesB 
+     *
+     * @param src
+     * @param dest
+     * @param axesA
+     * @param axesB
      */
     void tensordot(std::size_t src, std::size_t dest, std::vector<std::size_t> axesA, std::vector<std::size_t> axesB)
     {
@@ -108,9 +112,9 @@ private:
 
     /**
      * @brief Perform an outer product between two vertices.
-     * 
-     * @param src 
-     * @param dest 
+     *
+     * @param src
+     * @param dest
      */
     void outer(std::size_t src, std::size_t dest)
     {
@@ -135,29 +139,28 @@ private:
 public:
     /**
      * @brief Construct a new Tensor Network object.
-     * 
+     *
      */
     TensorNetwork() = default;
 
     /**
      * @brief Copy constructor.
-     * 
-     * @param other 
+     *
+     * @param other
      */
-    TensorNetwork(const TensorNetwork& other) :
-        mDanglingLegs(other.mDanglingLegs),
-        mLegs(other.mLegs),
-        mGraph(other.mGraph)
-    {}
+    TensorNetwork(const TensorNetwork &other) : mDanglingLegs(other.mDanglingLegs),
+                                                mLegs(other.mLegs),
+                                                mGraph(other.mGraph)
+    {
+    }
 
     /**
      * @brief Move constructor.
-     * 
+     *
      */
-    TensorNetwork(TensorNetwork&& other) :
-        mDanglingLegs(other.mDanglingLegs),
-        mLegs(other.mLegs),
-        mGraph(other.mGraph)
+    TensorNetwork(TensorNetwork &&other) : mDanglingLegs(other.mDanglingLegs),
+                                           mLegs(other.mLegs),
+                                           mGraph(other.mGraph)
     {
         other.mDanglingLegs = {};
         other.mLegs = {};
@@ -173,7 +176,8 @@ public:
      *  - aka LegsList
      *  - Nomenclature of the legs of the tensor in tensorList:
      *      - the legs are named by integers
-     *      - contractible legs have the same positive integer as name, hence occurring in pairs
+     *      - 0 is not a valid leg identifier
+     *      - contractible legs have the same positive integer as identifier, hence occurring in pairs
      *      - legs with negative integers won't be contracted, so-called dangling legs
      */
     explicit TensorNetwork(const std::vector<npp::tensor_type<T>> &tensorList,
@@ -244,6 +248,19 @@ public:
         }
     };
 
+    /**
+     * Explicit move constructor with given parameters.
+     *
+     * @param tensorList
+     *  - a list of tensors
+     * @param subscriptVectorList
+     *  - aka LegsList
+     *  - Nomenclature of the legs of the tensor in tensorList:
+     *      - the legs are named by integers
+     *      - 0 is not a valid leg identifier
+     *      - contractible legs have the same positive integer as identifier, hence occurring in pairs
+     *      - legs with negative integers won't be contracted, so-called dangling legs
+     */
     explicit TensorNetwork(std::vector<npp::tensor_type<T>> &&tensorList,
                            std::vector<std::vector<int>> &&subscriptVectorList) : mGraph(tensorList.size())
     {
@@ -312,22 +329,28 @@ public:
         }
     };
 
+    /**
+     * @brief Destroy the Tensor Network object
+     *
+     */
     ~TensorNetwork() = default;
 
     /**
      * @brief Retrieve current dangling legs (negative indices).
-     * 
-     * @return const std::set<int>& 
+     *
+     * @return const std::set<int>&
      */
-    const std::set<int>& DanglingLegs() {
+    const std::set<int> &DanglingLegs()
+    {
         return mDanglingLegs;
     }
 
     /**
      * @brief Retrieve current legs (positive indices).
-     * 
+     *
      */
-    const std::set<int>& Legs() {
+    const std::set<int> &Legs()
+    {
         return mLegs;
     }
 
@@ -340,9 +363,6 @@ public:
      */
     void contract(std::vector<int> contractionSequence = {}, std::vector<int> finalOrder = {})
     {
-        // TODO optimization:
-        //  - flatten edges
-
         // fill contraction sequence with positive legs if initially empty
         if (contractionSequence.empty())
         {
@@ -419,7 +439,7 @@ public:
     }
 
     /**
-     * @brief Connect all remaining tensors into a single one by outer products.
+     * @brief Connect all tensors into a single one by outer products.
      *
      */
     void connect()
@@ -443,8 +463,8 @@ public:
 
     /**
      * @brief Retrieve a current view of tensors.
-     * 
-     * @return const std::vector<npp::tensor_type<T>>& 
+     *
+     * @return const std::vector<npp::tensor_type<T>>&
      */
     std::vector<npp::tensor_type<T>> TensorList()
     {
@@ -457,7 +477,12 @@ public:
         return result;
     }
 
-    std::vector<npp::shape_type> TensorShapes() 
+    /**
+     * @brief Retrieve a current view of the shapes of the tensors.
+     *
+     * @return std::vector<npp::shape_type>
+     */
+    std::vector<npp::shape_type> TensorShapes()
     {
         auto nv = mGraph.NumVertices();
         std::vector<npp::shape_type> result(nv);
@@ -468,29 +493,42 @@ public:
         return result;
     }
 
-    void split(std::size_t pos, std::size_t vertex_pos = 0)
+    /**
+     * @brief Split a vertex (default 0) on a specific leg position.
+     *
+     * @param leg_pos
+     * @param vertex_pos
+     */
+    void split(std::size_t leg_pos, std::size_t vertex_pos = 0)
     {
         auto vertex = mGraph[vertex_pos];
-        auto tensor = vertex.tensor;
         auto legs = vertex.legs;
+        auto tensor = vertex.tensor;
 
+        // split legs
+        std::vector<int>::const_iterator leg_pos_it(legs.cbegin());
+        std::advance(leg_pos_it, leg_pos);
+
+        std::vector<int> left_legs(legs.begin(), leg_pos_it);
+        std::vector<int> right_legs(leg_pos_it, legs.end());
+
+        // split tensor
         std::size_t len = legs.size();
-        if (pos < len)
+        if (leg_pos < len)
         {
-
             auto shape = npp::shape(tensor);
 
             std::size_t left = 1, right = 1;
             npp::shape_type left_shape, right_shape;
             for (std::size_t s = 0; s < len; s++)
             {
-                if (s < pos)
+                if (s < leg_pos)
                 {
                     left *= shape[s];
 
                     left_shape.push_back(shape[s]);
                 }
-                else if (s == pos)
+                else if (s == leg_pos)
                 {
                     right *= shape[s];
 
@@ -513,14 +551,54 @@ public:
             npp::tensor_type<T> U, s, V;
             std::tie(U, s, V) = npp::linalg::svd(tensor);
 
+            // reshape U,V back to tensors with new shape
             npp::reshape(U, left_shape);
             npp::reshape(V, right_shape);
 
-            // TODO
-            // - add new vertex
-            // - split legs
-            // - add new leg
-            throw std::logic_error("Not implemented yet.");
+            // new leg ids
+            int new_leg_left = *mLegs.rbegin() + 1;
+            int new_leg_right = new_leg_left + 1;
+
+            // add to the subscript vectors
+            left_legs.emplace_back(new_leg_left);
+            std::vector<int> s_legs{new_leg_left, new_leg_right};
+            right_legs.emplace_back(new_leg_right);
+
+            // add to list of current legs
+            mLegs.insert(new_leg_left);
+            mLegs.insert(new_leg_right);
+
+            // update current vertex for U and create new vertices for s and V
+            auto U_ver = mGraph.setVertexProperties(vertex_properties{std::move(U), std::move(left_legs)}, vertex_pos);
+            auto s_ver = mGraph.addVertex(vertex_properties{std::move(s), std::move(s_legs)});
+            auto V_ver = mGraph.addVertex(vertex_properties{std::move(U), std::move(right_legs)});
+
+            // add edges to graph
+            mGraph.addEdge(U_ver, s_ver, new_leg_left);
+            mGraph.addEdge(s_ver, V_ver, new_leg_right);
+
+            // TODO update old edges
+
+            // --- refactor this ---
+            for (int i : left_legs)
+            {
+                if (i > 0)
+                {
+                    auto edge = mGraph.getEdge(i);
+                    
+                }
+            }
+
+            for (int i : right_legs)
+            {
+                if (i > 0)
+                {
+                    auto edge = mGraph.getEdge(i);
+                }
+            }
+            // --- end ---
+
+            throw std::logic_error("Not finally implemented yet. Current TODO: update edges.");
         }
         else
         {
