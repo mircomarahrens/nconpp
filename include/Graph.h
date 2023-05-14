@@ -47,9 +47,9 @@ public:
     typedef typename boost::graph_traits<GraphContainer>::vertex_descriptor vertex_descriptor_t;
     typedef typename boost::graph_traits<GraphContainer>::edge_descriptor edge_descriptor_t;
 
-    typedef typename boost::graph_traits<GraphContainer>::vertex_iterator vertex_iterator;
-    typedef typename boost::graph_traits<GraphContainer>::edge_iterator edge_iterator;
-    typedef typename boost::graph_traits<GraphContainer>::out_edge_iterator out_edge_iterator;
+    typedef typename boost::graph_traits<GraphContainer>::vertex_iterator vertex_iterator_t;
+    typedef typename boost::graph_traits<GraphContainer>::edge_iterator edge_iterator_t;
+    typedef typename boost::graph_traits<GraphContainer>::out_edge_iterator out_edge_iterator_t;
 
     typedef typename boost::graph_traits<GraphContainer>::adjacency_iterator adjacency_iterator;
 
@@ -148,7 +148,7 @@ public:
         vertex_descriptor_t target = boost::vertex(dest, graph_t);
 
         // define and declare out edge iterators
-        out_edge_iterator oi, oi_end, next;
+        out_edge_iterator_t oi, oi_end, next;
         boost::tie(oi, oi_end) = boost::out_edges(target, graph_t);
 
         // iterate through iterators from begin to end via next
@@ -193,7 +193,7 @@ public:
      */
     void addEdge(std::size_t src, std::size_t dest, edge_properties_t edge_properties)
     {
-        edge_iterator ei, ei_end, next;
+        edge_iterator_t ei, ei_end, next;
         boost::tie(ei, ei_end) = boost::edges(graph_t);
 
         checkEdgeIndex(edge_properties.edge_index_t);
@@ -222,7 +222,7 @@ public:
      */
     edge_properties_t getEdgeProperties(std::size_t edge_index)
     {
-        edge_iterator ei, ei_end, next;
+        edge_iterator_t ei, ei_end, next;
         boost::tie(ei, ei_end) = boost::edges(graph_t);
 
         for (next = ei; ei != ei_end; ei = next)
@@ -269,9 +269,15 @@ public:
         return boost::num_edges(graph_t);
     }
 
-    std::pair<std::size_t, std::size_t> getEdge(int edge_index)
+    /**
+     * @brief Get source and target of an edge.
+     *
+     * @param edge_index
+     * @return std::pair<std::size_t, std::size_t>
+     */
+    std::pair<std::size_t, std::size_t> getEdge(std::size_t edge_index)
     {
-        edge_iterator ei, ei_end, next;
+        edge_iterator_t ei, ei_end, next;
         boost::tie(ei, ei_end) = boost::edges(graph_t);
 
         for (next = ei; ei != ei_end; ei = next)
@@ -297,7 +303,7 @@ public:
     {
         std::set<int> result = {};
 
-        edge_iterator ei, ei_end, next;
+        edge_iterator_t ei, ei_end, next;
         boost::tie(ei, ei_end) = boost::edges(graph_t);
 
         for (next = ei; ei != ei_end; ei = next)
@@ -319,7 +325,7 @@ public:
     {
         std::set<int> result = {};
 
-        edge_iterator ei, ei_end, next;
+        edge_iterator_t ei, ei_end, next;
         boost::tie(ei, ei_end) = boost::edges(graph_t);
 
         for (next = ei; ei != ei_end; ei = next)
@@ -332,18 +338,51 @@ public:
         return result;
     }
 
-    // /**
-    //  * @brief Update an edge.
-    //  *
-    //  * @param edge_index
-    //  * @param new_src
-    //  * @param new_dest
-    //  */
-    // void updateEdge(edge_descriptor_t edge_descriptor, std::size_t new_src = -1, std::size_t new_dest = -1)
-    // {
-    //     // TODO
-    //     auto edge = graph_t[edge_descriptor];
-    // }
+    /**
+     * @brief Update an edge.
+     *
+     * @param edge_index
+     * @param new_src
+     * @param new_dest
+     */
+    void updateEdge(std::size_t edge_index, std::size_t new_src = -1, std::size_t new_dest = -1)
+    {
+        out_edge_iterator_t oi, oi_end, next;
+        boost::tie(oi, oi_end) = boost::edges(graph_t);
+
+        // iterate through iterators from begin to end via next
+        for (next = oi; oi != oi_end; oi = next)
+        {
+            ++next;
+
+            // get the bundled edge property
+            auto edge_properties = graph_t[*oi];
+
+            if (edge_index == edge_properties.edge_index_t)
+            {
+                auto src = boost::source(oi, graph_t);
+                auto dest = boost::target(oi, graph_t);
+
+                if (new_src != -1) {
+                    src = boost::source(new_src, graph_t);
+                }
+
+                if (new_dest != -1) {
+                    dest = boost::source(new_dest, graph_t);
+                }
+
+                if (new_src != -1 || new_dest != -1) {
+                    // and add a new edge (src, dest) with the given edge properties
+                    boost::add_edge(src, dest, edge_properties, graph_t);
+
+                    // remove the old edge
+                    boost::remove_edge(oi);
+                }
+            }
+        }
+
+        throw std::runtime_error(ERROR_MESSAGE::EDGE_INDEX_NOT_PRESENT);
+    }
 
     /**
      * @brief Remove edge by index.
@@ -352,7 +391,7 @@ public:
      */
     void removeEdge(int edge_index)
     {
-        edge_iterator ei, ei_end, next;
+        edge_iterator_t ei, ei_end, next;
         boost::tie(ei, ei_end) = boost::edges(graph_t);
 
         bool notFound = true;
@@ -377,7 +416,7 @@ private:
 
     void checkEdgeIndex(int edge_index)
     {
-        edge_iterator ei, ei_end, next;
+        edge_iterator_t ei, ei_end, next;
         boost::tie(ei, ei_end) = boost::edges(graph_t);
 
         for (next = ei; ei != ei_end; ei = next)

@@ -54,7 +54,6 @@ private:
     Graph<custom_vertex_properties, custom_edge_properties> mGraph;
 
     // custom typedefs
-    typedef Graph<custom_vertex_properties, custom_edge_properties>::out_edge_iterator out_edge_iterator_t;
     typedef Graph<custom_vertex_properties, custom_edge_properties>::vertex_properties_t vertex_properties_t;
     typedef Graph<custom_vertex_properties, custom_edge_properties>::edge_properties_t edge_properties_t;
 
@@ -579,25 +578,20 @@ public:
             mGraph.addEdge(U_ver, s_ver, new_leg_left);
             mGraph.addEdge(s_ver, V_ver, new_leg_right);
 
-            // TODO update old edges
-
-            // --- refactor this ---
-            for (int i : left_legs)
-            {
-                if (i > 0)
-                {
-                    auto edge = mGraph.getEdge(i);
-                                }
-            }
-
+            // only edges of rhs needs to be updated
             for (int i : right_legs)
             {
                 if (i > 0)
                 {
+                    // pair(src, tar)
                     auto edge = mGraph.getEdge(i);
+
+                    if (edge.first != V_ver)
+                    {
+                        mGraph.updateEdge(i, V_ver, edge.second);
+                    }
                 }
             }
-            // --- end ---
 
             throw std::logic_error("Not finally implemented yet. Current TODO: update edges.");
         }
