@@ -54,9 +54,9 @@ private:
     Graph<custom_vertex_properties, custom_edge_properties> mGraph;
 
     // custom typedefs
-    typedef Graph<custom_vertex_properties, custom_edge_properties>::out_edge_iterator out_edge_iterator;
-    typedef Graph<custom_vertex_properties, custom_edge_properties>::vertex_properties_t vertex_properties;
-    typedef Graph<custom_vertex_properties, custom_edge_properties>::edge_properties_t edge_properties;
+    typedef Graph<custom_vertex_properties, custom_edge_properties>::out_edge_iterator out_edge_iterator_t;
+    typedef Graph<custom_vertex_properties, custom_edge_properties>::vertex_properties_t vertex_properties_t;
+    typedef Graph<custom_vertex_properties, custom_edge_properties>::edge_properties_t edge_properties_t;
 
     // store negative and positive legs in separate sets
     std::set<int> mDanglingLegs = {}; // negative leg indices
@@ -71,14 +71,16 @@ private:
      */
     void trace(std::size_t vertex_index, std::size_t axesA, std::size_t axesB)
     {
-        auto newTensor = npp::linalg::trace(mGraph[vertex_index].tensor, 0, axesA, axesB);
+        auto vertex_properties = mGraph.getVertexProperties(vertex_index);
 
-        auto newLegs = mGraph[vertex_index].legs;
+        auto newTensor = npp::linalg::trace(vertex_properties.tensor, 0, axesA, axesB);
+
+        auto newLegs = vertex_properties.legs;
         newLegs.erase(newLegs.begin() + axesB);
         newLegs.erase(newLegs.begin() + axesA);
 
         mGraph.setVertexProperties(vertex_index,
-                                   vertex_properties{std::move(newLegs), std::move(newTensor)});
+                                   vertex_properties_t{std::move(newLegs), std::move(newTensor)});
     };
 
     /**
@@ -91,8 +93,8 @@ private:
      */
     void tensordot(std::size_t src, std::size_t dest, std::vector<std::size_t> axesA, std::vector<std::size_t> axesB)
     {
-        auto legsA = mGraph[src].legs;
-        auto legsB = mGraph[dest].legs;
+        auto legsA = mGraph.getVertexProperties(src).legs;
+        auto legsB = mGraph.getVertexProperties(dest).legs;
 
         legsA.erase(legsA.begin() + axesA[0]);
         legsB.erase(legsB.begin() + axesB[0]);
@@ -101,13 +103,13 @@ private:
         newLegs.insert(newLegs.end(), legsA.begin(), legsA.end());
         newLegs.insert(newLegs.end(), legsB.begin(), legsB.end());
 
-        auto tensorA = mGraph[src].tensor;
-        auto tensorB = mGraph[dest].tensor;
+        auto tensorA = mGraph.getVertexProperties(src).tensor;
+        auto tensorB = mGraph.getVertexProperties(dest).tensor;
 
         auto newTensor = npp::linalg::tensordot(tensorA, tensorB, axesA, axesB);
 
         mGraph.setVertexProperties(src,
-                                   vertex_properties{std::move(newLegs), std::move(newTensor)});
+                                   vertex_properties_t{std::move(newLegs), std::move(newTensor)});
     };
 
     /**
@@ -118,11 +120,11 @@ private:
      */
     void outer(std::size_t src, std::size_t dest)
     {
-        auto legsA = mGraph[src].legs;
-        auto legsB = mGraph[dest].legs;
+        auto legsA = mGraph.getVertexProperties(src).legs;
+        auto legsB = mGraph.getVertexProperties(dest).legs;
 
-        auto tensorA = mGraph[src].tensor;
-        auto tensorB = mGraph[dest].tensor;
+        auto tensorA = mGraph.getVertexProperties(src).tensor;
+        auto tensorB = mGraph.getVertexProperties(dest).tensor;
 
         auto newTensor = npp::linalg::outer(tensorA, tensorB);
 
@@ -131,7 +133,7 @@ private:
         newLegs.insert(newLegs.end(), legsB.begin(), legsB.end());
 
         mGraph.setVertexProperties(src,
-                                   vertex_properties{std::move(newLegs), std::move(newTensor)});
+                                   vertex_properties_t{std::move(newLegs), std::move(newTensor)});
 
         mGraph.removeVertex(dest);
     }
@@ -242,7 +244,7 @@ public:
             }
 
             mGraph.setVertexProperties(vertex_index,
-                                       vertex_properties{subscriptVectorList[vertex_index], tensorList[vertex_index]});
+                                       vertex_properties_t{subscriptVectorList[vertex_index], tensorList[vertex_index]});
 
             vertex_index++;
         }
@@ -323,7 +325,7 @@ public:
             }
 
             mGraph.setVertexProperties(vertex_index,
-                                       vertex_properties{std::move(subscriptVectorList[vertex_index]), std::move(tensorList[vertex_index])});
+                                       vertex_properties_t{std::move(subscriptVectorList[vertex_index]), std::move(tensorList[vertex_index])});
 
             vertex_index++;
         }
@@ -388,9 +390,9 @@ public:
             { // trace
 
                 std::vector<std::size_t> axes = {};
-                for (auto axis = 0; axis < mGraph[dest].legs.size(); axis++)
+                for (auto axis = 0; axis < mGraph.getVertexProperties(dest).legs.size(); axis++)
                 {
-                    if (mGraph[dest].legs[axis] == leg_index)
+                    if (mGraph.getVertexProperties(dest).legs[axis] == leg_index)
                     {
                         axes.emplace_back(axis);
                     }
@@ -407,16 +409,16 @@ public:
                 std::vector<std::size_t> axesA = {};
                 std::vector<std::size_t> axesB = {};
 
-                for (auto axis = 0; axis < mGraph[src].legs.size(); axis++)
+                for (auto axis = 0; axis < mGraph.getVertexProperties(src).legs.size(); axis++)
                 {
-                    if (mGraph[src].legs[axis] == leg_index)
+                    if (mGraph.getVertexProperties(src).legs[axis] == leg_index)
                     {
                         axesA.emplace_back(axis);
                     }
                 }
-                for (auto axis = 0; axis < mGraph[dest].legs.size(); axis++)
+                for (auto axis = 0; axis < mGraph.getVertexProperties(dest).legs.size(); axis++)
                 {
-                    if (mGraph[dest].legs[axis] == leg_index)
+                    if (mGraph.getVertexProperties(dest).legs[axis] == leg_index)
                     {
                         axesB.emplace_back(axis);
                     }
@@ -472,7 +474,7 @@ public:
         std::vector<npp::tensor_type<T>> result(nv);
         for (int i = 0; i < nv; i++)
         {
-            result[i] = mGraph[i].tensor;
+            result[i] = mGraph.getVertexProperties(i).tensor;
         }
         return result;
     }
@@ -488,7 +490,7 @@ public:
         std::vector<npp::shape_type> result(nv);
         for (int i = 0; i < nv; i++)
         {
-            result[i] = mGraph[i].tensor.shape();
+            result[i] = mGraph.getVertexProperties(i).tensor.shape();
         }
         return result;
     }
@@ -569,9 +571,9 @@ public:
             mLegs.insert(new_leg_right);
 
             // update current vertex for U and create new vertices for s and V
-            auto U_ver = mGraph.setVertexProperties(vertex_properties{std::move(U), std::move(left_legs)}, vertex_pos);
-            auto s_ver = mGraph.addVertex(vertex_properties{std::move(s), std::move(s_legs)});
-            auto V_ver = mGraph.addVertex(vertex_properties{std::move(U), std::move(right_legs)});
+            auto U_ver = mGraph.setVertexProperties(vertex_properties_t{std::move(U), std::move(left_legs)}, vertex_pos);
+            auto s_ver = mGraph.addVertex(vertex_properties_t{std::move(s), std::move(s_legs)});
+            auto V_ver = mGraph.addVertex(vertex_properties_t{std::move(U), std::move(right_legs)});
 
             // add edges to graph
             mGraph.addEdge(U_ver, s_ver, new_leg_left);
@@ -585,8 +587,7 @@ public:
                 if (i > 0)
                 {
                     auto edge = mGraph.getEdge(i);
-                    
-                }
+                                }
             }
 
             for (int i : right_legs)

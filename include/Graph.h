@@ -54,38 +54,6 @@ public:
     typedef typename boost::graph_traits<GraphContainer>::adjacency_iterator adjacency_iterator;
 
     /**
-     * @brief Operator to return the bundled vertex from a descriptor.
-     *
-     * @param v
-     * @return Vertex
-     */
-    vertex_t operator[](const vertex_descriptor_t &v)
-    {
-        return graph_t[v];
-    }
-
-    /**
-     * @brief Operator to return the bundled edge from a descriptor.
-     *
-     * @param e
-     * @return Edge
-     */
-    edge_t operator[](const edge_descriptor_t &e)
-    {
-        return graph_t[e];
-    }
-
-    /**
-     * @brief Return the vertex iterators begin() and end() for the whole graph.
-     *
-     * @return std::pair<vertex_iterator, vertex_iterator>
-     */
-    std::pair<vertex_iterator, vertex_iterator> vertices()
-    {
-        return boost::vertices(graph_t);
-    }
-
-    /**
      * @brief Get vertex indices.
      *
      * @return std::set<size_t>
@@ -132,6 +100,17 @@ public:
     vertex_t setVertexProperties(vertex_descriptor_t vertex, vertex_properties_t vertex_properties)
     {
         graph_t[vertex] = vertex_properties;
+        return graph_t[vertex];
+    }
+
+    /**
+     * @brief Get the properties of a specific vertex.
+     *
+     * @param vertex
+     * @return vertex_properties_t
+     */
+    vertex_properties_t getVertexProperties(vertex_descriptor_t vertex)
+    {
         return graph_t[vertex];
     }
 
@@ -226,12 +205,36 @@ public:
     /**
      * @brief Set edge properties.
      *
-     * @param edge
+     * @param edge_index
      * @param edge_properties
      */
-    void setEdgeProperties(edge_descriptor_t edge, edge_properties_t edge_properties)
+    void setEdgeProperties(std::size_t edge_index, edge_properties_t edge_properties)
     {
-        graph_t[edge] = edge_properties;
+        auto edge_descriptor = getEdge(edge_index);
+        graph_t[edge_descriptor] = edge_properties;
+    }
+
+    /**
+     * @brief Get the properties of a specific edge.
+     *
+     * @param edge_index
+     * @return edge_properties_t
+     */
+    edge_properties_t getEdgeProperties(std::size_t edge_index)
+    {
+        edge_iterator ei, ei_end, next;
+        boost::tie(ei, ei_end) = boost::edges(graph_t);
+
+        for (next = ei; ei != ei_end; ei = next)
+        {
+            ++next;
+            if (graph_t[*ei].edge_index_t == edge_index)
+            {
+                return graph_t[*ei];
+            }
+        }
+
+        throw std::runtime_error(ERROR_MESSAGE::EDGE_INDEX_NOT_PRESENT);
     }
 
     /**
@@ -312,17 +315,29 @@ public:
      * @param v
      * @return std::pair<out_edge_iterator, out_edge_iterator>
      */
-    std::pair<out_edge_iterator, out_edge_iterator> outEdges(const vertex_descriptor_t &v)
+    std::set<int> outEdges(std::size_t vertex_index)
     {
-        return boost::out_edges(v, graph_t);
+        std::set<int> result = {};
+
+        edge_iterator ei, ei_end, next;
+        boost::tie(ei, ei_end) = boost::edges(graph_t);
+
+        for (next = ei; ei != ei_end; ei = next)
+        {
+            ++next;
+
+            result.insert(graph_t[*ei].edge_index_t);
+        }
+
+        return result;
     }
 
     // /**
     //  * @brief Update an edge.
-    //  * 
-    //  * @param edge_index 
-    //  * @param new_src 
-    //  * @param new_dest 
+    //  *
+    //  * @param edge_index
+    //  * @param new_src
+    //  * @param new_dest
     //  */
     // void updateEdge(edge_descriptor_t edge_descriptor, std::size_t new_src = -1, std::size_t new_dest = -1)
     // {

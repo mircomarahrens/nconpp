@@ -123,18 +123,18 @@ TEST(GraphTest, custom_properties)
     // access vertices through index
     for (std::size_t i = 0; i < 6; i++)
     {
-        ASSERT_TRUE(g[i].name == "default constructed name for vertices");
+        ASSERT_TRUE(g.getVertexProperties(i).name == "default constructed name for vertices");
     }
 
     // access vertices and out edges through iterator
-    auto vs = g.vertices();
-    for (auto v = vs.first; v != vs.second; v++)
+    auto vs = g.getVertices();
+    for (auto v : vs)
     {
-        ASSERT_TRUE(g[*v].name == "default constructed name for vertices");
-        auto oes = g.outEdges(*v);
-        for (auto e = oes.first; e != oes.second; e++)
+        ASSERT_TRUE(g.getVertexProperties(v).name == "default constructed name for vertices");
+        auto oes = g.outEdges(v);
+        for (auto e : oes)
         {
-            ASSERT_TRUE(g[*e].name == "default constructed name for edges");
+            ASSERT_TRUE(g.getEdgeProperties(e).name == "default constructed name for edges");
         }
     }
 
@@ -144,11 +144,11 @@ TEST(GraphTest, custom_properties)
 
     ASSERT_TRUE(g.NumVertices() == 7);
 
-    ASSERT_TRUE(g[6].name == "manual constructed name for a vertex");
+    ASSERT_TRUE(g.getVertexProperties(6).name == "manual constructed name for a vertex");
 
     g.setVertexProperties(2, prop);
 
-    ASSERT_TRUE(g[2].name == "manual constructed name for a vertex");
+    ASSERT_TRUE(g.getVertexProperties(2).name == "manual constructed name for a vertex");
 
     g.addEdge(0, 1, 2);
 }
