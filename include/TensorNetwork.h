@@ -424,6 +424,11 @@ public:
                     }
                 }
 
+                // ...---!!! CONTINUE HERE !!!---...
+                // =================================
+                // TODO: 
+                // Check if singular value vertix is present as its tensor is only the diagonal presentation
+
                 // perform tensordot
                 tensordot(src, dest, axesA, axesB);
 
@@ -577,16 +582,18 @@ public:
             mLegs.insert(new_leg_left);
             mLegs.insert(new_leg_right);
 
-            // update current vertex for U and create new vertices for s and V
+            // update current vertex for U
             mGraph.setVertexProperties(vertex_pos, vertex_properties_t{std::move(left_legs), std::move(U)});
+
+            // and create new vertices for s and V
             auto s_ver = mGraph.addVertex(vertex_properties_t{std::move(s_legs), std::move(s), true});
             auto V_ver = mGraph.addVertex(vertex_properties_t{std::move(right_legs), std::move(V)});
 
-            // add edges to graph
+            // add new edges to graph
             mGraph.addEdge(vertex_pos, s_ver, new_leg_left);
             mGraph.addEdge(s_ver, V_ver, new_leg_right);
 
-            // only edges of rhs needs to be updated
+            // only edges of rhs needs to be updated, because edges of lhs are reused in U
             for (int i : right_legs)
             {
                 if (i > 0)
