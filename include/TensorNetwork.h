@@ -397,6 +397,7 @@ public:
                     }
                 }
 
+                // perform trace
                 trace(src, axes[0], axes[1]);
 
                 mGraph.removeEdge(leg_index);
@@ -423,11 +424,15 @@ public:
                     }
                 }
 
+                // perform tensordot
                 tensordot(src, dest, axesA, axesB);
 
+                mGraph.removeEdge(leg_index);
                 mGraph.mergeVertices(src, dest);
             }
             contractionSequence.erase(contractionSequence.begin());
+
+            mLegs.erase(leg_index);
         }
 
         if (!contractionSequence.empty())
@@ -500,18 +505,17 @@ public:
      * @param leg_pos
      * @param vertex_pos
      */
-    void split(std::size_t leg_pos, std::size_t vertex_pos = 0)
+    void split(std::size_t vertex_pos, std::size_t leg_pos)
     {
-        auto vertex = mGraph[vertex_pos];
-        auto legs = vertex.legs;
+        // throw std::logic_error("Not finally implemented yet. Current TODO: update edges.");
+
+        auto vertex = mGraph.getVertexProperties(vertex_pos);
+        std::vector<int> legs = vertex.legs;
         auto tensor = vertex.tensor;
 
         // split legs
-        std::vector<int>::const_iterator leg_pos_it(legs.cbegin());
-        std::advance(leg_pos_it, leg_pos);
-
-        std::vector<int> left_legs(legs.begin(), leg_pos_it);
-        std::vector<int> right_legs(leg_pos_it, legs.end());
+        std::vector<int> left_legs(legs.begin(), legs.begin() + leg_pos);
+        std::vector<int> right_legs(legs.begin() + leg_pos, legs.end());
 
         // split tensor
         std::size_t len = legs.size();
@@ -547,17 +551,21 @@ public:
                 }
             }
 
-            npp::reshape(tensor, npp::shape_type(left, right));
+            npp::reshape(tensor, npp::shape_type({left, right}));
 
             npp::tensor_type<T> U, s, V;
-            std::tie(U, s, V) = npp::linalg::svd(tensor);
+            std::tie(U, s, V) = npp::linalg::svd(tensor, false);
 
             // reshape U,V back to tensors with new shape
             npp::reshape(U, left_shape);
             npp::reshape(V, right_shape);
 
             // new leg ids
-            int new_leg_left = *mLegs.rbegin() + 1;
+            int new_leg_left = 1;
+            if (!mLegs.empty())
+            {
+                new_leg_left = *mLegs.rbegin() + 1;
+            }
             int new_leg_right = new_leg_left + 1;
 
             // add to the subscript vectors
@@ -570,12 +578,12 @@ public:
             mLegs.insert(new_leg_right);
 
             // update current vertex for U and create new vertices for s and V
-            auto U_ver = mGraph.setVertexProperties(vertex_properties_t{std::move(U), std::move(left_legs)}, vertex_pos);
-            auto s_ver = mGraph.addVertex(vertex_properties_t{std::move(s), std::move(s_legs)});
-            auto V_ver = mGraph.addVertex(vertex_properties_t{std::move(U), std::move(right_legs)});
+            mGraph.setVertexProperties(vertex_pos, vertex_properties_t{std::move(left_legs), std::move(U)});
+            auto s_ver = mGraph.addVertex(vertex_properties_t{std::move(s_legs), std::move(s), true});
+            auto V_ver = mGraph.addVertex(vertex_properties_t{std::move(right_legs), std::move(V)});
 
             // add edges to graph
-            mGraph.addEdge(U_ver, s_ver, new_leg_left);
+            mGraph.addEdge(vertex_pos, s_ver, new_leg_left);
             mGraph.addEdge(s_ver, V_ver, new_leg_right);
 
             // only edges of rhs needs to be updated
@@ -592,8 +600,6 @@ public:
                     }
                 }
             }
-
-            throw std::logic_error("Not finally implemented yet. Current TODO: update edges.");
         }
         else
         {

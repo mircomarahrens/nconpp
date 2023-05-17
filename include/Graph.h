@@ -162,6 +162,9 @@ public:
 
             // and add a new edge (source, target_old) with the given edge properties
             boost::add_edge(source, target_old, edge_properties, graph_t);
+
+            // remove the old edge
+            boost::remove_edge(oi, graph_t);
         }
         removeVertex(dest);
     }
@@ -173,7 +176,7 @@ public:
      * @param dest
      * @param edge_index
      */
-    void addEdge(std::size_t src, std::size_t dest, std::size_t edge_index)
+    void addEdge(std::size_t src, std::size_t dest, int edge_index)
     {
         checkEdgeIndex(edge_index);
 
@@ -345,11 +348,12 @@ public:
      * @param new_src
      * @param new_dest
      */
-    void updateEdge(std::size_t edge_index, std::size_t new_src = -1, std::size_t new_dest = -1)
+    void updateEdge(std::size_t edge_index, std::size_t new_src, std::size_t new_dest)
     {
-        out_edge_iterator_t oi, oi_end, next;
+        edge_iterator_t oi, oi_end, next;
         boost::tie(oi, oi_end) = boost::edges(graph_t);
 
+        bool updated = false;
         // iterate through iterators from begin to end via next
         for (next = oi; oi != oi_end; oi = next)
         {
@@ -360,28 +364,18 @@ public:
 
             if (edge_index == edge_properties.edge_index_t)
             {
-                auto src = boost::source(oi, graph_t);
-                auto dest = boost::target(oi, graph_t);
+                updated = true;
 
-                if (new_src != -1) {
-                    src = boost::source(new_src, graph_t);
-                }
+                // and add a new edge (src, dest) with the given edge properties
+                boost::add_edge(new_src, new_dest, edge_properties, graph_t);
 
-                if (new_dest != -1) {
-                    dest = boost::source(new_dest, graph_t);
-                }
-
-                if (new_src != -1 || new_dest != -1) {
-                    // and add a new edge (src, dest) with the given edge properties
-                    boost::add_edge(src, dest, edge_properties, graph_t);
-
-                    // remove the old edge
-                    boost::remove_edge(oi);
-                }
+                // remove the old edge
+                boost::remove_edge(*oi, graph_t);
             }
         }
 
-        throw std::runtime_error(ERROR_MESSAGE::EDGE_INDEX_NOT_PRESENT);
+        if (!updated)
+            throw std::runtime_error(ERROR_MESSAGE::EDGE_INDEX_NOT_PRESENT);
     }
 
     /**

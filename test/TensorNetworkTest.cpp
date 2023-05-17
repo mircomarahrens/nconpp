@@ -269,5 +269,61 @@ TEST(TensorNetworkTest, move_constructed_contract)
 
 TEST(TensorNetworkTest, split)
 {
-    
+    std::vector<npp::shape_type> shapes =
+        {
+            {3, 4, 5},
+            {5, 3, 6, 7, 6},
+            {7, 2},
+            {8},
+            {8, 9},
+            {9, 9},
+        };
+
+    TensorNetwork tn(
+        createTensorList(shapes).first,
+        {
+            {3, -2, 2},
+            {2, 3, 1, 4, 1},
+            {4, -1},
+            {5},
+            {5, -3},
+            {6, 6},
+        });
+
+    ASSERT_THAT(tn.Legs(), ElementsAre(1, 2, 3, 4, 5, 6));
+    ASSERT_THAT(tn.DanglingLegs(), ElementsAre(-3, -2, -1));
+
+    tn.contract();
+
+    auto nt = tn.NumTensors();
+
+    ASSERT_TRUE(nt == 3);
+
+    auto tensorList = tn.TensorList();
+
+    // checks before connect
+    ASSERT_TRUE(tensorList.size() == 3);
+    ASSERT_EQ(tensorList[0].shape(), npp::shape_type({4, 2}));
+    ASSERT_EQ(tensorList[1].shape(), npp::shape_type({9}));
+    ASSERT_EQ(tensorList[2].shape(), npp::shape_type({}));
+
+    tn.connect();
+
+    nt = tn.NumTensors();
+
+    ASSERT_TRUE(nt == 1);
+
+    tensorList = tn.TensorList();
+
+    ASSERT_TRUE(tensorList.size() == 1);
+    ASSERT_EQ(tensorList[0].shape(), npp::shape_type({4, 2, 9}));
+
+    // new test starts here
+    tn.split(0, 1);
+
+    tensorList = tn.TensorList();
+
+    ASSERT_EQ(tensorList[0].shape(), npp::shape_type({4, 4}));
+    ASSERT_EQ(tensorList[1].shape(), npp::shape_type({4}));
+    ASSERT_EQ(tensorList[2].shape(), npp::shape_type({4,2,9}));
 }
