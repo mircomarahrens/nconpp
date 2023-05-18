@@ -39,7 +39,7 @@ private:
     struct custom_vertex_properties
     {
         // place custom properties for vertices here
-        std::vector<int> legs; // TODO should be a set
+        std::vector<int> legs;
         npp::tensor_type<T> tensor;
         bool is_singular_values = false;
     };
