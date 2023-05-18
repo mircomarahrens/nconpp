@@ -1,10 +1,19 @@
 #include <gtest/gtest.h>
+#include <gmock/gmock-matchers.h>
 
 #include "TensorNetwork.h"
 
+using ::testing::ElementsAre;
+
+/**
+ * @brief Create a pair consists of randomize tensors (first) and corresponding descending leg indices (second) from a given vector of shapes.
+ *
+ * @param shapes
+ * @return auto
+ */
 static auto createTensorList(const std::vector<npp::shape_type> &shapes)
 {
-    std::vector<npp::tensor<std::complex<double>>> tensorList = {};
+    std::vector<npp::tensor_type<std::complex<double>>> tensorList = {};
     std::vector<std::vector<int>> legs = {};
     int leg = -1;
     for (auto shape : shapes)
@@ -14,11 +23,13 @@ static auto createTensorList(const std::vector<npp::shape_type> &shapes)
 
         // legs
         std::vector<int> tlegs = {};
-        for (auto i : shapes)
+        for (auto i : shape)
         {
             tlegs.push_back(leg);
             leg--;
         }
+
+        legs.emplace_back(tlegs);
     }
 
     return std::make_pair<>(tensorList, legs);
@@ -31,64 +42,113 @@ class TensorNetworkTest : public testing::Test
     ~TensorNetworkTest() override = default;
 };
 
-TEST(TensorNetworkTest, Graph)
+TEST(TensorNetworkTest, defaultConstructor)
 {
-    struct vertex_properties
+    ASSERT_NO_THROW(TensorNetwork<> tn);
+}
+
+TEST(TensorNetworkTest, explicitCopyConstructor)
+{
+    auto vals = createTensorList({{2, 3, 1}, {3, 1, 2}});
+
+    TensorNetwork<> tn(vals.first, vals.second);
+
+    ASSERT_THAT(tn.DanglingLegs(),
+                ElementsAre(-6, -5, -4, -3, -2, -1));
+    ASSERT_THAT(tn.Legs(),
+                ElementsAre());
+    ASSERT_THAT(tn.TensorShapes(),
+                ElementsAre(npp::shape_type({2, 3, 1}), npp::shape_type({3, 1, 2})));
+}
+
+TEST(TensorNetworkTest, copyConstructor)
+{
+    auto vals = createTensorList({{2, 3, 1}, {3, 1, 2}});
+
+    TensorNetwork<> tn1(vals.first, vals.second);
+
+    // call copy constructor
+    TensorNetwork<> tn2(tn1);
+
+    ASSERT_EQ(tn1.DanglingLegs(), tn2.DanglingLegs());
+    ASSERT_EQ(tn1.Legs(), tn2.Legs());
+    ASSERT_EQ(tn1.TensorShapes(), tn2.TensorShapes());
+}
+
+TEST(TensorNetworkTest, moveConstructor)
+{
+    auto vals = createTensorList({{2, 3, 1}, {3, 1, 2}});
+
+    TensorNetwork<> tn1(vals.first, vals.second);
+
+    ASSERT_THAT(tn1.DanglingLegs(),
+                ElementsAre(-6, -5, -4, -3, -2, -1));
+    ASSERT_THAT(tn1.Legs(),
+                ElementsAre());
+    ASSERT_THAT(tn1.TensorShapes(),
+                ElementsAre(npp::shape_type({2, 3, 1}), npp::shape_type({3, 1, 2})));
+
+    // call move constructor
+    TensorNetwork<> tn2(std::move(tn1));
+
+    ASSERT_THAT(tn2.DanglingLegs(),
+                ElementsAre(-6, -5, -4, -3, -2, -1));
+    ASSERT_THAT(tn2.Legs(),
+                ElementsAre());
+    ASSERT_THAT(tn2.TensorShapes(),
+                ElementsAre(npp::shape_type({2, 3, 1}), npp::shape_type({3, 1, 2})));
+
+    ASSERT_THAT(tn1.DanglingLegs(),
+                ElementsAre());
+    ASSERT_THAT(tn1.Legs(),
+                ElementsAre());
+    ASSERT_THAT(tn1.TensorShapes(),
+                ElementsAre());
+}
+
+TEST(TensorNetworkTest, explicitMoveConstructor)
+{
+    // TODO how to test the move constructor?
+
+    std::vector<npp::shape_type> shapes = {{2, 3, 1}, {3, 1, 2}};
+
+    std::vector<npp::tensor_type<std::complex<double>>> tensorList = {};
+    std::vector<std::vector<int>> legs = {};
+    int leg = -1;
+    for (auto shape : shapes)
     {
-        std::vector<int> legs = {1, 2, 3};
-    };
+        // tensor
+        tensorList.emplace_back(xt::random::rand<double>(shape));
 
-    typedef boost::adjacency_list<
-        boost::vecS,
-        boost::vecS,
-        boost::undirectedS,
-        vertex_properties,
-        boost::property<boost::edge_index_t, std::size_t>>
-        graph_t;
+        // legs
+        std::vector<int> tlegs = {};
+        for (auto i : shape)
+        {
+            tlegs.push_back(leg);
+            leg--;
+        }
 
-    typedef boost::graph_traits<graph_t>::edge_descriptor edge_d;
-    typedef boost::property_map<graph_t, boost::edge_index_t>::type edge_index_pm;
-    typedef boost::graph_traits<graph_t>::edge_iterator edge_it;
-    typedef boost::graph_traits<graph_t>::vertex_descriptor vertex_d;
-    typedef boost::graph_traits<graph_t>::vertex_iterator vertex_it;
-    typedef boost::graph_traits<graph_t>::adjacency_iterator adjacency_it;
-
-    std::size_t N = 5;
-    graph_t G(N);
-
-    ASSERT_TRUE(boost::num_vertices(G) == N);
-
-    typedef std::pair<int, int> Pair;
-    Pair edge_array[11] = {
-        Pair(0, 1),
-        Pair(0, 2),
-        Pair(0, 3),
-        Pair(0, 4),
-        Pair(2, 0),
-        Pair(3, 0),
-        Pair(2, 4),
-        Pair(3, 1),
-        Pair(3, 4),
-        Pair(4, 0),
-        Pair(4, 1),
-    };
-
-    int NE = 11;
-    for (int i = 0; i < NE; ++i)
-    {
-        auto e = boost::add_edge(edge_array[i].first, edge_array[i].second, i + 1, G);
-        ASSERT_TRUE(e.second == true);
+        legs.emplace_back(tlegs);
     }
-    ASSERT_TRUE(boost::num_edges(G) == NE);
+
+    // call explicit move constructor
+    TensorNetwork<> tn(std::move(tensorList), std::move(legs));
+
+    ASSERT_THAT(tn.DanglingLegs(),
+                ElementsAre(-6, -5, -4, -3, -2, -1));
+    ASSERT_THAT(tn.Legs(),
+                ElementsAre());
+    ASSERT_THAT(tn.TensorShapes(),
+                ElementsAre(npp::shape_type({2, 3, 1}), npp::shape_type({3, 1, 2})));
 }
 
 TEST(TensorNetworkTest, logicError_MoreThanTwoLegs)
 {
-    std::vector<npp::tensor<std::complex<double>>> tensorList =
+    std::vector<npp::tensor_type<std::complex<double>>> tensorList =
         {
-            npp::tensor<std::complex<double>>({3, 4, 5}),
-            npp::tensor<std::complex<double>>({5, 3, 6, 7, 6}),
-            npp::tensor<std::complex<double>>({7, 2}),
+            npp::tensor_type<std::complex<double>>({3, 4, 5}),
+            npp::tensor_type<std::complex<double>>({5, 3, 6, 7, 6}),
+            npp::tensor_type<std::complex<double>>({7, 2}),
         };
 
     std::vector<std::vector<int>> legLinks =
@@ -101,16 +161,16 @@ TEST(TensorNetworkTest, logicError_MoreThanTwoLegs)
     EXPECT_THROW(
         try {
             TensorNetwork tn(std::move(tensorList), legLinks);
-        } catch (const std::logic_error &ex) {
-            EXPECT_EQ(ERROR::CONSTRAINT_LEGPAIRS, ex.what());
+        } catch (const std::invalid_argument &ex) {
+            EXPECT_EQ(ERROR_MESSAGE::EDGE_INDEX_PRESENT, ex.what());
             throw;
         },
-        std::logic_error);
+        std::invalid_argument);
 }
 
 TEST(TensorNetworkTest, copy_constructed_contract)
 {
-    std::vector<npp::tensor<std::complex<double>>> tensorList =
+    std::vector<npp::tensor_type<std::complex<double>>> tensorList =
         {
             xt::random::rand<double>({3, 4, 5}),
             xt::random::rand<double>({5, 3, 6, 7, 6}),
@@ -134,20 +194,28 @@ TEST(TensorNetworkTest, copy_constructed_contract)
 
     tn.contract();
 
-    auto nt = tn.num_tensors();
+    auto nt = tn.NumTensors();
 
     ASSERT_TRUE(nt == 3);
 
+    tensorList = tn.TensorList();
+
+    // checks before connect
+    ASSERT_TRUE(tensorList.size() == 3);
+    ASSERT_EQ(tensorList[0].shape(), npp::shape_type({4, 2}));
+    ASSERT_EQ(tensorList[1].shape(), npp::shape_type({9}));
+    ASSERT_EQ(tensorList[2].shape(), npp::shape_type({}));
+
     tn.connect();
 
-    nt = tn.num_tensors();
+    nt = tn.NumTensors();
 
     ASSERT_TRUE(nt == 1);
 
-    tensorList = tn.getTensorList();
+    tensorList = tn.TensorList();
 
-    npp::shape_type shape = {4, 2, 9};
-    ASSERT_EQ(tensorList[0].shape(), shape);
+    ASSERT_TRUE(tensorList.size() == 1);
+    ASSERT_EQ(tensorList[0].shape(), npp::shape_type({4, 2, 9}));
 }
 
 TEST(TensorNetworkTest, move_constructed_contract)
@@ -175,40 +243,105 @@ TEST(TensorNetworkTest, move_constructed_contract)
 
     tn.contract();
 
-    auto nt = tn.num_tensors();
+    auto nt = tn.NumTensors();
 
     ASSERT_TRUE(nt == 3);
 
+    auto tensorList = tn.TensorList();
+
+    // checks before connect
+    ASSERT_TRUE(tensorList.size() == 3);
+    ASSERT_EQ(tensorList[0].shape(), npp::shape_type({4, 2}));
+    ASSERT_EQ(tensorList[1].shape(), npp::shape_type({9}));
+    ASSERT_EQ(tensorList[2].shape(), npp::shape_type({}));
+
     tn.connect();
 
-    nt = tn.num_tensors();
+    nt = tn.NumTensors();
 
     ASSERT_TRUE(nt == 1);
 
-    auto tensorList = tn.getTensorList();
+    tensorList = tn.TensorList();
 
-    npp::shape_type shape = {4, 2, 9};
-    ASSERT_EQ(tensorList[0].shape(), shape);
+    ASSERT_TRUE(tensorList.size() == 1);
+    ASSERT_EQ(tensorList[0].shape(), npp::shape_type({4, 2, 9}));
 }
 
-TEST(TensorTest, svd)
+TEST(TensorNetworkTest, split)
 {
-    // from https://github.com/xtensor-stack/xtensor-blas/blob/master/test/test_linalg.cpp
-    npp::tensor<double> arg_0 = {{0, 1, 2},
-                                 {3, 4, 5},
-                                 {6, 7, 8}};
+    std::vector<npp::shape_type> shapes =
+        {
+            {3, 4, 5},
+            {5, 3, 6, 7, 6},
+            {7, 2},
+            {8},
+            {8, 9},
+            {9, 9},
+        };
 
-    auto res = npp::linalg::svd(arg_0);
+    TensorNetwork tn(
+        createTensorList(shapes).first,
+        {
+            {3, -2, 2},
+            {2, 3, 1, 4, 1},
+            {4, -1},
+            {5},
+            {5, -3},
+            {6, 6},
+        });
 
-    npp::tensor<double> expected_0 = {{-0.13511895, 0.90281571, 0.40824829},
-                                      {-0.49633514, 0.29493179, -0.81649658},
-                                      {-0.85755134, -0.31295213, 0.40824829}};
-    npp::tensor<double> expected_1 = {1.42267074e+01, 1.26522599e+00, 5.89938022e-16};
-    npp::tensor<double> expected_2 = {{-0.4663281, -0.57099079, -0.67565348},
-                                      {-0.78477477, -0.08545673, 0.61386131},
-                                      {-0.40824829, 0.81649658, -0.40824829}};
+    ASSERT_THAT(tn.Legs(), ElementsAre(1, 2, 3, 4, 5, 6));
+    ASSERT_THAT(tn.DanglingLegs(), ElementsAre(-3, -2, -1));
 
-    ASSERT_TRUE(npp::allclose(std::get<0>(res), expected_0));
-    ASSERT_TRUE(npp::allclose(std::get<1>(res), expected_1));
-    ASSERT_TRUE(npp::allclose(std::get<2>(res), expected_2));
+    tn.contract();
+
+    auto nt = tn.NumTensors();
+
+    ASSERT_TRUE(nt == 3);
+
+    auto tensorList = tn.TensorList();
+
+    // checks before connect
+    ASSERT_TRUE(tensorList.size() == 3);
+    ASSERT_EQ(tensorList[0].shape(), npp::shape_type({4, 2}));
+    ASSERT_EQ(tensorList[1].shape(), npp::shape_type({9}));
+    ASSERT_EQ(tensorList[2].shape(), npp::shape_type({}));
+
+    tn.connect();
+
+    nt = tn.NumTensors();
+
+    ASSERT_TRUE(nt == 1);
+
+    tensorList = tn.TensorList();
+
+    ASSERT_TRUE(tensorList.size() == 1);
+    ASSERT_EQ(tensorList[0].shape(), npp::shape_type({4, 2, 9}));
+
+    auto tensor = tensorList[0];
+
+    // new test starts here
+    tn.split(0, 1);
+
+    tensorList = tn.TensorList();
+
+    ASSERT_EQ(tensorList[0].shape(), npp::shape_type({4, 4}));
+    ASSERT_EQ(tensorList[1].shape(), npp::shape_type({4}));
+    ASSERT_EQ(tensorList[2].shape(), npp::shape_type({4, 2, 9}));
+
+    auto U = tensorList[0];
+    auto s = tensorList[1];
+    auto V = tensorList[2];
+
+    npp::tensor_type<std::complex<double>> smat = npp::zeros<std::complex<double>>(npp::shape_type({4, 4}));
+    for (int i = 0 ; i < 4; i++)
+    {
+        smat(i,i) = s(i);
+    }
+
+    auto Us = npp::linalg::dot(U, smat);
+    ASSERT_EQ(Us.shape(), npp::shape_type({4, 4}));
+    auto result = npp::linalg::tensordot(Us, V, {1}, {0});
+    ASSERT_EQ(result.shape(), npp::shape_type({4, 2, 9}));
+    ASSERT_TRUE(npp::allclose(tensor, result));
 }

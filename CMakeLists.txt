@@ -36,13 +36,13 @@ set(NCONPP_DEPENDENCIES
     xtensor-blas)
 
 set(NCONPP_INCLUDE
-    include/LogMessages.h
+    include/Graph.h
     include/Tensor.h
     include/TensorNetwork.h
     )
 
 
-        # debug
+# debug
 if (CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
     message(STATUS "GoogleTest process triggered.")
     project(nconpp_tests)
@@ -62,8 +62,10 @@ if (CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
 
     add_executable(nconpp_tests_run
         test/nconpp_tests_run.cpp
-        test/TensorNetworkTest.cpp
-        test/TensorTest.cpp)
+        test/GraphTest.cpp
+        test/GraphTest_F.cpp
+        test/TensorTest.cpp
+        test/TensorNetworkTest.cpp)
 
     target_include_directories(nconpp_tests_run PUBLIC
         include/
@@ -75,7 +77,7 @@ if (CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
         gmock_main
         gtest_main)
 
-    include(CTest)
+    # include(CTest)
     include(GoogleTest)
     gtest_discover_tests(nconpp_tests_run)
 endif ()
