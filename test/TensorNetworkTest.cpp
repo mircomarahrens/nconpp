@@ -318,6 +318,8 @@ TEST(TensorNetworkTest, split)
     ASSERT_TRUE(tensorList.size() == 1);
     ASSERT_EQ(tensorList[0].shape(), npp::shape_type({4, 2, 9}));
 
+    auto tensor = tensorList[0];
+
     // new test starts here
     tn.split(0, 1);
 
@@ -325,5 +327,21 @@ TEST(TensorNetworkTest, split)
 
     ASSERT_EQ(tensorList[0].shape(), npp::shape_type({4, 4}));
     ASSERT_EQ(tensorList[1].shape(), npp::shape_type({4}));
-    ASSERT_EQ(tensorList[2].shape(), npp::shape_type({4,2,9}));
+    ASSERT_EQ(tensorList[2].shape(), npp::shape_type({4, 2, 9}));
+
+    auto U = tensorList[0];
+    auto s = tensorList[1];
+    auto V = tensorList[2];
+
+    npp::tensor_type<std::complex<double>> smat = npp::zeros<std::complex<double>>(npp::shape_type({4, 4}));
+    for (int i = 0 ; i < 4; i++)
+    {
+        smat(i,i) = s(i);
+    }
+
+    auto Us = npp::linalg::dot(U, smat);
+    ASSERT_EQ(Us.shape(), npp::shape_type({4, 4}));
+    auto result = npp::linalg::tensordot(Us, V, {1}, {0});
+    ASSERT_EQ(result.shape(), npp::shape_type({4, 2, 9}));
+    ASSERT_TRUE(npp::allclose(tensor, result));
 }
