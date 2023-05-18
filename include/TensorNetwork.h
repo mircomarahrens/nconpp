@@ -74,6 +74,7 @@ private:
 
         if (vertex_properties.is_singular_values)
         {
+            // TODO
         }
 
         auto _tensor = npp::linalg::trace(vertex_properties.tensor, 0, axes_a, axes_b);
@@ -210,7 +211,7 @@ public:
                 std::to_string(subscript_vector_list.size()) + ".");
         }
 
-        std::size_t vertex_index = 0;
+        std::size_t _vertex_index = 0;
         // counting occurrence of legs to check constraints
         std::unordered_map<std::size_t, std::size_t> _vertex_leg_map;
         for (auto &_subscript_vector : subscript_vector_list)
@@ -243,7 +244,7 @@ public:
                         std::size_t prev = _vertex_leg_map[_leg_index];
 
                         // add edge between previous src and dest (the current src)
-                        m_graph.addEdge(prev, vertex_index, _leg_index);
+                        m_graph.addEdge(prev, _vertex_index, _leg_index);
 
                         // erase entry from map
                         _vertex_leg_map.erase(_leg_index);
@@ -251,7 +252,7 @@ public:
                     else
                     {
                         // store mapping leg to src
-                        _vertex_leg_map[_leg_index] = vertex_index;
+                        _vertex_leg_map[_leg_index] = _vertex_index;
 
                         // store edge leg
                         m_legs.insert(_leg_index);
@@ -259,10 +260,10 @@ public:
                 }
             }
 
-            m_graph.setVertexProperties(vertex_index,
-                                        vertex_properties_t{subscript_vector_list[vertex_index], tensor_list[vertex_index]});
+            m_graph.setVertexProperties(_vertex_index,
+                                        vertex_properties_t{subscript_vector_list[_vertex_index], tensor_list[_vertex_index]});
 
-            vertex_index++;
+            _vertex_index++;
         }
     };
 
@@ -291,7 +292,7 @@ public:
                 std::to_string(subscript_vector_list.size()) + ".");
         }
 
-        std::size_t vertex_index = 0;
+        std::size_t _vertex_index = 0;
         // counting occurrence of legs to check constraints
         std::unordered_map<std::size_t, std::size_t> _vertex_leg_map;
         for (auto &_subscript_vector : subscript_vector_list)
@@ -324,7 +325,7 @@ public:
                         std::size_t prev = _vertex_leg_map[_leg_index];
 
                         // add edge between previous src and dest (the current src)
-                        m_graph.addEdge(prev, vertex_index, _leg_index);
+                        m_graph.addEdge(prev, _vertex_index, _leg_index);
 
                         // erase entry from map
                         _vertex_leg_map.erase(_leg_index);
@@ -332,7 +333,7 @@ public:
                     else
                     {
                         // store mapping leg to src
-                        _vertex_leg_map[_leg_index] = vertex_index;
+                        _vertex_leg_map[_leg_index] = _vertex_index;
 
                         // store edge leg
                         m_legs.insert(_leg_index);
@@ -340,10 +341,10 @@ public:
                 }
             }
 
-            m_graph.setVertexProperties(vertex_index,
-                                        vertex_properties_t{std::move(subscript_vector_list[vertex_index]), std::move(tensor_list[vertex_index])});
+            m_graph.setVertexProperties(_vertex_index,
+                                        vertex_properties_t{std::move(subscript_vector_list[_vertex_index]), std::move(tensor_list[_vertex_index])});
 
-            vertex_index++;
+            _vertex_index++;
         }
     };
 
