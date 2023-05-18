@@ -51,82 +51,82 @@ private:
 
     // TODO maybe inherit? TensorNetwork : public Graph
     // graph object for this class
-    Graph<custom_vertex_properties, custom_edge_properties> mGraph;
+    Graph<custom_vertex_properties, custom_edge_properties> m_graph;
 
     // custom typedefs
     typedef Graph<custom_vertex_properties, custom_edge_properties>::vertex_properties_t vertex_properties_t;
     typedef Graph<custom_vertex_properties, custom_edge_properties>::edge_properties_t edge_properties_t;
 
     // store negative and positive legs in separate sets
-    std::set<int> mDanglingLegs = {}; // negative leg indices
-    std::set<int> mLegs = {};         // positive leg indices
+    std::set<int> m_dangling_legs = {}; // negative leg indices
+    std::set<int> m_legs = {};          // positive leg indices
 
     /**
-     * @brief Perform a trace on a specific vertex between axesA and axesB.
+     * @brief Perform a trace on a specific vertex between axes_a and axes_b.
      *
      * @param vertex_index
-     * @param axesA
-     * @param axesB
+     * @param axes_a
+     * @param axes_b
      */
-    void trace(std::size_t vertex_index, std::size_t axesA, std::size_t axesB)
+    void trace(std::size_t vertex_index, std::size_t axes_a, std::size_t axes_b)
     {
-        auto vertex_properties = mGraph.getVertexProperties(vertex_index);
+        auto vertex_properties = m_graph.getVertexProperties(vertex_index);
 
         if (vertex_properties.is_singular_values)
         {
-
+            // TODO
         }
 
-        auto newTensor = npp::linalg::trace(vertex_properties.tensor, 0, axesA, axesB);
+        auto _tensor = npp::linalg::trace(vertex_properties.tensor, 0, axes_a, axes_b);
 
-        auto newLegs = vertex_properties.legs;
-        newLegs.erase(newLegs.begin() + axesB);
-        newLegs.erase(newLegs.begin() + axesA);
+        auto &_legs = vertex_properties.legs;
+        _legs.erase(_legs.begin() + axes_b);
+        _legs.erase(_legs.begin() + axes_a);
 
-        mGraph.setVertexProperties(vertex_index,
-                                   vertex_properties_t{std::move(newLegs), std::move(newTensor)});
+        m_graph.setVertexProperties(vertex_index,
+                                    vertex_properties_t{std::move(_legs), std::move(_tensor)});
     };
 
     /**
-     * @brief Perform a tensordot on specific vertices between axesA and axesB.
+     * @brief Perform a tensordot on specific vertices between axes_a and axes_b.
      *
      * @param src
      * @param dest
-     * @param axesA
-     * @param axesB
+     * @param axes_a
+     * @param axes_b
      */
-    void tensordot(std::size_t src, std::size_t dest, std::vector<std::size_t> axesA, std::vector<std::size_t> axesB)
+    void tensordot(std::size_t src, std::size_t dest, std::vector<std::size_t> axes_a, std::vector<std::size_t> axes_b)
     {
-        auto source_properties = mGraph.getVertexProperties(src);
-        auto target_properties = mGraph.getVertexProperties(dest);
+        auto _source_properties = m_graph.getVertexProperties(src);
+        auto _target_properties = m_graph.getVertexProperties(dest);
 
-        auto legsA = source_properties.legs;
-        auto legsB = target_properties.legs;
+        auto _legs_a = _source_properties.legs;
+        auto _legs_b = _target_properties.legs;
 
-        legsA.erase(legsA.begin() + axesA[0]);
-        legsB.erase(legsB.begin() + axesB[0]);
+        _legs_a.erase(_legs_a.begin() + axes_a[0]);
+        _legs_b.erase(_legs_b.begin() + axes_b[0]);
 
-        std::vector<int> newLegs = {};
-        newLegs.insert(newLegs.end(), legsA.begin(), legsA.end());
-        newLegs.insert(newLegs.end(), legsB.begin(), legsB.end());
+        std::vector<int> _legs = {};
+        _legs.insert(_legs.end(), _legs_a.begin(), _legs_a.end());
+        _legs.insert(_legs.end(), _legs_b.begin(), _legs_b.end());
 
-        auto tensorA = source_properties.tensor;
-        auto tensorB = target_properties.tensor;
+        auto _tensor_a = _source_properties.tensor;
+        auto _tensor_b = _target_properties.tensor;
 
-        if (source_properties.is_singular_values)
+        if (_source_properties.is_singular_values)
         {
-
+            // TODO
         }
 
-        if (target_properties.is_singular_values)
+        if (_target_properties.is_singular_values)
         {
-
+            // TODO
         }
 
-        auto newTensor = npp::linalg::tensordot(tensorA, tensorB, axesA, axesB);
+        auto _tensor = npp::linalg::tensordot(_tensor_a, _tensor_b, axes_a, axes_b);
 
-        mGraph.setVertexProperties(src,
-                                   vertex_properties_t{std::move(newLegs), std::move(newTensor)});
+        m_graph.setVertexProperties(src,
+                                    vertex_properties_t{std::move(_legs), std::move(_tensor)});
     };
 
     /**
@@ -137,22 +137,22 @@ private:
      */
     void outer(std::size_t src, std::size_t dest)
     {
-        auto legsA = mGraph.getVertexProperties(src).legs;
-        auto legsB = mGraph.getVertexProperties(dest).legs;
+        auto _legs_a = m_graph.getVertexProperties(src).legs;
+        auto _legs_b = m_graph.getVertexProperties(dest).legs;
 
-        auto tensorA = mGraph.getVertexProperties(src).tensor;
-        auto tensorB = mGraph.getVertexProperties(dest).tensor;
+        auto _tensor_a = m_graph.getVertexProperties(src).tensor;
+        auto _tensor_b = m_graph.getVertexProperties(dest).tensor;
 
-        auto newTensor = npp::linalg::outer(tensorA, tensorB);
+        auto _tensor = npp::linalg::outer(_tensor_a, _tensor_b);
 
-        std::vector<int> newLegs = {};
-        newLegs.insert(newLegs.end(), legsA.begin(), legsA.end());
-        newLegs.insert(newLegs.end(), legsB.begin(), legsB.end());
+        std::vector<int> _legs = {};
+        _legs.insert(_legs.end(), _legs_a.begin(), _legs_a.end());
+        _legs.insert(_legs.end(), _legs_b.begin(), _legs_b.end());
 
-        mGraph.setVertexProperties(src,
-                                   vertex_properties_t{std::move(newLegs), std::move(newTensor)});
+        m_graph.setVertexProperties(src,
+                                    vertex_properties_t{std::move(_legs), std::move(_tensor)});
 
-        mGraph.removeVertex(dest);
+        m_graph.removeVertex(dest);
     }
 
 public:
@@ -167,9 +167,9 @@ public:
      *
      * @param other
      */
-    TensorNetwork(const TensorNetwork &other) : mDanglingLegs(other.mDanglingLegs),
-                                                mLegs(other.mLegs),
-                                                mGraph(other.mGraph)
+    TensorNetwork(const TensorNetwork &other) : m_dangling_legs(other.m_dangling_legs),
+                                                m_legs(other.m_legs),
+                                                m_graph(other.m_graph)
     {
     }
 
@@ -177,174 +177,174 @@ public:
      * @brief Move constructor.
      *
      */
-    TensorNetwork(TensorNetwork &&other) : mDanglingLegs(other.mDanglingLegs),
-                                           mLegs(other.mLegs),
-                                           mGraph(other.mGraph)
+    TensorNetwork(TensorNetwork &&other) : m_dangling_legs(other.m_dangling_legs),
+                                           m_legs(other.m_legs),
+                                           m_graph(other.m_graph)
     {
-        other.mDanglingLegs = {};
-        other.mLegs = {};
-        other.mGraph = {};
+        other.m_dangling_legs = {};
+        other.m_legs = {};
+        other.m_graph = {};
     }
 
     /**
      * Explicit copy constructor with given parameters.
      *
-     * @param tensorList
+     * @param tensor_list
      *  - a list of tensors
-     * @param subscriptVectorList
+     * @param subscript_vector_list
      *  - aka LegsList
-     *  - Nomenclature of the legs of the tensor in tensorList:
+     *  - Nomenclature of the legs of the tensor in tensor_list:
      *      - the legs are named by integers
      *      - 0 is not a valid leg identifier
      *      - contractible legs have the same positive integer as identifier, hence occurring in pairs
      *      - legs with negative integers won't be contracted, so-called dangling legs
      */
-    explicit TensorNetwork(const std::vector<npp::tensor_type<T>> &tensorList,
-                           const std::vector<std::vector<int>> &subscriptVectorList) : mGraph(tensorList.size())
+    explicit TensorNetwork(const std::vector<npp::tensor_type<T>> &tensor_list,
+                           const std::vector<std::vector<int>> &subscript_vector_list) : m_graph(tensor_list.size())
     {
-        if (tensorList.size() != subscriptVectorList.size())
+        if (tensor_list.size() != subscript_vector_list.size())
         {
             throw std::invalid_argument(
                 "The number of tensors, which is " +
-                std::to_string(tensorList.size()) +
+                std::to_string(tensor_list.size()) +
                 ", does not match the number of legs, which is " +
-                std::to_string(subscriptVectorList.size()) + ".");
+                std::to_string(subscript_vector_list.size()) + ".");
         }
 
-        std::size_t vertex_index = 0;
+        std::size_t _vertex_index = 0;
         // counting occurrence of legs to check constraints
         std::unordered_map<std::size_t, std::size_t> _vertex_leg_map;
-        for (auto &subscriptVector : subscriptVectorList)
+        for (auto &_subscript_vector : subscript_vector_list)
         {
-            for (int leg_index : subscriptVector)
+            for (int _leg_index : _subscript_vector)
             {
                 // 0 is an invalid leg index by convention
-                if (leg_index == 0)
+                if (_leg_index == 0)
                 {
                     throw std::invalid_argument(ERROR::CONSTRAINT_INVALIDLEG);
                 }
 
                 // store negative leg ids as dangling legs
-                if (leg_index < 0)
+                if (_leg_index < 0)
                 {
-                    if (mDanglingLegs.contains(leg_index))
+                    if (m_dangling_legs.contains(_leg_index))
                     {
                         throw std::invalid_argument(ERROR::CONSTRAINT_UNIQUELEGS);
                     }
-                    mDanglingLegs.insert(leg_index);
+                    m_dangling_legs.insert(_leg_index);
                 }
 
                 // store positive legs as edge legs
-                if (leg_index > 0)
+                if (_leg_index > 0)
                 {
                     // if leg_id has already been seen -> form an edge
-                    if (mLegs.contains(leg_index))
+                    if (m_legs.contains(_leg_index))
                     {
                         // obtain previous src from map
-                        std::size_t prev = _vertex_leg_map[leg_index];
+                        std::size_t prev = _vertex_leg_map[_leg_index];
 
                         // add edge between previous src and dest (the current src)
-                        mGraph.addEdge(prev, vertex_index, leg_index);
+                        m_graph.addEdge(prev, _vertex_index, _leg_index);
 
                         // erase entry from map
-                        _vertex_leg_map.erase(leg_index);
+                        _vertex_leg_map.erase(_leg_index);
                     }
                     else
                     {
                         // store mapping leg to src
-                        _vertex_leg_map[leg_index] = vertex_index;
+                        _vertex_leg_map[_leg_index] = _vertex_index;
 
                         // store edge leg
-                        mLegs.insert(leg_index);
+                        m_legs.insert(_leg_index);
                     }
                 }
             }
 
-            mGraph.setVertexProperties(vertex_index,
-                                       vertex_properties_t{subscriptVectorList[vertex_index], tensorList[vertex_index]});
+            m_graph.setVertexProperties(_vertex_index,
+                                        vertex_properties_t{subscript_vector_list[_vertex_index], tensor_list[_vertex_index]});
 
-            vertex_index++;
+            _vertex_index++;
         }
     };
 
     /**
      * Explicit move constructor with given parameters.
      *
-     * @param tensorList
+     * @param tensor_list
      *  - a list of tensors
-     * @param subscriptVectorList
+     * @param subscript_vector_list
      *  - aka LegsList
-     *  - Nomenclature of the legs of the tensor in tensorList:
+     *  - Nomenclature of the legs of the tensor in tensor_list:
      *      - the legs are named by integers
      *      - 0 is not a valid leg identifier
      *      - contractible legs have the same positive integer as identifier, hence occurring in pairs
      *      - legs with negative integers won't be contracted, so-called dangling legs
      */
-    explicit TensorNetwork(std::vector<npp::tensor_type<T>> &&tensorList,
-                           std::vector<std::vector<int>> &&subscriptVectorList) : mGraph(tensorList.size())
+    explicit TensorNetwork(std::vector<npp::tensor_type<T>> &&tensor_list,
+                           std::vector<std::vector<int>> &&subscript_vector_list) : m_graph(tensor_list.size())
     {
-        if (tensorList.size() != subscriptVectorList.size())
+        if (tensor_list.size() != subscript_vector_list.size())
         {
             throw std::invalid_argument(
                 "The number of tensors, which is " +
-                std::to_string(tensorList.size()) +
+                std::to_string(tensor_list.size()) +
                 ", does not match the number of legs, which is " +
-                std::to_string(subscriptVectorList.size()) + ".");
+                std::to_string(subscript_vector_list.size()) + ".");
         }
 
-        std::size_t vertex_index = 0;
+        std::size_t _vertex_index = 0;
         // counting occurrence of legs to check constraints
         std::unordered_map<std::size_t, std::size_t> _vertex_leg_map;
-        for (auto &subscriptVector : subscriptVectorList)
+        for (auto &_subscript_vector : subscript_vector_list)
         {
-            for (int leg_index : subscriptVector)
+            for (int _leg_index : _subscript_vector)
             {
                 // 0 is an invalid leg index by convention
-                if (leg_index == 0)
+                if (_leg_index == 0)
                 {
                     throw std::invalid_argument(ERROR::CONSTRAINT_INVALIDLEG);
                 }
 
                 // store negative leg ids as dangling legs
-                if (leg_index < 0)
+                if (_leg_index < 0)
                 {
-                    if (mDanglingLegs.contains(leg_index))
+                    if (m_dangling_legs.contains(_leg_index))
                     {
                         throw std::invalid_argument(ERROR::CONSTRAINT_UNIQUELEGS);
                     }
-                    mDanglingLegs.insert(leg_index);
+                    m_dangling_legs.insert(_leg_index);
                 }
 
                 // store positive legs as edge legs
-                if (leg_index > 0)
+                if (_leg_index > 0)
                 {
                     // if leg_id has already been seen -> form an edge
-                    if (mLegs.contains(leg_index))
+                    if (m_legs.contains(_leg_index))
                     {
                         // obtain previous src from map
-                        std::size_t prev = _vertex_leg_map[leg_index];
+                        std::size_t prev = _vertex_leg_map[_leg_index];
 
                         // add edge between previous src and dest (the current src)
-                        mGraph.addEdge(prev, vertex_index, leg_index);
+                        m_graph.addEdge(prev, _vertex_index, _leg_index);
 
                         // erase entry from map
-                        _vertex_leg_map.erase(leg_index);
+                        _vertex_leg_map.erase(_leg_index);
                     }
                     else
                     {
                         // store mapping leg to src
-                        _vertex_leg_map[leg_index] = vertex_index;
+                        _vertex_leg_map[_leg_index] = _vertex_index;
 
                         // store edge leg
-                        mLegs.insert(leg_index);
+                        m_legs.insert(_leg_index);
                     }
                 }
             }
 
-            mGraph.setVertexProperties(vertex_index,
-                                       vertex_properties_t{std::move(subscriptVectorList[vertex_index]), std::move(tensorList[vertex_index])});
+            m_graph.setVertexProperties(_vertex_index,
+                                        vertex_properties_t{std::move(subscript_vector_list[_vertex_index]), std::move(tensor_list[_vertex_index])});
 
-            vertex_index++;
+            _vertex_index++;
         }
     };
 
@@ -361,7 +361,7 @@ public:
      */
     const std::set<int> &DanglingLegs()
     {
-        return mDanglingLegs;
+        return m_dangling_legs;
     }
 
     /**
@@ -370,90 +370,90 @@ public:
      */
     const std::set<int> &Legs()
     {
-        return mLegs;
+        return m_legs;
     }
 
     /**
      *
-     * @param contractionSequence
+     * @param contraction_sequence
      *  - order by legs in which the tensors shall be contracted
-     * @param finalOrder
+     * @param final_order
      *  - permutation of the legs of the final tensors
      */
-    void contract(std::vector<int> contractionSequence = {}, std::vector<int> finalOrder = {})
+    void contract(std::vector<int> contraction_sequence = {}, std::vector<int> final_order = {})
     {
         // fill contraction sequence with positive legs if initially empty
-        if (contractionSequence.empty())
+        if (contraction_sequence.empty())
         {
-            contractionSequence.insert(contractionSequence.begin(), mLegs.begin(), mLegs.end());
+            contraction_sequence.insert(contraction_sequence.begin(), m_legs.begin(), m_legs.end());
         }
 
         // fill final order with negative legs if initially empty
-        if (finalOrder.empty())
+        if (final_order.empty())
         {
-            finalOrder.insert(finalOrder.end(), mDanglingLegs.begin(), mDanglingLegs.end());
+            final_order.insert(final_order.end(), m_dangling_legs.begin(), m_dangling_legs.end());
         }
 
-        while (!contractionSequence.empty())
+        while (!contraction_sequence.empty())
         {
 
-            int leg_index = *contractionSequence.begin();
-            auto edge = mGraph.getEdge(leg_index);
+            int _leg_index = *contraction_sequence.begin();
+            auto _edge = m_graph.getEdge(_leg_index);
 
-            auto src = edge.first;
-            auto dest = edge.second;
+            auto _src = _edge.first;
+            auto _dest = _edge.second;
 
-            if (src == dest)
+            if (_src == _dest)
             { // trace
 
-                std::vector<std::size_t> axes = {};
-                for (auto axis = 0; axis < mGraph.getVertexProperties(dest).legs.size(); axis++)
+                std::vector<std::size_t> _axes = {};
+                for (auto _axis = 0; _axis < m_graph.getVertexProperties(_dest).legs.size(); _axis++)
                 {
-                    if (mGraph.getVertexProperties(dest).legs[axis] == leg_index)
+                    if (m_graph.getVertexProperties(_dest).legs[_axis] == _leg_index)
                     {
-                        axes.emplace_back(axis);
+                        _axes.emplace_back(_axis);
                     }
                 }
 
-                trace(src, axes[0], axes[1]);
+                trace(_src, _axes[0], _axes[1]);
 
-                mGraph.removeEdge(leg_index);
+                m_graph.removeEdge(_leg_index);
             }
             else
             { // tensordot
 
                 // TODO add multi axis tensor contraction?
-                std::vector<std::size_t> axesA = {};
-                std::vector<std::size_t> axesB = {};
-                for (auto axis = 0; axis < mGraph.getVertexProperties(src).legs.size(); axis++)
+                std::vector<std::size_t> _axes_a = {};
+                std::vector<std::size_t> _axes_b = {};
+                for (auto _axis = 0; _axis < m_graph.getVertexProperties(_src).legs.size(); _axis++)
                 {
-                    if (mGraph.getVertexProperties(src).legs[axis] == leg_index)
+                    if (m_graph.getVertexProperties(_src).legs[_axis] == _leg_index)
                     {
-                        axesA.emplace_back(axis);
+                        _axes_a.emplace_back(_axis);
                     }
                 }
-                for (auto axis = 0; axis < mGraph.getVertexProperties(dest).legs.size(); axis++)
+                for (auto _axis = 0; _axis < m_graph.getVertexProperties(_dest).legs.size(); _axis++)
                 {
-                    if (mGraph.getVertexProperties(dest).legs[axis] == leg_index)
+                    if (m_graph.getVertexProperties(_dest).legs[_axis] == _leg_index)
                     {
-                        axesB.emplace_back(axis);
+                        _axes_b.emplace_back(_axis);
                     }
                 }
 
-                tensordot(src, dest, axesA, axesB);
+                tensordot(_src, _dest, _axes_a, _axes_b);
 
-                mGraph.removeEdge(leg_index);
-                mGraph.mergeVertices(src, dest);
+                m_graph.removeEdge(_leg_index);
+                m_graph.mergeVertices(_src, _dest);
             }
-            contractionSequence.erase(contractionSequence.begin());
-            mLegs.erase(leg_index);
+            contraction_sequence.erase(contraction_sequence.begin());
+            m_legs.erase(_leg_index);
         }
 
-        if (!contractionSequence.empty())
+        if (!contraction_sequence.empty())
         {
             throw std::invalid_argument(
                 "The contraction sequence vector, which size is " +
-                std::to_string(contractionSequence.size()) +
+                std::to_string(contraction_sequence.size()) +
                 ", is not empty.");
         }
     }
@@ -464,11 +464,11 @@ public:
      */
     void connect()
     {
-        auto nv = mGraph.NumVertices();
-        while (nv > 1)
+        auto _nv = m_graph.NumVertices();
+        while (_nv > 1)
         {
             outer(0, 1);
-            nv--;
+            _nv--;
         }
     }
 
@@ -478,7 +478,7 @@ public:
      */
     std::size_t NumTensors()
     {
-        return mGraph.NumVertices();
+        return m_graph.NumVertices();
     }
 
     /**
@@ -488,13 +488,13 @@ public:
      */
     std::vector<npp::tensor_type<T>> TensorList()
     {
-        auto nv = mGraph.NumVertices();
-        std::vector<npp::tensor_type<T>> result(nv);
-        for (int i = 0; i < nv; i++)
+        auto _nv = m_graph.NumVertices();
+        std::vector<npp::tensor_type<T>> _result(_nv);
+        for (int _i = 0; _i < _nv; _i++)
         {
-            result[i] = mGraph.getVertexProperties(i).tensor;
+            _result[_i] = m_graph.getVertexProperties(_i).tensor;
         }
-        return result;
+        return _result;
     }
 
     /**
@@ -504,115 +504,115 @@ public:
      */
     std::vector<npp::shape_type> TensorShapes()
     {
-        auto nv = mGraph.NumVertices();
-        std::vector<npp::shape_type> result(nv);
-        for (int i = 0; i < nv; i++)
+        auto _nv = m_graph.NumVertices();
+        std::vector<npp::shape_type> _result(_nv);
+        for (int _i = 0; _i < _nv; _i++)
         {
-            result[i] = mGraph.getVertexProperties(i).tensor.shape();
+            _result[_i] = m_graph.getVertexProperties(_i).tensor.shape();
         }
-        return result;
+        return _result;
     }
 
     /**
-     * @brief Split a vertex (default 0) on a specific leg position.
+     * @brief Split a vertex on a specific leg. The position to split is between leg_index and leg_index + 1.
      *
-     * @param leg_pos
-     * @param vertex_pos
+     * @param leg_index
+     * @param vertex_index
      */
-    void split(std::size_t vertex_pos, std::size_t leg_pos)
+    void split(std::size_t vertex_index, std::size_t leg_index)
     {
         // throw std::logic_error("Not finally implemented yet. Current TODO: update edges.");
 
-        auto vertex = mGraph.getVertexProperties(vertex_pos);
-        std::vector<int> legs = vertex.legs;
-        auto tensor = vertex.tensor;
+        auto _vertex = m_graph.getVertexProperties(vertex_index);
+        std::vector<int> _legs = _vertex.legs;
+        auto _tensor = _vertex.tensor;
 
         // split legs
-        std::vector<int> left_legs(legs.begin(), legs.begin() + leg_pos);
-        std::vector<int> right_legs(legs.begin() + leg_pos, legs.end());
+        std::vector<int> _left_legs(_legs.begin(), _legs.begin() + leg_index);
+        std::vector<int> _right_legs(_legs.begin() + leg_index, _legs.end());
 
         // split tensor
-        std::size_t len = legs.size();
-        if (leg_pos < len)
+        std::size_t _len = _legs.size();
+        if (leg_index < _len)
         {
-            auto shape = npp::shape(tensor);
+            auto _shape = npp::shape(_tensor);
 
-            std::size_t left = 1, right = 1;
-            npp::shape_type left_shape, right_shape;
-            for (std::size_t s = 0; s < len; s++)
+            std::size_t _left = 1, _right = 1;
+            npp::shape_type _left_shape, _right_shape;
+            for (std::size_t _i = 0; _i < _len; _i++)
             {
-                if (s < leg_pos)
+                if (_i < leg_index)
                 {
-                    left *= shape[s];
+                    _left *= _shape[_i];
 
-                    left_shape.push_back(shape[s]);
+                    _left_shape.push_back(_shape[_i]);
                 }
-                else if (s == leg_pos)
+                else if (_i == leg_index)
                 {
-                    right *= shape[s];
+                    _right *= _shape[_i];
 
                     // new shape after svd
-                    left_shape.push_back(left);
-                    right_shape.push_back(left);
+                    _left_shape.push_back(_left);
+                    _right_shape.push_back(_left);
 
-                    right_shape.push_back(shape[s]);
+                    _right_shape.push_back(_shape[_i]);
                 }
                 else
                 {
-                    right *= shape[s];
+                    _right *= _shape[_i];
 
-                    right_shape.push_back(shape[s]);
+                    _right_shape.push_back(_shape[_i]);
                 }
             }
 
-            npp::reshape(tensor, npp::shape_type({left, right}));
+            npp::reshape(_tensor, npp::shape_type({_left, _right}));
 
-            npp::tensor_type<T> U, s, V;
-            std::tie(U, s, V) = npp::linalg::svd(tensor, false);
+            npp::tensor_type<T> _U, _s, _V;
+            std::tie(_U, _s, _V) = npp::linalg::svd(_tensor, false);
 
             // reshape U,V back to tensors with new shape
-            npp::reshape(U, left_shape);
-            npp::reshape(V, right_shape);
+            npp::reshape(_U, _left_shape);
+            npp::reshape(_V, _right_shape);
 
             // new leg ids
-            int new_leg_left = 1;
-            if (!mLegs.empty())
+            int _new_leg_left = 1;
+            if (!m_legs.empty())
             {
-                new_leg_left = *mLegs.rbegin() + 1;
+                _new_leg_left = *m_legs.rbegin() + 1;
             }
-            int new_leg_right = new_leg_left + 1;
+            int _new_leg_right = _new_leg_left + 1;
 
             // add to the subscript vectors
-            left_legs.emplace_back(new_leg_left);
-            std::vector<int> s_legs{new_leg_left, new_leg_right};
-            right_legs.emplace_back(new_leg_right);
+            _left_legs.emplace_back(_new_leg_left);
+            std::vector<int> s_legs{_new_leg_left, _new_leg_right};
+            _right_legs.emplace_back(_new_leg_right);
 
             // add to list of current legs
-            mLegs.insert(new_leg_left);
-            mLegs.insert(new_leg_right);
+            m_legs.insert(_new_leg_left);
+            m_legs.insert(_new_leg_right);
 
             // update current vertex for U
-            mGraph.setVertexProperties(vertex_pos, vertex_properties_t{std::move(left_legs), std::move(U)});
+            m_graph.setVertexProperties(vertex_index, vertex_properties_t{std::move(_left_legs), std::move(_U)});
 
             // and create new vertices for s and V
-            auto s_ver = mGraph.addVertex(vertex_properties_t{std::move(s_legs), std::move(s), true});
-            auto V_ver = mGraph.addVertex(vertex_properties_t{std::move(right_legs), std::move(V)});
+            auto _s_vertex = m_graph.addVertex(vertex_properties_t{std::move(s_legs), std::move(_s), true});
+            auto _V_vertex = m_graph.addVertex(vertex_properties_t{std::move(_right_legs), std::move(_V)});
 
             // add new edges to graph
-            mGraph.addEdge(vertex_pos, s_ver, new_leg_left);
-            mGraph.addEdge(s_ver, V_ver, new_leg_right);
+            m_graph.addEdge(vertex_index, _s_vertex, _new_leg_left);
+            m_graph.addEdge(_s_vertex, _V_vertex, _new_leg_right);
 
             // only edges of rhs needs to be updated, because edges of lhs are reused in U
-            for (int i : right_legs)
+            for (int _i : _right_legs)
             {
-                if (i > 0)
+                if (_i > 0)
                 {
                     // pair(src, tar)
-                    auto edge = mGraph.getEdge(i);
+                    auto _edge = m_graph.getEdge(_i);
 
-                    if (edge.first != V_ver)
+                    if (_edge.first != _V_vertex)
                     {
-                        mGraph.updateEdge(i, V_ver, edge.second);
+                        m_graph.updateEdge(_i, _V_vertex, _edge.second);
                     }
                 }
             }
