@@ -41,7 +41,7 @@ private:
         // place custom properties for vertices here
         std::vector<int> legs; // TODO should be a set
         npp::tensor_type<T> tensor;
-        bool singular_values = false;
+        bool is_singular_values = false;
     };
 
     struct custom_edge_properties
@@ -72,6 +72,11 @@ private:
     {
         auto vertex_properties = mGraph.getVertexProperties(vertex_index);
 
+        if (vertex_properties.is_singular_values)
+        {
+
+        }
+
         auto newTensor = npp::linalg::trace(vertex_properties.tensor, 0, axesA, axesB);
 
         auto newLegs = vertex_properties.legs;
@@ -92,8 +97,11 @@ private:
      */
     void tensordot(std::size_t src, std::size_t dest, std::vector<std::size_t> axesA, std::vector<std::size_t> axesB)
     {
-        auto legsA = mGraph.getVertexProperties(src).legs;
-        auto legsB = mGraph.getVertexProperties(dest).legs;
+        auto source_properties = mGraph.getVertexProperties(src);
+        auto target_properties = mGraph.getVertexProperties(dest);
+
+        auto legsA = source_properties.legs;
+        auto legsB = target_properties.legs;
 
         legsA.erase(legsA.begin() + axesA[0]);
         legsB.erase(legsB.begin() + axesB[0]);
@@ -102,8 +110,18 @@ private:
         newLegs.insert(newLegs.end(), legsA.begin(), legsA.end());
         newLegs.insert(newLegs.end(), legsB.begin(), legsB.end());
 
-        auto tensorA = mGraph.getVertexProperties(src).tensor;
-        auto tensorB = mGraph.getVertexProperties(dest).tensor;
+        auto tensorA = source_properties.tensor;
+        auto tensorB = target_properties.tensor;
+
+        if (source_properties.is_singular_values)
+        {
+
+        }
+
+        if (target_properties.is_singular_values)
+        {
+
+        }
 
         auto newTensor = npp::linalg::tensordot(tensorA, tensorB, axesA, axesB);
 
@@ -397,7 +415,6 @@ public:
                     }
                 }
 
-                // perform trace
                 trace(src, axes[0], axes[1]);
 
                 mGraph.removeEdge(leg_index);
@@ -408,7 +425,6 @@ public:
                 // TODO add multi axis tensor contraction?
                 std::vector<std::size_t> axesA = {};
                 std::vector<std::size_t> axesB = {};
-
                 for (auto axis = 0; axis < mGraph.getVertexProperties(src).legs.size(); axis++)
                 {
                     if (mGraph.getVertexProperties(src).legs[axis] == leg_index)
@@ -424,19 +440,12 @@ public:
                     }
                 }
 
-                // ...---!!! CONTINUE HERE !!!---...
-                // =================================
-                // TODO: 
-                // Check if singular value vertix is present as its tensor is only the diagonal presentation
-
-                // perform tensordot
                 tensordot(src, dest, axesA, axesB);
 
                 mGraph.removeEdge(leg_index);
                 mGraph.mergeVertices(src, dest);
             }
             contractionSequence.erase(contractionSequence.begin());
-
             mLegs.erase(leg_index);
         }
 
