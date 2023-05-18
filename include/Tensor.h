@@ -1,4 +1,9 @@
-#pragma once
+//
+// Created by mirco on 2/25/2023.
+//
+
+#ifndef NCONPP_TENSOR_H
+#define NCONPP_TENSOR_H
 
 #include <xtensor/xarray.hpp>
 #include <xtensor/xexpression.hpp>
@@ -15,14 +20,25 @@ namespace npp {
     using array_type = xt::xarray<T, xt::layout_type::dynamic>;
 
     // shape_type
-    using shape_type = xt::xarray<std::size_t>::shape_type;
+    using shape_type = xt::xarray<size_t>::shape_type;
 
     // general multi-dimensional object
     template<typename T>
     using expression_type = xt::xexpression<T>;
 
     template<typename T>
-    using tensor = xt::xarray<T>;
+    using tensor_type = xt::xarray<T>;
+
+    // zeros
+    template<class T>
+    static inline auto zeros(shape_type shape) {
+        return xt::zeros<T>(shape);
+    }
+
+    template<class E>
+    static inline auto diag(E& arr) {
+        return xt::diag(arr);
+    }
 
     // allclose
     template<class E1, class E2>
@@ -32,9 +48,9 @@ namespace npp {
 
     // reshape
     template<typename T>
-    static inline auto reshape(const expression_type<T> &M, shape_type shape) {
+    void reshape(expression_type<T> &M, shape_type shape) {
         auto &&dM = M.derived_cast();
-        return dM.reshape(shape);
+        dM.reshape(shape);
     }
 
     // prod
@@ -80,6 +96,13 @@ namespace npp {
     }
 
     namespace linalg {
+        // dot
+        template<typename T, typename O>
+        static inline auto
+        dot(const expression_type <T> &xa, const expression_type <O> &xb) -> decltype(xt::linalg::dot(xa, xb)) {
+            return xt::linalg::dot(xa, xb);
+        }        
+
         // tensordot
         template<typename T, typename O>
         static inline auto
@@ -127,3 +150,5 @@ namespace npp {
         }
     }
 };
+
+#endif // NCONPP_TENSOR_H

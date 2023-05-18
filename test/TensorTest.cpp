@@ -1,8 +1,5 @@
 #include <gtest/gtest.h>
 
-#define TEST_FRIENDS \
-    friend class TensorTest_flatten1_Test; friend class TensorTest_flatten2_Test; friend class TensorTest_flatten3_Test; friend class TensorTest_transpose2_Test;
-
 #include "Tensor.h"
 
 #include <complex>
@@ -10,289 +7,163 @@
 
 using namespace std::complex_literals;
 
-class TensorTest : public testing::Test {
+class TensorTest : public testing::Test
+{
     TensorTest() = default;
 
     ~TensorTest() override = default;
 };
 
-//TEST(DISABLED_TensorTest, permutation) {
-//    std::vector<int> s = {4, 3, 8};
-//    for (int i: s) {
-//        for (int j = 0; j < i; j++)
-//            std::cout << j << std::endl;
-//    }
-//}
-//
-//TEST(TensorTest, flatten1) {
-//    std::vector<std::size_t> s = {2, 3, 2};
-//    Tensor<double> A({2, 3, 2});
-//
-//    ASSERT_EQ(A.flatten(0, 0, 0), 0);
-//    ASSERT_EQ(A.flatten(0, 0, 1), 1);
-//    ASSERT_EQ(A.flatten(0, 1, 0), 2);
-//    ASSERT_EQ(A.flatten(0, 1, 1), 3);
-//    ASSERT_EQ(A.flatten(0, 2, 0), 4);
-//    ASSERT_EQ(A.flatten(0, 2, 1), 5);
-//    ASSERT_EQ(A.flatten(1, 0, 0), 6);
-//    ASSERT_EQ(A.flatten(1, 0, 1), 7);
-//    ASSERT_EQ(A.flatten(1, 1, 0), 8);
-//    ASSERT_EQ(A.flatten(1, 1, 1), 9);
-//    ASSERT_EQ(A.flatten(1, 2, 0), 10);
-//    ASSERT_EQ(A.flatten(1, 2, 1), 11);
-//}
-//
-//TEST(TensorTest, flatten2) {
-//    std::vector<std::size_t> s = {2, 3, 2};
-//    std::vector<int> d = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
-//    Tensor<int> A(d, {2, 3, 2});
-//
-//    ASSERT_EQ(A.flatten(0, 0, 0), 0);
-//    ASSERT_EQ(A.flatten(0, 0, 1), 1);
-//    ASSERT_EQ(A.flatten(0, 1, 0), 2);
-//    ASSERT_EQ(A.flatten(0, 1, 1), 3);
-//    ASSERT_EQ(A.flatten(0, 2, 0), 4);
-//    ASSERT_EQ(A.flatten(0, 2, 1), 5);
-//    ASSERT_EQ(A.flatten(1, 0, 0), 6);
-//    ASSERT_EQ(A.flatten(1, 0, 1), 7);
-//    ASSERT_EQ(A.flatten(1, 1, 0), 8);
-//    ASSERT_EQ(A.flatten(1, 1, 1), 9);
-//    ASSERT_EQ(A.flatten(1, 2, 0), 10);
-//    ASSERT_EQ(A.flatten(1, 2, 1), 11);
-//
-//    ASSERT_EQ(A(0, 0, 0), d[0]);
-//    ASSERT_EQ(A(0, 0, 1), d[1]);
-//    ASSERT_EQ(A(0, 1, 0), d[2]);
-//    ASSERT_EQ(A(0, 1, 1), d[3]);
-//    ASSERT_EQ(A(0, 2, 0), d[4]);
-//    ASSERT_EQ(A(0, 2, 1), d[5]);
-//    ASSERT_EQ(A(1, 0, 0), d[6]);
-//    ASSERT_EQ(A(1, 0, 1), d[7]);
-//    ASSERT_EQ(A(1, 1, 0), d[8]);
-//    ASSERT_EQ(A(1, 1, 1), d[9]);
-//    ASSERT_EQ(A(1, 2, 0), d[10]);
-//    ASSERT_EQ(A(1, 2, 1), d[11]);
-//}
-//
-//TEST(TensorTest, flatten3) {
-//    std::vector<std::size_t> s = {16, 4, 4};
-//    Tensor<double> A(s);
-//
-//    std::unordered_map<std::size_t, std::vector<std::size_t>> indices = {};
-//
-//    std::size_t index = 0;
-//    for (std::size_t i0 = 0; i0 < s[0]; ++i0)
-//        for (std::size_t i1 = 0; i1 < s[1]; ++i1)
-//            for (std::size_t i2 = 0; i2 < s[2]; ++i2) {
-//                indices[index] = std::vector<std::size_t>({i0, i1, i2});
-//                index += 1;
-//            }
-//
-//    for (const auto &[key, val]: indices) {
-//        ASSERT_EQ(A.flatten(val), key);
-//    }
-//}
-//
-//TEST(TensorTest, constructorShape) {
-//    std::vector<std::size_t> s = {4, 3, 8};
-//    Tensor<double> A({4, 3, 8});
-//    ASSERT_EQ(A.shape(), s);
-//}
-//
-//TEST(TensorTest, constructorRandomData) {
-//    std::vector<std::size_t> s = {4, 3, 1, 8};
-//
-//    std::vector<double> data(4 * 3 * 8);
-//
-//    std::default_random_engine gen{std::random_device{}()};
-//    std::uniform_real_distribution<double> dist(0, 1);
-//    std::generate(std::begin(data), std::end(data), [&] { return dist(gen); });
-//
-//    Tensor<double> A(data, {4, 3, 1, 8});
-//    ASSERT_EQ(A.shape(), s);
-//    ASSERT_EQ(A.getData(), data);
-//    ASSERT_EQ(A.getData().size(), 4 * 3 * 8);
-//}
-//
-//TEST(TensorTest, randomize) {
-//    std::vector<std::size_t> s = {4, 3, 8};
-//    Tensor<std::complex<double>> A({4, 3, 8});
-//    A.randomize();
-//    ASSERT_EQ(A.shape(), s);
-//    ASSERT_EQ(A.getData().size(), 4 * 3 * 8);
-//}
-//
-//TEST(TensorTest, dimension) {
-//    std::vector<std::size_t> s = {4, 3, 8};
-//    Tensor<std::complex<double>> A({4, 3, 8});
-//    ASSERT_EQ(A.dimension(), 3);
-//}
-//
-//TEST(TensorTest, expand_dims) {
-//    std::vector<std::size_t> s = {4, 3, 8};
-//    Tensor<std::complex<double>> A({4, 3, 8});
-//
-//    A.expand_dims(0);
-//    std::vector<std::size_t> new_shape1 = {1, 4, 3, 8};
-//    ASSERT_EQ(A.dimension(), 4);
-//    ASSERT_EQ(A.shape(), new_shape1);
-//
-//    A.expand_dims(4);
-//    std::vector<std::size_t> new_shape2 = {1, 4, 3, 8, 1};
-//    ASSERT_EQ(A.dimension(), 5);
-//    ASSERT_EQ(A.shape(), new_shape2);
-//
-//    A.expand_dims(2);
-//    std::vector<std::size_t> new_shape3 = {1, 4, 1, 3, 8, 1};
-//    ASSERT_EQ(A.dimension(), 6);
-//    ASSERT_EQ(A.shape(), new_shape3);
-//}
-//
-//TEST(TensorTest, reshapeMatch) {
-//    std::vector<std::size_t> s = {4, 3, 8};
-//    Tensor<std::complex<double>> A({4, 3, 8});
-//    A.reshape({3, 4, 2, 2, 2});
-//}
-//
-//TEST(TensorTest, reshapeNoMatch) {
-//    std::vector<int> s = {4, 3, 8};
-//    Tensor<std::complex<double>> A({4, 3, 8});
-//    EXPECT_THROW(A.reshape({8, 8}), std::logic_error);
-//}
-//
-//TEST(TensorTest, accessOperator) {
-//    std::vector<std::size_t> s = {4, 3, 8};
-//    Tensor<std::complex<double>> A({4, 3, 8});
-//    A.randomize();
-//    ASSERT_EQ(A.shape(), s);
-//    ASSERT_EQ(A.getData().size(), 4 * 3 * 8);
-//
-//    std::complex<double> val(2.0, 2.0);
-//    A(1, 2, 4) = val;
-//    ASSERT_EQ(A(1, 2, 4), val);
-//}
-//
-//TEST(TensorTest, accessOperator_IndexOutOfRange) {
-//    std::vector<std::size_t> s = {4, 3, 8};
-//    Tensor<std::complex<double>> A({4, 3, 8});
-//    A.randomize();
-//    ASSERT_EQ(A.shape(), s);
-//    ASSERT_EQ(A.getData().size(), 4 * 3 * 8);
-//
-//    EXPECT_THROW(A(1, 4, 4), std::logic_error);
-//}
-//
-//TEST(TensorTest, asterikOperator_int) {
-//    std::vector<std::size_t> s = {3, 1, 2};
-//    std::vector<int> d = {1, 2, 3, 4, 5, 6};
-//    Tensor<int> A(d, s);
-//
-//    auto A1 = A * 2;
-//    auto A2 = 2 * A;
-//}
-//
-//TEST(TensorTest, prod1) {
-//    std::vector<std::size_t> s = {3};
-//    std::vector<int> d = {1, 2, 3};
-//    Tensor<int> A(d, s);
-//
-//    auto res = A.prod(0);
-//
-//    ASSERT_EQ(res, 6);
-//}
-//
-//TEST(TensorTest, prod2) {
-//    std::vector<std::size_t> s = {3, 1, 2};
-//    std::vector<int> d = {1, 2, 3, 4, 5, 6};
-//    Tensor<int> A(d, s);
-//
-//    auto res1 = A.prod(1);
-//    ASSERT_EQ(res1, 6);
-//
-//    auto res2 = A.prod(2);
-//    ASSERT_EQ(res2, 5 * 6);
-//}
-//
-//TEST(TensorTest, prod3) {
-//    std::vector<std::size_t> s = {3, 2, 1, 3, 4};
-//    std::vector<int> d(72);
-//    std::iota(d.begin(), d.end(), 1);
-//    Tensor<int> A(d, s);
-//
-//    auto res = A.prod({1, 3});
-//
-//    ASSERT_EQ(res[0], A(2, 0, 0, 2, 3) * A(2, 1, 0, 2, 3));
-//    ASSERT_EQ(res[1], A(2, 1, 0, 0, 3) * A(2, 1, 0, 1, 3) * A(2, 1, 0, 2, 3));
-//}
-//
-//TEST(TensorTest, transpose1) {
-//    std::vector<std::size_t> s = {8, 7, 6};
-//    std::vector<int> d(336);
-//    std::iota(d.begin(), d.end(), 0);
-//    Tensor<int> A(d, s);
-//    auto before = A(1, 2, 3);
-//    A.transpose(std::vector<std::size_t>({2, 0, 1}));
-//    ASSERT_EQ(before, A(3, 1, 2));
-//}
-//
-//TEST(TensorTest, transpose2) {
-//    std::vector<std::size_t> s = {16, 4, 4};
-//    std::vector<int> d(256);
-//    std::iota(d.begin(), d.end(), 0);
-//    Tensor<int> A(d, s);
-//
-//    std::unordered_map<std::size_t, std::vector<std::size_t>> indices = {};
-//
-//    std::size_t index = 0;
-//    for (std::size_t i0 = 0; i0 < s[0]; ++i0)
-//        for (std::size_t i1 = 0; i1 < s[1]; ++i1)
-//            for (std::size_t i2 = 0; i2 < s[2]; ++i2) {
-//                indices[index] = std::vector<std::size_t>({i0, i1, i2});
-//                index += 1;
-//            }
-//
-//    for (const auto &[key, val]: indices) {
-//        ASSERT_EQ(key, A.flatten(val));
-//    }
-//
-//    A.transpose(std::vector<std::size_t>({2, 0, 1}));
-//
-//    // TODO transform indices
-//}
-//
-//TEST(DISABLED_TensorTest, dot) {
-////    Tensor<std::complex<double>> A({4, 3, 2, 8});
-////    A.randomize();
-////
-////    Tensor<std::complex<double>> B({8, 4, 2, 1, 3});
-////    B.randomize();
-////
-////    auto C = nlinalg::dot(A, B);
-//}
-
-TEST(TensorTest, trace) {
+TEST(TensorTest, trace)
+{
     npp::shape_type shapeA = {4, 3, 2, 8, 2};
-    npp::tensor<std::complex<double>> A = npp::random::rand<double>(shapeA) + 1i * npp::random::rand<double>(shapeA);
+    npp::tensor_type<std::complex<double>> A = npp::random::rand<double>(shapeA) + 1i * npp::random::rand<double>(shapeA);
     A = npp::linalg::trace(A, 0, 3, 4);
 
     shapeA = {4, 3, 2};
     ASSERT_EQ(npp::shape(A), shapeA);
 }
 
-TEST(TensorTest, tensordot) {
+TEST(TensorTest, tensordot)
+{
     npp::shape_type shapeA = {4, 3, 2, 8};
-    npp::tensor<std::complex<double>> A = npp::random::rand<double>(shapeA) + 1i * npp::random::rand<double>(shapeA);
+    npp::tensor_type<std::complex<double>> A = npp::random::rand<double>(shapeA) + 1i * npp::random::rand<double>(shapeA);
 
     npp::shape_type shapeB = {8, 4, 2, 1, 3};
-    npp::tensor<std::complex<double>> B = npp::random::rand<double>(shapeB) + 1i * npp::random::rand<double>(shapeB);
+    npp::tensor_type<std::complex<double>> B = npp::random::rand<double>(shapeB) + 1i * npp::random::rand<double>(shapeB);
 
-    auto C = npp::linalg::tensordot(A, B, {0, 2, 3}, {1, 2, 0});
+    npp::tensor_type<std::complex<double>> C = npp::linalg::tensordot(A, B, {0, 2, 3}, {1, 2, 0});
 
     npp::shape_type shapeC = {3, 1, 3};
     ASSERT_EQ(npp::shape(C), shapeC);
 
-    npp::tensor<std::complex<double>> D = npp::linalg::trace(C, 0, 0, 2);
+    npp::tensor_type<std::complex<double>> D = npp::linalg::trace(C, 0, 0, 2);
 
     npp::shape_type shapeD = {1};
     ASSERT_EQ(npp::shape(D), shapeD);
+}
+
+TEST(TensorTest, svd)
+{
+    // from https://github.com/xtensor-stack/xtensor-blas/blob/master/test/test_linalg.cpp
+    npp::tensor_type<double> arg_0 = {{0, 1, 2},
+                                      {3, 4, 5},
+                                      {6, 7, 8}};
+
+    auto res = npp::linalg::svd(arg_0);
+
+    npp::tensor_type<double> expected_0 = {{-0.13511895, 0.90281571, 0.40824829},
+                                           {-0.49633514, 0.29493179, -0.81649658},
+                                           {-0.85755134, -0.31295213, 0.40824829}};
+    npp::tensor_type<double> expected_1 = {1.42267074e+01, 1.26522599e+00, 5.89938022e-16};
+    npp::tensor_type<double> expected_2 = {{-0.4663281, -0.57099079, -0.67565348},
+                                           {-0.78477477, -0.08545673, 0.61386131},
+                                           {-0.40824829, 0.81649658, -0.40824829}};
+
+    ASSERT_TRUE(npp::allclose(std::get<0>(res), expected_0));
+    ASSERT_TRUE(npp::allclose(std::get<1>(res), expected_1));
+    ASSERT_TRUE(npp::allclose(std::get<2>(res), expected_2));
+
+    npp::tensor_type<double> U = std::get<0>(res);
+    ASSERT_EQ(U.shape(), npp::shape_type({3, 3}));
+
+    npp::tensor_type<double> s = std::get<1>(res);
+    ASSERT_EQ(s.shape(), npp::shape_type({3}));
+
+    npp::tensor_type<double> V = std::get<2>(res);
+    ASSERT_EQ(V.shape(), npp::shape_type({3, 3}));
+
+    npp::tensor_type<double> smat = npp::zeros<double>({3, 3});
+    for (size_t i = 0; i < s.shape()[0]; i++)
+        smat(i, i) = s(i);
+
+    auto result = npp::linalg::dot(npp::linalg::dot(U, smat), V);
+    ASSERT_TRUE(npp::allclose(arg_0, result));
+}
+
+TEST(TensorTest, reshape)
+{
+    npp::tensor_type<double> tensor = xt::random::rand<double>({3, 4, 5});
+
+    std::size_t pos = 2;
+
+    npp::shape_type shape = npp::shape(tensor);
+    npp::shape_type left_shape = std::vector(shape.begin(), shape.begin() + pos);
+    npp::shape_type right_shape = std::vector(shape.begin() + pos, shape.end());
+
+    size_t left = 1;
+    for (auto l : left_shape)
+    {
+        left *= l;
+    }
+
+    size_t right = 1;
+    for (auto r : right_shape)
+    {
+        right *= r;
+    }
+
+    npp::shape_type new_shape = npp::shape_type({left, right});
+
+    // in place via methods
+    npp::reshape(tensor, {left, right});
+    ASSERT_EQ(npp::shape(tensor), new_shape);
+
+    // in place via member
+    tensor.reshape({left, right});
+    ASSERT_EQ(tensor.shape(), new_shape);
+}
+
+TEST(TensorTest, split)
+{
+    auto shape = npp::shape_type({3, 4, 5, 6});
+    npp::tensor_type<double> tensor = npp::random::rand<double>(shape);
+
+    std::size_t len = shape.size(); std::size_t left = 1, right = 1;
+    std::size_t e = 2; npp::shape_type left_shape, right_shape;
+    for (std::size_t s = 0; s < len; s++) {
+        if (s < e) {
+            left *= shape[s];
+            left_shape.push_back(shape[s]);
+        } else if (s == e) {
+            right *= shape[s];
+
+            left_shape.push_back(left);
+            right_shape.push_back(left);
+
+            right_shape.push_back(shape[s]);
+        } else {
+            right *= shape[s];
+
+            right_shape.push_back(shape[s]);
+        }
+    }
+    
+    ASSERT_EQ(left_shape, npp::shape_type({3, 4, 12}));
+    ASSERT_EQ(right_shape, npp::shape_type({12, 5, 6}));
+
+    tensor.reshape({left, right});
+    ASSERT_EQ(tensor.shape(), npp::shape_type({left, right}));
+
+    auto res = npp::linalg::svd(tensor, false);
+
+    npp::tensor_type<double> U = std::get<0>(res);
+    ASSERT_EQ(U.shape(), npp::shape_type({left, left}));
+
+    npp::tensor_type<double> s = std::get<1>(res);
+    ASSERT_EQ(s.shape(), npp::shape_type({left}));
+
+    npp::tensor_type<double> V = std::get<2>(res);
+    ASSERT_EQ(V.shape(), npp::shape_type({left, right}));
+
+    npp::tensor_type<double> smat = npp::diag(s);
+
+    auto result = npp::linalg::dot(npp::linalg::dot(U, smat), V);
+    ASSERT_TRUE(npp::allclose(tensor, result));
+
+    npp::reshape(U, left_shape);
+    ASSERT_EQ(U.shape(), npp::shape_type(left_shape));
+
+    npp::reshape(V, right_shape);
+    ASSERT_EQ(V.shape(), npp::shape_type(right_shape));
 }
