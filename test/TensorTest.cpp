@@ -119,26 +119,34 @@ TEST(TensorTest, split)
     auto shape = npp::shape_type({3, 4, 5, 6});
     npp::tensor_type<double> tensor = npp::random::rand<double>(shape);
 
-    std::size_t len = shape.size(); std::size_t left = 1, right = 1;
-    std::size_t e = 2; npp::shape_type left_shape, right_shape;
-    for (std::size_t s = 0; s < len; s++) {
-        if (s < e) {
+    std::size_t len = shape.size();
+    std::size_t left = 1, right = 1;
+    std::size_t e = 2;
+    npp::shape_type left_shape, right_shape;
+    for (std::size_t s = 0; s < len; s++)
+    {
+        if (s < e)
+        {
             left *= shape[s];
             left_shape.push_back(shape[s]);
-        } else if (s == e) {
+        }
+        else if (s == e)
+        {
             right *= shape[s];
 
             left_shape.push_back(left);
             right_shape.push_back(left);
 
             right_shape.push_back(shape[s]);
-        } else {
+        }
+        else
+        {
             right *= shape[s];
 
             right_shape.push_back(shape[s]);
         }
     }
-    
+
     ASSERT_EQ(left_shape, npp::shape_type({3, 4, 12}));
     ASSERT_EQ(right_shape, npp::shape_type({12, 5, 6}));
 
