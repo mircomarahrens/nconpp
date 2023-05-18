@@ -334,9 +334,9 @@ TEST(TensorNetworkTest, split)
     auto V = tensorList[2];
 
     npp::tensor_type<std::complex<double>> smat = npp::zeros<std::complex<double>>(npp::shape_type({4, 4}));
-    for (int i = 0 ; i < 4; i++)
+    for (int i = 0; i < 4; i++)
     {
-        smat(i,i) = s(i);
+        smat(i, i) = s(i);
     }
 
     auto Us = npp::linalg::dot(U, smat);
