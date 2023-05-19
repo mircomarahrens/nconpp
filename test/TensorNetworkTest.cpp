@@ -355,4 +355,6 @@ TEST(TensorNetworkTest, split)
     tensorList = tn.TensorList();
 
     ASSERT_EQ(tensorList[0].shape(), npp::shape_type({4, 2, 9}));
+
+    ASSERT_TRUE(npp::allclose(tensor, tensorList[0]));
 }
