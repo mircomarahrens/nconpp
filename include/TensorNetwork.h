@@ -41,7 +41,7 @@ private:
         // place custom properties for vertices here
         std::vector<int> legs;
         npp::tensor_type<T> tensor;
-        bool is_singular_values = false;
+        bool is_singular_vector = false;
     };
 
     struct custom_edge_properties
@@ -74,7 +74,7 @@ private:
         auto _legs = _vertex_properties.legs;
         auto _tensor = _vertex_properties.tensor;
 
-        if (_vertex_properties.is_singular_values)
+        if (_vertex_properties.is_singular_vector)
         {
             _tensor = npp::diag(_tensor);
         }
@@ -114,12 +114,12 @@ private:
         auto _tensor_a = _source_properties.tensor;
         auto _tensor_b = _target_properties.tensor;
 
-        if (_source_properties.is_singular_values)
+        if (_source_properties.is_singular_vector)
         {
             _tensor_a = npp::diag(_tensor_a);
         }
 
-        if (_target_properties.is_singular_values)
+        if (_target_properties.is_singular_vector)
         {
             _tensor_b = npp::diag(_tensor_b);
         }
