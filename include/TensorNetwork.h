@@ -76,6 +76,7 @@ private:
 
         if (_vertex_properties.is_singular_vector)
         {
+            // TODO does this make sense?
             _tensor = npp::diag(_tensor);
         }
 

@@ -325,6 +325,10 @@ TEST(TensorNetworkTest, split)
 
     tensorList = tn.TensorList();
 
+    nt = tn.NumTensors();
+
+    ASSERT_TRUE(nt == 3);
+
     ASSERT_EQ(tensorList[0].shape(), npp::shape_type({4, 4}));
     ASSERT_EQ(tensorList[1].shape(), npp::shape_type({4}));
     ASSERT_EQ(tensorList[2].shape(), npp::shape_type({4, 2, 9}));
@@ -340,4 +344,15 @@ TEST(TensorNetworkTest, split)
     auto result = npp::linalg::tensordot(Us, V, {1}, {0});
     ASSERT_EQ(result.shape(), npp::shape_type({4, 2, 9}));
     ASSERT_TRUE(npp::allclose(tensor, result));
+
+    // recontract splitted network
+    tn.contract();
+
+    nt = tn.NumTensors();
+
+    ASSERT_TRUE(nt == 1);
+
+    tensorList = tn.TensorList();
+
+    ASSERT_EQ(tensorList[0].shape(), npp::shape_type({4, 2, 9}));
 }
