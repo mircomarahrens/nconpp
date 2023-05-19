@@ -125,6 +125,9 @@ private:
             _tensor_b = npp::diag(_tensor_b);
         }
 
+        auto shapeA = _tensor_a.shape();
+        auto shapeB = _tensor_b.shape();
+
         auto _tensor = npp::linalg::tensordot(_tensor_a, _tensor_b, axes_a, axes_b);
 
         m_graph.setVertexProperties(src,
@@ -587,7 +590,7 @@ public:
             // add to the subscript vectors
             _left_legs.emplace_back(_new_leg_left);
             std::vector<int> s_legs{_new_leg_left, _new_leg_right};
-            _right_legs.emplace_back(_new_leg_right);
+            _right_legs.emplace(_right_legs.begin(), _new_leg_right);
 
             // add to list of current legs
             m_legs.insert(_new_leg_left);
