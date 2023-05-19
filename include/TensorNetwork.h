@@ -70,16 +70,17 @@ private:
      */
     void trace(std::size_t vertex_index, std::size_t axes_a, std::size_t axes_b)
     {
-        auto vertex_properties = m_graph.getVertexProperties(vertex_index);
+        auto _vertex_properties = m_graph.getVertexProperties(vertex_index);
+        auto _legs = _vertex_properties.legs;
+        auto _tensor = _vertex_properties.tensor;
 
-        if (vertex_properties.is_singular_values)
+        if (_vertex_properties.is_singular_values)
         {
-            // TODO
+            _tensor = npp::diag(_tensor);
         }
 
-        auto _tensor = npp::linalg::trace(vertex_properties.tensor, 0, axes_a, axes_b);
+        _tensor = npp::linalg::trace(_tensor, 0, axes_a, axes_b);
 
-        auto &_legs = vertex_properties.legs;
         _legs.erase(_legs.begin() + axes_b);
         _legs.erase(_legs.begin() + axes_a);
 
@@ -115,12 +116,12 @@ private:
 
         if (_source_properties.is_singular_values)
         {
-            // TODO
+            _tensor_a = npp::diag(_tensor_a);
         }
 
         if (_target_properties.is_singular_values)
         {
-            // TODO
+            _tensor_b = npp::diag(_tensor_b);
         }
 
         auto _tensor = npp::linalg::tensordot(_tensor_a, _tensor_b, axes_a, axes_b);
