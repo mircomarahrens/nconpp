@@ -349,12 +349,9 @@ TEST(TensorNetworkTest, split)
     tn.contract();
 
     nt = tn.NumTensors();
-
     ASSERT_TRUE(nt == 1);
 
     tensorList = tn.TensorList();
-
     ASSERT_EQ(tensorList[0].shape(), npp::shape_type({4, 2, 9}));
-
     ASSERT_TRUE(npp::allclose(tensor, tensorList[0]));
 }
