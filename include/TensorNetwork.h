@@ -76,7 +76,6 @@ private:
 
         if (_vertex_properties.is_singular_vector)
         {
-            // TODO does this make sense?
             _tensor = npp::diag(_tensor);
         }
 
@@ -160,12 +159,66 @@ private:
         m_graph.removeVertex(dest);
     }
 
+    /**
+     * @brief Create all edges
+     *
+     * @param _vertex_leg_map
+     * @param _vertex_index
+     * @param _subscript_vector
+     */
+    void create_edges(std::unordered_map<std::size_t, std::size_t> &_vertex_leg_map, int _vertex_index, const std::vector<int> &_subscript_vector)
+    {
+        for (int _leg_index : _subscript_vector)
+        {
+            // 0 is an invalid leg index by convention
+            if (_leg_index == 0)
+            {
+                throw std::invalid_argument(ERROR::CONSTRAINT_INVALIDLEG);
+            }
+
+            // store negative leg ids as dangling legs
+            if (_leg_index < 0)
+            {
+                if (m_dangling_legs.contains(_leg_index))
+                {
+                    throw std::invalid_argument(ERROR::CONSTRAINT_UNIQUELEGS);
+                }
+                m_dangling_legs.insert(_leg_index);
+            }
+
+            // store positive legs as edge legs
+            if (_leg_index > 0)
+            {
+                // if leg_id has already been seen -> form an edge
+                if (m_legs.contains(_leg_index))
+                {
+                    // obtain previous src from map
+                    std::size_t prev = _vertex_leg_map[_leg_index];
+
+                    // add edge between previous src and dest (the current src)
+                    m_graph.addEdge(prev, _vertex_index, _leg_index);
+
+                    // erase entry from map
+                    _vertex_leg_map.erase(_leg_index);
+                }
+                else
+                {
+                    // store mapping leg to src
+                    _vertex_leg_map[_leg_index] = _vertex_index;
+
+                    // store edge leg
+                    m_legs.insert(_leg_index);
+                }
+            }
+        }
+    }
+
 public:
     /**
-     * @brief Construct a new Tensor Network object.
+     * @brief Forbid empty initialization of Tensor Network object
      *
      */
-    TensorNetwork() = default;
+    TensorNetwork() = delete;
 
     /**
      * @brief Copy constructor.
@@ -179,6 +232,21 @@ public:
     }
 
     /**
+     * @brief Copy assignment
+     *
+     * @param other
+     * @return TensorNetwork&
+     */
+    TensorNetwork &operator=(const TensorNetwork &other)
+    {
+        std::swap(m_dangling_legs, other.m_dangling_legs);
+        std::swap(m_legs, other.m_legs);
+        std::swap(m_graph, other.m_graph);
+
+        return *this;
+    }
+
+    /**
      * @brief Move constructor.
      *
      */
@@ -189,6 +257,21 @@ public:
         other.m_dangling_legs = {};
         other.m_legs = {};
         other.m_graph = {};
+    }
+
+    /**
+     * @brief Move assignment
+     *
+     * @param other
+     * @return TensorNetwork&
+     */
+    TensorNetwork &operator=(TensorNetwork &&other)
+    {
+        m_dangling_legs = std::move(other.m_dangling_legs);
+        m_legs = std::move(other.m_legs);
+        m_graph = std::move(other.m_graph);
+
+        return *this;
     }
 
     /**
@@ -209,6 +292,7 @@ public:
     {
         if (tensor_list.size() != subscript_vector_list.size())
         {
+            // TODO optimize error handling
             throw std::invalid_argument(
                 "The number of tensors, which is " +
                 std::to_string(tensor_list.size()) +
@@ -216,61 +300,18 @@ public:
                 std::to_string(subscript_vector_list.size()) + ".");
         }
 
-        std::size_t _vertex_index = 0;
         // counting occurrence of legs to check constraints
         std::unordered_map<std::size_t, std::size_t> _vertex_leg_map;
-        for (auto &_subscript_vector : subscript_vector_list)
+        for (std::size_t _vertex_index = 0; _vertex_index < tensor_list.size(); _vertex_index++)
         {
-            for (int _leg_index : _subscript_vector)
-            {
-                // 0 is an invalid leg index by convention
-                if (_leg_index == 0)
-                {
-                    throw std::invalid_argument(ERROR::CONSTRAINT_INVALIDLEG);
-                }
+            const std::vector<int> &_subscript_vector = subscript_vector_list[_vertex_index];
 
-                // store negative leg ids as dangling legs
-                if (_leg_index < 0)
-                {
-                    if (m_dangling_legs.contains(_leg_index))
-                    {
-                        throw std::invalid_argument(ERROR::CONSTRAINT_UNIQUELEGS);
-                    }
-                    m_dangling_legs.insert(_leg_index);
-                }
-
-                // store positive legs as edge legs
-                if (_leg_index > 0)
-                {
-                    // if leg_id has already been seen -> form an edge
-                    if (m_legs.contains(_leg_index))
-                    {
-                        // obtain previous src from map
-                        std::size_t prev = _vertex_leg_map[_leg_index];
-
-                        // add edge between previous src and dest (the current src)
-                        m_graph.addEdge(prev, _vertex_index, _leg_index);
-
-                        // erase entry from map
-                        _vertex_leg_map.erase(_leg_index);
-                    }
-                    else
-                    {
-                        // store mapping leg to src
-                        _vertex_leg_map[_leg_index] = _vertex_index;
-
-                        // store edge leg
-                        m_legs.insert(_leg_index);
-                    }
-                }
-            }
+            create_edges(_vertex_leg_map, _vertex_index, _subscript_vector);
 
             m_graph.setVertexProperties(_vertex_index,
-                                        vertex_properties_t{subscript_vector_list[_vertex_index], tensor_list[_vertex_index]});
-
-            _vertex_index++;
+                                        vertex_properties_t{_subscript_vector, tensor_list[_vertex_index]});
         }
-    };
+    }
 
     /**
      * Explicit move constructor with given parameters.
@@ -297,59 +338,16 @@ public:
                 std::to_string(subscript_vector_list.size()) + ".");
         }
 
-        std::size_t _vertex_index = 0;
         // counting occurrence of legs to check constraints
         std::unordered_map<std::size_t, std::size_t> _vertex_leg_map;
-        for (auto &_subscript_vector : subscript_vector_list)
+        for (std::size_t _vertex_index = 0; _vertex_index < tensor_list.size(); _vertex_index++)
         {
-            for (int _leg_index : _subscript_vector)
-            {
-                // 0 is an invalid leg index by convention
-                if (_leg_index == 0)
-                {
-                    throw std::invalid_argument(ERROR::CONSTRAINT_INVALIDLEG);
-                }
+            const std::vector<int> &_subscript_vector = subscript_vector_list[_vertex_index];
 
-                // store negative leg ids as dangling legs
-                if (_leg_index < 0)
-                {
-                    if (m_dangling_legs.contains(_leg_index))
-                    {
-                        throw std::invalid_argument(ERROR::CONSTRAINT_UNIQUELEGS);
-                    }
-                    m_dangling_legs.insert(_leg_index);
-                }
-
-                // store positive legs as edge legs
-                if (_leg_index > 0)
-                {
-                    // if leg_id has already been seen -> form an edge
-                    if (m_legs.contains(_leg_index))
-                    {
-                        // obtain previous src from map
-                        std::size_t prev = _vertex_leg_map[_leg_index];
-
-                        // add edge between previous src and dest (the current src)
-                        m_graph.addEdge(prev, _vertex_index, _leg_index);
-
-                        // erase entry from map
-                        _vertex_leg_map.erase(_leg_index);
-                    }
-                    else
-                    {
-                        // store mapping leg to src
-                        _vertex_leg_map[_leg_index] = _vertex_index;
-
-                        // store edge leg
-                        m_legs.insert(_leg_index);
-                    }
-                }
-            }
+            create_edges(_vertex_leg_map, _vertex_index, _subscript_vector);
 
             m_graph.setVertexProperties(_vertex_index,
                                         vertex_properties_t{std::move(subscript_vector_list[_vertex_index]), std::move(tensor_list[_vertex_index])});
-
-            _vertex_index++;
         }
     };
 

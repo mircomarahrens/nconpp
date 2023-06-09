@@ -42,11 +42,6 @@ class TensorNetworkTest : public testing::Test
     ~TensorNetworkTest() override = default;
 };
 
-TEST(TensorNetworkTest, defaultConstructor)
-{
-    ASSERT_NO_THROW(TensorNetwork<> tn);
-}
-
 TEST(TensorNetworkTest, explicitCopyConstructor)
 {
     auto vals = createTensorList({{2, 3, 1}, {3, 1, 2}});
@@ -69,6 +64,20 @@ TEST(TensorNetworkTest, copyConstructor)
 
     // call copy constructor
     TensorNetwork<> tn2(tn1);
+
+    ASSERT_EQ(tn1.DanglingLegs(), tn2.DanglingLegs());
+    ASSERT_EQ(tn1.Legs(), tn2.Legs());
+    ASSERT_EQ(tn1.TensorShapes(), tn2.TensorShapes());
+}
+
+TEST(TensorNetworkTest, copyAssignment)
+{
+    auto vals = createTensorList({{2, 3, 1}, {3, 1, 2}});
+
+    TensorNetwork<> tn1(vals.first, vals.second);
+
+    // call copy assignment
+    TensorNetwork<> tn2 = tn1;
 
     ASSERT_EQ(tn1.DanglingLegs(), tn2.DanglingLegs());
     ASSERT_EQ(tn1.Legs(), tn2.Legs());
@@ -106,10 +115,39 @@ TEST(TensorNetworkTest, moveConstructor)
                 ElementsAre());
 }
 
+TEST(TensorNetworkTest, moveAssignment)
+{
+    auto vals = createTensorList({{2, 3, 1}, {3, 1, 2}});
+
+    TensorNetwork<> tn1(vals.first, vals.second);
+
+    ASSERT_THAT(tn1.DanglingLegs(),
+                ElementsAre(-6, -5, -4, -3, -2, -1));
+    ASSERT_THAT(tn1.Legs(),
+                ElementsAre());
+    ASSERT_THAT(tn1.TensorShapes(),
+                ElementsAre(npp::shape_type({2, 3, 1}), npp::shape_type({3, 1, 2})));
+
+    // call move assignment
+    TensorNetwork<> tn2 = std::move(tn1);
+
+    ASSERT_THAT(tn2.DanglingLegs(),
+                ElementsAre(-6, -5, -4, -3, -2, -1));
+    ASSERT_THAT(tn2.Legs(),
+                ElementsAre());
+    ASSERT_THAT(tn2.TensorShapes(),
+                ElementsAre(npp::shape_type({2, 3, 1}), npp::shape_type({3, 1, 2})));
+
+    ASSERT_THAT(tn1.DanglingLegs(),
+                ElementsAre());
+    ASSERT_THAT(tn1.Legs(),
+                ElementsAre());
+    ASSERT_THAT(tn1.TensorShapes(),
+                ElementsAre());
+}
+
 TEST(TensorNetworkTest, explicitMoveConstructor)
 {
-    // TODO how to test the move constructor?
-
     std::vector<npp::shape_type> shapes = {{2, 3, 1}, {3, 1, 2}};
 
     std::vector<npp::tensor_type<std::complex<double>>> tensorList = {};
