@@ -232,49 +232,6 @@ public:
     }
 
     /**
-     * @brief Copy assignment
-     *
-     * @param other
-     * @return TensorNetwork&
-     */
-    TensorNetwork &operator=(const TensorNetwork &other)
-    {
-        std::swap(m_dangling_legs, other.m_dangling_legs);
-        std::swap(m_legs, other.m_legs);
-        std::swap(m_graph, other.m_graph);
-
-        return *this;
-    }
-
-    /**
-     * @brief Move constructor.
-     *
-     */
-    TensorNetwork(TensorNetwork &&other) : m_dangling_legs(other.m_dangling_legs),
-                                           m_legs(other.m_legs),
-                                           m_graph(other.m_graph)
-    {
-        other.m_dangling_legs = {};
-        other.m_legs = {};
-        other.m_graph = {};
-    }
-
-    /**
-     * @brief Move assignment
-     *
-     * @param other
-     * @return TensorNetwork&
-     */
-    TensorNetwork &operator=(TensorNetwork &&other)
-    {
-        m_dangling_legs = std::move(other.m_dangling_legs);
-        m_legs = std::move(other.m_legs);
-        m_graph = std::move(other.m_graph);
-
-        return *this;
-    }
-
-    /**
      * Explicit copy constructor with given parameters.
      *
      * @param tensor_list
@@ -314,6 +271,34 @@ public:
     }
 
     /**
+     * @brief Copy assignment
+     *
+     * @param other
+     * @return TensorNetwork&
+     */
+    TensorNetwork &operator=(const TensorNetwork &other)
+    {
+        std::swap(m_dangling_legs, other.m_dangling_legs);
+        std::swap(m_legs, other.m_legs);
+        std::swap(m_graph, other.m_graph);
+
+        return *this;
+    }
+
+    /**
+     * @brief Move constructor.
+     *
+     */
+    TensorNetwork(TensorNetwork &&other) : m_dangling_legs(other.m_dangling_legs),
+                                           m_legs(other.m_legs),
+                                           m_graph(other.m_graph)
+    {
+        other.m_dangling_legs = {};
+        other.m_legs = {};
+        other.m_graph = {};
+    }
+
+    /**
      * Explicit move constructor with given parameters.
      *
      * @param tensor_list
@@ -350,6 +335,21 @@ public:
                                         vertex_properties_t{std::move(subscript_vector_list[_vertex_index]), std::move(tensor_list[_vertex_index])});
         }
     };
+
+    /**
+     * @brief Move assignment
+     *
+     * @param other
+     * @return TensorNetwork&
+     */
+    TensorNetwork &operator=(TensorNetwork &&other)
+    {
+        m_dangling_legs = std::move(other.m_dangling_legs);
+        m_legs = std::move(other.m_legs);
+        m_graph = std::move(other.m_graph);
+
+        return *this;
+    }
 
     /**
      * @brief Destroy the Tensor Network object
