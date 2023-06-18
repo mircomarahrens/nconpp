@@ -13,6 +13,7 @@
 #include <tuple>
 #include <string>
 
+// TODO optimize error handling
 namespace ERROR
 {
     const static std::string CONSTRAINT_LEGPAIRS = "Only pairs of legs are allowed.";
