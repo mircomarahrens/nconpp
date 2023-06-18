@@ -14,14 +14,19 @@
 
 namespace py = pybind11;
 
+/**
+ * @brief Trampoline class for TensorNetwork
+ * 
+ * @tparam T 
+ */
 template <typename T>
-class PyTensorNetwork : public TensorNetwork<T>
+class PyTensorNetwork_trampoline : public TensorNetwork<T>
 {
 public:
-	PyTensorNetwork(const std::vector<npp::tensor<T>> &tensorList,
+	PyTensorNetwork_trampoline(const std::vector<npp::tensor_type<T>> &tensorList,
 					const std::vector<std::vector<int>> &subscriptVectorList) : TensorNetwork<T>(tensorList, subscriptVectorList) {};
 
-	PyTensorNetwork(std::vector<npp::tensor<T>> &&tensorList,
+	PyTensorNetwork_trampoline(std::vector<npp::tensor_type<T>> &&tensorList,
 					std::vector<std::vector<int>> &&subscriptVectorList) : TensorNetwork<T>(std::move(tensorList), std::move(subscriptVectorList)) {};
 
 	void contract_wrapper(std::optional<std::vector<int>> opt_contractionSequence = std::nullopt,
@@ -43,6 +48,13 @@ public:
 	}
 };
 
+/**
+ * @brief Wrapper function for trampoline class PyTensorNetwork_trampoline
+ * 
+ * @tparam T 
+ * @param m 
+ * @param typestr 
+ */
 template <typename T>
 void PyTensorNetwork_wrapper(py::module &m, const std::string &typestr = std::string())
 {
@@ -52,15 +64,15 @@ void PyTensorNetwork_wrapper(py::module &m, const std::string &typestr = std::st
 		pyclass_name += typestr;
 	}
 
-	py::class_<PyTensorNetwork<T>>(m, pyclass_name.c_str(), py::buffer_protocol(), py::dynamic_attr())
-		.def(py::init<std::vector<npp::tensor<T>> &, std::vector<std::vector<int>> &>(),
+	py::class_<PyTensorNetwork_trampoline<T>>(m, pyclass_name.c_str(), py::buffer_protocol(), py::dynamic_attr())
+		.def(py::init<std::vector<npp::tensor_type<T>> &, std::vector<std::vector<int>> &>(),
 			 py::arg("tensorList"), py::arg("legsList"))
-		.def(py::init<std::vector<npp::tensor<T>> &&, std::vector<std::vector<int>> &&>(),
+		.def(py::init<std::vector<npp::tensor_type<T>> &&, std::vector<std::vector<int>> &&>(),
 			 py::arg("tensorList"), py::arg("legsList"))
-		.def("contract", &PyTensorNetwork<T>::contract_wrapper,
+		.def("contract", &PyTensorNetwork_trampoline<T>::contract_wrapper,
 			 py::arg("contractionSequence") = py::none(), py::arg("finalOrder") = py::none())
-		.def("connect", &PyTensorNetwork<T>::connect)
-		.def_property_readonly("num_tensors", &PyTensorNetwork<T>::num_tensors);
+		.def("connect", &PyTensorNetwork_trampoline<T>::connect)
+		.def_property_readonly("num_tensors", &PyTensorNetwork_trampoline<T>::NumTensors);
 }
 
 PYBIND11_MODULE(_nconpp, m)

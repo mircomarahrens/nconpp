@@ -66,6 +66,12 @@
             "displayName": "",
             "configurePreset": "release",
             "configuration": "Release"
+        },
+        {
+            "name": "python",
+            "description": "",
+            "displayName": "",
+            "configurePreset": "python"
         }
     ]
 }
