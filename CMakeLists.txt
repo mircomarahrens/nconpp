@@ -94,7 +94,7 @@ if (CMAKE_BUILD_TYPE MATCHES Python AND SKBUILD)
 
     message(STATUS "Use NumPy include dir: ${Python_NumPy_INCLUDE_DIRS}")
     set(PYTHON_EXECUTABLE ${Python_EXECUTABLE})
-    message(STATUS "Use Python venv executable: ${Python_EXECUTABLE}")
+    #message(STATUS "Use Python venv executable: ${Python_EXECUTABLE}")
 
 #    get_cmake_property(_variableNames VARIABLES)
 #    list (SORT _variableNames)
@@ -149,7 +149,8 @@ __all__ = (\"TensorNetwork\")")
     target_compile_definitions(${PYBIND11_MODULE} PRIVATE
         VERSION_INFO=${VERSION_INFO})
 
-    install(FILES python/nconpp/__init__.py DESTINATION .)
+    install(FILES python/nconpp/__init__.py 
+        DESTINATION .)
     install(TARGETS ${PYBIND11_MODULE}
         LIBRARY DESTINATION .)
 endif()
