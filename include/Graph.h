@@ -34,7 +34,7 @@ public:
     };
     struct edge_properties_t : E
     {
-        std::size_t edge_index_t;
+        std::size_t edge_index;
         // put any default property here
     };
 
@@ -181,7 +181,7 @@ public:
         checkEdgeIndex(edge_index);
 
         edge_properties_t edge_properties;
-        edge_properties.edge_index_t = edge_index;
+        edge_properties.edge_index = edge_index;
 
         auto e = boost::add_edge(src, dest, edge_properties, graph_t);
         assert(e.second == true);
@@ -199,7 +199,7 @@ public:
         edge_iterator_t ei, ei_end, next;
         boost::tie(ei, ei_end) = boost::edges(graph_t);
 
-        checkEdgeIndex(edge_properties.edge_index_t);
+        checkEdgeIndex(edge_properties.edge_index);
 
         auto e = boost::add_edge(src, dest, edge_properties, graph_t);
         assert(e.second == true);
@@ -231,7 +231,7 @@ public:
         for (next = ei; ei != ei_end; ei = next)
         {
             ++next;
-            if (graph_t[*ei].edge_index_t == edge_index)
+            if (graph_t[*ei].edge_index == edge_index)
             {
                 return graph_t[*ei];
             }
@@ -255,7 +255,7 @@ public:
             checkEdgeIndex(edge_index);
 
             edge_properties_t edge_properties;
-            edge_properties.edge_index_t = edge_index;
+            edge_properties.edge_index = edge_index;
 
             auto e = boost::add_edge(ep.first, ep.second, edge_properties, graph_t);
             assert(e.second == true);
@@ -286,7 +286,7 @@ public:
         for (next = ei; ei != ei_end; ei = next)
         {
             ++next;
-            if (graph_t[*ei].edge_index_t == edge_index)
+            if (graph_t[*ei].edge_index == edge_index)
             {
                 auto source = boost::source(*ei, graph_t);
                 auto target = boost::target(*ei, graph_t);
@@ -312,7 +312,7 @@ public:
         for (next = ei; ei != ei_end; ei = next)
         {
             ++next;
-            result.insert(graph_t[*ei].edge_index_t);
+            result.insert(graph_t[*ei].edge_index);
         }
 
         return result;
@@ -335,7 +335,7 @@ public:
         {
             ++next;
 
-            result.insert(graph_t[*ei].edge_index_t);
+            result.insert(graph_t[*ei].edge_index);
         }
 
         return result;
@@ -362,7 +362,7 @@ public:
             // get the bundled edge property
             auto edge_properties = graph_t[*oi];
 
-            if (edge_index == edge_properties.edge_index_t)
+            if (edge_index == edge_properties.edge_index)
             {
                 updated = true;
 
@@ -392,7 +392,7 @@ public:
         for (next = ei; ei != ei_end; ei = next)
         {
             ++next;
-            if (graph_t[*ei].edge_index_t == edge_index)
+            if (graph_t[*ei].edge_index == edge_index)
             {
                 boost::remove_edge(*ei, graph_t);
                 notFound = false;
@@ -417,7 +417,7 @@ private:
         {
             ++next;
 
-            if (graph_t[*ei].edge_index_t == edge_index)
+            if (graph_t[*ei].edge_index == edge_index)
             {
                 throw std::invalid_argument(ERROR_MESSAGE::EDGE_INDEX_PRESENT);
             }

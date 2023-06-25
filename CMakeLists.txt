@@ -36,6 +36,7 @@ set(NCONPP_DEPENDENCIES
     xtensor-blas)
 
 set(NCONPP_INCLUDE
+    include/GraphNew.h
     include/Graph.h
     include/Tensor.h
     include/TensorNetwork.h
@@ -62,8 +63,9 @@ if (CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
 
     add_executable(nconpp_tests_run
         test/nconpp_tests_run.cpp
-        test/GraphTest.cpp
-        test/GraphTest_F.cpp
+        test/GraphNewTest.cpp
+        # test/GraphTest.cpp
+        # test/GraphTest_F.cpp
         test/TensorTest.cpp
         test/TensorNetworkTest.cpp)
 
