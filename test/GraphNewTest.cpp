@@ -153,3 +153,68 @@ TEST(GraphNewTest, removeEdge)
 
     ASSERT_TRUE(g.NumEdges() == 0);
 }
+
+TEST(GraphNewTest, customVertexProperties)
+{
+    struct vertex_properties
+    {
+        int prop1 = 0;
+        std::vector<int> prop2 = {1, 2, 3};
+    };
+
+    Graph<vertex_properties> g(6);
+
+    g.vertices[3].prop1 = 1;
+    g.vertices[3].prop2 = {4, 5, 6};
+
+    for (auto i = 0; i < g.NumVertices(); i++)
+    {
+        if (i != 3)
+        {
+            ASSERT_TRUE(g.vertices[i].prop1 == 0);
+            ASSERT_THAT(g.vertices[i].prop2, ElementsAre(1, 2, 3));
+        }
+        else
+        {
+            ASSERT_TRUE(g.vertices[i].prop1 == 1);
+            ASSERT_THAT(g.vertices[i].prop2, ElementsAre(4, 5, 6));
+        }
+    }
+}
+
+TEST(GraphNewTest, customEdgeProperties)
+{
+    struct vertex_properties
+    {
+        int prop1 = 0;
+        std::vector<int> prop2 = {1, 2, 3};
+    };
+
+    struct edge_properties
+    {
+        bool prop3 = true;
+    };
+
+    Graph<vertex_properties, edge_properties> g(6);
+
+    g.vertices[3].prop1 = 1;
+    g.vertices[3].prop2 = {4, 5, 6};
+
+    for (auto i = 0; i < g.NumVertices(); i++)
+    {
+        if (i != 3)
+        {
+            ASSERT_TRUE(g.vertices[i].prop1 == 0);
+            ASSERT_THAT(g.vertices[i].prop2, ElementsAre(1, 2, 3));
+        }
+        else
+        {
+            ASSERT_TRUE(g.vertices[i].prop1 == 1);
+            ASSERT_THAT(g.vertices[i].prop2, ElementsAre(4, 5, 6));
+        }
+    }
+
+    g.addEdge(0, 3, 4);
+
+    ASSERT_TRUE(g.edges[0].prop3 == true);
+}
