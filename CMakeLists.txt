@@ -37,7 +37,6 @@ set(NCONPP_DEPENDENCIES
 
 set(NCONPP_INCLUDE
     include/GraphNew.h
-    include/Graph.h
     include/Tensor.h
     include/TensorNetwork.h
     )
