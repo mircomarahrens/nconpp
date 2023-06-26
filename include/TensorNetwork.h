@@ -193,7 +193,7 @@ private:
                     std::size_t prev = _vertex_leg_map[_leg_index];
 
                     // add edge between previous src and dest (the current src)
-                    m_graph.addEdge(prev, _vertex_index, _leg_index);
+                    m_graph.addEdge(_leg_index, prev, _vertex_index);
 
                     // erase entry from map
                     _vertex_leg_map.erase(_leg_index);
@@ -521,7 +521,6 @@ public:
     //  */
     // void split(std::size_t vertex_index, std::size_t leg_index)
     // {
-    //     // throw std::logic_error("Not finally implemented yet. Current TODO: update edges.");
 
     //     auto _vertex = m_graph.vertices[vertex_index];
     //     std::vector<int> _legs = _vertex.legs;
