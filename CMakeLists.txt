@@ -13,10 +13,7 @@ set(CMAKE_CXX_STANDARD 20
 # activate vcpkg manifest mode
 set(VCPKG_FEATURE_FLAGS "versions")
 
-set(Boost_NO_WARN_NEW_VERSIONS 1)
-
 # dependencies
-find_package(Boost REQUIRED graph)
 find_package(BLAS REQUIRED)
 set(BLAS_INCLUDE_DIR ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include/openblas)
 message(STATUS "cblas.h is located in " ${BLAS_INCLUDE_DIR})
@@ -36,7 +33,7 @@ set(NCONPP_DEPENDENCIES
     xtensor-blas)
 
 set(NCONPP_INCLUDE
-    include/GraphNew.h
+    include/Graph.h
     include/Tensor.h
     include/TensorNetwork.h
     )
@@ -62,9 +59,7 @@ if (CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
 
     add_executable(nconpp_tests_run
         test/nconpp_tests_run.cpp
-        test/GraphNewTest.cpp
-        # test/GraphTest.cpp
-        # test/GraphTest_F.cpp
+        test/GraphTest.cpp
         test/TensorTest.cpp
         test/TensorNetworkTest.cpp)
 
