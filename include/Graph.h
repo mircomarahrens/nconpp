@@ -83,7 +83,7 @@ public:
     }
 
     /**
-     * @brief Add a new vertex to the graph and return its index.
+     * @brief Add a new vertex from a given index to the graph and return its index.
      * Throws exception if vertex index is present.
      *
      * @return std::size_t
@@ -99,6 +99,21 @@ public:
             throw std::invalid_argument(ERROR_MESSAGE::VERTEX_PRESENT);
         }
         return newVertex;
+    }
+
+    std::size_t addVertex()
+    {
+        std::size_t vertex_index = 0;
+        while (true)
+        {
+            if (vertices.find(vertex_index) == vertices.end())
+            {
+                vertices[vertex_index] = vertex_properties();
+                return vertex_index;
+            }
+            vertex_index++;
+        }
+        return -1;
     }
 
     /**

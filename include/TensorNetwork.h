@@ -115,32 +115,6 @@ private:
     };
 
     /**
-     * @brief Perform an outer product between two vertices.
-     *
-     * @param src
-     * @param dest
-     */
-    void outer(std::size_t src, std::size_t dest)
-    {
-        auto _legs_a = this->vertices[src].legs;
-        auto _legs_b = this->vertices[dest].legs;
-
-        auto _tensor_a = this->vertices[src].tensor;
-        auto _tensor_b = this->vertices[dest].tensor;
-
-        auto _tensor = npp::linalg::outer(_tensor_a, _tensor_b);
-
-        std::vector<int> _legs = {};
-        _legs.insert(_legs.end(), _legs_a.begin(), _legs_a.end());
-        _legs.insert(_legs.end(), _legs_b.begin(), _legs_b.end());
-
-        this->vertices[src].legs = std::move(_legs);
-        this->vertices[src].tensor = std::move(_tensor);
-
-        this->removeVertex(dest);
-    }
-
-    /**
      * @brief Create all edges
      *
      * @param _vertex_leg_map
@@ -554,33 +528,59 @@ public:
             this->vertices[vertex_index].legs = std::move(_left_legs);
             this->vertices[vertex_index].tensor = std::move(_U);
 
-            // // and create new vertices for s and V
-            // auto _s_vertex = addVertex(vertex_properties_t{.legs = std::move(s_legs), .tensor = std::move(_s), .singular_value = true});
-            // auto _V_vertex = addVertex(vertex_properties_t{.legs = std::move(_right_legs), .tensor = std::move(_V)});
+            // and create new vertices for s and V
+            std::size_t _s_vertex = this->addVertex();
+            this->vertices[_s_vertex].legs = std::move(s_legs);
+            this->vertices[_s_vertex].tensor = std::move(_s);
+            this->vertices[_s_vertex].is_singular_vector = true;
 
-            // // add new edges to graph
-            // this->addEdge(vertex_index, _s_vertex, _new_leg_left);
-            // this->addEdge(_s_vertex, _V_vertex, _new_leg_right);
+            std::size_t _V_vertex = this->addVertex();           
+            this->vertices[_V_vertex].legs = std::move(_right_legs);
+            this->vertices[_V_vertex].tensor = std::move(_V);
 
-            // // only edges of rhs needs to be updated, because edges of lhs are reused in U
-            // for (int _i : _right_legs)
-            // {
-            //     if (_i > 0)
-            //     {
-            //         // pair(src, tar)
-            //         auto _edge = this->getEdge(_i);
+            // add new edges to graph
+            this->addEdge(_new_leg_left, vertex_index, _s_vertex);
+            this->addEdge(_new_leg_right, _s_vertex, _V_vertex);
 
-            //         if (_edge.first != _V_vertex)
-            //         {
-            //             updateEdge(_i, _V_vertex, _edge.second);
-            //         }
-            //     }
-            // }
+            // only edges of rhs needs to be updated, because edges of lhs are reused in U
+            for (int _i : _right_legs)
+            {
+                if (_i > 0)
+                {
+                    this->edges[_i].src = _V_vertex;
+                }
+            }
         }
         else
         {
             throw std::invalid_argument(ERROR::OUT_OF_SIZE);
         }
+    }
+
+    /**
+     * @brief Perform an outer product between two vertices.
+     *
+     * @param src
+     * @param dest
+     */
+    void outer(std::size_t src, std::size_t dest)
+    {
+        auto _legs_a = this->vertices[src].legs;
+        auto _legs_b = this->vertices[dest].legs;
+
+        auto _tensor_a = this->vertices[src].tensor;
+        auto _tensor_b = this->vertices[dest].tensor;
+
+        auto _tensor = npp::linalg::outer(_tensor_a, _tensor_b);
+
+        std::vector<int> _legs = {};
+        _legs.insert(_legs.end(), _legs_a.begin(), _legs_a.end());
+        _legs.insert(_legs.end(), _legs_b.begin(), _legs_b.end());
+
+        this->vertices[src].legs = std::move(_legs);
+        this->vertices[src].tensor = std::move(_tensor);
+
+        this->removeVertex(dest);
     }
 };
 

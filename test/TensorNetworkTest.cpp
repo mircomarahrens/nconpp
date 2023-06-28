@@ -311,91 +311,83 @@ TEST(TensorNetworkTest, move_constructed_contract)
     // ASSERT_EQ(tensorList[0].shape(), npp::shape_type({4, 2, 9}));
 }
 
-// TEST(TensorNetworkTest, DISABLED_split)
-// {
-//     std::vector<npp::shape_type> shapes =
-//         {
-//             {3, 4, 5},
-//             {5, 3, 6, 7, 6},
-//             {7, 2},
-//             {8},
-//             {8, 9},
-//             {9, 9},
-//         };
+TEST(TensorNetworkTest, split)
+{
+    std::vector<npp::shape_type> shapes =
+        {
+            {3, 4, 5},
+            {5, 3, 6, 7, 6},
+            {7, 2},
+            {8},
+            {8, 9},
+            {9, 9},
+        };
 
-//     TensorNetwork tn(
-//         createTensorList(shapes).first,
-//         {
-//             {3, -2, 2},
-//             {2, 3, 1, 4, 1},
-//             {4, -1},
-//             {5},
-//             {5, -3},
-//             {6, 6},
-//         });
+    TensorNetwork tn(
+        createTensorList(shapes).first,
+        {
+            {3, -2, 2},
+            {2, 3, 1, 4, 1},
+            {4, -1},
+            {5},
+            {5, -3},
+            {6, 6},
+        });
 
-//     ASSERT_THAT(tn.Legs(), ElementsAre(1, 2, 3, 4, 5, 6));
-//     ASSERT_THAT(tn.DanglingLegs(), ElementsAre(-3, -2, -1));
+    ASSERT_THAT(tn.Legs(), ElementsAre(1, 2, 3, 4, 5, 6));
+    ASSERT_THAT(tn.DanglingLegs(), ElementsAre(-3, -2, -1));
 
-//     tn.contract();
+    tn.contract();
 
-//     auto nt = tn.NumTensors();
+    auto nt = tn.NumTensors();
 
-//     ASSERT_TRUE(nt == 3);
+    ASSERT_TRUE(nt == 3);
 
-//     auto tensorList = tn.TensorList();
+    ASSERT_EQ(tn.vertices[0].tensor.shape(), npp::shape_type({4, 2}));
+    ASSERT_EQ(tn.vertices[3].tensor.shape(), npp::shape_type({9}));
+    ASSERT_EQ(tn.vertices[5].tensor.shape(), npp::shape_type({}));
 
-//     // checks before connect
-//     ASSERT_TRUE(tensorList.size() == 3);
-//     ASSERT_EQ(tensorList[0].shape(), npp::shape_type({4, 2}));
-//     ASSERT_EQ(tensorList[1].shape(), npp::shape_type({9}));
-//     ASSERT_EQ(tensorList[2].shape(), npp::shape_type({}));
+    tn.outer(0, 3);
+    ASSERT_EQ(tn.vertices[0].tensor.shape(), npp::shape_type({4, 2, 9}));
+    
+    tn.outer(0, 5);
+    ASSERT_EQ(tn.vertices[0].tensor.shape(), npp::shape_type({4, 2, 9}));
 
-//     tn.connect();
+    nt = tn.NumTensors();
 
-//     nt = tn.NumTensors();
+    ASSERT_TRUE(nt == 1);
 
-//     ASSERT_TRUE(nt == 1);
+    auto tensor = tn.vertices[0].tensor;
 
-//     tensorList = tn.TensorList();
+    // new test starts here
+    tn.split(0, 1);
 
-//     ASSERT_TRUE(tensorList.size() == 1);
-//     ASSERT_EQ(tensorList[0].shape(), npp::shape_type({4, 2, 9}));
+    nt = tn.NumTensors();
 
-//     auto tensor = tensorList[0];
+    ASSERT_TRUE(nt == 3);
 
-//     // new test starts here
-//     tn.split(0, 1);
+    ASSERT_EQ(tn.vertices[0].tensor.shape(), npp::shape_type({4, 4}));
+    ASSERT_EQ(tn.vertices[1].tensor.shape(), npp::shape_type({4}));
+    ASSERT_EQ(tn.vertices[2].tensor.shape(), npp::shape_type({4, 2, 9}));
 
-//     tensorList = tn.TensorList();
+    auto U = tn.vertices[0].tensor;
+    auto s = tn.vertices[1].tensor;
+    auto V = tn.vertices[2].tensor;
 
-//     nt = tn.NumTensors();
+    npp::tensor_type<std::complex<double>> smat = npp::diag(s);
 
-//     ASSERT_TRUE(nt == 3);
+    auto Us = npp::linalg::dot(U, smat);
+    ASSERT_EQ(Us.shape(), npp::shape_type({4, 4}));
+    auto result = npp::linalg::tensordot(Us, V, {1}, {0});
+    ASSERT_EQ(result.shape(), npp::shape_type({4, 2, 9}));
+    ASSERT_TRUE(npp::allclose(tensor, result));
 
-//     ASSERT_EQ(tensorList[0].shape(), npp::shape_type({4, 4}));
-//     ASSERT_EQ(tensorList[1].shape(), npp::shape_type({4}));
-//     ASSERT_EQ(tensorList[2].shape(), npp::shape_type({4, 2, 9}));
+    // recontract splitted network
+    tn.contract();
 
-//     auto U = tensorList[0];
-//     auto s = tensorList[1];
-//     auto V = tensorList[2];
+    nt = tn.NumTensors();
+    ASSERT_TRUE(nt == 1);
 
-//     npp::tensor_type<std::complex<double>> smat = npp::diag(s);
-
-//     auto Us = npp::linalg::dot(U, smat);
-//     ASSERT_EQ(Us.shape(), npp::shape_type({4, 4}));
-//     auto result = npp::linalg::tensordot(Us, V, {1}, {0});
-//     ASSERT_EQ(result.shape(), npp::shape_type({4, 2, 9}));
-//     ASSERT_TRUE(npp::allclose(tensor, result));
-
-//     // recontract splitted network
-//     tn.contract();
-
-//     nt = tn.NumTensors();
-//     ASSERT_TRUE(nt == 1);
-
-//     tensorList = tn.TensorList();
-//     ASSERT_EQ(tensorList[0].shape(), npp::shape_type({4, 2, 9}));
-//     ASSERT_TRUE(npp::allclose(tensor, tensorList[0]));
-// }
+    ASSERT_EQ(tn.vertices[0].tensor.shape(), npp::shape_type({4, 2, 9}));
+    ASSERT_TRUE(npp::allclose(tensor, tn.vertices[0].tensor));
+}
