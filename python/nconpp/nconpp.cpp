@@ -8,6 +8,7 @@
 #include <complex>
 #include <vector>
 #include <string>
+#include <unordered_map>
 #include <optional>
 
 #include "TensorNetwork.h"
