@@ -582,6 +582,27 @@ public:
 
         this->removeVertex(dest);
     }
+
+    /**
+     * @brief Connect all remaining vertices consecutive starting with the most left one.
+     * 
+     */
+    void connect()
+    {
+        auto vs = this->getVertices();
+        auto v0 = *vs.begin();
+        std::size_t c = 0;
+        for(const auto& el : vs)
+        {
+            if (c > 0) {
+                outer(v0, el);
+            }
+            else
+            {
+                c += 1;
+            }
+        }
+    }
 };
 
 #endif // NCONPP_TENSORNETWORK_H

@@ -239,24 +239,6 @@ TEST(TensorNetworkTest, copy_constructed_contract)
     ASSERT_EQ(tn.vertices[0].tensor.shape(), npp::shape_type({4, 2}));
     ASSERT_EQ(tn.vertices[3].tensor.shape(), npp::shape_type({9}));
     ASSERT_EQ(tn.vertices[5].tensor.shape(), npp::shape_type({}));
-
-    // tensorList = tn.TensorList();
-
-    // ASSERT_TRUE(tensorList.size() == 3);
-    // ASSERT_EQ(tensorList[0].shape(), npp::shape_type({4, 2}));
-    // ASSERT_EQ(tensorList[1].shape(), npp::shape_type({9}));
-    // ASSERT_EQ(tensorList[2].shape(), npp::shape_type({}));
-
-    // tn.connect();
-
-    // nt = tn.NumTensors();
-
-    // ASSERT_TRUE(nt == 1);
-
-    // tensorList = tn.TensorList();
-
-    // ASSERT_TRUE(tensorList.size() == 1);
-    // ASSERT_EQ(tensorList[0].shape(), npp::shape_type({4, 2, 9}));
 }
 
 TEST(TensorNetworkTest, move_constructed_contract)
@@ -291,24 +273,48 @@ TEST(TensorNetworkTest, move_constructed_contract)
     ASSERT_EQ(tn.vertices[0].tensor.shape(), npp::shape_type({4, 2}));
     ASSERT_EQ(tn.vertices[3].tensor.shape(), npp::shape_type({9}));
     ASSERT_EQ(tn.vertices[5].tensor.shape(), npp::shape_type({}));
+}
 
-    // auto tensorList = tn.TensorList();
+TEST(TensorNetworkTest, connect)
+{
+    std::vector<npp::shape_type> shapes =
+        {
+            {3, 4, 5},
+            {5, 3, 6, 7, 6},
+            {7, 2},
+            {8},
+            {8, 9},
+            {9, 9},
+        };
 
-    // // checks before connect
-    // ASSERT_TRUE(tensorList.size() == 3);
-    // ASSERT_EQ(tensorList[0].shape(), npp::shape_type({4, 2}));
-    // ASSERT_EQ(tensorList[1].shape(), npp::shape_type({9}));
-    // ASSERT_EQ(tensorList[2].shape(), npp::shape_type({}));
-    // tn.connect();
+    TensorNetwork tn(
+        createTensorList(shapes).first,
+        {
+            {3, -2, 2},
+            {2, 3, 1, 4, 1},
+            {4, -1},
+            {5},
+            {5, -3},
+            {6, 6},
+        });
 
-    // nt = tn.NumTensors();
+    tn.contract();
 
-    // ASSERT_TRUE(nt == 1);
+    auto nt = tn.NumTensors();
 
-    // tensorList = tn.TensorList();
+    ASSERT_TRUE(nt == 3);
 
-    // ASSERT_TRUE(tensorList.size() == 1);
-    // ASSERT_EQ(tensorList[0].shape(), npp::shape_type({4, 2, 9}));
+    ASSERT_EQ(tn.vertices[0].tensor.shape(), npp::shape_type({4, 2}));
+    ASSERT_EQ(tn.vertices[3].tensor.shape(), npp::shape_type({9}));
+    ASSERT_EQ(tn.vertices[5].tensor.shape(), npp::shape_type({}));
+
+    tn.connect();
+
+    nt = tn.NumTensors();
+
+    ASSERT_TRUE(nt == 1);
+
+    ASSERT_EQ(tn.vertices[0].tensor.shape(), npp::shape_type({4, 2, 9}));
 }
 
 TEST(TensorNetworkTest, split)
@@ -349,7 +355,7 @@ TEST(TensorNetworkTest, split)
 
     tn.outer(0, 3);
     ASSERT_EQ(tn.vertices[0].tensor.shape(), npp::shape_type({4, 2, 9}));
-    
+
     tn.outer(0, 5);
     ASSERT_EQ(tn.vertices[0].tensor.shape(), npp::shape_type({4, 2, 9}));
 

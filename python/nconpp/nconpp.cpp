@@ -80,12 +80,10 @@ PYBIND11_MODULE(_nconpp, m)
 	xt::import_numpy();
 
 	m.doc() = R"pbdoc(
-        Library for Tensor Network contraction.
-
-	    Contracts multiple tensors to one tensor, if possible.
+        Library for Tensor Network algorithms.
 
 	    @params:
-	     containerList:
+	     tensorList:
 	         list of containers, i.e. tensors to contract
 	     legsList:
 	         Nomenclature of the legs of the tensors in tensorList:
@@ -94,7 +92,7 @@ PYBIND11_MODULE(_nconpp, m)
 	               hence occuring in pairs
 	             - legs with negative integers won't be contracted, so called
 	               dangling legs
-	     contractionSequenceLegs (optional):
+	     contractionSequence (optional):
 	         order in which the tensors shall be contracted
 	     finalOrder (optional):
 	         Permutation of the legs of the final tensor.
@@ -103,6 +101,8 @@ PYBIND11_MODULE(_nconpp, m)
 	     the final contracted container
     )pbdoc";
 
+	//PyTensorNetwork_wrapper<int>(m);
+	//PyTensorNetwork_wrapper<double>(m);
 	PyTensorNetwork_wrapper<std::complex<double>>(m);
 	// TODO define derived (?) class for Pybind11 with different data types (aka dtype)
 	// class_wrapper<double>(m);

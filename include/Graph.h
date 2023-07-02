@@ -7,7 +7,7 @@
 
 #include <string>
 #include <unordered_map>
-#include <unordered_set>
+#include <set>
 
 namespace ERROR_MESSAGE
 {
@@ -41,7 +41,7 @@ public:
 
     struct vertex_properties : V
     {
-        std::unordered_set<int> edge_indices;
+        std::set<int> edge_indices;
         // put any default properties here
     };
 
@@ -70,11 +70,11 @@ public:
     /**
      * @brief Get vertex indices.
      *
-     * @return std::unordered_set<size_t>
+     * @return std::set<size_t>
      */
-    std::unordered_set<std::size_t> getVertices()
+    std::set<std::size_t> getVertices()
     {
-        std::unordered_set<std::size_t> keys;
+        std::set<std::size_t> keys;
         for (auto p : vertices)
         {
             keys.insert(p.first);
@@ -247,11 +247,11 @@ public:
     /**
      * @brief Get edge indices.
      *
-     * @return std::unordered_set<size_t>
+     * @return std::set<size_t>
      */
-    std::unordered_set<std::size_t> getEdges()
+    std::set<std::size_t> getEdges()
     {
-        std::unordered_set<std::size_t> keys;
+        std::set<std::size_t> keys;
         for (auto p : edges)
         {
             keys.insert(p.first);
