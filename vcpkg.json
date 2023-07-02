@@ -11,10 +11,7 @@
   }, {
     "name" : "lapack",
     "version>=" : "2022-02-22"
-  }, {
-    "name" : "boost-graph",
-    "version>=" : "1.81.0#2"
-  } ],
+  }],
   "builtin-baseline" : "c9f906558f9bb12ee9811d6edc98ec9255c6cda5",
   "name" : "nconpp-core",
   "version" : "0.0.1"
