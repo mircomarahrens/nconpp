@@ -45,3 +45,9 @@ pip install .
 ## Licensing
 
 ...
+
+## Ideas
+
+* Text-based user interface; inspiration: <https://www.tensortrace.com/>
+* Add mechanism for empty initilaization of class TensorNetwork with CRUD-like behavior
+* Add tests for python via pytest or similar
