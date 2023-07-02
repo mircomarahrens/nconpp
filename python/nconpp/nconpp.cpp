@@ -76,6 +76,24 @@ void PyTensorNetwork_wrapper(py::module &m, const std::string &typestr = std::st
 		.def_property_readonly("num_tensors", &PyTensorNetwork_trampoline<T>::NumTensors);
 }
 
+/**
+ * @brief Wrapper function for trampoline class PyGraph_trampoline
+ * 
+ * @param m 
+ * @param typestr 
+ */
+void PyGraph_wrapper(py::module &m, const std::string &typestr = std::string())
+{
+	std::string pyclass_name = std::string("Graph");
+	if (!typestr.empty())
+	{
+		pyclass_name += typestr;
+	}
+
+	py::class_<Graph<>>(m, pyclass_name.c_str(), py::buffer_protocol(), py::dynamic_attr())
+		.def(py::init<std::size_t>(), py::arg("nodes"));
+}
+
 PYBIND11_MODULE(_nconpp, m)
 {
 	xt::import_numpy();
@@ -105,6 +123,7 @@ PYBIND11_MODULE(_nconpp, m)
 	//PyTensorNetwork_wrapper<int>(m);
 	//PyTensorNetwork_wrapper<double>(m);
 	PyTensorNetwork_wrapper<std::complex<double>>(m);
+	PyGraph_wrapper(m);
 	// TODO define derived (?) class for Pybind11 with different data types (aka dtype)
 	// class_wrapper<double>(m);
 }
