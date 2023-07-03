@@ -79,9 +79,11 @@ void PyTensorNetwork_wrapper(py::module &m, const std::string &typestr = std::st
 /**
  * @brief Wrapper function for trampoline class PyGraph_trampoline
  * 
+ * @tparam V,E
  * @param m 
  * @param typestr 
  */
+template<class V = GRAPH_PROPERTIES::default_t, class E = GRAPH_PROPERTIES::default_t>
 void PyGraph_wrapper(py::module &m, const std::string &typestr = std::string())
 {
 	std::string pyclass_name = std::string("Graph");
@@ -90,8 +92,13 @@ void PyGraph_wrapper(py::module &m, const std::string &typestr = std::string())
 		pyclass_name += typestr;
 	}
 
-	py::class_<Graph<>>(m, pyclass_name.c_str(), py::buffer_protocol(), py::dynamic_attr())
-		.def(py::init<std::size_t>(), py::arg("nodes"));
+	py::class_<Graph<V,E>>(m, pyclass_name.c_str(), py::buffer_protocol(), py::dynamic_attr())
+		.def(py::init<>())
+		.def(py::init<std::size_t>(), py::arg("nodes"))
+		.def("get_vertices", &Graph<V,E>::getVertices)
+		.def("remove_vertex", &Graph<V,E>::removeVertex, py::arg("vertex"))
+		//.def("add_vertex", &Graph<V,E>::addVertex)
+		.def_property_readonly("num_vertices", &Graph<V,E>::NumVertices);
 }
 
 PYBIND11_MODULE(_nconpp, m)
@@ -123,7 +130,7 @@ PYBIND11_MODULE(_nconpp, m)
 	//PyTensorNetwork_wrapper<int>(m);
 	//PyTensorNetwork_wrapper<double>(m);
 	PyTensorNetwork_wrapper<std::complex<double>>(m);
-	PyGraph_wrapper(m);
+	PyGraph_wrapper<>(m);
 	// TODO define derived (?) class for Pybind11 with different data types (aka dtype)
 	// class_wrapper<double>(m);
 }

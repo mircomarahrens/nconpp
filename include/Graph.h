@@ -19,11 +19,14 @@ namespace ERROR_MESSAGE
     const static std::string DEST_NOTPRESENT = "Destination vertex index not present.";
 }
 
-struct default_t
+namespace GRAPH_PROPERTIES
 {
-};
+    struct default_t
+    {
+    };
+}
 
-template <class V = default_t, class E = default_t>
+template <class V = GRAPH_PROPERTIES::default_t, class E = GRAPH_PROPERTIES::default_t>
 class Graph
 {
 public:
@@ -101,6 +104,11 @@ public:
         return newVertex;
     }
 
+    /**
+     * @brief Add a new vertex to the graph object and return its unique id.
+     * 
+     * @return std::size_t 
+     */
     std::size_t addVertex()
     {
         std::size_t vertex_index = 0;
