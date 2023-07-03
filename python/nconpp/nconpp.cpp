@@ -97,7 +97,7 @@ void PyGraph_wrapper(py::module &m, const std::string &typestr = std::string())
 		.def(py::init<std::size_t>(), py::arg("nodes"))
 		.def("get_vertices", &Graph<V,E>::getVertices)
 		.def("remove_vertex", &Graph<V,E>::removeVertex, py::arg("vertex"))
-		//.def("add_vertex", &Graph<V,E>::addVertex)
+		.def("add_vertex", &Graph<V,E>::addVertex, py::arg("vertex"))
 		.def_property_readonly("num_vertices", &Graph<V,E>::NumVertices);
 }
 

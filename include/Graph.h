@@ -105,26 +105,6 @@ public:
     }
 
     /**
-     * @brief Add a new vertex to the graph object and return its unique id.
-     * 
-     * @return std::size_t 
-     */
-    std::size_t addVertex()
-    {
-        std::size_t vertex_index = 0;
-        while (true)
-        {
-            if (vertices.find(vertex_index) == vertices.end())
-            {
-                vertices[vertex_index] = vertex_properties();
-                return vertex_index;
-            }
-            vertex_index++;
-        }
-        return -1;
-    }
-
-    /**
      * @brief Remove a vertex by index and return its index.
      * Beforehand all edges corresponding to the vertex are also removed.
      * Throws exception if vertex index is not present.
