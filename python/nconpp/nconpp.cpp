@@ -76,6 +76,44 @@ void PyTensorNetwork_wrapper(py::module &m, const std::string &typestr = std::st
 		.def_property_readonly("num_tensors", &PyTensorNetwork_trampoline<T>::NumTensors);
 }
 
+/**
+ * @brief Wrapper function for trampoline class PyGraph_trampoline
+ * 
+ * @param m 
+ * @param typestr 
+ */
+void PyGraph_wrapper(py::module &m, const std::string &typestr = std::string())
+{
+	std::string pyclass_name = std::string("Graph");
+	if (!typestr.empty())
+	{
+		pyclass_name += typestr;
+	}
+
+	py::class_<Graph<>::vertex_properties>(m, "VertexProperties")
+		.def(py::init<>())
+		.def_readwrite("edge_indices", &Graph<>::vertex_properties::edge_indices);
+	py::class_<Graph<>::edge_properties>(m, "EdgeProperties")
+		.def(py::init<>())
+		.def_readonly("src", &Graph<>::edge_properties::src)
+		.def_readonly("dest", &Graph<>::edge_properties::dest)
+		.def_readonly("directed", &Graph<>::edge_properties::directed);
+
+	py::class_<Graph<>>(m, pyclass_name.c_str(), py::buffer_protocol(), py::dynamic_attr())
+		.def(py::init<>())
+		.def(py::init<std::size_t>(), py::arg("nodes"))
+		.def("get_vertices", &Graph<>::getVertices)
+		.def("remove_vertex", &Graph<>::removeVertex, py::arg("vertex"))
+		.def("add_vertex", &Graph<>::addVertex, py::arg("vertex"))
+		.def("add_edge", &Graph<>::addEdge, py::arg("index"), py::arg("src"), py::arg("dest"), py::arg("directed") = py::none())
+		.def("get_edges", &Graph<>::getEdges)
+		.def("remove_edge", &Graph<>::removeEdge)
+		.def_readwrite("vertices", &Graph<>::vertices)
+		.def_readwrite("edges", &Graph<>::edges)
+		.def_property_readonly("num_vertices", &Graph<>::NumVertices)
+		.def_property_readonly("num_edges", &Graph<>::NumEdges);
+}
+
 PYBIND11_MODULE(_nconpp, m)
 {
 	xt::import_numpy();
@@ -105,6 +143,7 @@ PYBIND11_MODULE(_nconpp, m)
 	//PyTensorNetwork_wrapper<int>(m);
 	//PyTensorNetwork_wrapper<double>(m);
 	PyTensorNetwork_wrapper<std::complex<double>>(m);
+	PyGraph_wrapper(m);
 	// TODO define derived (?) class for Pybind11 with different data types (aka dtype)
 	// class_wrapper<double>(m);
 }
