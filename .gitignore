@@ -2,6 +2,8 @@
 /out/
 /venv/
 /python/__init__.py
+/python/tests/.pytest_cache
+/python/tests/__pycache__
 
 # JetBrains
 /.idea/

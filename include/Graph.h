@@ -19,11 +19,14 @@ namespace ERROR_MESSAGE
     const static std::string DEST_NOTPRESENT = "Destination vertex index not present.";
 }
 
-struct default_t
+namespace GRAPH_PROPERTIES
 {
-};
+    struct default_t
+    {
+    };
+}
 
-template <class V = default_t, class E = default_t>
+template <class V = GRAPH_PROPERTIES::default_t, class E = GRAPH_PROPERTIES::default_t>
 class Graph
 {
 public:
@@ -99,21 +102,6 @@ public:
             throw std::invalid_argument(ERROR_MESSAGE::VERTEX_PRESENT);
         }
         return newVertex;
-    }
-
-    std::size_t addVertex()
-    {
-        std::size_t vertex_index = 0;
-        while (true)
-        {
-            if (vertices.find(vertex_index) == vertices.end())
-            {
-                vertices[vertex_index] = vertex_properties();
-                return vertex_index;
-            }
-            vertex_index++;
-        }
-        return -1;
     }
 
     /**
