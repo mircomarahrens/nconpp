@@ -8,7 +8,7 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "nconpp"
-version = "0.0.1"
+version = "0.1.0"
 description="Library for Tensor Network calculations."
 readme = "README.md"
 authors = [
