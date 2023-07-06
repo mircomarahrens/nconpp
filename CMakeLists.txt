@@ -115,9 +115,10 @@ if (CMAKE_BUILD_TYPE MATCHES Python AND SKBUILD)
 if (sys.platform == 'win32'):
     os.add_dll_directory(\"${VCPKG_INSTALLED_DIR_DLL_DIR}\")
 
-from ._nconpp import TensorNetwork, Graph
+from ._nconpp import TensorNetwork, Graph, VertexProperties, EdgeProperties
 
-__all__ = (\"TensorNetwork\", \"Graph\")")
+__all__ = (\"TensorNetwork\", \"Graph\", \"VertexProperties\", \"EdgeProperties\")")
+__version__ = "0.1.0"
     endif()
 
     # pybind11
