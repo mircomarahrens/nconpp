@@ -2,6 +2,7 @@
 /out/
 /venv/
 /python/__init__.py
+/python/nconpp/__init__.py
 /python/tests/.pytest_cache
 /python/tests/__pycache__
 
