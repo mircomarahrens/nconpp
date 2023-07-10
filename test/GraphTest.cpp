@@ -4,6 +4,7 @@
 #include "Graph.h"
 
 using ::testing::ElementsAre;
+using ::testing::Pair;
 using ::testing::UnorderedElementsAre;
 
 class GraphTest : public testing::Test
@@ -225,16 +226,28 @@ TEST(GraphTest, mergeVertices)
 
     g.addEdge(0, 1, 2);
     g.addEdge(1, 2, 3);
+    g.addEdge(2, 2, 4);
+    g.addEdge(3, 3, 4);
 
-    // --> (x, 1, 3)
+    // AFTER MERGE
+    // --> (., 1, 1), (., 1, 3), (., 1, 4), (., 3, 4)
 
-    ASSERT_TRUE(g.NumEdges() == 2);
+    ASSERT_TRUE(g.NumEdges() == 4);
 
-    ASSERT_THAT(g.getEdges(), UnorderedElementsAre(0, 1));
+    ASSERT_THAT(g.getEdges(), UnorderedElementsAre(0, 1, 2, 3));
 
     g.mergeVertices(1, 2);
 
-    ASSERT_TRUE(g.NumEdges() == 1);
+    ASSERT_TRUE(g.NumEdges() == 4);
 
-    ASSERT_THAT(g.getEdges(), UnorderedElementsAre(1));
+    ASSERT_THAT(g.getEdges(), UnorderedElementsAre(0, 1, 2, 3));
+
+    ASSERT_TRUE(g.edges[0].src == 1);
+    ASSERT_TRUE(g.edges[0].dest == 1);
+    ASSERT_TRUE(g.edges[1].src == 1);
+    ASSERT_TRUE(g.edges[1].dest == 3);
+    ASSERT_TRUE(g.edges[2].src == 1);
+    ASSERT_TRUE(g.edges[2].dest == 4);
+    ASSERT_TRUE(g.edges[3].src == 3);
+    ASSERT_TRUE(g.edges[3].dest == 4);
 }
