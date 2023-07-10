@@ -101,7 +101,7 @@ void PyGraph_wrapper(py::module &m, const std::string &typestr = std::string())
 
 	py::class_<Graph<>>(m, pyclass_name.c_str(), py::buffer_protocol(), py::dynamic_attr())
 		.def(py::init<>())
-		.def(py::init<std::size_t>(), py::arg("nodes"))
+		.def(py::init<std::size_t>(), py::arg("nodes"), py::arg("parallel_edges") = py::none)
 		.def("get_vertices", &Graph<>::getVertices)
 		.def("remove_vertex", &Graph<>::removeVertex, py::arg("vertex"))
 		.def("add_vertex", &Graph<>::addVertex, py::arg("vertex"))
@@ -110,6 +110,7 @@ void PyGraph_wrapper(py::module &m, const std::string &typestr = std::string())
 		.def("remove_edge", &Graph<>::removeEdge)
 		.def_readwrite("vertices", &Graph<>::vertices)
 		.def_readwrite("edges", &Graph<>::edges)
+		.def_readonly("adjacency_list", &Graph<>::adjacency_list)
 		.def_property_readonly("num_vertices", &Graph<>::NumVertices)
 		.def_property_readonly("num_edges", &Graph<>::NumEdges);
 }

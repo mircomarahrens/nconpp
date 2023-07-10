@@ -5,6 +5,7 @@
 #ifndef NCONPP_GRAPH_H
 #define NCONPP_GRAPH_H
 
+#include <list>
 #include <string>
 #include <unordered_map>
 #include <set>
@@ -21,9 +22,9 @@ namespace ERROR_MESSAGE
 
 namespace GRAPH_PROPERTIES
 {
-    struct default_t
-    {
-    };
+    struct default_t {};
+
+    enum Color { BLACK, GRAY, WHITE };
 }
 
 template <class V = GRAPH_PROPERTIES::default_t, class E = GRAPH_PROPERTIES::default_t>
@@ -32,10 +33,11 @@ class Graph
 public:
     Graph() = default;
 
-    Graph(std::size_t N)
+    Graph(std::size_t N, bool parallel_edges = true) : m_parallel_edges(parallel_edges)
     {
         for (std::size_t i = 0; i < N; i++)
         {
+            adjacency_list[i] = std::set<std::size_t>();
             vertices[i] = vertex_properties();
         }
     };
@@ -45,6 +47,7 @@ public:
     struct vertex_properties : V
     {
         std::set<int> edge_indices;
+        GRAPH_PROPERTIES::Color color = GRAPH_PROPERTIES::Color::WHITE;
         // put any default properties here
     };
 
@@ -60,6 +63,9 @@ public:
 
     // edge index : edge properties
     std::unordered_map<std::size_t, edge_properties> edges;
+
+    // adjacency list
+    std::unordered_map<std::size_t, std::set<std::size_t>> adjacency_list;
 
     /**
      * @brief Get the current number of vertices.
@@ -105,6 +111,26 @@ public:
     }
 
     /**
+     * @brief Adds a new vertex to the graph and return its index.
+     * 
+     * @return std::size_t 
+     */
+    std::size_t addVertex()
+    {
+        std::size_t len = vertices.size();
+        for (std::size_t id = 0; id < len; id++)
+        {
+            if (vertices.find(id) == vertices.end())
+            {
+                vertices[id] = vertex_properties();
+                return id;
+            }
+        }
+        vertices[len] = vertex_properties();
+        return len; 
+    }
+
+    /**
      * @brief Remove a vertex by index and return its index.
      * Beforehand all edges corresponding to the vertex are also removed.
      * Throws exception if vertex index is not present.
@@ -118,6 +144,7 @@ public:
         {
             clearVertex(vertex);
             vertices.erase(vertex);
+            adjacency_list.erase(vertex);
         }
         else
         {
@@ -158,6 +185,12 @@ public:
 
         vertices[src].edge_indices.insert(edgeIndex);
         vertices[dest].edge_indices.insert(edgeIndex);
+
+        adjacency_list[src].insert(dest);
+        if (!directed)
+        {
+            adjacency_list[dest].insert(src);
+        }
 
         return edgeIndex;
     }
@@ -200,24 +233,21 @@ public:
             for (int i : edge_indices)
             {
                 auto& edge = edges[i];
-                if (edge.src == dest && edge.dest == dest) 
+                if (edge.src == dest)
                 {
                     edge.src = src;
-                    edge.dest = src;
-
                     vertices[src].edge_indices.insert(i);
+                    adjacency_list[src].insert(dest);
                     vertices[dest].edge_indices.erase(i);
                 }
                 else if (edge.dest == dest)
                 {
-                    removeEdge(i);
-                }
-                else if (edge.src == dest)
-                {
-                    edge.src = src;
+                    adjacency_list[src].insert(edge.dest);
+                    edge.dest = src;
                     vertices[src].edge_indices.insert(i);
                     vertices[dest].edge_indices.erase(i);
                 }
+
             }
             removeVertex(dest);
         }
@@ -262,12 +292,25 @@ public:
         }
         else
         {
-            vertices[edges[edgeIndex].src].edge_indices.erase(edgeIndex);
-            vertices[edges[edgeIndex].dest].edge_indices.erase(edgeIndex);
+            auto src = edges[edgeIndex].src;
+            auto dest = edges[edgeIndex].dest;
+
+            adjacency_list[src].erase(dest);
+            if (!edges[edgeIndex].directed)
+            {
+                adjacency_list[dest].erase(src);
+            }
+
+            vertices[src].edge_indices.erase(edgeIndex);
+            vertices[dest].edge_indices.erase(edgeIndex);
+
             edges.erase(edgeIndex);
         }
         return edgeIndex;
     }
+
+private:
+    bool m_parallel_edges = true;
 };
 
 #endif // NCONPP_GRAPH_H
