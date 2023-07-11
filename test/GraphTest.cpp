@@ -251,3 +251,34 @@ TEST(GraphTest, mergeVertices)
     ASSERT_TRUE(g.edges[3].src == 3);
     ASSERT_TRUE(g.edges[3].dest == 4);
 }
+
+TEST(GraphTest, largeCustomGraph)
+{
+    struct vertex_properties
+    {
+        int vp1 = 0;
+        std::vector<int> vp2 = {1, 2, 3, 4, 6};
+        bool vp3 = false;
+    };
+
+    struct edge_properties
+    {
+        bool ep1 = true;
+        double ep2 = 0.55;
+    };
+
+    Graph<vertex_properties, edge_properties> g(1000);
+
+    for (std::size_t id = 0; id < 2000; id++)
+    {
+        g.addEdge(id, std::rand() % 1000, std::rand() % 1000);
+    }
+
+    ASSERT_TRUE(g.NumEdges() == 2000);
+
+    for (auto el : g.edges)
+    {
+        auto edge = el.second;
+        ASSERT_TRUE(g.adjacency_list[edge.src].find(edge.dest) != g.adjacency_list[edge.src].end());
+    }
+}
