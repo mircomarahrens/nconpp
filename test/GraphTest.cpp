@@ -45,7 +45,7 @@ TEST(GraphTest, addVertex)
         try {
             g.addVertex(5);
         } catch (const std::invalid_argument &ex) {
-            EXPECT_EQ(ERROR_MESSAGE::VERTEX_PRESENT, ex.what());
+            EXPECT_EQ(ERROR_MESSAGE::VERTEXID_PRESENT, ex.what());
             throw;
         },
         std::invalid_argument);
@@ -69,7 +69,7 @@ TEST(GraphTest, removeVertex)
         try {
             g.removeVertex(6);
         } catch (const std::invalid_argument &ex) {
-            EXPECT_EQ(ERROR_MESSAGE::VERTEX_NOTPRESENT, ex.what());
+            EXPECT_EQ(ERROR_MESSAGE::VERTEXID_NOTPRESENT, ex.what());
             throw;
         },
         std::invalid_argument);
@@ -93,7 +93,7 @@ TEST(GraphTest, addEdge)
         try {
             g.addEdge(0, 6, 5);
         } catch (const std::invalid_argument &ex) {
-            EXPECT_EQ(ERROR_MESSAGE::SOURCE_NOTPRESENT, ex.what());
+            EXPECT_EQ(ERROR_MESSAGE::SOURCEID_NOTPRESENT, ex.what());
             throw;
         },
         std::invalid_argument);
@@ -102,7 +102,7 @@ TEST(GraphTest, addEdge)
         try {
             g.addEdge(0, 5, 6);
         } catch (const std::invalid_argument &ex) {
-            EXPECT_EQ(ERROR_MESSAGE::DEST_NOTPRESENT, ex.what());
+            EXPECT_EQ(ERROR_MESSAGE::DESTID_NOTPRESENT, ex.what());
             throw;
         },
         std::invalid_argument);
@@ -113,7 +113,7 @@ TEST(GraphTest, addEdge)
         try {
             g.addEdge(0, 1, 2);
         } catch (const std::invalid_argument &ex) {
-            EXPECT_EQ(ERROR_MESSAGE::EDGE_PRESENT, ex.what());
+            EXPECT_EQ(ERROR_MESSAGE::EDGEID_PRESENT, ex.what());
             throw;
         },
         std::invalid_argument);
@@ -145,7 +145,7 @@ TEST(GraphTest, removeEdge)
         try {
             g.removeEdge(1);
         } catch (const std::invalid_argument &ex) {
-            EXPECT_EQ(ERROR_MESSAGE::EDGE_NOTPRESENT, ex.what());
+            EXPECT_EQ(ERROR_MESSAGE::EDGEID_NOTPRESENT, ex.what());
             throw;
         },
         std::invalid_argument);
@@ -252,6 +252,31 @@ TEST(GraphTest, mergeVertices)
     ASSERT_TRUE(g.edges[3].dest == 4);
 }
 
+TEST(GraphTest, parallelEdgePresent)
+{
+    Graph<> g(3, false);
+
+    g.addEdge(0, 1, 2);
+
+    EXPECT_THROW(
+        try {
+            g.addEdge(1, 2, 1);
+        } catch (const std::invalid_argument &ex) {
+            EXPECT_EQ(ERROR_MESSAGE::PARALLEL_EDGE_PRESENT, ex.what());
+            throw;
+        },
+        std::invalid_argument);
+
+    EXPECT_THROW(
+        try {
+            g.addEdge(2, 1, 2);
+        } catch (const std::invalid_argument &ex) {
+            EXPECT_EQ(ERROR_MESSAGE::PARALLEL_EDGE_PRESENT, ex.what());
+            throw;
+        },
+        std::invalid_argument);
+}
+
 TEST(GraphTest, largeCustomGraph)
 {
     struct vertex_properties
@@ -280,5 +305,6 @@ TEST(GraphTest, largeCustomGraph)
     {
         auto edge = el.second;
         ASSERT_TRUE(g.adjacency_list[edge.src].find(edge.dest) != g.adjacency_list[edge.src].end());
+        ASSERT_TRUE(g.adjacency_list[edge.dest].find(edge.src) != g.adjacency_list[edge.dest].end());
     }
 }

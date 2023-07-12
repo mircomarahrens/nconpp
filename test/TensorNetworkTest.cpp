@@ -200,7 +200,7 @@ TEST(TensorNetworkTest, logicError_MoreThanTwoLegs)
         try {
             TensorNetwork tn(std::move(tensorList), legLinks);
         } catch (const std::invalid_argument &ex) {
-            EXPECT_EQ(ERROR_MESSAGE::EDGE_PRESENT, ex.what());
+            EXPECT_EQ(ERROR_MESSAGE::EDGEID_PRESENT, ex.what());
             throw;
         },
         std::invalid_argument);
