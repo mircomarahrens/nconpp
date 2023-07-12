@@ -5,7 +5,7 @@
 #ifndef NCONPP_GRAPH_H
 #define NCONPP_GRAPH_H
 
-#include <list>
+#include <optional>
 #include <string>
 #include <unordered_map>
 #include <set>
@@ -24,9 +24,9 @@ namespace ERROR_MESSAGE
 
 namespace GRAPH_PROPERTIES
 {
-    struct default_t {};
-
-    enum Color { BLACK, GRAY, WHITE };
+    struct default_t
+    {
+    };
 }
 
 template <class V = GRAPH_PROPERTIES::default_t, class E = GRAPH_PROPERTIES::default_t>
@@ -49,7 +49,6 @@ public:
     struct vertex_properties : V
     {
         std::set<int> edge_indices;
-        GRAPH_PROPERTIES::Color color = GRAPH_PROPERTIES::Color::WHITE;
         // put any default properties here
     };
 
@@ -99,37 +98,35 @@ public:
      *
      * @return std::size_t
      */
-    std::size_t addVertex(std::size_t newVertex)
+    std::size_t addVertex(std::optional<std::size_t> newVertexIndex = std::nullopt)
     {
-        if (vertices.find(newVertex) == vertices.end())
+        if (newVertexIndex)
         {
-            vertices[newVertex] = vertex_properties();
+            std::size_t newVertex = newVertexIndex.value();
+            if (vertices.find(newVertex) == vertices.end())
+            {
+                vertices[newVertex] = vertex_properties();
+            }
+            else
+            {
+                throw std::invalid_argument(ERROR_MESSAGE::VERTEXID_PRESENT);
+            }
+            return newVertex;
         }
         else
         {
-            throw std::invalid_argument(ERROR_MESSAGE::VERTEXID_PRESENT);
-        }
-        return newVertex;
-    }
-
-    /**
-     * @brief Adds a new vertex to the graph and return its index.
-     * 
-     * @return std::size_t 
-     */
-    std::size_t addVertex()
-    {
-        std::size_t len = vertices.size();
-        for (std::size_t id = 0; id < len; id++)
-        {
-            if (vertices.find(id) == vertices.end())
+            std::size_t len = vertices.size();
+            for (std::size_t id = 0; id < len; id++)
             {
-                vertices[id] = vertex_properties();
-                return id;
+                if (vertices.find(id) == vertices.end())
+                {
+                    vertices[id] = vertex_properties();
+                    return id;
+                }
             }
+            vertices[len] = vertex_properties();
+            return len;
         }
-        vertices[len] = vertex_properties();
-        return len; 
     }
 
     /**
@@ -157,7 +154,7 @@ public:
 
     /**
      * @brief Add a new edge to the graph.
-     * Throws an exception if either the source or the destination 
+     * Throws an exception if either the source or the destination
      * is not a valid vertex or the edge index is already present.
      *
      * @param edgeIndex
@@ -226,9 +223,9 @@ public:
     /**
      * @brief Merge edges of vertex dest into src and remove dest from graph.
      * Throws an exception if src or dest vertex not present.
-     * 
-     * @param src 
-     * @param dest 
+     *
+     * @param src
+     * @param dest
      */
     void mergeVertices(std::size_t src, std::size_t dest)
     {
@@ -247,7 +244,7 @@ public:
             auto edge_indices = getEdges();
             for (int i : edge_indices)
             {
-                auto& edge = edges[i];
+                auto &edge = edges[i];
                 if (edge.src == dest)
                 {
                     edge.src = src;
@@ -262,7 +259,6 @@ public:
                     vertices[src].edge_indices.insert(i);
                     vertices[dest].edge_indices.erase(i);
                 }
-
             }
             removeVertex(dest);
         }
