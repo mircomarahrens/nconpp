@@ -311,7 +311,7 @@ public:
             auto dest = edges[edgeIndex].dest;
 
             adjacency_list[src].erase(dest);
-            if (!edges[edgeIndex].directed)
+            if (!edges[edgeIndex].directed && m_parallel_edges)
             {
                 adjacency_list[dest].erase(src);
             }
