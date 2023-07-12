@@ -12,12 +12,14 @@
 
 namespace ERROR_MESSAGE
 {
-    const static std::string VERTEX_PRESENT = "Vertex index already present.";
-    const static std::string VERTEX_NOTPRESENT = "Vertex index not present.";
-    const static std::string EDGE_PRESENT = "Edge index already present.";
-    const static std::string EDGE_NOTPRESENT = "Edge index not present.";
-    const static std::string SOURCE_NOTPRESENT = "Source vertex index not present.";
-    const static std::string DEST_NOTPRESENT = "Destination vertex index not present.";
+    const static std::string VERTEXID_PRESENT = "Vertex identifier already present.";
+    const static std::string VERTEXID_NOTPRESENT = "Vertex identifier not present.";
+    const static std::string EDGE_PRESENT = "Edge already present.";
+    const static std::string EDGEID_PRESENT = "Edge identifier already present.";
+    const static std::string EDGEID_NOTPRESENT = "Edge identifier not present.";
+    const static std::string PARALLEL_EDGE_PRESENT = "Parallel edge already present.";
+    const static std::string SOURCEID_NOTPRESENT = "Source vertex identifier not present.";
+    const static std::string DESTID_NOTPRESENT = "Destination vertex identifier not present.";
 }
 
 namespace GRAPH_PROPERTIES
@@ -58,14 +60,14 @@ public:
         // put any default property here
     };
 
+    // adjacency list
+    std::unordered_map<std::size_t, std::set<std::size_t>> adjacency_list;
+
     // vertex index : vertex properties
     std::unordered_map<std::size_t, vertex_properties> vertices;
 
     // edge index : edge properties
     std::unordered_map<std::size_t, edge_properties> edges;
-
-    // adjacency list
-    std::unordered_map<std::size_t, std::set<std::size_t>> adjacency_list;
 
     /**
      * @brief Get the current number of vertices.
@@ -105,7 +107,7 @@ public:
         }
         else
         {
-            throw std::invalid_argument(ERROR_MESSAGE::VERTEX_PRESENT);
+            throw std::invalid_argument(ERROR_MESSAGE::VERTEXID_PRESENT);
         }
         return newVertex;
     }
@@ -148,7 +150,7 @@ public:
         }
         else
         {
-            throw std::invalid_argument(ERROR_MESSAGE::VERTEX_NOTPRESENT);
+            throw std::invalid_argument(ERROR_MESSAGE::VERTEXID_NOTPRESENT);
         }
         return vertex;
     }
@@ -168,17 +170,30 @@ public:
     {
         if (vertices.find(src) == vertices.end())
         {
-            throw std::invalid_argument(ERROR_MESSAGE::SOURCE_NOTPRESENT);
+            throw std::invalid_argument(ERROR_MESSAGE::SOURCEID_NOTPRESENT);
         }
 
         if (vertices.find(dest) == vertices.end())
         {
-            throw std::invalid_argument(ERROR_MESSAGE::DEST_NOTPRESENT);
+            throw std::invalid_argument(ERROR_MESSAGE::DESTID_NOTPRESENT);
         }
 
         if (edges.find(edgeIndex) != edges.end())
         {
-            throw std::invalid_argument(ERROR_MESSAGE::EDGE_PRESENT);
+            throw std::invalid_argument(ERROR_MESSAGE::EDGEID_PRESENT);
+        }
+
+        if (!m_parallel_edges)
+        {
+            if (adjacency_list[dest].find(src) != adjacency_list[dest].end())
+            {
+                throw std::invalid_argument(ERROR_MESSAGE::PARALLEL_EDGE_PRESENT);
+            }
+
+            if (adjacency_list[src].find(dest) != adjacency_list[src].end())
+            {
+                throw std::invalid_argument(ERROR_MESSAGE::PARALLEL_EDGE_PRESENT);
+            }
         }
 
         edges[edgeIndex] = {.src = src, .dest = dest, .directed = directed};
@@ -187,7 +202,7 @@ public:
         vertices[dest].edge_indices.insert(edgeIndex);
 
         adjacency_list[src].insert(dest);
-        if (!directed)
+        if (!directed || !m_parallel_edges)
         {
             adjacency_list[dest].insert(src);
         }
@@ -221,12 +236,12 @@ public:
         {
             if (vertices.find(src) == vertices.end())
             {
-                throw std::invalid_argument(ERROR_MESSAGE::SOURCE_NOTPRESENT);
+                throw std::invalid_argument(ERROR_MESSAGE::SOURCEID_NOTPRESENT);
             }
 
             if (vertices.find(dest) == vertices.end())
             {
-                throw std::invalid_argument(ERROR_MESSAGE::DEST_NOTPRESENT);
+                throw std::invalid_argument(ERROR_MESSAGE::DESTID_NOTPRESENT);
             }
 
             auto edge_indices = getEdges();
@@ -288,7 +303,7 @@ public:
     {
         if (edges.find(edgeIndex) == edges.end())
         {
-            throw std::invalid_argument(ERROR_MESSAGE::EDGE_NOTPRESENT);
+            throw std::invalid_argument(ERROR_MESSAGE::EDGEID_NOTPRESENT);
         }
         else
         {
@@ -310,6 +325,7 @@ public:
     }
 
 private:
+    // graph property
     bool m_parallel_edges = true;
 };
 
