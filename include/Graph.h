@@ -22,26 +22,28 @@ namespace ERROR_MESSAGE
     const static std::string DESTID_NOTPRESENT = "Destination vertex identifier not present.";
 }
 
-namespace GRAPH_PROPERTIES
+namespace EMPTY_STRUCT
 {
     struct default_t
     {
     };
 }
 
-template <class V = GRAPH_PROPERTIES::default_t, class E = GRAPH_PROPERTIES::default_t>
+template <class V = EMPTY_STRUCT::default_t, class E = EMPTY_STRUCT::default_t, class G = EMPTY_STRUCT::default_t>
 class Graph
 {
 public:
     Graph() = default;
 
-    Graph(std::size_t N, bool parallel_edges = true) : m_parallel_edges(parallel_edges)
+    Graph(std::size_t N, bool parallel_edges = true)
     {
         for (std::size_t i = 0; i < N; i++)
         {
             adjacency_list[i] = std::set<std::size_t>();
             vertices[i] = vertex_properties();
         }
+
+        graph_properties_default.parallel_edges = parallel_edges;
     };
 
     ~Graph() = default;
@@ -58,6 +60,12 @@ public:
         bool directed = false;
         // put any default property here
     };
+
+    struct graph_properties : G
+    {
+        // put any default property here
+        bool parallel_edges;
+    } graph_properties_default;
 
     // adjacency list
     std::unordered_map<std::size_t, std::set<std::size_t>> adjacency_list;
@@ -180,7 +188,7 @@ public:
             throw std::invalid_argument(ERROR_MESSAGE::EDGEID_PRESENT);
         }
 
-        if (!m_parallel_edges)
+        if (!graph_properties_default.parallel_edges)
         {
             if (adjacency_list[dest].find(src) != adjacency_list[dest].end())
             {
@@ -199,7 +207,7 @@ public:
         vertices[dest].edge_indices.insert(edgeIndex);
 
         adjacency_list[src].insert(dest);
-        if (!directed || !m_parallel_edges)
+        if (!directed || !graph_properties_default.parallel_edges)
         {
             adjacency_list[dest].insert(src);
         }
@@ -307,7 +315,7 @@ public:
             auto dest = edges[edgeIndex].dest;
 
             adjacency_list[src].erase(dest);
-            if (!edges[edgeIndex].directed && m_parallel_edges)
+            if (!edges[edgeIndex].directed && graph_properties_default.parallel_edges)
             {
                 adjacency_list[dest].erase(src);
             }
@@ -319,10 +327,6 @@ public:
         }
         return edgeIndex;
     }
-
-private:
-    // graph property
-    bool m_parallel_edges = true;
 };
 
 #endif // NCONPP_GRAPH_H
