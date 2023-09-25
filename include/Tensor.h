@@ -66,6 +66,12 @@ namespace npp
         return xt::prod(dM, axis);
     }
 
+    static inline auto prod(const shape_type &M)
+    {
+        size_t initialProduct = 1;
+        return std::accumulate(M.begin(), M.end(), initialProduct, std::multiplies<size_t>());
+    }
+
     // range
     template <class A, class B>
     static inline auto range(A start_val, B stop_val)
@@ -95,6 +101,20 @@ namespace npp
     {
         auto &&dM = M.derived_cast();
         return xt::expand_dims(dM, axis);
+    }
+
+    // unravel_index
+    static inline auto unravel_index(int i, shape_type& shape)
+    {
+        auto _res = xt::unravel_index(i, shape);
+        return std::vector<size_t>(_res.begin(), _res.end());
+    }
+
+    // ravel_index
+    template <typename T>
+    static inline auto ravel_index(T &multi_index, shape_type& shape)
+    {
+        return xt::ravel_index(multi_index, shape, xt::layout_type::row_major);
     }
 
     namespace random
