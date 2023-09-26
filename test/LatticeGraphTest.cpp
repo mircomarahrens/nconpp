@@ -17,9 +17,8 @@ class LatticeGraphTest : public testing::Test
 TEST(LatticeGraphTest, Honeycomb)
 {
     npp::shape_type grid_shape = {4, 4};
-    npp::tensor_type<int> directions = 
+    std::vector<std::vector<std::vector<int>>> directions =
         {{{0, -1}, {0, +1}, {+1, 0}}, {{-1, 0}, {0, -1}, {0, +1}}};
-    npp::shape_type shape = directions.shape();
 
     LatticeGraph lattice_graph("Honeycomb", grid_shape, directions, {"pbc", "pbc"});
 
@@ -27,12 +26,14 @@ TEST(LatticeGraphTest, Honeycomb)
     auto bgs = lattice_graph.getBoundaryGridShape();
     ASSERT_THAT(bgs, ElementsAre(6, 6));
     auto _directions = lattice_graph.getDirections();
-    ASSERT_EQ(_directions.shape(), shape);
 
     for (auto v : lattice_graph.vertices)
     {
         auto cc = npp::unravel_index(v.first, bgs);
-        ASSERT_THAT(v.second.cartesian_coordinate, cc);
+        ASSERT_THAT(v.second.coordinate, cc);
         ASSERT_THAT(npp::ravel_index(cc, bgs), v.first);
     }
+
+    ASSERT_THAT(lattice_graph.vertices.size(), 36);
+    ASSERT_THAT(lattice_graph.edges.size(), 24);
 }

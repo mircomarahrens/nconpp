@@ -13,13 +13,13 @@ namespace GRAPH_PROPERTIES
     template <class G = GRAPH_PROPERTIES::default_t>
     struct custom_graph_properties : G
     {
-        std::string graph_type = "Lattice";
+        std::string name = "Lattice";
     };
 
     template <class V = GRAPH_PROPERTIES::default_t>
     struct custom_vertex_properties : V
     {
-        std::vector<std::size_t> cartesian_coordinate;
+        std::vector<std::size_t> coordinate;
         bool boundary;
     };
 
@@ -32,13 +32,15 @@ namespace GRAPH_PROPERTIES
 class LatticeGraph : public Graph<GRAPH_PROPERTIES::custom_graph_properties<>, GRAPH_PROPERTIES::custom_vertex_properties<>, GRAPH_PROPERTIES::custom_edge_properties<>>
 {
 public:
-    LatticeGraph(const std::string _graph_type,
+    using directions_type = std::vector<std::vector<std::vector<int>>>;
+
+    LatticeGraph(const std::string &_name,
                  const npp::shape_type &_grid_shape,
-                 const npp::tensor_type<int> &_directions,
+                 const directions_type &_directions,
                  const std::vector<std::string> &_bcs)
-        : m_grid_shape(_grid_shape), m_directions(_directions)
+        : m_grid_shape(_grid_shape), m_directions(_directions), m_bcs(_bcs)
     {
-        graph_properties.graph_type = _graph_type;
+        graph_properties.name = _name;
 
         m_boundary_grid_shape.resize(m_grid_shape.size());
         for (int i = 0; i < m_grid_shape.size(); ++i)
@@ -46,7 +48,7 @@ public:
             m_boundary_grid_shape[i] = m_grid_shape[i] + 2;
         }
 
-        lattice_initialization();
+        m_lattice_initialization();
     };
 
     ~LatticeGraph() = default;
@@ -61,7 +63,7 @@ public:
         return m_boundary_grid_shape;
     }
 
-    const npp::tensor_type<std::size_t> &getDirections() const
+    const directions_type &getDirections() const
     {
         return m_directions;
     }
@@ -69,25 +71,27 @@ public:
 private:
     npp::shape_type m_grid_shape;
     npp::shape_type m_boundary_grid_shape;
-    npp::tensor_type<std::size_t> m_directions;
+    directions_type m_directions;
+    std::vector<std::string> m_bcs;
 
-    void lattice_initialization()
+    void m_lattice_initialization()
     {
         // get number of sites
-        int _sites = npp::prod(m_boundary_grid_shape);
+        std::size_t _sites = npp::prod(m_boundary_grid_shape);
 
         // iterate over sites
-        for (int i = 0; i < _sites; i++)
+        for (std::size_t _i = 0; _i < _sites; _i++)
         {
             // store cartesian coordinate to site as vertex property
-            auto &v = this->vertices[i];
-            v.cartesian_coordinate =
-                npp::unravel_index(i, m_boundary_grid_shape);
+            auto &v = this->vertices[_i];
+            v.coordinate =
+                npp::unravel_index(_i, m_boundary_grid_shape);
 
             // check if site is a boundary site and store it as vertex property
-            for (std::size_t i : v.cartesian_coordinate)
+            for (std::size_t _ic = 0; _ic < v.coordinate.size(); _ic++)
             {
-                if (i == 0 || i == m_boundary_grid_shape[0] - 1)
+                int _c = v.coordinate[_ic];
+                if (_c == 0 || _c == m_boundary_grid_shape[_ic] - 1)
                 {
                     v.boundary = true;
                     break;
@@ -95,30 +99,60 @@ private:
             }
         }
 
-        int edge_index = 0;
-        for (auto &v : this-> vertices)
+        int _edge_index = 0;
+        for (auto &_vertex : this->vertices)
         {
-            if (!v.second.boundary)
+            if (!_vertex.second.boundary)
             {
-                // iterate over directions
-                for (int j = 0; j < m_directions.shape()[0]; j++)
+                auto _origin_index = _vertex.first;
+                auto _origin = _vertex.second.coordinate;
+                auto _dirs = m_directions[std::reduce(_origin.begin(), _origin.end()) % m_directions.size()];
+
+                for (auto _dir : _dirs)
                 {
                     // get cartesian coordinate of neighbour site
-                    auto _cartesian_coordinate_neighbour = v.second.cartesian_coordinate;
-                    for (int i = 0; i < _cartesian_coordinate_neighbour.size(); ++i)
+                    auto _target_coordinate = _vertex.second.coordinate;
+                    for (std::size_t _id = 0; _id < _dir.size(); ++_id)
                     {
-                        _cartesian_coordinate_neighbour[i] += m_directions[i];
+                        _target_coordinate[_id] += _dir[_id];
                     }
 
-                    // get neighbour site
-                    int _neighbour_site = npp::ravel_index(_cartesian_coordinate_neighbour, m_boundary_grid_shape);
+                    // ravel the target coordinate to index representation
+                    std::size_t _target_index =
+                        npp::ravel_index(_target_coordinate, m_boundary_grid_shape);
 
-                    // check if neighbour site exists
-                    if (_neighbour_site != -1)
+                    if (this->vertices[_target_index].boundary)
+                    {
+                        for (std::size_t _ib = 0; _ib < m_bcs.size(); ++_ib)
+                        {
+                            if (m_bcs[_ib] == "obc")
+                            {
+                                continue;
+                            }
+                            else if (m_bcs[_ib] == "pbc")
+                            {
+                                if (_target_coordinate[_ib] == 0)
+                                {
+                                    _target_coordinate[_ib] = m_grid_shape[_ib];
+                                }
+                                else if (_target_coordinate[_ib] == m_boundary_grid_shape[_ib] - 1)
+                                {
+                                    _target_coordinate[_ib] = 1;
+                                }
+                            }
+                        }
+                    }
+
+                    // re-ravel
+                    _target_index =
+                        npp::ravel_index(_target_coordinate, m_boundary_grid_shape);
+
+                    // check if edge is already present
+                    if (adjacency_list[_target_index].find(_origin_index) == adjacency_list[_target_index].end())
                     {
                         // add edge
-                        this->addEdge(edge_index, v.first, _neighbour_site);
-                        edge_index++;
+                        this->addEdge(_edge_index, _origin_index, _target_index);
+                        _edge_index++;
                     }
                 }
             }

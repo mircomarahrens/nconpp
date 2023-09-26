@@ -6,6 +6,8 @@
 #define NCONPP_TENSOR_H
 
 #include <xtensor/xarray.hpp>
+#include <xtensor/xaxis_iterator.hpp>
+#include <xtensor/xio.hpp>
 #include <xtensor/xexpression.hpp>
 #include <xtensor/xlayout.hpp>
 #include <xtensor/xrandom.hpp>
@@ -29,6 +31,21 @@ namespace npp
 
     template <typename T>
     using tensor_type = xt::xarray<T>;
+
+    // view
+    template <typename T>
+    static inline auto axis_begin(const expression_type<T> &M, std::size_t axis)
+    {
+        auto &&dM = M.derived_cast();
+        return xt::axis_begin(dM, axis);
+    }
+
+    template <typename T>
+    static inline auto axis_end(const expression_type<T> &M, std::size_t axis)
+    {
+        auto &&dM = M.derived_cast();
+        return xt::axis_end(dM, axis);
+    }
 
     // zeros
     template <class T>
