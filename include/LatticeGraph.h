@@ -10,37 +10,35 @@
 
 namespace GRAPH_PROPERTIES
 {
-    template <class G = GRAPH_PROPERTIES::default_t>
-    struct custom_graph_properties : G
+    struct lattice_graph_properties
     {
-        std::string name = "Lattice";
+        std::string name;
     };
 
-    template <class V = GRAPH_PROPERTIES::default_t>
-    struct custom_vertex_properties : V
+    struct lattice_vertex_properties
     {
         std::vector<std::size_t> coordinate;
         bool boundary;
     };
 
-    template <class E = GRAPH_PROPERTIES::default_t>
-    struct custom_edge_properties : E
+    struct lattice_edge_properties
     {
     };
 }
 
-class LatticeGraph : public Graph<GRAPH_PROPERTIES::custom_graph_properties<>, GRAPH_PROPERTIES::custom_vertex_properties<>, GRAPH_PROPERTIES::custom_edge_properties<>>
+class LatticeGraph : public Graph<GRAPH_PROPERTIES::lattice_graph_properties, GRAPH_PROPERTIES::lattice_vertex_properties, GRAPH_PROPERTIES::lattice_edge_properties>
 {
 public:
     using directions_type = std::vector<std::vector<std::vector<int>>>;
 
-    LatticeGraph(const std::string &_name,
-                 const npp::shape_type &_grid_shape,
-                 const directions_type &_directions,
-                 const std::vector<std::string> &_bcs)
+    LatticeGraph(const std::string &_name = "Honeycomb",
+                 const npp::shape_type &_grid_shape = {4, 4},
+                 const directions_type &_directions = {{{0, -1}, {0, +1}, {+1, 0}}, {{-1, 0}, {0, -1}, {0, +1}}},
+                 const std::vector<std::string> &_bcs = {"pbc", "pbc"})
         : m_grid_shape(_grid_shape), m_directions(_directions), m_bcs(_bcs)
     {
-        graph_properties.name = _name;
+        this->graph_properties.parallel_edges = false;
+        this->graph_properties.name = _name;
 
         m_boundary_grid_shape.resize(m_grid_shape.size());
         for (int i = 0; i < m_grid_shape.size(); ++i)
@@ -106,7 +104,9 @@ private:
             {
                 auto _origin_index = _vertex.first;
                 auto _origin = _vertex.second.coordinate;
-                auto _dirs = m_directions[std::reduce(_origin.begin(), _origin.end()) % m_directions.size()];
+
+                auto _dirs =
+                    m_directions[std::reduce(_origin.begin(), _origin.end()) % m_directions.size()];
 
                 for (auto _dir : _dirs)
                 {
@@ -143,12 +143,12 @@ private:
                         }
                     }
 
-                    // re-ravel
+                    // re-ravel new index
                     _target_index =
                         npp::ravel_index(_target_coordinate, m_boundary_grid_shape);
 
-                    // check if edge is already present
-                    if (adjacency_list[_target_index].find(_origin_index) == adjacency_list[_target_index].end())
+                    // check if parallel edge is already present
+                    if (this->adjacency_list[_target_index].find(_origin_index) == this->adjacency_list[_target_index].end())
                     {
                         // add edge
                         this->addEdge(_edge_index, _origin_index, _target_index);

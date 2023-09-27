@@ -24,12 +24,12 @@ namespace ERROR_MESSAGE
 
 namespace GRAPH_PROPERTIES
 {
-    struct default_t
+    struct default_struct
     {
     };
 }
 
-template <class G = GRAPH_PROPERTIES::default_t, class V = GRAPH_PROPERTIES::default_t, class E = GRAPH_PROPERTIES::default_t>
+template <class G = GRAPH_PROPERTIES::default_struct, class V = GRAPH_PROPERTIES::default_struct, class E = GRAPH_PROPERTIES::default_struct>
 class Graph
 {
 public:
@@ -43,7 +43,7 @@ public:
             vertices[i] = vertex_properties_t();
         }
 
-        //graph_properties = graph_properties_t();
+        // graph_properties = graph_properties_t();
         graph_properties.parallel_edges = parallel_edges;
         graph_properties.directed_edges = directed_edges;
     };
