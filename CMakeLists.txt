@@ -34,6 +34,7 @@ set(NCONPP_DEPENDENCIES
 
 set(NCONPP_INCLUDE
     include/Graph.h
+    include/LatticeGraph.h
     include/Tensor.h
     include/TensorNetwork.h
     )
@@ -60,6 +61,7 @@ if (CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
     add_executable(nconpp_tests_run
         test/nconpp_tests_run.cpp
         test/GraphTest.cpp
+        test/LatticeGraphTest.cpp
         test/TensorTest.cpp
         test/TensorNetworkTest.cpp)
 
