@@ -24,49 +24,62 @@ namespace ERROR_MESSAGE
 
 namespace GRAPH_PROPERTIES
 {
-    struct default_t
+    struct default_struct
     {
     };
 }
 
-template <class V = GRAPH_PROPERTIES::default_t, class E = GRAPH_PROPERTIES::default_t>
+template <class G = GRAPH_PROPERTIES::default_struct, class V = GRAPH_PROPERTIES::default_struct, class E = GRAPH_PROPERTIES::default_struct>
 class Graph
 {
 public:
     Graph() = default;
 
-    Graph(std::size_t N, bool parallel_edges = true) : m_parallel_edges(parallel_edges)
+    Graph(std::size_t N, bool parallel_edges = true, bool directed_edges = false)
     {
         for (std::size_t i = 0; i < N; i++)
         {
             adjacency_list[i] = std::set<std::size_t>();
-            vertices[i] = vertex_properties();
+            vertices[i] = vertex_properties_t();
         }
+
+        // graph_properties = graph_properties_t();
+        graph_properties.parallel_edges = parallel_edges;
+        graph_properties.directed_edges = directed_edges;
     };
 
     ~Graph() = default;
 
-    struct vertex_properties : V
+    struct graph_properties_t : G
     {
-        std::set<int> edge_indices;
-        // put any default properties here
+        // put any default property here
+        bool parallel_edges = true;
+        bool directed_edges = false;
     };
 
-    struct edge_properties : E
+    struct vertex_properties_t : V
     {
-        std::size_t src, dest;
-        bool directed = false;
-        // put any default property here
+        // put any default properties here
+        std::set<int> edge_indices;
     };
+
+    struct edge_properties_t : E
+    {
+        // put any default property here
+        std::size_t src, dest;
+    };
+
+    // graph properties
+    graph_properties_t graph_properties{graph_properties_t()};
 
     // adjacency list
     std::unordered_map<std::size_t, std::set<std::size_t>> adjacency_list;
 
     // vertex index : vertex properties
-    std::unordered_map<std::size_t, vertex_properties> vertices;
+    std::unordered_map<std::size_t, vertex_properties_t> vertices;
 
     // edge index : edge properties
-    std::unordered_map<std::size_t, edge_properties> edges;
+    std::unordered_map<std::size_t, edge_properties_t> edges;
 
     /**
      * @brief Get the current number of vertices.
@@ -105,7 +118,7 @@ public:
             std::size_t newVertex = newVertexIndex.value();
             if (vertices.find(newVertex) == vertices.end())
             {
-                vertices[newVertex] = vertex_properties();
+                vertices[newVertex] = vertex_properties_t();
             }
             else
             {
@@ -120,11 +133,11 @@ public:
             {
                 if (vertices.find(id) == vertices.end())
                 {
-                    vertices[id] = vertex_properties();
+                    vertices[id] = vertex_properties_t();
                     return id;
                 }
             }
-            vertices[len] = vertex_properties();
+            vertices[len] = vertex_properties_t();
             return len;
         }
     }
@@ -160,10 +173,9 @@ public:
      * @param edgeIndex
      * @param src
      * @param dest
-     * @param directed
      * @return int
      */
-    int addEdge(int edgeIndex, std::size_t src, std::size_t dest, bool directed = false)
+    int addEdge(int edgeIndex, std::size_t src, std::size_t dest)
     {
         if (vertices.find(src) == vertices.end())
         {
@@ -180,7 +192,7 @@ public:
             throw std::invalid_argument(ERROR_MESSAGE::EDGEID_PRESENT);
         }
 
-        if (!m_parallel_edges)
+        if (!graph_properties.parallel_edges)
         {
             if (adjacency_list[dest].find(src) != adjacency_list[dest].end())
             {
@@ -193,13 +205,13 @@ public:
             }
         }
 
-        edges[edgeIndex] = {.src = src, .dest = dest, .directed = directed};
+        edges[edgeIndex] = {.src = src, .dest = dest};
 
         vertices[src].edge_indices.insert(edgeIndex);
         vertices[dest].edge_indices.insert(edgeIndex);
 
         adjacency_list[src].insert(dest);
-        if (!directed || !m_parallel_edges)
+        if (!graph_properties.directed_edges || !graph_properties.parallel_edges)
         {
             adjacency_list[dest].insert(src);
         }
@@ -307,7 +319,7 @@ public:
             auto dest = edges[edgeIndex].dest;
 
             adjacency_list[src].erase(dest);
-            if (!edges[edgeIndex].directed && m_parallel_edges)
+            if (!graph_properties.directed_edges && graph_properties.parallel_edges)
             {
                 adjacency_list[dest].erase(src);
             }
@@ -319,10 +331,6 @@ public:
         }
         return edgeIndex;
     }
-
-private:
-    // graph property
-    bool m_parallel_edges = true;
 };
 
 #endif // NCONPP_GRAPH_H
