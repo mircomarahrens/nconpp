@@ -24,6 +24,17 @@ TEST(GraphTest, FiniteGraph)
     ASSERT_NO_THROW(Graph<> g(123));
 }
 
+TEST(GraphTest, DefaultInit)
+{
+    Graph<> g;
+
+    ASSERT_FALSE(g.graph_properties.directed_edges);
+    ASSERT_TRUE(g.graph_properties.parallel_edges);
+
+    ASSERT_TRUE(g.NumVertices() == 0);
+    ASSERT_TRUE(g.NumEdges() == 0);
+}
+
 TEST(GraphTest, getVertices)
 {
     Graph<> g(6);
@@ -124,7 +135,6 @@ TEST(GraphTest, addEdge)
 
     ASSERT_TRUE(g.edges[0].src == 1);
     ASSERT_TRUE(g.edges[0].dest == 2);
-    ASSERT_TRUE(g.edges[0].directed == false);
 }
 
 TEST(GraphTest, removeEdge)
@@ -157,13 +167,18 @@ TEST(GraphTest, removeEdge)
 
 TEST(GraphTest, customVertexProperties)
 {
+    struct graph_properties {};
+
     struct vertex_properties
     {
         int prop1 = 0;
         std::vector<int> prop2 = {1, 2, 3};
     };
 
-    Graph<vertex_properties> g(6);
+    struct edge_properties {};
+    
+
+    Graph<graph_properties, vertex_properties, edge_properties> g(6);
 
     g.vertices[3].prop1 = 1;
     g.vertices[3].prop2 = {4, 5, 6};
@@ -185,6 +200,8 @@ TEST(GraphTest, customVertexProperties)
 
 TEST(GraphTest, customEdgeProperties)
 {
+    struct graph_properties {};
+
     struct vertex_properties
     {
         int prop1 = 0;
@@ -196,7 +213,7 @@ TEST(GraphTest, customEdgeProperties)
         bool prop3 = true;
     };
 
-    Graph<vertex_properties, edge_properties> g(6);
+    Graph<graph_properties, vertex_properties, edge_properties> g(6);
 
     g.vertices[3].prop1 = 1;
     g.vertices[3].prop2 = {4, 5, 6};
@@ -279,6 +296,8 @@ TEST(GraphTest, parallelEdgePresent)
 
 TEST(GraphTest, largeCustomGraph)
 {
+    struct graph_properties {};
+
     struct vertex_properties
     {
         int vp1 = 0;
@@ -292,7 +311,7 @@ TEST(GraphTest, largeCustomGraph)
         double ep2 = 0.55;
     };
 
-    Graph<vertex_properties, edge_properties> g(1000);
+    Graph<graph_properties, vertex_properties, edge_properties> g(1000);
 
     for (std::size_t id = 0; id < 2000; id++)
     {
