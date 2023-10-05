@@ -321,24 +321,31 @@ public:
             auto _edge = this->edges[_leg_index];
 
             auto _src = _edge.src;
+            auto &_src_vertex = this->vertices[_src];
+            auto &_src_legs = _src_vertex.legs;
+            auto &_src_tensor = _src_vertex.tensor;
+
             auto _dest = _edge.dest;
+            auto &_dest_vertex = this->vertices[_dest];
+            auto &_dest_legs = _dest_vertex.legs;
+            auto &_dest_tensor = _dest_vertex.tensor;
 
             if (_src == _dest)
             { // trace
 
                 std::vector<std::size_t> _axes = {};
-                for (auto _axis = 0; _axis < this->vertices[_dest].legs.size(); _axis++)
+                for (auto _axis = 0; _axis < _src_legs.size(); _axis++)
                 {
-                    if (this->vertices[_src].legs[_axis] == _leg_index)
+                    if (_src_legs[_axis] == _leg_index)
                     {
                         _axes.emplace_back(_axis);
                     }
                 }
 
-                this->vertices[_src].legs.erase(this->vertices[_src].legs.begin() + _axes[1]);
-                this->vertices[_src].legs.erase(this->vertices[_src].legs.begin() + _axes[0]);
+                _src_legs.erase(_src_legs.begin() + _axes[1]);
+                _src_legs.erase(_src_legs.begin() + _axes[0]);
 
-                this->vertices[_src].tensor = npp::linalg::trace(this->vertices[_src].tensor, 0, _axes[0], _axes[1]);
+                _src_tensor = npp::linalg::trace(_src_tensor, 0, _axes[0], _axes[1]);
 
                 this->removeEdge(_leg_index);
             }
@@ -348,41 +355,38 @@ public:
                 // TODO add multi axis tensor contraction?
                 std::vector<std::size_t> _axes_a = {};
                 std::vector<std::size_t> _axes_b = {};
-                for (auto _axis = 0; _axis < this->vertices[_src].legs.size(); _axis++)
+                for (auto _axis = 0; _axis < _src_legs.size(); _axis++)
                 {
-                    if (this->vertices[_src].legs[_axis] == _leg_index)
+                    if (_src_legs[_axis] == _leg_index)
                     {
                         _axes_a.emplace_back(_axis);
                     }
                 }
-                for (auto _axis = 0; _axis < this->vertices[_dest].legs.size(); _axis++)
+                for (auto _axis = 0; _axis < _dest_legs.size(); _axis++)
                 {
-                    if (this->vertices[_dest].legs[_axis] == _leg_index)
+                    if (_dest_legs[_axis] == _leg_index)
                     {
                         _axes_b.emplace_back(_axis);
                     }
                 }
 
-                this->vertices[_src].legs.erase(this->vertices[_src].legs.begin() + _axes_a[0]);
-                this->vertices[_dest].legs.erase(this->vertices[_dest].legs.begin() + _axes_b[0]);
+                _src_legs.erase(_src_legs.begin() + _axes_a[0]);
+                _dest_legs.erase(_dest_legs.begin() + _axes_b[0]);
 
                 std::vector<int> _legs = {};
-                _legs.insert(_legs.end(), this->vertices[_src].legs.begin(), this->vertices[_src].legs.end());
-                _legs.insert(_legs.end(), this->vertices[_dest].legs.begin(), this->vertices[_dest].legs.end());
+                _legs.insert(_legs.end(), _src_legs.begin(), _src_legs.end());
+                _legs.insert(_legs.end(), _dest_legs.begin(), _dest_legs.end());
 
                 // set new legs to src vertex
-                this->vertices[_src].legs = _legs;
-
-                auto _tensor_a = this->vertices[_src].tensor;
-                auto _tensor_b = this->vertices[_dest].tensor;
+                _src_legs = _legs;
 
                 if (npp::dimension(_edge.singular_values) > 0)
                 {
-                    _tensor_a = npp::linalg::tensordot(_tensor_a, npp::diag(_edge.singular_values), _axes_a, {0});
+                    _src_tensor = npp::linalg::tensordot(_src_tensor, npp::diag(_edge.singular_values), _axes_a, {0});
                 }
 
                 // tensordot and store result to src vertex
-                this->vertices[_src].tensor = npp::linalg::tensordot(_tensor_a, _tensor_b, _axes_a, _axes_b);
+                _src_tensor = npp::linalg::tensordot(_src_tensor, _dest_tensor, _axes_a, _axes_b);
 
                 this->removeEdge(_leg_index);
 
