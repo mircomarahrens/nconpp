@@ -17,8 +17,8 @@ namespace ERROR
 {
     const static std::string CONSTRAINT_LEGPAIRS = "Only pairs of legs are allowed.";
     const static std::string CONSTRAINT_INVALIDLEG = "0 is not a valid leg index by convention.";
-    const static std::string CONSTRAINT_UNIQUELEGS = "Only unique leg indices are allowed by convention.";
-    const static std::string OUT_OF_SIZE = "The position to split is not within the amount of legs.";
+    const static std::string CONSTRAINT_UNIQUELEGS = "Only unique dangling leg indices are allowed by convention.";
+    const static std::string OUT_OF_SIZE = "The position to split is not within the range of legs.";
 }
 
 namespace WARNING
@@ -45,82 +45,26 @@ namespace GRAPH_PROPERTIES
     {
         // place custom properties for vertices here
         std::vector<int> cartesian_coordinates;
-        std::vector<int> legs;
+        std::vector<int> legs; // TODO maybe change edge_indices from set to vector?
         npp::tensor_type<U> tensor;
-        bool is_singular_vector = false;
     };
 
     // custom edge properties
+    template <typename U = std::complex<double>>
     struct custom_edge_properties
     {
         // place custom properties for edges here
+        npp::tensor_type<U> singular_values;
     };
 }
 
 template <typename T = std::complex<double>>
-class TensorNetwork : public Graph<GRAPH_PROPERTIES::custom_graph_properties, GRAPH_PROPERTIES::custom_vertex_properties<T>, GRAPH_PROPERTIES::custom_edge_properties>
+class TensorNetwork : public Graph<GRAPH_PROPERTIES::custom_graph_properties, GRAPH_PROPERTIES::custom_vertex_properties<T>, GRAPH_PROPERTIES::custom_edge_properties<T>>
 {
 private:
     // store negative and positive legs in separate sets
     std::set<int> m_dangling_legs = {}; // negative leg indices
     std::set<int> m_legs = {};          // positive leg indices
-
-    /**
-     * @brief Perform a trace on a specific vertex between axes_a and axes_b.
-     *
-     * @param vertex_index
-     * @param axes_a
-     * @param axes_b
-     */
-    void trace(std::size_t vertex_index, std::size_t axes_a, std::size_t axes_b)
-    {
-        if (this->vertices[vertex_index].is_singular_vector)
-        {
-            this->vertices[vertex_index].tensor = npp::diag(this->vertices[vertex_index].tensor);
-        }
-
-        this->vertices[vertex_index].legs.erase(this->vertices[vertex_index].legs.begin() + axes_b);
-        this->vertices[vertex_index].legs.erase(this->vertices[vertex_index].legs.begin() + axes_a);
-        
-        this->vertices[vertex_index].tensor = npp::linalg::trace(this->vertices[vertex_index].tensor, 0, axes_a, axes_b);;
-    };
-
-    /**
-     * @brief Perform a tensordot on specific vertices between axes_a and axes_b.
-     *
-     * @param src
-     * @param dest
-     * @param axes_a
-     * @param axes_b
-     */
-    void tensordot(std::size_t src, std::size_t dest, std::vector<std::size_t> axes_a, std::vector<std::size_t> axes_b)
-    {
-        this->vertices[src].legs.erase(this->vertices[src].legs.begin() + axes_a[0]);
-        this->vertices[dest].legs.erase(this->vertices[dest].legs.begin() + axes_b[0]);
-
-        std::vector<int> _legs = {};
-        _legs.insert(_legs.end(), this->vertices[src].legs.begin(), this->vertices[src].legs.end());
-        _legs.insert(_legs.end(), this->vertices[dest].legs.begin(), this->vertices[dest].legs.end());
-
-        auto _tensor_a = this->vertices[src].tensor;
-        auto _tensor_b = this->vertices[dest].tensor;
-
-        if (this->vertices[src].is_singular_vector)
-        {
-            _tensor_a = npp::diag(_tensor_a);
-        }
-
-        if (this->vertices[dest].is_singular_vector)
-        {
-            _tensor_b = npp::diag(_tensor_b);
-        }
-
-        auto shapeA = _tensor_a.shape();
-        auto shapeB = _tensor_b.shape();
-
-        this->vertices[src].legs = _legs;
-        this->vertices[src].tensor = npp::linalg::tensordot(_tensor_a, _tensor_b, axes_a, axes_b);
-    };
 
     /**
      * @brief Create all edges
@@ -161,6 +105,8 @@ private:
                     // add edge between previous src and dest (the current src)
                     this->addEdge(_leg_index, prev, _vertex_index);
 
+                    this->edges[_leg_index].singular_values = {};
+
                     // erase entry from map
                     _vertex_leg_map.erase(_leg_index);
                 }
@@ -190,7 +136,7 @@ public:
      */
     TensorNetwork(const TensorNetwork &other) : m_dangling_legs(other.m_dangling_legs),
                                                 m_legs(other.m_legs),
-                                                Graph<GRAPH_PROPERTIES::custom_graph_properties, GRAPH_PROPERTIES::custom_vertex_properties<T>, GRAPH_PROPERTIES::custom_edge_properties>()
+                                                Graph<GRAPH_PROPERTIES::custom_graph_properties, GRAPH_PROPERTIES::custom_vertex_properties<T>, GRAPH_PROPERTIES::custom_edge_properties<T>>()
     {
         this->vertices = other.vertices;
         this->edges = other.edges;
@@ -210,7 +156,7 @@ public:
      *      - legs with negative integers won't be contracted, so-called dangling legs
      */
     explicit TensorNetwork(const std::vector<npp::tensor_type<T>> &tensor_list,
-                           const std::vector<std::vector<int>> &subscript_vector_list) : Graph<GRAPH_PROPERTIES::custom_graph_properties, GRAPH_PROPERTIES::custom_vertex_properties<T>, GRAPH_PROPERTIES::custom_edge_properties>(tensor_list.size())
+                           const std::vector<std::vector<int>> &subscript_vector_list) : Graph<GRAPH_PROPERTIES::custom_graph_properties, GRAPH_PROPERTIES::custom_vertex_properties<T>, GRAPH_PROPERTIES::custom_edge_properties<T>>(tensor_list.size())
     {
         if (tensor_list.size() != subscript_vector_list.size())
         {
@@ -256,7 +202,7 @@ public:
      */
     TensorNetwork(TensorNetwork &&other) : m_dangling_legs(other.m_dangling_legs),
                                            m_legs(other.m_legs),
-                                           Graph<GRAPH_PROPERTIES::custom_graph_properties, GRAPH_PROPERTIES::custom_vertex_properties<T>, GRAPH_PROPERTIES::custom_edge_properties>()
+                                           Graph<GRAPH_PROPERTIES::custom_graph_properties, GRAPH_PROPERTIES::custom_vertex_properties<T>, GRAPH_PROPERTIES::custom_edge_properties<T>>()
     {
         other.m_dangling_legs = {};
         other.m_legs = {};
@@ -282,7 +228,7 @@ public:
      *      - legs with negative integers won't be contracted, so-called dangling legs
      */
     explicit TensorNetwork(std::vector<npp::tensor_type<T>> &&tensor_list,
-                           std::vector<std::vector<int>> &&subscript_vector_list) : Graph<GRAPH_PROPERTIES::custom_graph_properties,GRAPH_PROPERTIES::custom_vertex_properties<T>, GRAPH_PROPERTIES::custom_edge_properties>(tensor_list.size())
+                           std::vector<std::vector<int>> &&subscript_vector_list) : Graph<GRAPH_PROPERTIES::custom_graph_properties, GRAPH_PROPERTIES::custom_vertex_properties<T>, GRAPH_PROPERTIES::custom_edge_properties<T>>(tensor_list.size())
     {
         if (tensor_list.size() != subscript_vector_list.size())
         {
@@ -300,7 +246,7 @@ public:
             const std::vector<int> &_subscript_vector = subscript_vector_list[_vertex_index];
 
             create_edges(_vertex_leg_map, _vertex_index, _subscript_vector);
-                
+
             this->vertices[_vertex_index].legs = std::move(subscript_vector_list[_vertex_index]);
             this->vertices[_vertex_index].tensor = std::move(tensor_list[_vertex_index]);
         }
@@ -375,21 +321,31 @@ public:
             auto _edge = this->edges[_leg_index];
 
             auto _src = _edge.src;
+            auto &_src_vertex = this->vertices[_src];
+            auto &_src_legs = _src_vertex.legs;
+            auto &_src_tensor = _src_vertex.tensor;
+
             auto _dest = _edge.dest;
+            auto &_dest_vertex = this->vertices[_dest];
+            auto &_dest_legs = _dest_vertex.legs;
+            auto &_dest_tensor = _dest_vertex.tensor;
 
             if (_src == _dest)
             { // trace
 
                 std::vector<std::size_t> _axes = {};
-                for (auto _axis = 0; _axis < this->vertices[_dest].legs.size(); _axis++)
+                for (auto _axis = 0; _axis < _src_legs.size(); _axis++)
                 {
-                    if (this->vertices[_dest].legs[_axis] == _leg_index)
+                    if (_src_legs[_axis] == _leg_index)
                     {
                         _axes.emplace_back(_axis);
                     }
                 }
 
-                trace(_src, _axes[0], _axes[1]);
+                _src_legs.erase(_src_legs.begin() + _axes[1]);
+                _src_legs.erase(_src_legs.begin() + _axes[0]);
+
+                _src_tensor = npp::linalg::trace(_src_tensor, 0, _axes[0], _axes[1]);
 
                 this->removeEdge(_leg_index);
             }
@@ -399,24 +355,42 @@ public:
                 // TODO add multi axis tensor contraction?
                 std::vector<std::size_t> _axes_a = {};
                 std::vector<std::size_t> _axes_b = {};
-                for (auto _axis = 0; _axis < this->vertices[_src].legs.size(); _axis++)
+                for (auto _axis = 0; _axis < _src_legs.size(); _axis++)
                 {
-                    if (this->vertices[_src].legs[_axis] == _leg_index)
+                    if (_src_legs[_axis] == _leg_index)
                     {
                         _axes_a.emplace_back(_axis);
                     }
                 }
-                for (auto _axis = 0; _axis < this->vertices[_dest].legs.size(); _axis++)
+                for (auto _axis = 0; _axis < _dest_legs.size(); _axis++)
                 {
-                    if (this->vertices[_dest].legs[_axis] == _leg_index)
+                    if (_dest_legs[_axis] == _leg_index)
                     {
                         _axes_b.emplace_back(_axis);
                     }
                 }
 
-                tensordot(_src, _dest, _axes_a, _axes_b);
+                _src_legs.erase(_src_legs.begin() + _axes_a[0]);
+                _dest_legs.erase(_dest_legs.begin() + _axes_b[0]);
+
+                std::vector<int> _legs = {};
+                _legs.insert(_legs.end(), _src_legs.begin(), _src_legs.end());
+                _legs.insert(_legs.end(), _dest_legs.begin(), _dest_legs.end());
+
+                // set new legs to src vertex
+                _src_legs = _legs;
+
+                if (npp::dimension(_edge.singular_values) > 0)
+                {
+                    _src_tensor = npp::linalg::tensordot(_src_tensor, npp::diag(_edge.singular_values), _axes_a, {0});
+                }
+
+                // tensordot and store result to src vertex
+                _src_tensor = npp::linalg::tensordot(_src_tensor, _dest_tensor, _axes_a, _axes_b);
 
                 this->removeEdge(_leg_index);
+
+                // merge dest vertex into src vertex
                 this->mergeVertices(_src, _dest);
             }
             contraction_sequence.erase(contraction_sequence.begin());
@@ -434,8 +408,8 @@ public:
 
     /**
      * @brief Retrieve the current number of vertices.
-     * 
-     * @return std::size_t 
+     *
+     * @return std::size_t
      */
     std::size_t NumTensors()
     {
@@ -516,39 +490,33 @@ public:
             npp::reshape(_V, _right_shape);
 
             // new leg ids
-            int _new_leg_left = 1;
+            int _new_leg = 1;
             if (!m_legs.empty())
             {
-                _new_leg_left = *m_legs.rbegin() + 1;
+                _new_leg = *m_legs.rbegin() + 1;
             }
-            int _new_leg_right = _new_leg_left + 1;
 
             // add to the subscript vectors
-            _left_legs.emplace_back(_new_leg_left);
-            std::vector<int> s_legs{_new_leg_left, _new_leg_right};
-            _right_legs.emplace(_right_legs.begin(), _new_leg_right);
+            _left_legs.emplace_back(_new_leg);
+            _right_legs.emplace(_right_legs.begin(), _new_leg);
 
             // add to list of current legs
-            m_legs.insert(_new_leg_left);
-            m_legs.insert(_new_leg_right);
+            m_legs.insert(_new_leg);
 
             // update current vertex for U
             this->vertices[vertex_index].legs = std::move(_left_legs);
             this->vertices[vertex_index].tensor = std::move(_U);
 
-            // and create new vertices for s and V
-            std::size_t _s_vertex = this->addVertex();
-            this->vertices[_s_vertex].legs = std::move(s_legs);
-            this->vertices[_s_vertex].tensor = std::move(_s);
-            this->vertices[_s_vertex].is_singular_vector = true;
-
-            std::size_t _V_vertex = this->addVertex();           
+            // and create new vertex for V
+            std::size_t _V_vertex = this->addVertex();
             this->vertices[_V_vertex].legs = std::move(_right_legs);
             this->vertices[_V_vertex].tensor = std::move(_V);
 
-            // add new edges to graph
-            this->addEdge(_new_leg_left, vertex_index, _s_vertex);
-            this->addEdge(_new_leg_right, _s_vertex, _V_vertex);
+            // add new edge to graph
+            this->addEdge(_new_leg, vertex_index, _V_vertex);
+
+            // and store singular values s as edge property
+            this->edges[_new_leg].singular_values = std::move(_s);
 
             // only edges of rhs needs to be updated, because edges of lhs are reused in U
             for (int _i : _right_legs)
@@ -593,16 +561,17 @@ public:
 
     /**
      * @brief Connect all remaining vertices consecutive starting with the most left one.
-     * 
+     *
      */
     void connect()
     {
         auto vs = this->getVertices();
         auto v0 = *vs.begin();
         std::size_t c = 0;
-        for(const auto& el : vs)
+        for (const auto &el : vs)
         {
-            if (c > 0) {
+            if (c > 0)
+            {
                 outer(v0, el);
             }
             else

@@ -370,15 +370,15 @@ TEST(TensorNetworkTest, split)
 
     nt = tn.NumTensors();
 
-    ASSERT_TRUE(nt == 3);
+    ASSERT_TRUE(nt == 2);
 
     ASSERT_EQ(tn.vertices[0].tensor.shape(), npp::shape_type({4, 4}));
-    ASSERT_EQ(tn.vertices[1].tensor.shape(), npp::shape_type({4}));
-    ASSERT_EQ(tn.vertices[2].tensor.shape(), npp::shape_type({4, 2, 9}));
+    // ASSERT_EQ(tn.vertices[1].tensor.shape(), npp::shape_type({4}));
+    ASSERT_EQ(tn.vertices[1].tensor.shape(), npp::shape_type({4, 2, 9}));
 
     auto U = tn.vertices[0].tensor;
-    auto s = tn.vertices[1].tensor;
-    auto V = tn.vertices[2].tensor;
+    auto s = tn.edges[1].singular_values;
+    auto V = tn.vertices[1].tensor;
 
     npp::tensor_type<std::complex<double>> smat = npp::diag(s);
 
