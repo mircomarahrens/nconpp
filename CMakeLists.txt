@@ -80,11 +80,36 @@ if (CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
     gtest_discover_tests(nconpp_tests_run)
 endif ()
 
+
 # python
+project(nconpp_python LANGUAGES CXX)
+
+# CMake Warning (dev) at C:/Repositories/vcpkg/scripts/buildsystems/vcpkg.cmake:859 (_find_package):
+# Policy CMP0148 is not set: The FindPythonInterp and FindPythonLibs modules
+# are removed.  Run "cmake --help-policy CMP0148" for policy details.  Use
+# the cmake_policy command to set the policy and suppress this warning.
+add_subdirectory(python/extern/pybind11)
+add_subdirectory(python/extern/xtensor-python)
+
+# pybind11
+set(PYBIND11_NEWPYTHON ON)
+set(PYBIND11_MAIN python/nconpp/nconpp.cpp)
+set(PYBIND11_MODULE _nconpp)
+
+pybind11_add_module(${PYBIND11_MODULE}
+    ${PYBIND11_MAIN}
+    ${NCONPP_INCLUDE})
+
+target_include_directories(${PYBIND11_MODULE} PRIVATE
+    include/)
+
+target_link_libraries(${PYBIND11_MODULE} PRIVATE
+    ${NCONPP_DEPENDENCIES}
+    pybind11::module
+    xtensor-python)
+
 if (CMAKE_BUILD_TYPE MATCHES Python AND SKBUILD)
     message(STATUS "Skbuild process triggered.")
-
-    project(nconpp_python LANGUAGES CXX)
 
     set(Python_FIND_VIRTUALENV FIRST)
     set(Python_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/venv)
@@ -100,8 +125,8 @@ if (CMAKE_BUILD_TYPE MATCHES Python AND SKBUILD)
 #        message(STATUS "${_variableName}=${${_variableName}}")
 #    endforeach()
 
-    add_subdirectory(python/extern/pybind11)
-
+    # We currently only implemented the configuration for windows
+    # I guess it is less complex for Linux though :-)
     if (WIN32)
         set(VCPKG_INSTALLED_DIR_DLL_DIR ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/)
 
@@ -117,32 +142,17 @@ if (CMAKE_BUILD_TYPE MATCHES Python AND SKBUILD)
 if (sys.platform == 'win32'):
     os.add_dll_directory(\"${VCPKG_INSTALLED_DIR_DLL_DIR}\")
 
-from ._nconpp import TensorNetwork, Graph
+from ._nconpp import Graph, LatticeGraph
 
-__all__ = (\"TensorNetwork\", \"Graph\")
+__all__ = (\"Graph\", \"LatticeGraph\")
 __version__ = \"0.1.0\"")
     endif()
 
-    # pybind11
-    set(PYBIND11_NEWPYTHON ON)
-    set(PYBIND11_MAIN python/nconpp/nconpp.cpp)
-    set(PYBIND11_MODULE _nconpp)
-
-    add_subdirectory(python/extern/xtensor-python)
-
-    pybind11_add_module(${PYBIND11_MODULE}
-        ${PYBIND11_MAIN}
-        ${NCONPP_INCLUDE})
-
     target_include_directories(${PYBIND11_MODULE} PRIVATE
-        include/
         ${Python_NumPy_INCLUDE_DIRS}
         ${BLAS_INCLUDE_DIR})
 
     target_link_libraries(${PYBIND11_MODULE} PRIVATE
-        ${NCONPP_DEPENDENCIES}
-        pybind11::module
-        xtensor-python
         Python::NumPy)
 
     target_compile_definitions(${PYBIND11_MODULE} PRIVATE
