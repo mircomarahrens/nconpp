@@ -121,23 +121,22 @@ void PyLatticeGraph_wrapper(py::module &m)
         .def_readonly("src", &graph::edge_properties_t::src)
         .def_readonly("dest", &graph::edge_properties_t::dest);
 
-    py::class_<graph>(m, "graph_lattice", py::buffer_protocol(), py::dynamic_attr(), py::module_local())
-        .def(py::init<>())
-        .def(py::init<std::size_t, bool, bool>(), py::arg("nodes"), py::arg("parallel_edges") = true, py::arg("directed_edges") = false)
-        .def("get_vertices", &graph::getVertices)
-        .def("add_vertex", &graph::addVertex, py::arg("vertex") = py::none())
-        .def("remove_vertex", &graph::removeVertex, py::arg("vertex"))
-        .def("clear_vertex", &graph::clearVertex, py::arg("vertex"))
-        .def("add_edge", &graph::addEdge, py::arg("id"), py::arg("src"), py::arg("dest"))
-        .def("get_edges", &graph::getEdges)
-        .def("remove_edge", &graph::removeEdge)
-        .def_property_readonly("num_edges", &graph::NumEdges)
-        .def_property_readonly("num_vertices", &graph::NumVertices)
-        .def_readonly("adjacency_list", &graph::adjacency_list)
-        .def_readonly("vertices", &graph::vertices)
-        .def_readonly("edges", &graph::edges);
+    // py::class_<graph>(m, "graph_lattice", py::buffer_protocol(), py::dynamic_attr(), py::module_local())
+    //     .def(py::init<>())
+    //     .def(py::init<std::size_t, bool, bool>(), py::arg("nodes"), py::arg("parallel_edges") = true, py::arg("directed_edges") = false)
+    //     .def("get_vertices", &graph::getVertices)
+    //     .def("add_vertex", &graph::addVertex, py::arg("vertex") = py::none())
+    //     .def("remove_vertex", &graph::removeVertex, py::arg("vertex"))
+    //     .def("clear_vertex", &graph::clearVertex, py::arg("vertex"))
+    //     .def("add_edge", &graph::addEdge, py::arg("id"), py::arg("src"), py::arg("dest"))
+    //     .def("get_edges", &graph::getEdges)
+    //     .def("remove_edge", &graph::removeEdge)
+    //     .def_property_readonly("num_edges", &graph::NumEdges)
+    //     .def_property_readonly("num_vertices", &graph::NumVertices)
+    //     .def_readonly("adjacency_list", &graph::adjacency_list)
+    //     .def_readonly("vertices", &graph::vertices)
+    //     .def_readonly("edges", &graph::edges);
 
-    // TODO problem starts here
     py::class_<lattice>(m, "LatticeGraph", py::buffer_protocol(), py::dynamic_attr(), py::module_local())
         .def(py::init<std::string&, std::vector<std::size_t>&, lattice::directions_type&, std::vector<std::string>&>(), 
         py::arg("name") = "honeycomb",
@@ -146,7 +145,19 @@ void PyLatticeGraph_wrapper(py::module &m)
         py::arg("boundary_conditions") = std::vector<std::string>({"pbc", "pbc"}))
         .def("getGridShape", &lattice::getGridShape)
         .def("getBoundaryGridShape", &lattice::getBoundaryGridShape)
-        .def("getDirections", &lattice::getDirections);
+        .def("getDirections", &lattice::getDirections)
+        .def("get_vertices", &lattice::getVertices)
+        .def("add_vertex", &lattice::addVertex, py::arg("vertex") = py::none())
+        .def("remove_vertex", &lattice::removeVertex, py::arg("vertex"))
+        .def("clear_vertex", &lattice::clearVertex, py::arg("vertex"))
+        .def("add_edge", &lattice::addEdge, py::arg("id"), py::arg("src"), py::arg("dest"))
+        .def("get_edges", &lattice::getEdges)
+        .def("remove_edge", &lattice::removeEdge)
+        .def_property_readonly("num_edges", &lattice::NumEdges)
+        .def_property_readonly("num_vertices", &lattice::NumVertices)
+        .def_readonly("adjacency_list", &lattice::adjacency_list)
+        .def_readonly("vertices", &lattice::vertices)
+        .def_readonly("edges", &lattice::edges);;
 }
 
 /**
