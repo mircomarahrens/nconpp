@@ -142,9 +142,9 @@ if (CMAKE_BUILD_TYPE MATCHES Python AND SKBUILD)
 if (sys.platform == 'win32'):
     os.add_dll_directory(\"${VCPKG_INSTALLED_DIR_DLL_DIR}\")
 
-from ._nconpp import Graph, LatticeGraph
+from ._nconpp import Graph, LatticeGraph, TensorNetwork
 
-__all__ = (\"Graph\", \"LatticeGraph\")
+__all__ = (\"Graph\", \"LatticeGraph\", \"TensorNetwork\")
 __version__ = \"0.1.0\"")
     endif()
 

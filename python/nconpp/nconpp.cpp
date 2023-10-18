@@ -18,7 +18,6 @@
 
 namespace py = pybind11;
 
-
 /**
  * @brief Trampoline class for Graph
  *
@@ -35,7 +34,7 @@ public:
 
 /**
  * @brief Wrapper function for class Graph
- * 
+ *
  * @param m
  * @param typestr
  */
@@ -76,16 +75,6 @@ void PyGraph_wrapper(py::module &m)
 }
 
 /**
- * @brief Trampoline class for Graph
- *
- */
-// class PyLatticeGraph_trampoline : public LatticeGraph
-// {
-// public:
-//     using LatticeGraph::LatticeGraph;
-// };
-
-/**
  * @brief Wrapper function for class LatticeGraph
  *
  * @param m
@@ -99,50 +88,27 @@ void PyLatticeGraph_wrapper(py::module &m)
     using le = GRAPH_PROPERTIES::lattice_edge_properties;
     using graph = PyGraph_trampoline<lg, lv, le>;
 
-    py::class_<lg>(m, "lattice_graph_properties")
-        .def(py::init<>())
-        .def_readwrite("name", &lg::name);
-    py::class_<lv>(m, "lattice_vertex_properties")
-        .def(py::init<>())
-        .def_readwrite("coordinate", &lv::coordinate)
-        .def_readwrite("boundary", &lv::boundary);
-    py::class_<le>(m, "lattice_edge_properties")
-        .def(py::init<>());
-
-    py::class_<graph::graph_properties_t, lg>(m, "LatticeGraphProperties", py::module_local())
+    py::class_<graph::graph_properties_t>(m, "LatticeGraphProperties", py::module_local())
         .def(py::init<>())
         .def_readonly("parallel_edges", &graph::graph_properties_t::parallel_edges)
-        .def_readonly("directed_edges", &graph::graph_properties_t::directed_edges);
-    py::class_<graph::vertex_properties_t, lv>(m, "LatticeVertexProperties", py::module_local())
+        .def_readonly("directed_edges", &graph::graph_properties_t::directed_edges)
+        .def_readwrite("name", &graph::graph_properties_t::name);
+    py::class_<graph::vertex_properties_t>(m, "LatticeVertexProperties", py::module_local())
         .def(py::init<>())
-        .def_readwrite("edge_indices", &graph::vertex_properties_t::edge_indices);
-    py::class_<graph::edge_properties_t, le>(m, "LatticeEdgeProperties")
+        .def_readwrite("edge_indices", &graph::vertex_properties_t::edge_indices)
+        .def_readwrite("coordinate", &graph::vertex_properties_t::coordinate)
+        .def_readwrite("boundary", &graph::vertex_properties_t::boundary);
+    py::class_<graph::edge_properties_t>(m, "LatticeEdgeProperties")
         .def(py::init<>())
         .def_readonly("src", &graph::edge_properties_t::src)
         .def_readonly("dest", &graph::edge_properties_t::dest);
 
-    // py::class_<graph>(m, "graph_lattice", py::buffer_protocol(), py::dynamic_attr(), py::module_local())
-    //     .def(py::init<>())
-    //     .def(py::init<std::size_t, bool, bool>(), py::arg("nodes"), py::arg("parallel_edges") = true, py::arg("directed_edges") = false)
-    //     .def("get_vertices", &graph::getVertices)
-    //     .def("add_vertex", &graph::addVertex, py::arg("vertex") = py::none())
-    //     .def("remove_vertex", &graph::removeVertex, py::arg("vertex"))
-    //     .def("clear_vertex", &graph::clearVertex, py::arg("vertex"))
-    //     .def("add_edge", &graph::addEdge, py::arg("id"), py::arg("src"), py::arg("dest"))
-    //     .def("get_edges", &graph::getEdges)
-    //     .def("remove_edge", &graph::removeEdge)
-    //     .def_property_readonly("num_edges", &graph::NumEdges)
-    //     .def_property_readonly("num_vertices", &graph::NumVertices)
-    //     .def_readonly("adjacency_list", &graph::adjacency_list)
-    //     .def_readonly("vertices", &graph::vertices)
-    //     .def_readonly("edges", &graph::edges);
-
     py::class_<lattice>(m, "LatticeGraph", py::buffer_protocol(), py::dynamic_attr(), py::module_local())
-        .def(py::init<std::string&, std::vector<std::size_t>&, lattice::directions_type&, std::vector<std::string>&>(), 
-        py::arg("name") = "honeycomb",
-        py::arg("shape") = std::vector<std::size_t>({4, 4}),
-        py::arg("directions") = LatticeGraph::directions_type({{{0, -1}, {0, +1}, {+1, 0}}, {{-1, 0}, {0, -1}, {0, +1}}}),
-        py::arg("boundary_conditions") = std::vector<std::string>({"pbc", "pbc"}))
+        .def(py::init<std::string &, std::vector<std::size_t> &, lattice::directions_type &, std::vector<std::string> &>(),
+             py::arg("name") = "honeycomb",
+             py::arg("shape") = std::vector<std::size_t>({4, 4}),
+             py::arg("directions") = LatticeGraph::directions_type({{{0, -1}, {0, +1}, {+1, 0}}, {{-1, 0}, {0, -1}, {0, +1}}}),
+             py::arg("boundary_conditions") = std::vector<std::string>({"pbc", "pbc"}))
         .def("getGridShape", &lattice::getGridShape)
         .def("getBoundaryGridShape", &lattice::getBoundaryGridShape)
         .def("getDirections", &lattice::getDirections)
@@ -157,7 +123,7 @@ void PyLatticeGraph_wrapper(py::module &m)
         .def_property_readonly("num_vertices", &lattice::NumVertices)
         .def_readonly("adjacency_list", &lattice::adjacency_list)
         .def_readonly("vertices", &lattice::vertices)
-        .def_readonly("edges", &lattice::edges);;
+        .def_readonly("edges", &lattice::edges);
 }
 
 /**
@@ -194,44 +160,68 @@ public:
     }
 };
 
+class PyTensorNetworkGraphProperties_trampoline : public GRAPH_PROPERTIES::tensornetwork_graph_properties
+{
+};
+template <typename T>
+class PyTensorNetworkVertexProperties_trampoline : public GRAPH_PROPERTIES::tensornetwork_vertex_properties<T>
+{
+};
+template <typename T>
+class PyTensorNetworkEdgeProperties_trampoline : public GRAPH_PROPERTIES::tensornetwork_edge_properties<T>
+{
+};
+
 /**
  * @brief Wrapper function for trampoline class PyTensorNetwork_trampoline
  *
- * @tparam T
  * @param m
- * @param typestr
  */
-template <typename T>
-void PyTensorNetwork_wrapper(py::module &m, const std::string &typestr = std::string())
+void PyTensorNetwork_wrapper(py::module &m)
 {
-    std::string pyclass_name = std::string("TensorNetwork");
-    if (!typestr.empty())
-    {
-        pyclass_name += typestr;
-    }
+    using tensornetwork = PyTensorNetwork_trampoline<std::complex<double>>;
+    using tng = PyTensorNetworkGraphProperties_trampoline;
+    using tnv = PyTensorNetworkVertexProperties_trampoline<std::complex<double>>;
+    using tne = PyTensorNetworkEdgeProperties_trampoline<std::complex<double>>;
+    using graph = PyGraph_trampoline<tng, tnv, tne>;
 
-    // py::class_<GRAPH_PROPERTIES::custom_graph_properties>(m, "custom_graph_properties")
-    // 	.def(py::init<>());
-    // py::class_<GRAPH_PROPERTIES::custom_vertex_properties<T>>(m, "custom_vertex_properties")
-    // 	.def(py::init<>())
-    // 	.def_readwrite("cartesian_coordinates", &GRAPH_PROPERTIES::custom_vertex_properties<T>::cartesian_coordinates)
-    // 	.def_readwrite("legs", &GRAPH_PROPERTIES::custom_vertex_properties<T>::legs)
-    // 	.def_readwrite("tensor", &GRAPH_PROPERTIES::custom_vertex_properties<T>::tensor);
-    // py::class_<GRAPH_PROPERTIES::custom_edge_properties<T>>(m, "custom_edge_properties")
-    // 	.def(py::init<>())
-    // 	.def_readwrite("singular_values", &GRAPH_PROPERTIES::custom_edge_properties<T>::singular_values);
+    py::class_<graph::graph_properties_t>(m, "TensorNetworkGraphProperties")
+        .def(py::init<>())
+        .def_readonly("parallel_edges", &graph::graph_properties_t::parallel_edges)
+        .def_readonly("directed_edges", &graph::graph_properties_t::directed_edges);
+    py::class_<graph::vertex_properties_t>(m, "TensorNetworVertexProperties")
+        .def(py::init<>())
+        .def_readwrite("edge_indices", &graph::vertex_properties_t::edge_indices)
+        .def_readwrite("cartesian_coordinates", &graph::vertex_properties_t::cartesian_coordinates)
+        .def_readwrite("legs", &graph::vertex_properties_t::legs)
+        .def_readwrite("tensor", &graph::vertex_properties_t::tensor);
+    py::class_<graph::edge_properties_t>(m, "TensorNetworkEdgeProperties")
+        .def(py::init<>())
+        .def_readonly("src", &graph::edge_properties_t::src)
+        .def_readonly("dest", &graph::edge_properties_t::dest)
+        .def_readwrite("singular_values", &graph::edge_properties_t::singular_values);
 
-    // PyGraph_properties_wrapper<GRAPH_PROPERTIES::custom_graph_properties, GRAPH_PROPERTIES::custom_vertex_properties<T>, GRAPH_PROPERTIES::custom_edge_properties<T>>(m);
-
-    // py::class_<PyTensorNetwork_trampoline<T>, Graph<GRAPH_PROPERTIES::custom_graph_properties, GRAPH_PROPERTIES::custom_vertex_properties<T>, GRAPH_PROPERTIES::custom_edge_properties<T>>>(m, pyclass_name.c_str(), py::buffer_protocol(), py::dynamic_attr())
-    // 	.def(py::init<std::vector<npp::tensor_type<T>> &, std::vector<std::vector<int>> &>(),
-    // 		 py::arg("tensorList"), py::arg("legsList"))
-    // 	.def(py::init<std::vector<npp::tensor_type<T>> &&, std::vector<std::vector<int>> &&>(),
-    // 		 py::arg("tensorList"), py::arg("legsList"))
-    // 	.def("contract", &PyTensorNetwork_trampoline<T>::contract_wrapper,
-    // 		 py::arg("contractionSequence") = py::none(), py::arg("finalOrder") = py::none())
-    // 	.def("connect", &PyTensorNetwork_trampoline<T>::connect)
-    // 	.def_property_readonly("num_tensors", &PyTensorNetwork_trampoline<T>::NumTensors);
+    py::class_<tensornetwork>(m, "TensorNetwork", py::buffer_protocol(), py::dynamic_attr(), py::module_local())
+        .def(py::init<std::vector<npp::tensor_type<std::complex<double>>> &, std::vector<std::vector<int>> &>(),
+             py::arg("tensorList"), py::arg("legsList"))
+        .def(py::init<std::vector<npp::tensor_type<std::complex<double>>> &&, std::vector<std::vector<int>> &&>(),
+             py::arg("tensorList"), py::arg("legsList"))
+        .def("contract", &tensornetwork::contract_wrapper,
+             py::arg("contractionSequence") = py::none(), py::arg("finalOrder") = py::none())
+        .def("connect", &tensornetwork::connect)
+        .def_property_readonly("num_tensors", &tensornetwork::NumTensors)
+        .def("get_vertices", &tensornetwork::getVertices)
+        .def("add_vertex", &tensornetwork::addVertex, py::arg("vertex") = py::none())
+        .def("remove_vertex", &tensornetwork::removeVertex, py::arg("vertex"))
+        .def("clear_vertex", &tensornetwork::clearVertex, py::arg("vertex"))
+        .def("add_edge", &tensornetwork::addEdge, py::arg("id"), py::arg("src"), py::arg("dest"))
+        .def("get_edges", &tensornetwork::getEdges)
+        .def("remove_edge", &tensornetwork::removeEdge)
+        .def_property_readonly("num_edges", &tensornetwork::NumEdges)
+        .def_property_readonly("num_vertices", &tensornetwork::NumVertices)
+        .def_readonly("adjacency_list", &tensornetwork::adjacency_list)
+        .def_readonly("vertices", &tensornetwork::vertices)
+        .def_readonly("edges", &tensornetwork::edges);
 }
 
 PYBIND11_MODULE(_nconpp, m)
@@ -262,4 +252,5 @@ PYBIND11_MODULE(_nconpp, m)
 
     PyGraph_wrapper(m);
     PyLatticeGraph_wrapper(m);
+    PyTensorNetwork_wrapper(m);
 }
