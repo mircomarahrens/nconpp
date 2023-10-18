@@ -32,7 +32,7 @@ public:
     using directions_type = std::vector<std::vector<std::vector<int>>>;
 
     LatticeGraph(const std::string &_name = "Honeycomb",
-                 const npp::shape_type &_grid_shape = {4, 4},
+                 const std::vector<std::size_t> &_grid_shape = {4, 4},
                  const directions_type &_directions = {{{0, -1}, {0, +1}, {+1, 0}}, {{-1, 0}, {0, -1}, {0, +1}}},
                  const std::vector<std::string> &_bcs = {"pbc", "pbc"})
         : m_grid_shape(_grid_shape), m_directions(_directions), m_bcs(_bcs)
@@ -51,12 +51,12 @@ public:
 
     ~LatticeGraph() = default;
 
-    const npp::shape_type &getGridShape() const
+    const std::vector<std::size_t> &getGridShape() const
     {
         return m_grid_shape;
     }
 
-    const npp::shape_type &getBoundaryGridShape() const
+    const std::vector<std::size_t> &getBoundaryGridShape() const
     {
         return m_boundary_grid_shape;
     }
@@ -67,8 +67,8 @@ public:
     }
 
 private:
-    npp::shape_type m_grid_shape;
-    npp::shape_type m_boundary_grid_shape;
+    std::vector<std::size_t> m_grid_shape;
+    std::vector<std::size_t> m_boundary_grid_shape;
     directions_type m_directions;
     std::vector<std::string> m_bcs;
 

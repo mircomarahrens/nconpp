@@ -110,9 +110,23 @@ namespace npp
         return std::vector<size_t>(_res.begin(), _res.end());
     }
 
+    // unravel_index
+    static inline auto unravel_index(int i, std::vector<std::size_t>& shape)
+    {
+        auto _res = xt::unravel_index(i, shape);
+        return std::vector<size_t>(_res.begin(), _res.end());
+    }
+
     // ravel_index
     template <typename T>
     static inline auto ravel_index(T &multi_index, shape_type& shape)
+    {
+        return xt::ravel_index(multi_index, shape, xt::layout_type::row_major);
+    }
+
+    // ravel_index
+    template <typename T>
+    static inline auto ravel_index(T &multi_index, std::vector<std::size_t>& shape)
     {
         return xt::ravel_index(multi_index, shape, xt::layout_type::row_major);
     }

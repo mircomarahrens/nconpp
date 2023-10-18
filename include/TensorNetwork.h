@@ -34,14 +34,14 @@ namespace INFO
 namespace GRAPH_PROPERTIES
 {
     // custom graph properties
-    struct custom_graph_properties
+    struct tensornetwork_graph_properties
     {
         // place custom properties for the graph here
     };
 
     // custom vertex properties
     template <typename U = std::complex<double>>
-    struct custom_vertex_properties
+    struct tensornetwork_vertex_properties
     {
         // place custom properties for vertices here
         std::vector<int> cartesian_coordinates;
@@ -51,7 +51,7 @@ namespace GRAPH_PROPERTIES
 
     // custom edge properties
     template <typename U = std::complex<double>>
-    struct custom_edge_properties
+    struct tensornetwork_edge_properties
     {
         // place custom properties for edges here
         npp::tensor_type<U> singular_values;
@@ -59,7 +59,7 @@ namespace GRAPH_PROPERTIES
 }
 
 template <typename T = std::complex<double>>
-class TensorNetwork : public Graph<GRAPH_PROPERTIES::custom_graph_properties, GRAPH_PROPERTIES::custom_vertex_properties<T>, GRAPH_PROPERTIES::custom_edge_properties<T>>
+class TensorNetwork : public Graph<GRAPH_PROPERTIES::tensornetwork_graph_properties, GRAPH_PROPERTIES::tensornetwork_vertex_properties<T>, GRAPH_PROPERTIES::tensornetwork_edge_properties<T>>
 {
 private:
     // store negative and positive legs in separate sets
@@ -136,7 +136,7 @@ public:
      */
     TensorNetwork(const TensorNetwork &other) : m_dangling_legs(other.m_dangling_legs),
                                                 m_legs(other.m_legs),
-                                                Graph<GRAPH_PROPERTIES::custom_graph_properties, GRAPH_PROPERTIES::custom_vertex_properties<T>, GRAPH_PROPERTIES::custom_edge_properties<T>>()
+                                                Graph<GRAPH_PROPERTIES::tensornetwork_graph_properties, GRAPH_PROPERTIES::tensornetwork_vertex_properties<T>, GRAPH_PROPERTIES::tensornetwork_edge_properties<T>>()
     {
         this->vertices = other.vertices;
         this->edges = other.edges;
@@ -156,7 +156,7 @@ public:
      *      - legs with negative integers won't be contracted, so-called dangling legs
      */
     explicit TensorNetwork(const std::vector<npp::tensor_type<T>> &tensor_list,
-                           const std::vector<std::vector<int>> &subscript_vector_list) : Graph<GRAPH_PROPERTIES::custom_graph_properties, GRAPH_PROPERTIES::custom_vertex_properties<T>, GRAPH_PROPERTIES::custom_edge_properties<T>>(tensor_list.size())
+                           const std::vector<std::vector<int>> &subscript_vector_list) : Graph<GRAPH_PROPERTIES::tensornetwork_graph_properties, GRAPH_PROPERTIES::tensornetwork_vertex_properties<T>, GRAPH_PROPERTIES::tensornetwork_edge_properties<T>>(tensor_list.size())
     {
         if (tensor_list.size() != subscript_vector_list.size())
         {
@@ -202,7 +202,7 @@ public:
      */
     TensorNetwork(TensorNetwork &&other) : m_dangling_legs(other.m_dangling_legs),
                                            m_legs(other.m_legs),
-                                           Graph<GRAPH_PROPERTIES::custom_graph_properties, GRAPH_PROPERTIES::custom_vertex_properties<T>, GRAPH_PROPERTIES::custom_edge_properties<T>>()
+                                           Graph<GRAPH_PROPERTIES::tensornetwork_graph_properties, GRAPH_PROPERTIES::tensornetwork_vertex_properties<T>, GRAPH_PROPERTIES::tensornetwork_edge_properties<T>>()
     {
         other.m_dangling_legs = {};
         other.m_legs = {};
@@ -228,7 +228,7 @@ public:
      *      - legs with negative integers won't be contracted, so-called dangling legs
      */
     explicit TensorNetwork(std::vector<npp::tensor_type<T>> &&tensor_list,
-                           std::vector<std::vector<int>> &&subscript_vector_list) : Graph<GRAPH_PROPERTIES::custom_graph_properties, GRAPH_PROPERTIES::custom_vertex_properties<T>, GRAPH_PROPERTIES::custom_edge_properties<T>>(tensor_list.size())
+                           std::vector<std::vector<int>> &&subscript_vector_list) : Graph<GRAPH_PROPERTIES::tensornetwork_graph_properties, GRAPH_PROPERTIES::tensornetwork_vertex_properties<T>, GRAPH_PROPERTIES::tensornetwork_edge_properties<T>>(tensor_list.size())
     {
         if (tensor_list.size() != subscript_vector_list.size())
         {
