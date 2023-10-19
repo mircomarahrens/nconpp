@@ -34,7 +34,7 @@
             }
         },
         {
-            "name": "python",
+            "name": "python-debug",
             "displayName": "python",
             "description": "Using compilers for Visual Studio 17 2022 (x64 architecture)",
             "generator": "Visual Studio 17 2022",
@@ -71,7 +71,13 @@
             "name": "python",
             "description": "",
             "displayName": "",
-            "configurePreset": "python"
+            "configurePreset": "python-debug"
+        },
+        {
+            "name": "debug",
+            "description": "",
+            "displayName": "",
+            "configurePreset": "debug"
         }
     ]
 }
