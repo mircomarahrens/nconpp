@@ -17,7 +17,7 @@ class LatticeGraphTest : public testing::Test
 TEST(LatticeGraphTest, Honeycomb)
 {
     std::string name = "Honeycomb";
-    npp::shape_type grid_shape = {4, 4};
+    std::vector<std::size_t> grid_shape = {4, 4};
     std::vector<std::vector<std::vector<int>>> directions =
         {{{0, -1}, {0, +1}, {+1, 0}}, {{-1, 0}, {0, -1}, {0, +1}}};
     std::vector<std::string> bcs = {"pbc", "pbc"};
