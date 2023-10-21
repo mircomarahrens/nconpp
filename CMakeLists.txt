@@ -93,7 +93,7 @@ add_subdirectory(python/extern/xtensor-python)
 
 # pybind11
 set(PYBIND11_NEWPYTHON ON)
-set(PYBIND11_MAIN python/nconpp/nconpp.cpp)
+set(PYBIND11_MAIN python/src/nconpp.cpp)
 set(PYBIND11_MODULE _nconpp)
 
 pybind11_add_module(${PYBIND11_MODULE}
@@ -136,7 +136,7 @@ if (CMAKE_BUILD_TYPE MATCHES Python AND SKBUILD)
             message(FATAL_ERROR "Could not find DLL directory.")
         endif()
 
-        file(WRITE python/nconpp/__init__.py 
+        file(WRITE python/src/__init__.py 
 "import os, sys
 
 if (sys.platform == 'win32'):
@@ -158,7 +158,7 @@ __version__ = \"0.1.0\"")
     target_compile_definitions(${PYBIND11_MODULE} PRIVATE
         VERSION_INFO=${VERSION_INFO})
 
-    install(FILES python/nconpp/__init__.py 
+    install(FILES python/src/__init__.py 
         DESTINATION .)
     install(TARGETS ${PYBIND11_MODULE}
         LIBRARY DESTINATION .)
