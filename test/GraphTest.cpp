@@ -56,7 +56,7 @@ TEST(GraphTest, addVertex)
         try {
             g.addVertex(5);
         } catch (const std::invalid_argument &ex) {
-            EXPECT_EQ(ERROR_MESSAGE::VERTEXID_PRESENT, ex.what());
+            EXPECT_EQ(ERROR::VERTEXID_PRESENT, ex.what());
             throw;
         },
         std::invalid_argument);
@@ -80,7 +80,7 @@ TEST(GraphTest, removeVertex)
         try {
             g.removeVertex(6);
         } catch (const std::invalid_argument &ex) {
-            EXPECT_EQ(ERROR_MESSAGE::VERTEXID_NOTPRESENT, ex.what());
+            EXPECT_EQ(ERROR::VERTEXID_NOTPRESENT, ex.what());
             throw;
         },
         std::invalid_argument);
@@ -104,7 +104,7 @@ TEST(GraphTest, addEdge)
         try {
             g.addEdge(0, 6, 5);
         } catch (const std::invalid_argument &ex) {
-            EXPECT_EQ(ERROR_MESSAGE::SOURCEID_NOTPRESENT, ex.what());
+            EXPECT_EQ(ERROR::SOURCEID_NOTPRESENT, ex.what());
             throw;
         },
         std::invalid_argument);
@@ -113,7 +113,7 @@ TEST(GraphTest, addEdge)
         try {
             g.addEdge(0, 5, 6);
         } catch (const std::invalid_argument &ex) {
-            EXPECT_EQ(ERROR_MESSAGE::DESTID_NOTPRESENT, ex.what());
+            EXPECT_EQ(ERROR::DESTID_NOTPRESENT, ex.what());
             throw;
         },
         std::invalid_argument);
@@ -124,7 +124,7 @@ TEST(GraphTest, addEdge)
         try {
             g.addEdge(0, 1, 2);
         } catch (const std::invalid_argument &ex) {
-            EXPECT_EQ(ERROR_MESSAGE::EDGEID_PRESENT, ex.what());
+            EXPECT_EQ(ERROR::EDGEID_PRESENT, ex.what());
             throw;
         },
         std::invalid_argument);
@@ -155,7 +155,7 @@ TEST(GraphTest, removeEdge)
         try {
             g.removeEdge(1);
         } catch (const std::invalid_argument &ex) {
-            EXPECT_EQ(ERROR_MESSAGE::EDGEID_NOTPRESENT, ex.what());
+            EXPECT_EQ(ERROR::EDGEID_NOTPRESENT, ex.what());
             throw;
         },
         std::invalid_argument);
@@ -279,7 +279,7 @@ TEST(GraphTest, parallelEdgePresent)
         try {
             g.addEdge(1, 2, 1);
         } catch (const std::invalid_argument &ex) {
-            EXPECT_EQ(ERROR_MESSAGE::PARALLEL_EDGE_PRESENT, ex.what());
+            EXPECT_EQ(ERROR::PARALLEL_EDGE_PRESENT, ex.what());
             throw;
         },
         std::invalid_argument);
@@ -288,7 +288,7 @@ TEST(GraphTest, parallelEdgePresent)
         try {
             g.addEdge(2, 1, 2);
         } catch (const std::invalid_argument &ex) {
-            EXPECT_EQ(ERROR_MESSAGE::PARALLEL_EDGE_PRESENT, ex.what());
+            EXPECT_EQ(ERROR::PARALLEL_EDGE_PRESENT, ex.what());
             throw;
         },
         std::invalid_argument);
