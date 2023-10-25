@@ -68,7 +68,6 @@ public:
     struct vertex_properties_t : V
     {
         // put any default properties here
-        std::set<int> edge_indices;
         GRAPH_PROPERTIES::COLOR color = GRAPH_PROPERTIES::COLOR::WHITE;
     };
 
@@ -172,6 +171,8 @@ public:
         {
             throw std::invalid_argument(ERROR::VERTEXID_NOTPRESENT);
         }
+
+
         return vertex;
     }
 
@@ -217,9 +218,6 @@ public:
 
         edges[edgeIndex] = {.src = src, .dest = dest};
 
-        vertices[src].edge_indices.insert(edgeIndex);
-        vertices[dest].edge_indices.insert(edgeIndex);
-
         adjacency_list[src].insert(dest);
         if (!graph_properties.directed_edges || !graph_properties.parallel_edges)
         {
@@ -236,10 +234,17 @@ public:
      */
     void clearVertex(std::size_t vertex)
     {
-        for (int i : vertices[vertex].edge_indices)
+        if (!graph_properties.directed_edges)
         {
-            removeEdge(i);
+            for (std::size_t vertex_dest : adjacency_list[vertex])
+            {
+                if (vertex_dest != vertex)
+                {
+                    adjacency_list[vertex_dest].erase(vertex);
+                }
+            }
         }
+        adjacency_list.erase(vertex);
     }
 
     /**
@@ -270,16 +275,12 @@ public:
                 if (edge.src == dest)
                 {
                     edge.src = src;
-                    vertices[src].edge_indices.insert(i);
                     adjacency_list[src].insert(dest);
-                    vertices[dest].edge_indices.erase(i);
                 }
                 else if (edge.dest == dest)
                 {
                     adjacency_list[src].insert(edge.dest);
                     edge.dest = src;
-                    vertices[src].edge_indices.insert(i);
-                    vertices[dest].edge_indices.erase(i);
                 }
             }
             removeVertex(dest);
@@ -329,13 +330,10 @@ public:
             auto dest = edges[edgeIndex].dest;
 
             adjacency_list[src].erase(dest);
-            if (!graph_properties.directed_edges && graph_properties.parallel_edges)
+            if (!graph_properties.directed_edges)
             {
                 adjacency_list[dest].erase(src);
             }
-
-            vertices[src].edge_indices.erase(edgeIndex);
-            vertices[dest].edge_indices.erase(edgeIndex);
 
             edges.erase(edgeIndex);
         }

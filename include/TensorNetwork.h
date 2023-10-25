@@ -45,6 +45,7 @@ namespace GRAPH_PROPERTIES
     {
         // place custom properties for vertices here
         std::vector<int> cartesian_coordinates;
+        std::vector<int> subscript_vector;
         npp::tensor_type<U> tensor;
     };
 
@@ -54,7 +55,6 @@ namespace GRAPH_PROPERTIES
     {
         // place custom properties for edges here
         npp::tensor_type<U> singular_values;
-        std::pair<std::size_t, std::size_t> leg_pos;
     };
 }
 
@@ -64,6 +64,7 @@ class TensorNetwork : public Graph<GRAPH_PROPERTIES::tensornetwork_graph_propert
 private:
     // store negative and positive legs in separate sets
     std::set<int> m_dangling_legs = {}; // negative leg indices
+    std::set<std::size_t> m_legs = {};  // positive leg indices
 
     /**
      * @brief Create all edges
@@ -101,19 +102,15 @@ private:
                     {
                         throw std::invalid_argument(ERROR::CONSTRAINT_LEGPAIRS);
                     }
-                    // TODO: 
-                    //  - this is not updating the edge_indices in vertex properties
-                    //  -> need method update edge
                     this->edges[_leg].dest = _vertex_index;
-                    this->edges[_leg].leg_pos.second = pos;
                     this->edges[_leg].color = GRAPH_PROPERTIES::COLOR::BLACK;
                 }
                 else
                 {
                     this->addEdge(_leg, _vertex_index, _vertex_index);
                     this->edges[_leg].singular_values = {};
-                    this->edges[_leg].leg_pos = std::make_pair(pos, pos);
                     this->edges[_leg].color = GRAPH_PROPERTIES::COLOR::GRAY;
+                    m_legs.insert(_leg);
                 }
             }
         }
@@ -164,8 +161,6 @@ public:
         }
 
         // counting occurrence of legs to check constraints
-        std::unordered_map<std::size_t, std::size_t> _vertex_leg_map;
-        std::unordered_map<std::size_t, std::pair<std::size_t, std::size_t>> _leg_pos_map;
         for (std::size_t _vertex_index = 0; _vertex_index < tensor_list.size(); _vertex_index++)
         {
             const std::vector<int> &_subscript_vector = subscript_vector_list[_vertex_index];
@@ -173,6 +168,8 @@ public:
             create_edges(_vertex_index, _subscript_vector);
 
             this->vertices[_vertex_index].tensor = std::move(tensor_list[_vertex_index]);
+            this->vertices[_vertex_index].subscript_vector = std::move(_subscript_vector);
+            this->vertices[_vertex_index].color = GRAPH_PROPERTIES::COLOR::BLACK;
         }
     }
 
@@ -236,8 +233,12 @@ public:
         for (std::size_t _vertex_index = 0; _vertex_index < tensor_list.size(); _vertex_index++)
         {
             const std::vector<int> &_subscript_vector = subscript_vector_list[_vertex_index];
+
             create_edges(_vertex_index, _subscript_vector);
+
             this->vertices[_vertex_index].tensor = std::move(tensor_list[_vertex_index]);
+            this->vertices[_vertex_index].subscript_vector = std::move(_subscript_vector);
+            this->vertices[_vertex_index].color = GRAPH_PROPERTIES::COLOR::BLACK;
         }
     };
 
@@ -283,33 +284,23 @@ public:
     }
 
     /**
-     * @brief Update positions of legs in edge properties.
+     * @brief Update positions of legs in subscript vector.
      * 
-     * @param src: source vertex
-     * @param dest: destination vertex
      * @param edge_index: edge id
+     * @param subscript_vector: subscript vector of the vertex
      * 
      */
-    void update_edges(int edge_index)
+    std::vector<std::size_t> get_axes(int edge_index, const std::vector<int> &subscript_vector)
     {
-        auto edge = this->edges[edge_index];
-        for (int _edge_index : this->vertices[edge.src].edge_indices)
+        std::vector<std::size_t> axes = {};
+        for (int _pos = 0 ; _pos < subscript_vector.size(); ++_pos)
         {
-            auto current_edge = this->edges[_edge_index];
-            if (current_edge.leg_pos.first > edge.leg_pos.first)
+            if (edge_index == subscript_vector[_pos])
             {
-                current_edge.leg_pos.first -= 1;
+                axes.push_back(_pos);
             }
         }
-
-        for (int _edge_index : this->vertices[edge.dest].edge_indices)
-        {
-            auto current_edge = this->edges[_edge_index];
-            if (current_edge.leg_pos.second > edge.leg_pos.second)
-            {
-                current_edge.leg_pos.second -= 1;
-            }
-        }
+        return axes;
     }
 
     /**
@@ -350,28 +341,36 @@ public:
 
             if (_src == _dest)
             { // trace
-                _src_tensor = npp::linalg::trace(_src_tensor, 0, _edge.leg_pos.first, _edge.leg_pos.second);
-
-                update_edges(_leg_index);
+                auto _axes = get_axes(_leg_index, _src_vertex.subscript_vector);
+                _src_tensor = npp::linalg::trace(_src_tensor, 0, _axes[0], _axes[1]);
 
                 this->removeEdge(_leg_index);
+
+                _src_vertex.subscript_vector.erase(_src_vertex.subscript_vector.begin() + _axes[1]);
+                _src_vertex.subscript_vector.erase(_src_vertex.subscript_vector.begin() + _axes[0]);
             }
             else
             { // tensordot
+                auto _axes_src = get_axes(_leg_index, _src_vertex.subscript_vector);
+                auto _axes_dest = get_axes(_leg_index, _dest_vertex.subscript_vector);
                 if (npp::dimension(_edge.singular_values) > 0)
                 {
-                    _src_tensor = npp::linalg::tensordot(_src_tensor, npp::diag(_edge.singular_values), {_edge.leg_pos.first}, {_edge.leg_pos.second});
+                    _src_tensor = npp::linalg::tensordot(_src_tensor, npp::diag(_edge.singular_values), _axes_src, {0});
                 }
 
                 // tensordot and store result to src vertex
-                _src_tensor = npp::linalg::tensordot(_src_tensor, _dest_tensor, {_edge.leg_pos.first}, {_edge.leg_pos.second});
+                _src_tensor = npp::linalg::tensordot(_src_tensor, _dest_tensor, _axes_src, _axes_dest);
 
-                update_edges(_leg_index);
+                _src_vertex.subscript_vector.erase(_src_vertex.subscript_vector.begin() + _axes_src[0]);
+                _dest_vertex.subscript_vector.erase(_dest_vertex.subscript_vector.begin() + _axes_dest[0]);
+
+                _src_vertex.subscript_vector.insert(_src_vertex.subscript_vector.end(), _dest_vertex.subscript_vector.begin(), _dest_vertex.subscript_vector.end());
 
                 this->removeEdge(_leg_index);
                 this->mergeVertices(_src, _dest);
             }
             contraction_sequence.erase(contraction_sequence.begin());
+            m_legs.erase(_leg_index);
         }
 
         if (!contraction_sequence.empty())
@@ -417,97 +416,97 @@ public:
      */
     void split(std::size_t vertex_index, std::size_t leg_index)
     {
-//        auto _tensor = this->vertices[vertex_index].tensor;
-//
-//        // split legs
-//        std::vector<int> _left_legs(this->vertices[vertex_index].legs.begin(), this->vertices[vertex_index].legs.begin() + leg_index);
-//        std::vector<int> _right_legs(this->vertices[vertex_index].legs.begin() + leg_index, this->vertices[vertex_index].legs.end());
-//
-//        // split tensor
-//        std::size_t _len = this->vertices[vertex_index].legs.size();
-//        if (leg_index < _len)
-//        {
-//            auto _shape = npp::shape(_tensor);
-//
-//            std::size_t _left = 1, _right = 1;
-//            npp::shape_type _left_shape, _right_shape;
-//            for (std::size_t _i = 0; _i < _len; _i++)
-//            {
-//                if (_i < leg_index)
-//                {
-//                    _left *= _shape[_i];
-//
-//                    _left_shape.push_back(_shape[_i]);
-//                }
-//                else if (_i == leg_index)
-//                {
-//                    _right *= _shape[_i];
-//
-//                    // new shape after svd
-//                    _left_shape.push_back(_left);
-//                    _right_shape.push_back(_left);
-//
-//                    _right_shape.push_back(_shape[_i]);
-//                }
-//                else
-//                {
-//                    _right *= _shape[_i];
-//
-//                    _right_shape.push_back(_shape[_i]);
-//                }
-//            }
-//
-//            npp::reshape(_tensor, npp::shape_type({_left, _right}));
-//
-//            npp::tensor_type<T> _U, _s, _V;
-//            std::tie(_U, _s, _V) = npp::linalg::svd(_tensor, false);
-//
-//            // reshape U,V back to tensors with new shape
-//            npp::reshape(_U, _left_shape);
-//            npp::reshape(_V, _right_shape);
-//
-//            // new leg ids
-//            int _new_leg = 1;
-//            if (!m_legs.empty())
-//            {
-//                _new_leg = *m_legs.rbegin() + 1;
-//            }
-//
-//            // add to the subscript vectors
-//            _left_legs.emplace_back(_new_leg);
-//            _right_legs.emplace(_right_legs.begin(), _new_leg);
-//
-//            // add to list of current legs
-//            m_legs.insert(_new_leg);
-//
-//            // update current vertex for U
-//            this->vertices[vertex_index].legs = std::move(_left_legs);
-//            this->vertices[vertex_index].tensor = std::move(_U);
-//
-//            // and create new vertex for V
-//            std::size_t _V_vertex = this->addVertex();
-//            this->vertices[_V_vertex].legs = std::move(_right_legs);
-//            this->vertices[_V_vertex].tensor = std::move(_V);
-//
-//            // add new edge to graph
-//            this->addEdge(_new_leg, vertex_index, _V_vertex);
-//
-//            // and store singular values s as edge property
-//            this->edges[_new_leg].singular_values = std::move(_s);
-//
-//            // only edges of rhs needs to be updated, because edges of lhs are reused in U
-//            for (int _i : _right_legs)
-//            {
-//                if (_i > 0)
-//                {
-//                    this->edges[_i].src = _V_vertex;
-//                }
-//            }
-//        }
-//        else
-//        {
-//            throw std::invalid_argument(ERROR::OUT_OF_SIZE);
-//        }
+        auto _tensor = this->vertices[vertex_index].tensor;
+
+        // split legs
+        std::vector<int> _left_legs(this->vertices[vertex_index].subscript_vector.begin(), this->vertices[vertex_index].subscript_vector.begin() + leg_index);
+        std::vector<int> _right_legs(this->vertices[vertex_index].subscript_vector.begin() + leg_index, this->vertices[vertex_index].subscript_vector.end());
+
+        // split tensor
+        std::size_t _len = this->vertices[vertex_index].subscript_vector.size();
+        if (leg_index < _len)
+        {
+            auto _shape = npp::shape(_tensor);
+
+            std::size_t _left = 1, _right = 1;
+            npp::shape_type _left_shape, _right_shape;
+            for (std::size_t _i = 0; _i < _len; _i++)
+            {
+                if (_i < leg_index)
+                {
+                    _left *= _shape[_i];
+
+                    _left_shape.push_back(_shape[_i]);
+                }
+                else if (_i == leg_index)
+                {
+                    _right *= _shape[_i];
+
+                    // new shape after svd
+                    _left_shape.push_back(_left);
+                    _right_shape.push_back(_left);
+
+                    _right_shape.push_back(_shape[_i]);
+                }
+                else
+                {
+                    _right *= _shape[_i];
+
+                    _right_shape.push_back(_shape[_i]);
+                }
+            }
+
+            npp::reshape(_tensor, npp::shape_type({_left, _right}));
+
+            npp::tensor_type<T> _U, _s, _V;
+            std::tie(_U, _s, _V) = npp::linalg::svd(_tensor, false);
+
+            // reshape U,V back to tensors with new shape
+            npp::reshape(_U, _left_shape);
+            npp::reshape(_V, _right_shape);
+
+            // new leg ids
+            int _new_leg = 1;
+            if (!m_legs.empty())
+            {
+                _new_leg = *m_legs.rbegin() + 1;
+            }
+
+            // add to the subscript vectors
+            _left_legs.emplace_back(_new_leg);
+            _right_legs.emplace(_right_legs.begin(), _new_leg);
+
+            // add to list of current legs
+            m_legs.insert(_new_leg);
+
+            // update current vertex for U
+            this->vertices[vertex_index].subscript_vector = std::move(_left_legs);
+            this->vertices[vertex_index].tensor = std::move(_U);
+
+            // and create new vertex for V
+            std::size_t _V_vertex = this->addVertex();
+            this->vertices[_V_vertex].subscript_vector = std::move(_right_legs);
+            this->vertices[_V_vertex].tensor = std::move(_V);
+
+            // add new edge to graph
+            this->addEdge(_new_leg, vertex_index, _V_vertex);
+
+            // and store singular values s as edge property
+            this->edges[_new_leg].singular_values = std::move(_s);
+
+            // only edges of rhs needs to be updated, because edges of lhs are reused in U
+            for (int _i : _right_legs)
+            {
+                if (_i > 0)
+                {
+                    this->edges[_i].src = _V_vertex;
+                }
+            }
+        }
+        else
+        {
+            throw std::invalid_argument(ERROR::OUT_OF_SIZE);
+        }
     }
 
     /**
@@ -518,8 +517,8 @@ public:
      */
     void outer(std::size_t src, std::size_t dest)
     {
-//        auto _legs_a = this->vertices[src].legs;
-//        auto _legs_b = this->vertices[dest].legs;
+        auto _legs_a = this->vertices[src].subscript_vector;
+        auto _legs_b = this->vertices[dest].subscript_vector;
 
         auto _tensor_a = this->vertices[src].tensor;
         auto _tensor_b = this->vertices[dest].tensor;
@@ -527,10 +526,10 @@ public:
         auto _tensor = npp::linalg::outer(_tensor_a, _tensor_b);
 
         std::vector<int> _legs = {};
-//        _legs.insert(_legs.end(), _legs_a.begin(), _legs_a.end());
-//        _legs.insert(_legs.end(), _legs_b.begin(), _legs_b.end());
+        _legs.insert(_legs.end(), _legs_a.begin(), _legs_a.end());
+        _legs.insert(_legs.end(), _legs_b.begin(), _legs_b.end());
 
-//        this->vertices[src].legs = std::move(_legs);
+        this->vertices[src].subscript_vector = std::move(_legs);
         this->vertices[src].tensor = std::move(_tensor);
 
         this->removeVertex(dest);
