@@ -41,7 +41,7 @@ set(NCONPP_INCLUDE
 
 
 # debug
-if (CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
+if(CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
     message(STATUS "GoogleTest process triggered.")
     project(nconpp_tests)
 
@@ -78,7 +78,7 @@ if (CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
     # include(CTest)
     include(GoogleTest)
     gtest_discover_tests(nconpp_tests_run)
-endif ()
+endif()
 
 
 # python
@@ -108,7 +108,7 @@ target_link_libraries(${PYBIND11_MODULE} PRIVATE
     pybind11::module
     xtensor-python)
 
-if (CMAKE_BUILD_TYPE MATCHES Python AND SKBUILD)
+if(CMAKE_BUILD_TYPE MATCHES Python AND SKBUILD)
     message(STATUS "Skbuild process triggered.")
 
     set(Python_FIND_VIRTUALENV FIRST)
@@ -127,16 +127,16 @@ if (CMAKE_BUILD_TYPE MATCHES Python AND SKBUILD)
 
     # We currently only implemented the configuration for windows
     # I guess it is less complex for Linux though :-)
-    if (WIN32)
+    if(WIN32)
         set(VCPKG_INSTALLED_DIR_DLL_DIR ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/)
 
-        if (EXISTS ${VCPKG_INSTALLED_DIR_DLL_DIR})
+        if(EXISTS ${VCPKG_INSTALLED_DIR_DLL_DIR})
             message(STATUS "Found DLL directory: " ${VCPKG_INSTALLED_DIR_DLL_DIR})
-        else() 
+        else()
             message(FATAL_ERROR "Could not find DLL directory.")
         endif()
 
-        file(WRITE python/src/__init__.py 
+        file(WRITE python/src/__init__.py
 "import os, sys
 
 if (sys.platform == 'win32'):
@@ -158,7 +158,7 @@ __version__ = \"0.1.0\"")
     target_compile_definitions(${PYBIND11_MODULE} PRIVATE
         VERSION_INFO=${VERSION_INFO})
 
-    install(FILES python/src/__init__.py 
+    install(FILES python/src/__init__.py
         DESTINATION .)
     install(TARGETS ${PYBIND11_MODULE}
         LIBRARY DESTINATION .)
