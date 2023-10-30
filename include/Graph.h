@@ -169,7 +169,7 @@ class Graph {
     vertices[dest].edge_indices.insert(edgeIndex);
 
     adjacency_list[src].insert(dest);
-    if (!graph_properties.directed_edges || !graph_properties.parallel_edges) {
+    if (!graph_properties.directed_edges) {
       adjacency_list[dest].insert(src);
     }
 

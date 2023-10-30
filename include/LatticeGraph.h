@@ -19,7 +19,9 @@ struct lattice_vertex_properties {
   bool boundary;
 };
 
-struct lattice_edge_properties {};
+struct lattice_edge_properties {
+  bool boundary;
+};
 }  // namespace GRAPH_PROPERTIES
 
 class LatticeGraph : public Graph<GRAPH_PROPERTIES::lattice_graph_properties,
@@ -65,13 +67,13 @@ class LatticeGraph : public Graph<GRAPH_PROPERTIES::lattice_graph_properties,
     // get number of sites
     std::size_t _sites = npp::prod(m_boundary_grid_shape);
 
-    // iterate over sites
+    // vertices
     for (std::size_t _i = 0; _i < _sites; _i++) {
       // store cartesian coordinate to site as vertex property
       auto &v = this->vertices[_i];
       v.coordinate = npp::unravel_index(_i, m_boundary_grid_shape);
 
-      // check if site is a boundary site and store it as vertex property
+      // check if site is a boundary site, store the result as vertex property
       for (std::size_t _ic = 0; _ic < v.coordinate.size(); _ic++) {
         int _c = v.coordinate[_ic];
         if (_c == 0 || _c == m_boundary_grid_shape[_ic] - 1) {
@@ -81,51 +83,59 @@ class LatticeGraph : public Graph<GRAPH_PROPERTIES::lattice_graph_properties,
       }
     }
 
+    // edges
     int _edge_index = 0;
     for (auto &_vertex : this->vertices) {
       if (!_vertex.second.boundary) {
-        auto _origin_index = _vertex.first;
-        auto _origin = _vertex.second.coordinate;
+        auto _origin_id = _vertex.first;
+        auto _origin_co = _vertex.second.coordinate;
 
-        auto _dirs = m_directions[std::reduce(_origin.begin(), _origin.end()) %
-                                  m_directions.size()];
+        // get possible directions to site in unit cell
+        auto _dirs =
+            m_directions[std::reduce(_origin_co.begin(), _origin_co.end()) %
+                         m_directions.size()];
 
+        // iterate over possible directions
         for (auto _dir : _dirs) {
           // get cartesian coordinate of neighbour site
-          auto _target_coordinate = _vertex.second.coordinate;
+          auto _target_co = _vertex.second.coordinate;
           for (std::size_t _id = 0; _id < _dir.size(); ++_id) {
-            _target_coordinate[_id] += _dir[_id];
+            _target_co[_id] += _dir[_id];
           }
 
           // ravel the target coordinate to index representation
-          std::size_t _target_index =
-              npp::ravel_index(_target_coordinate, m_boundary_grid_shape);
+          std::size_t _target_id =
+              npp::ravel_index(_target_co, m_boundary_grid_shape);
 
-          if (this->vertices[_target_index].boundary) {
+          // check if target is on dummy boundary
+          bool _boundary = false;
+          if (this->vertices[_target_id].boundary) {
             for (std::size_t _ib = 0; _ib < m_bcs.size(); ++_ib) {
               if (m_bcs[_ib] == "obc") {
                 continue;
               } else if (m_bcs[_ib] == "pbc") {
-                if (_target_coordinate[_ib] == 0) {
-                  _target_coordinate[_ib] = m_grid_shape[_ib];
-                } else if (_target_coordinate[_ib] ==
-                           m_boundary_grid_shape[_ib] - 1) {
-                  _target_coordinate[_ib] = 1;
+                if (_target_co[_ib] == 0) {
+                  _target_co[_ib] = m_grid_shape[_ib];
+                  _boundary = true;
+                } else if (_target_co[_ib] == m_boundary_grid_shape[_ib] - 1) {
+                  _target_co[_ib] = 1;
+                  _boundary = true;
                 }
               }
             }
           }
 
           // re-ravel new index
-          _target_index =
-              npp::ravel_index(_target_coordinate, m_boundary_grid_shape);
+          _target_id = npp::ravel_index(_target_co, m_boundary_grid_shape);
 
           // check if parallel edge is already present
-          if (this->adjacency_list[_target_index].find(_origin_index) ==
-              this->adjacency_list[_target_index].end()) {
+          if (this->adjacency_list[_target_id].find(_origin_id) ==
+              this->adjacency_list[_target_id].end()) {
             // add edge
-            this->addEdge(_edge_index, _origin_index, _target_index);
+            this->addEdge(_edge_index, _origin_id, _target_id);
+            this->edges[_edge_index].boundary = _boundary;
             _edge_index++;
+            _boundary = false;
           }
         }
       }

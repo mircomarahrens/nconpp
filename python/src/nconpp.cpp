@@ -108,7 +108,8 @@ void PyLatticeGraph_wrapper(py::module &m) {
   py::class_<graph::edge_properties_t>(m, "LatticeEdgeProperties")
       .def(py::init<>())
       .def_readonly("src", &graph::edge_properties_t::src)
-      .def_readonly("dest", &graph::edge_properties_t::dest);
+      .def_readonly("dest", &graph::edge_properties_t::dest)
+      .def_readonly("boundary", &graph::edge_properties_t::boundary);
 
   py::class_<lattice>(m, "LatticeGraph", py::buffer_protocol(),
                       py::dynamic_attr(), py::module_local())
@@ -273,3 +274,123 @@ PYBIND11_MODULE(_nconpp, m) {
   PyLatticeGraph_wrapper(m);
   PyTensorNetwork_wrapper(m);
 }
+
+/**
+ *     """A class for a graph representation of a lattice.
+
+    Note:
+        We construct lattices as graphs to achieve a solid framework where each
+        constituent has a fixed integer value as identifier. We enumerate sites,
+        bonds, boundary conditions (lattice) and setting up vertices and edges
+        (graph) corresponding to them. For handling of the lattice boundaries we
+        introduce boundary points.
+
+        A 4x4 honeycomb lattice has in total 6x6=36 sites, 4x4=16 bulk points
+        and 20 boundary points. In cartesian coordinates the graph has the
+        following representation:
+
+            (0, 5)  (1, 5)  (2, 5)  (3, 5)  (4, 5)  (5, 5)
+
+            (0, 4)  (1, 4)  (2, 4)  (3, 3)  (4, 4)  (5, 4)
+
+            (0, 3)  (1, 3)  (2, 3)  (3, 3)  (4, 3)  (5, 3)
+
+            (0, 2)  (1, 2)  (2, 2)  (3, 2)  (4, 2)  (5, 2)
+
+            (0, 1)  (1, 1)  (2, 1)  (3, 1)  (4, 1)  (5, 1)
+        y
+        ^   (0, 0)  (1, 0)  (2, 0)  (3, 0)  (4, 0)  (5, 0)
+        |
+        +-->x
+
+        The default lattice has periodic boundary conditions in both spatial
+        directions, hence are the edges of this graph as follows:
+
+                    (1, 1)--(2, 1)  (3, 1)--(4, 1)
+                      |       |       |       |
+            (4, 4)--(1, 4)  (2, 4)--(3, 3)  (4, 4)--(1, 4)
+                      |       |       |       |
+                    (1, 3)--(2, 3)  (3, 3)--(4, 3)
+                      |       |       |       |
+            (4, 2)--(1, 2)  (2, 2)--(3, 2)  (4, 2)--(1, 2)
+                      |       |       |       |
+                    (1, 1)--(2, 1)  (3, 1)--(4, 1)
+                      |       |       |       |
+                    (1, 4)  (2, 4)--(3, 3)  (4, 4)
+
+        whereas for open boundary conditions in both spatial directions
+        the coordinates of the lattice sites are as
+
+                    (1, 5)  (2, 5)  (3, 5)  (4, 5)
+                      |       |       |       |
+            (4, 4)--(1, 4)  (2, 4)--(3, 3)  (4, 4)--(1, 4)
+                      |       |       |       |
+                    (1, 3)--(2, 3)  (3, 3)--(4, 3)
+                      |       |       |       |
+            (4, 2)--(1, 2)  (2, 2)--(3, 2)  (4, 2)--(1, 2)
+                      |       |       |       |
+                    (1, 1)--(2, 1)  (3, 1)--(4, 1)
+                      |       |       |       |
+                    (1, 0)  (2, 0)  (3, 0)  (4, 0)
+
+        and for closed boundary conditions we have
+
+                    (1, 4)  (2, 4)--(3, 3)  (4, 4)
+                      |       |       |       |
+                    (1, 3)--(2, 3)  (3, 3)--(4, 3)
+                      |       |       |       |
+                    (1, 2)  (2, 2)--(3, 2)  (4, 2)
+                      |       |       |       |
+                    (1, 1)--(2, 1)  (3, 1)--(4, 1)
+
+        The last lattice graph represents the core of the lattice.
+
+    Args:
+        Graph (type): optional, default: None. Parent class of LatticeGraph.
+        name (str): see Attributes for a full description
+        grid (tuple): see Attributes for a full description
+        accu (list): accumulators, see Attributes for a full description
+        bcs (tuple): boundary_conditions, see Attributes for a full description
+
+    Attributes:
+        name (str): a free name for the lattice, e.g. "honeycomb", "square",
+            etc.
+
+        grid (tuple): the number of sites spatial distributed, e.g. for d=2
+            we have (Nx, Ny), where Nx, Ny are integers representing the
+            maximal number of sites for the x- and y-direction.
+
+        sites (tuple): the total number of sites.
+
+        accumulators (list): a list of tuples. The length of this list is the
+            number of sites in a "cell", i.e. a unit cell. Each entry of this
+            list is again a tuple consisting of multiple integers representing
+            additive coordinates. If a additive coordinate is added to a
+            origin site in the lattice one is getting a target site. A pair
+            (origin, target) is forming a bond/edge in the lattice/graph.
+
+        boundary_conditions (tuple): the boundary condition per spatial
+            direction, i.e. for d=2 we can have different conditions for the
+            x- and y-direction of the lattice. We currently support the
+            following boundary conditions:
+
+                - "pbc": periodic boundary conditions
+                - "obc": open boundary conditions
+                - "cbc": closed boundary conditions
+
+                tbd:
+
+                - "ibc": infinite boundary conditions
+
+        edges (dict of int : any): key: id, value: pairs of (origin, target) resulted from
+            the "unit cell".
+
+        vertices (dict of int: any): key: id, value: vertex properties
+
+    Methods:
+        - _init_lattice: see docstrings in methods for details.
+        - unravel: see docstrings in methods for details.
+        - ravel: see docstrings in methods for details.
+    """
+ *
+ */
