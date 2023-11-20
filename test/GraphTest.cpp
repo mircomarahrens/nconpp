@@ -1,3 +1,5 @@
+// Copyright 2023 Mirco Marahrens
+
 #include <gmock/gmock-matchers.h>
 #include <gtest/gtest.h>
 

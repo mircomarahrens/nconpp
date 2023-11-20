@@ -1,7 +1,7 @@
 // Copyright 2023 Mirco Marahrens
 
-#ifndef INCLUDE_LATTICEGRAPH_H_
-#define INCLUDE_LATTICEGRAPH_H_
+#ifndef NCONPP_INCLUDE_LATTICEGRAPH_H_
+#define NCONPP_INCLUDE_LATTICEGRAPH_H_
 
 #include <string>
 #include <vector>
@@ -143,4 +143,4 @@ class LatticeGraph : public Graph<GRAPH_PROPERTIES::lattice_graph_properties,
   }
 };
 
-#endif  // INCLUDE_LATTICEGRAPH_H_
+#endif  // NCONPP_INCLUDE_LATTICEGRAPH_H_

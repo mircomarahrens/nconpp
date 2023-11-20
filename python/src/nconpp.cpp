@@ -1,5 +1,8 @@
 // Copyright 2023 Mirco Marahrens
 
+#ifndef NCONPP_PYTHON_SRC_NCONPP_CPP_
+#define NCONPP_PYTHON_SRC_NCONPP_CPP_
+
 #include <complex>
 #include <optional>
 #include <string>
@@ -394,3 +397,5 @@ PYBIND11_MODULE(_nconpp, m) {
     """
  *
  */
+
+#endif  // NCONPP_PYTHON_SRC_NCONPP_CPP_

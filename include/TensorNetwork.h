@@ -1,7 +1,7 @@
 // Copyright 2023 Mirco Marahrens
 
-#ifndef INCLUDE_TENSORNETWORK_H_
-#define INCLUDE_TENSORNETWORK_H_
+#ifndef NCONPP_INCLUDE_TENSORNETWORK_H_
+#define NCONPP_INCLUDE_TENSORNETWORK_H_
 
 #include <algorithm>
 #include <complex>
@@ -538,4 +538,4 @@ class TensorNetwork
   }
 };
 
-#endif  // INCLUDE_TENSORNETWORK_H_
+#endif  // NCONPP_INCLUDE_TENSORNETWORK_H_
