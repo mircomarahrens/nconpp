@@ -10,20 +10,22 @@ set(CMAKE_CXX_STANDARD 20
     CMAKE_CXX_EXTENSIONS OFF)
 
 # git clone https://github.com/microsoft/vcpkg.git
+# git submodule update --init --recursive
 # activate vcpkg manifest mode
 set(VCPKG_FEATURE_FLAGS "versions")
 
 # dependencies
-find_package(BLAS REQUIRED)
+find_package(OpenBLAS CONFIG REQUIRED)
 set(BLAS_INCLUDE_DIR ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include/openblas)
 message(STATUS "cblas.h is located in " ${BLAS_INCLUDE_DIR})
 message(STATUS "Blas libraries " ${BLAS_LIBRARIES})
 find_package(LAPACK REQUIRED)
 
-find_package(XTENSOR REQUIRED)
-message(STATUS "xtensor version is " ${XTENSOR_VERSION} ".")
-find_package(XTENSOR-BLAS REQUIRED)
-message(STATUS "xtensor-blas version is " ${XTENSOR-BLAS_VERSION} ".")
+find_package(xtl CONFIG REQUIRED)
+find_package(xtensor CONFIG REQUIRED)
+message(STATUS "xtensor version is " ${xtensor_VERSION} ".")
+find_package(xtensor-blas REQUIRED)
+message(STATUS "xtensor-blas version is " ${xtensor-blas_VERSION} ".")
 
 set(NCONPP_DEPENDENCIES
     ${BLAS_LIBRARIES}

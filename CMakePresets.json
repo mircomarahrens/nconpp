@@ -2,8 +2,30 @@
     "version": 2,
     "configurePresets": [
         {
-            "name": "release",
-            "displayName": "release",
+            "name": "linux-default",
+            "displayName": "Linux Debug",
+            "description": "Sets Ninja generator, compilers, build and install directory, debug build type",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+                "CMAKE_TOOLCHAIN_FILE": "/home/mircomarahrens/local/vcpkg/scripts/buildsystems/vcpkg.cmake"
+            },
+            "vendor": {
+                "microsoft.com/VisualStudioSettings/CMake/1.0": {
+                    "hostOS": [
+                        "Linux"
+                    ]
+                },
+                "microsoft.com/VisualStudioRemoteSettings/CMake/1.0": {
+                    "sourceDir": "$env{HOME}/.vs/$ms{projectDirName}"
+                }
+            }
+        },
+        {
+            "name": "win32-release",
+            "displayName": "Win32 Release",
             "description": "Using compilers for Visual Studio 17 2022 (x64 architecture)",
             "generator": "Visual Studio 17 2022",
             "toolset": "host=x64",
@@ -18,8 +40,8 @@
             }
         },
         {
-            "name": "debug",
-            "displayName": "debug",
+            "name": "win32-debug",
+            "displayName": "Win32 Debug",
             "description": "Using compilers for Visual Studio 17 2022 (x64 architecture)",
             "generator": "Visual Studio 17 2022",
             "toolset": "host=x64",
@@ -34,8 +56,8 @@
             }
         },
         {
-            "name": "python-debug",
-            "displayName": "python",
+            "name": "win32-python-debug",
+            "displayName": "Win32 Python",
             "description": "Using compilers for Visual Studio 17 2022 (x64 architecture)",
             "generator": "Visual Studio 17 2022",
             "toolset": "host=x64",
@@ -53,31 +75,37 @@
     ],
     "testPresets": [
         {
-            "name": "googletests",
+            "name": "linux-googletests",
             "description": "",
             "displayName": "",
-            "configurePreset": "debug"
+            "configurePreset": "linux-default"
+        },
+        {
+            "name": "win32-googletests",
+            "description": "",
+            "displayName": "",
+            "configurePreset": "win32-debug"
         }
     ],
     "buildPresets": [
         {
-            "name": "build",
+            "name": "win32-build",
             "description": "",
             "displayName": "",
-            "configurePreset": "release",
+            "configurePreset": "win32-release",
             "configuration": "Release"
         },
         {
-            "name": "python",
+            "name": "win32-python",
             "description": "",
             "displayName": "",
-            "configurePreset": "python-debug"
+            "configurePreset": "win32-python-debug"
         },
         {
-            "name": "debug",
+            "name": "win32-debug",
             "description": "",
             "displayName": "",
-            "configurePreset": "debug"
+            "configurePreset": "win32-debug"
         }
     ]
 }

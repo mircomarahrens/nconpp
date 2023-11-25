@@ -172,7 +172,7 @@ class TensorNetwork
    * @param other
    * @return TensorNetwork&
    */
-  TensorNetwork &operator=(const TensorNetwork &other) {
+  TensorNetwork &operator=(TensorNetwork &other) {
     std::swap(m_dangling_legs, other.m_dangling_legs);
     std::swap(m_legs, other.m_legs);
     std::swap(this->vertices, other.vertices);
