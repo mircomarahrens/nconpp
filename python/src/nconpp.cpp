@@ -13,9 +13,11 @@
 #include "Graph.h"
 #include "LatticeGraph.h"
 #include "TensorNetwork.h"
+
 #define FORCE_IMPORT_ARRAY
 #include "pybind11/pybind11.h"
 #include "pybind11/stl.h"
+
 #include "xtensor-python/pyarray.hpp"
 #include "xtensor-python/pytensor.hpp"
 #include "xtensor-python/pyvectorize.hpp"

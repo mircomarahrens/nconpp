@@ -4,6 +4,13 @@ cmake_minimum_required(VERSION 3.20)
 
 project(nconpp CXX)
 
+# python
+set(Python_FIND_VIRTUALENV FIRST)
+set(Python_ROOT_DIR $ENV{PYTHON_VENV})
+message(STATUS "Use Python venv: $ENV{PYTHON_VENV}")
+find_package(Python COMPONENTS Interpreter Development.Module NumPy REQUIRED)
+
+
 # cmake flags
 set(CMAKE_CXX_STANDARD 20
     CMAKE_CXX_STANDARD_REQUIRED ON
@@ -86,14 +93,9 @@ endif()
 # python
 project(nconpp_python LANGUAGES CXX)
 
-# CMake Warning (dev) at C:/Repositories/vcpkg/scripts/buildsystems/vcpkg.cmake:859 (_find_package):
-# Policy CMP0148 is not set: The FindPythonInterp and FindPythonLibs modules
-# are removed.  Run "cmake --help-policy CMP0148" for policy details.  Use
-# the cmake_policy command to set the policy and suppress this warning.
-add_subdirectory(python/extern/pybind11)
-add_subdirectory(python/extern/xtensor-python)
-
 # pybind11
+add_subdirectory(python/extern/pybind11)
+
 set(PYBIND11_NEWPYTHON ON)
 set(PYBIND11_MAIN python/src/nconpp.cpp)
 set(PYBIND11_MODULE _nconpp)
@@ -102,8 +104,12 @@ pybind11_add_module(${PYBIND11_MODULE}
     ${PYBIND11_MAIN}
     ${NCONPP_INCLUDE})
 
+# xtensor-python
+add_subdirectory(python/extern/xtensor-python)
+
 target_include_directories(${PYBIND11_MODULE} PRIVATE
-    include/)
+    include/
+    python/extern/)
 
 target_link_libraries(${PYBIND11_MODULE} PRIVATE
     ${NCONPP_DEPENDENCIES}
@@ -127,8 +133,6 @@ if(CMAKE_BUILD_TYPE MATCHES Python AND SKBUILD)
 #        message(STATUS "${_variableName}=${${_variableName}}")
 #    endforeach()
 
-    # We currently only implemented the configuration for windows
-    # I guess it is less complex for Linux though :-)
     if(WIN32)
         set(VCPKG_INSTALLED_DIR_DLL_DIR ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/)
 
@@ -145,6 +149,14 @@ if (sys.platform == 'win32'):
     os.add_dll_directory(\"${VCPKG_INSTALLED_DIR_DLL_DIR}\")
 
 from ._nconpp import Graph, LatticeGraph, TensorNetwork
+
+__all__ = (\"Graph\", \"LatticeGraph\", \"TensorNetwork\")
+__version__ = \"0.1.0\"")
+    endif()
+
+    if (UNIX)
+        file(WRITE python/src/__init__.py
+"from ._nconpp import Graph, LatticeGraph, TensorNetwork
 
 __all__ = (\"Graph\", \"LatticeGraph\", \"TensorNetwork\")
 __version__ = \"0.1.0\"")
