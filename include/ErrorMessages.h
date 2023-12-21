@@ -1,7 +1,7 @@
 // Copyright 2023 Mirco Marahrens
 
-#ifndef INCLUDE_ERRORMESSAGES_H_
-#define INCLUDE_ERRORMESSAGES_H_
+#ifndef NCONPP_INCLUDE_ERRORMESSAGES_H_
+#define NCONPP_INCLUDE_ERRORMESSAGES_H_
 
 // Graph.h
 #define ERROR_VERTEXID_PRESENT "Vertex identifier already present."
@@ -21,4 +21,4 @@
 #define ERROR_OUT_OF_SIZE \
   "The position to split is not within the range of legs."
 
-#endif  // INCLUDE_ERRORMESSAGES_H_
+#endif  // NCONPP_INCLUDE_ERRORMESSAGES_H_

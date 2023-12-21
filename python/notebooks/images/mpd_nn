@@ -1,0 +1,71 @@
+digraph {
+	graph [color=transparent rankdir=LR ranksep=1 splines=true]
+	node [color=white fillcolor=lightgray fontsize=10 height=0.1 shape=circle style=filled]
+	edge [arrowsize=0.5 fontsize=8]
+	subgraph cluster_I {
+		a0 [label=0]
+		a1 [label=0]
+		a2 [label=0]
+	}
+	subgraph cluster_I {
+		b0 [label=1]
+		b1 [label=1]
+		b2 [label=1]
+	}
+	subgraph cluster_I {
+		c0 [label=2]
+		c1 [label=2]
+		c2 [label=2]
+	}
+	subgraph cluster_I {
+		a0 [label=0]
+		a1 [label=0]
+		a2 [label=0]
+	}
+	subgraph cluster_I {
+		b0 [label=1]
+		b1 [label=1]
+		b2 [label=1]
+	}
+	subgraph cluster_I {
+		c0 [label=2]
+		c1 [label=2]
+		c2 [label=2]
+	}
+	subgraph cluster_I {
+		a0 [label=0]
+		a1 [label=0]
+		a2 [label=0]
+	}
+	subgraph cluster_I {
+		b0 [label=1]
+		b1 [label=1]
+		b2 [label=1]
+	}
+	subgraph cluster_I {
+		c0 [label=2]
+		c1 [label=2]
+		c2 [label=2]
+	}
+	a0 -> a0 [style=invis]
+	b0 -> b0 [style=invis]
+	c0 -> c0 [style=invis]
+	a1 -> a1 [style=invis]
+	b1 -> b1 [style=invis]
+	c1 -> c1 [style=invis]
+	a2 -> a2 [style=invis]
+	b2 -> b2 [style=invis]
+	c2 -> c2 [style=invis]
+	a0 -> a1 [label=I]
+	b0 -> b1 [style=invis]
+	c0 -> c1 [label=I]
+	a1 -> a2 [label=I]
+	b1 -> b2 [style=invis]
+	c1 -> c2 [label=I]
+	a0 -> c1 [label=D]
+	a1 -> c2 [label=D]
+	a0 -> b1 [label=C]
+	b0 -> c1 [label=B]
+	a1 -> b2 [label=C]
+	b1 -> c2 [label=B]
+}

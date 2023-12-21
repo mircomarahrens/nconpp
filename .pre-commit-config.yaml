@@ -21,5 +21,7 @@ repos:
       rev: 1.6.1
       hooks:
           - id: cpplint
-            args: [--filter=-runtime/references]
+            # https://github.com/cpplint/cpplint/issues/44
+            args: ['--filter=-runtime/references,-build/header_guard']
+            files: \.(h\+\+|h|hh|hxx|hpp|cuh|c|cc|cpp|cu|c\+\+|cxx|tpp|txx)$
             exclude: '(python|test)/.*'

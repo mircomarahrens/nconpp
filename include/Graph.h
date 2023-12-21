@@ -1,7 +1,7 @@
 // Copyright 2023 Mirco Marahrens
 
-#ifndef INCLUDE_GRAPH_H_
-#define INCLUDE_GRAPH_H_
+#ifndef NCONPP_INCLUDE_GRAPH_H_
+#define NCONPP_INCLUDE_GRAPH_H_
 
 #include <optional>
 #include <set>
@@ -169,7 +169,7 @@ class Graph {
     vertices[dest].edge_indices.insert(edgeIndex);
 
     adjacency_list[src].insert(dest);
-    if (!graph_properties.directed_edges || !graph_properties.parallel_edges) {
+    if (!graph_properties.directed_edges) {
       adjacency_list[dest].insert(src);
     }
 
@@ -270,4 +270,4 @@ class Graph {
   }
 };
 
-#endif  // INCLUDE_GRAPH_H_
+#endif  // NCONPP_INCLUDE_GRAPH_H_
