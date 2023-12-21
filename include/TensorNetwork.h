@@ -1,7 +1,7 @@
 // Copyright 2023 Mirco Marahrens
 
-#ifndef INCLUDE_TENSORNETWORK_H_
-#define INCLUDE_TENSORNETWORK_H_
+#ifndef NCONPP_INCLUDE_TENSORNETWORK_H_
+#define NCONPP_INCLUDE_TENSORNETWORK_H_
 
 #include <algorithm>
 #include <complex>
@@ -172,7 +172,7 @@ class TensorNetwork
    * @param other
    * @return TensorNetwork&
    */
-  TensorNetwork &operator=(const TensorNetwork &other) {
+  TensorNetwork &operator=(TensorNetwork &other) {
     std::swap(m_dangling_legs, other.m_dangling_legs);
     std::swap(m_legs, other.m_legs);
     std::swap(this->vertices, other.vertices);
@@ -538,4 +538,4 @@ class TensorNetwork
   }
 };
 
-#endif  // INCLUDE_TENSORNETWORK_H_
+#endif  // NCONPP_INCLUDE_TENSORNETWORK_H_

@@ -1,3 +1,5 @@
+// Copyright 2023 Mirco Marahrens
+
 #include <gtest/gtest.h>
 
 #include <complex>

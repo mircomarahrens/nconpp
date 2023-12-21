@@ -1,7 +1,7 @@
 // Copyright 2023 Mirco Marahrens
 
-#ifndef INCLUDE_TENSOR_H_
-#define INCLUDE_TENSOR_H_
+#ifndef NCONPP_INCLUDE_TENSOR_H_
+#define NCONPP_INCLUDE_TENSOR_H_
 
 #include <functional>
 #include <vector>
@@ -192,4 +192,4 @@ static inline auto outer(const expression_type<T> &M,
 }  // namespace linalg
 };  // namespace npp
 
-#endif  // INCLUDE_TENSOR_H_
+#endif  // NCONPP_INCLUDE_TENSOR_H_

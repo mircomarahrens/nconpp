@@ -11,6 +11,7 @@ name = "nconpp"
 version = "0.1.0"
 description="Library for Tensor Network calculations."
 readme = "README.md"
+repository = "https://github.com/mircomarahrens/nconpp"
 authors = [
     { name = "Mirco Marahrens", email = "mirco.marahrens@googlemail.com" },
 ]
@@ -31,7 +32,7 @@ wheel.install-dir = "nconpp"
 minimum-version = "0.2.2"
 build-dir = "out/build/python"
 cmake.args = [
-    "-DCMAKE_TOOLCHAIN_FILE=C:/Repositories/vcpkg/scripts/buildsystems/vcpkg.cmake",
+    "-DCMAKE_TOOLCHAIN_FILE=/home/mircomarahrens/.local/vcpkg/scripts/buildsystems/vcpkg.cmake",
     "-DCMAKE_BUILD_TYPE=Python"
     ]
 cmake.minimum-version = "3.26.1"
