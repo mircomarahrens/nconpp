@@ -1,14 +1,24 @@
+# https://scikit-build-core.readthedocs.io/
+[build-system]
+requires = [
+    "scikit-build-core>=0.2.2",
+    "numpy>=1.24.2"
+]
+build-backend = "scikit_build_core.build"
+
 [project]
 name = "nconpp"
 version = "0.1.0"
-description="A library for tensor network calculations."
+description="Library for Tensor Network calculations."
 readme = "README.md"
+repository = "https://github.com/mircomarahrens/nconpp"
 authors = [
     { name = "Mirco Marahrens", email = "mirco.marahrens@googlemail.com" },
 ]
 requires-python = ">=3.7"
 classifiers = [
     "Development Status :: 4 - Beta",
+    "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
@@ -16,13 +26,6 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
 ]
-
-[build-system]
-requires = [
-    "scikit-build-core>=0.2.2",
-    "numpy>=1.24.2"
-]
-build-backend = "scikit_build_core.build"
 
 [tool.scikit-build]
 wheel.install-dir = "nconpp"
@@ -38,24 +41,12 @@ ninja.make-fallback = false
 ninja.minimum-version = "1.11"
 logging.level = "INFO"
 
-[tool.scikit-build.cmake.define]
-PYTHON_VENV = "${sourceDir}/.venv"
+[tool.isort]
+profile = "black"
 
-[tool.poetry]
-name = "nconpp"
-version = "0.1.0"
-description = "A library for tensor network calculations."
-authors = ["Mirco Marahrens <mirco.marahrens@googlemail.com>"]
-readme = "README.md"
-
-[tool.poetry.dependencies]
-python = "^3.10"
-cmake = "^3.28.1"
-numpy = "^1.26.3"
-pybind11 = {extras = ["global"], version = "^2.11.1"}
-scikit-build = "^0.17.6"
-ninja = "^1.11.1.1"
-
-[tool.poetry.group.dev.dependencies]
-ipykernel = "^6.29.0"
-
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra -q"
+testpaths = [
+    "python/test",
+]

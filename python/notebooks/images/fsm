@@ -7,7 +7,7 @@ digraph {
 	2 [label=2]
 	0 -> 0 [label=I]
 	0 -> 1 [label=C]
-	1 -> 1 [label=A]
+	1 -> 1 [label="A n times"]
 	1 -> 2 [label=B]
 	0 -> 2 [label=D]
 	2 -> 2 [label=I]
