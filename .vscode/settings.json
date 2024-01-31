@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "array": "cpp",
+        "optional": "cpp",
+        "tuple": "cpp"
+    },
+    "cmake.cmakePath": "/home/mircomarahrens/projects/nconpp/.venv/bin/cmake"
+}

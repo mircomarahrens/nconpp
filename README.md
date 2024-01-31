@@ -20,8 +20,10 @@ cd nconpp
 
 * Linux
 
+Using the python module `venv`:
+
 ```bash
-python -m venv venv # or python3
+python -m venv .venv # or python3
 source ./venv/bin/activate
 python -m pip install .
 ```

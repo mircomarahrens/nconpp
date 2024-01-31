@@ -2,20 +2,11 @@
     "version": 2,
     "configurePresets": [
         {
-            "name": "linux-default",
-            "displayName": "Linux Debug",
-            "description": "Sets Ninja generator, compilers, build and install directory, debug build type",
+            "name": "default",
+            "displayName": "Default Config",
+            "description": "Default build using Ninja generator.",
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/out/build/${presetName}",
-            "environment": {
-                "VCPKG_ROOT": "$env{HOME}/.local/vcpkg",
-                "PYTHON_VENV": "${sourceDir}/venv"
-              },
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug",
-                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
-                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
-            },
             "vendor": {
                 "microsoft.com/VisualStudioSettings/CMake/1.0": {
                     "hostOS": [
@@ -28,88 +19,24 @@
             }
         },
         {
-            "name": "win32-release",
-            "displayName": "Win32 Release",
-            "description": "Using compilers for Visual Studio 17 2022 (x64 architecture)",
-            "generator": "Visual Studio 17 2022",
-            "toolset": "host=x64",
-            "architecture": "x64",
-            "binaryDir": "${sourceDir}/out/build/${presetName}",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release",
-                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
-                "CMAKE_C_COMPILER": "cl.exe",
-                "CMAKE_CXX_COMPILER": "cl.exe",
-                "CMAKE_TOOLCHAIN_FILE": "C:/Tools/vcpkg/scripts/buildsystems/vcpkg.cmake"
-            }
-        },
-        {
-            "name": "win32-debug",
-            "displayName": "Win32 Debug",
-            "description": "Using compilers for Visual Studio 17 2022 (x64 architecture)",
-            "generator": "Visual Studio 17 2022",
-            "toolset": "host=x64",
-            "architecture": "x64",
-            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "name": "vcpkg-debug",
+            "inherits": "default",
+            "environment": {
+                "VCPKG_ROOT": "$env{HOME}/.local/vcpkg"
+              },
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
                 "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
-                "CMAKE_C_COMPILER": "cl.exe",
-                "CMAKE_CXX_COMPILER": "cl.exe",
-                "CMAKE_TOOLCHAIN_FILE": "C:/Tools/vcpkg/scripts/buildsystems/vcpkg.cmake"
-            }
-        },
-        {
-            "name": "win32-python-debug",
-            "displayName": "Win32 Python",
-            "description": "Using compilers for Visual Studio 17 2022 (x64 architecture)",
-            "generator": "Visual Studio 17 2022",
-            "toolset": "host=x64",
-            "architecture": "x64",
-            "binaryDir": "${sourceDir}/out/build/${presetName}",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug",
-                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
-                "CMAKE_C_COMPILER": "cl.exe",
-                "CMAKE_CXX_COMPILER": "cl.exe",
-                "CMAKE_TOOLCHAIN_FILE": "C:/Tools/vcpkg/scripts/buildsystems/vcpkg.cmake",
-                "SKBUILD": "2"
+                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
             }
         }
     ],
     "testPresets": [
         {
-            "name": "linux-googletests",
+            "name": "googletests-debug",
             "description": "",
             "displayName": "",
-            "configurePreset": "linux-default"
-        },
-        {
-            "name": "win32-googletests",
-            "description": "",
-            "displayName": "",
-            "configurePreset": "win32-debug"
-        }
-    ],
-    "buildPresets": [
-        {
-            "name": "win32-build",
-            "description": "",
-            "displayName": "",
-            "configurePreset": "win32-release",
-            "configuration": "Release"
-        },
-        {
-            "name": "win32-python",
-            "description": "",
-            "displayName": "",
-            "configurePreset": "win32-python-debug"
-        },
-        {
-            "name": "win32-debug",
-            "description": "",
-            "displayName": "",
-            "configurePreset": "win32-debug"
+            "configurePreset": "vcpkg-debug"
         }
     ]
 }
