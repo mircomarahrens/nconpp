@@ -1,8 +1,10 @@
 {
+    "cmake.generator": "Ninja",
+    "cmake.cmakePath": "${workspaceFolder}/.venv/bin/cmake",
+    "C_Cpp.intelliSenseEngine": "default",
+    "C_Cpp.intelliSenseEngineFallback": "enabled",
     "files.associations": {
-        "array": "cpp",
-        "optional": "cpp",
-        "tuple": "cpp"
-    },
-    "cmake.cmakePath": "/home/mircomarahrens/projects/nconpp/.venv/bin/cmake"
+        "iostream": "cpp",
+        "optional": "cpp"
+    }
 }

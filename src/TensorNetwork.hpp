@@ -12,9 +12,9 @@
 #include <utility>
 #include <vector>
 
-#include "ErrorMessages.h"
-#include "Graph.h"
-#include "Tensor.h"
+#include "ErrorMessages.hpp"
+#include "Graph.hpp"
+#include "Tensor.hpp"
 
 namespace GRAPH_PROPERTIES {
 // custom graph properties
@@ -27,8 +27,7 @@ template <typename U = std::complex<double>>
 struct tensornetwork_vertex_properties {
   // place custom properties for vertices here
   std::vector<int> cartesian_coordinates;
-  std::vector<int> legs;  // TODO(mircomarahrens): maybe change edge_indices
-                          // from set to vector?
+  std::vector<int> legs;
   npp::tensor_type<U> tensor;
 };
 
@@ -288,7 +287,7 @@ class TensorNetwork
    *  - permutation of the legs of the final tensors
    */
   void contract(std::vector<int> contraction_sequence = {},
-                std::vector<int> final_order = {}) {
+                std::vector<int> final_order = {}, bool multi_index = false) {
     // fill contraction sequence with positive legs if initially empty
     if (contraction_sequence.empty()) {
       contraction_sequence.insert(contraction_sequence.begin(), m_legs.begin(),
@@ -316,19 +315,19 @@ class TensorNetwork
       auto &_dest_tensor = _dest_vertex.tensor;
 
       if (_src == _dest) {  // trace
-        std::vector<std::size_t> _axes = {};
-        for (auto _axis = 0; _axis < _src_legs.size(); _axis++) {
-          if (_src_legs[_axis] == _leg_index) {
-            _axes.emplace_back(_axis);
-          }
-        }
+    std::vector<std::size_t> _axes = {};
+    for (auto _axis = 0; _axis < _src_legs.size(); _axis++) {
+      if (_src_legs[_axis] == _leg_index) {
+        _axes.emplace_back(_axis);
+      }
+    }
 
-        _src_legs.erase(_src_legs.begin() + _axes[1]);
-        _src_legs.erase(_src_legs.begin() + _axes[0]);
+    _src_legs.erase(_src_legs.begin() + _axes[1]);
+    _src_legs.erase(_src_legs.begin() + _axes[0]);
 
-        _src_tensor = npp::linalg::trace(_src_tensor, 0, _axes[0], _axes[1]);
+    _src_tensor = npp::linalg::trace(_src_tensor, 0, _axes[0], _axes[1]);
 
-        this->removeEdge(_leg_index);
+    this->removeEdge(_leg_index);
       } else {  // tensordot
         // TODO(mircomarahrens): add multi axis tensor contraction?
         std::vector<std::size_t> _axes_a = {};

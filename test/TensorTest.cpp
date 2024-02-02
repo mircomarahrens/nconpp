@@ -5,7 +5,7 @@
 #include <complex>
 #include <random>
 
-#include "Tensor.h"
+#include "Tensor.hpp"
 
 using namespace std::complex_literals;
 

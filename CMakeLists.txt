@@ -5,14 +5,19 @@ cmake_minimum_required(VERSION 3.28)
 project(nconpp CXX)
 
 # cmake flags
-set(CMAKE_CXX_STANDARD 20
-    CMAKE_CXX_STANDARD_REQUIRED ON
-    CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 # git clone https://github.com/microsoft/vcpkg.git
 # git submodule update --init --recursive
 # activate vcpkg manifest mode
 set(VCPKG_FEATURE_FLAGS "versions")
+
+set(NCONPP_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
+set(NCONPP_TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test)
+set(NCONPP_UTILS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/utils)
+set(NCONPP_PY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/python)
 
 # dependencies
 find_package(LAPACK CONFIG REQUIRED)
@@ -36,10 +41,10 @@ set(NCONPP_DEPENDENCIES
     )
 
 set(NCONPP_SRC
-    src/Graph.h
-    src/LatticeGraph.h
-    src/Tensor.h
-    src/TensorNetwork.h
+    src/Graph.hpp
+    src/LatticeGraph.hpp
+    src/Tensor.hpp
+    src/TensorNetwork.hpp
     )
 
 # get_cmake_property(_variableNames VARIABLES)

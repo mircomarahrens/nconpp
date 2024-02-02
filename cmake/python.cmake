@@ -45,7 +45,7 @@ find_package(Python COMPONENTS Interpreter Development.Module NumPy REQUIRED)
 # pybind11
 find_package(pybind11 CONFIG)
 set(PYBIND11_NEWPYTHON ON)
-set(PYBIND11_MAIN python/src/nconpp.cpp)
+set(PYBIND11_MAIN ${NCONPP_PY_DIR}/src/nconpp.cpp)
 set(PYBIND11_MODULE _nconpp)
 
 pybind11_add_module(${PYBIND11_MODULE}
@@ -55,11 +55,11 @@ pybind11_add_module(${PYBIND11_MODULE}
 
 # xtensor-python
 find_package(xtensor REQUIRED)
-add_subdirectory(python/extern/xtensor-python)
+add_subdirectory(${NCONPP_PY_DIR}/extern/xtensor-python)
 
 target_include_directories(${PYBIND11_MODULE} PRIVATE
-    src/
-    python/extern/)
+    ${NCONPP_SRC_DIR}
+    ${NCONPP_PY_DIR}/extern/)
 
 target_link_libraries(${PYBIND11_MODULE} PRIVATE
     ${NCONPP_DEPENDENCIES}
@@ -80,7 +80,7 @@ if(SKBUILD)
             message(FATAL_ERROR "Could not find DLL directory.")
         endif()
 
-        file(WRITE python/src/__init__.py
+        file(WRITE ${NCONPP_PY_DIR}/src/__init__.py
 "import os, sys
 
 if (sys.platform == 'win32'):
@@ -93,7 +93,7 @@ __version__ = \"0.1.0\"")
     endif()
 
     if (UNIX)
-        file(WRITE python/src/__init__.py
+        file(WRITE ${NCONPP_PY_DIR}/src/__init__.py
 "from ._nconpp import Graph, LatticeGraph, TensorNetwork
 
 __all__ = (\"Graph\", \"LatticeGraph\", \"TensorNetwork\")
