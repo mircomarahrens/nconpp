@@ -1,6 +1,7 @@
 # Custom
 /out/
-/venv/
+/utils/vcpkg/
+/.venv/
 /python/__init__.py
 /python/nconpp/__init__.py
 /python/tests/.pytest_cache

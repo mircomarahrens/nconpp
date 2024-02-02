@@ -3,7 +3,7 @@
 #include <gmock/gmock-matchers.h>
 #include <gtest/gtest.h>
 
-#include "TensorNetwork.h"
+#include "TensorNetwork.hpp"
 
 using ::testing::ElementsAre;
 

@@ -6,8 +6,8 @@
 #include <string>
 #include <vector>
 
-#include "Graph.h"
-#include "Tensor.h"
+#include "Graph.hpp"
+#include "Tensor.hpp"
 
 namespace GRAPH_PROPERTIES {
 struct lattice_graph_properties {

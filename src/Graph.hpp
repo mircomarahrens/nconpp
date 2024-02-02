@@ -5,10 +5,11 @@
 
 #include <optional>
 #include <set>
+#include <stdexcept>
 #include <string>
 #include <unordered_map>
 
-#include "ErrorMessages.h"
+#include "ErrorMessages.hpp"
 
 namespace GRAPH_PROPERTIES {
 struct default_struct {};
@@ -88,8 +89,10 @@ class Graph {
    *
    * @return std::size_t
    */
+  #include <optional>
+
   std::size_t addVertex(
-      std::optional<std::size_t> newVertexIndex = std::nullopt) {
+    std::optional<std::size_t> newVertexIndex = std::nullopt) {
     if (newVertexIndex) {
       std::size_t newVertex = newVertexIndex.value();
       if (vertices.find(newVertex) == vertices.end()) {

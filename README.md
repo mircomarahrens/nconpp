@@ -3,20 +3,28 @@
 This module shall help to perform efficient contractions and decomposition of tensor networks. The module is
 inspired by the matlab library NCON (<https://arxiv.org/abs/1402.0939>) and leverages strongly on graph algorithms.
 
-## Getting Started
-
-* cmake
-* vcpkg
-* presets
-
-## Install as Python module
-
-Execute the following commands if you wish to install ``nconpp`` in a virtual environment.
+## Local development environment
 
 ```bash
 git clone https://github.com/mircomarahrens/nconpp.git
 cd nconpp
 ```
+
+### C++
+
+Package manager: [vcpkg](https://vcpkg.io/en/)
+
+```bash
+git clone https://github.com/microsoft/vcpkg utils/vcpkg
+```
+
+Build system: [cmake](https://cmake.org/)
+
+### Python
+
+Python binding: [pybind11](https://pybind11.readthedocs.io/)
+
+Execute the following commands if you wish to install ``nconpp`` in a virtual environment.
 
 * Linux
 
@@ -27,6 +35,16 @@ python -m venv .venv # or python3
 source ./venv/bin/activate
 python -m pip install .
 ```
+
+---
+
+## Getting Started
+
+* cmake
+* vcpkg
+* presets
+
+## Install as Python module
 
 * Windows with `pylauncher`
 
