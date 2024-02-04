@@ -66,6 +66,12 @@ target_link_libraries(${PYBIND11_MODULE} PRIVATE
     pybind11::module
     xtensor-python)
 
+# get_cmake_property(_variableNames VARIABLES)
+# list (SORT _variableNames)
+# foreach (_variableName ${_variableNames})
+#     message(STATUS "${_variableName}=${${_variableName}}")
+# endforeach()
+
 if(SKBUILD)
     message(STATUS "Skbuild process triggered.")
 
@@ -110,7 +116,7 @@ __version__ = \"0.1.0\"")
     target_compile_definitions(${PYBIND11_MODULE} PRIVATE
         VERSION_INFO=${VERSION_INFO})
 
-    install(FILES python/src/__init__.py
+    install(FILES ${NCONPP_PY_DIR}/src/__init__.py
         DESTINATION .)
     install(TARGETS ${PYBIND11_MODULE}
         LIBRARY DESTINATION .)
