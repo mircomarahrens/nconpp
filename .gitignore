@@ -1,11 +1,11 @@
 # Custom
 /out/
-/utils/vcpkg/
+/misc/vcpkg/
 /.venv/
-/python/__init__.py
-/python/nconpp/__init__.py
-/python/tests/.pytest_cache
-/python/tests/__pycache__
+/misc/python/__init__.py
+/misc/python/nconpp/__init__.py
+/misc/python/tests/.pytest_cache
+/misc/python/tests/__pycache__
 
 # JetBrains
 /.idea/

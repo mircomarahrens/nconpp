@@ -29,7 +29,7 @@
             "displayName": "configure debug (user)",
             "inherits": "default-linux",
             "environment": {
-                "VCPKG_ROOT": "${sourceDir}/utils/vcpkg",
+                "VCPKG_ROOT": "${sourceDir}/misc/vcpkg",
                 "PYTHON_VENV": "${sourceDir}/.venv"
             },
             "cacheVariables": {

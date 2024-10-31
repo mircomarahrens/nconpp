@@ -22,7 +22,7 @@
             "name": "vcpkg-debug",
             "inherits": "default",
             "environment": {
-                "VCPKG_ROOT": "$env{HOME}/.local/vcpkg"
+                "VCPKG_ROOT": "${sourceDir}/misc/vcpkg"
               },
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
