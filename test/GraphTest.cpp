@@ -46,7 +46,7 @@ TEST(GraphTest, addVertex) {
 
   EXPECT_THROW(
       try { g.addVertex(5); } catch (const std::invalid_argument &ex) {
-        EXPECT_STREQ(ERROR_VERTEXID_PRESENT, ex.what());
+        EXPECT_STREQ(ErrorMessages::ERROR_VERTEXID_PRESENT, ex.what());
         throw;
       },
       std::invalid_argument);
@@ -67,7 +67,7 @@ TEST(GraphTest, removeVertex) {
 
   EXPECT_THROW(
       try { g.removeVertex(6); } catch (const std::invalid_argument &ex) {
-        EXPECT_STREQ(ERROR_VERTEXID_NOTPRESENT, ex.what());
+        EXPECT_STREQ(ErrorMessages::ERROR_VERTEXID_NOTPRESENT, ex.what());
         throw;
       },
       std::invalid_argument);
@@ -88,14 +88,14 @@ TEST(GraphTest, addEdge) {
 
   EXPECT_THROW(
       try { g.addEdge(0, 6, 5); } catch (const std::invalid_argument &ex) {
-        EXPECT_STREQ(ERROR_SOURCEID_NOTPRESENT, ex.what());
+        EXPECT_STREQ(ErrorMessages::ERROR_SOURCEID_NOTPRESENT, ex.what());
         throw;
       },
       std::invalid_argument);
 
   EXPECT_THROW(
       try { g.addEdge(0, 5, 6); } catch (const std::invalid_argument &ex) {
-        EXPECT_STREQ(ERROR_DESTID_NOTPRESENT, ex.what());
+        EXPECT_STREQ(ErrorMessages::ERROR_DESTID_NOTPRESENT, ex.what());
         throw;
       },
       std::invalid_argument);
@@ -104,7 +104,7 @@ TEST(GraphTest, addEdge) {
 
   EXPECT_THROW(
       try { g.addEdge(0, 1, 2); } catch (const std::invalid_argument &ex) {
-        EXPECT_STREQ(ERROR_EDGEID_PRESENT, ex.what());
+        EXPECT_STREQ(ErrorMessages::ERROR_EDGEID_PRESENT, ex.what());
         throw;
       },
       std::invalid_argument);
@@ -132,7 +132,7 @@ TEST(GraphTest, removeEdge) {
 
   EXPECT_THROW(
       try { g.removeEdge(1); } catch (const std::invalid_argument &ex) {
-        EXPECT_STREQ(ERROR_EDGEID_NOTPRESENT, ex.what());
+        EXPECT_STREQ(ErrorMessages::ERROR_EDGEID_NOTPRESENT, ex.what());
         throw;
       },
       std::invalid_argument);
@@ -238,14 +238,14 @@ TEST(GraphTest, parallelEdgePresent) {
 
   EXPECT_THROW(
       try { g.addEdge(1, 2, 1); } catch (const std::invalid_argument &ex) {
-        EXPECT_STREQ(ERROR_PARALLEL_EDGE_PRESENT, ex.what());
+        EXPECT_STREQ(ErrorMessages::ERROR_PARALLEL_EDGE_PRESENT, ex.what());
         throw;
       },
       std::invalid_argument);
 
   EXPECT_THROW(
       try { g.addEdge(2, 1, 2); } catch (const std::invalid_argument &ex) {
-        EXPECT_STREQ(ERROR_PARALLEL_EDGE_PRESENT, ex.what());
+        EXPECT_STREQ(ErrorMessages::ERROR_PARALLEL_EDGE_PRESENT, ex.what());
         throw;
       },
       std::invalid_argument);

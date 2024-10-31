@@ -98,7 +98,7 @@ class Graph {
       if (vertices.find(newVertex) == vertices.end()) {
         vertices[newVertex] = vertex_properties_t();
       } else {
-        throw std::invalid_argument(ERROR_VERTEXID_PRESENT);
+        throw std::invalid_argument(ErrorMessages::ERROR_VERTEXID_PRESENT);
       }
       return newVertex;
     } else {
@@ -128,7 +128,7 @@ class Graph {
       vertices.erase(vertex);
       adjacency_list.erase(vertex);
     } else {
-      throw std::invalid_argument(ERROR_VERTEXID_NOTPRESENT);
+      throw std::invalid_argument(ErrorMessages::ERROR_VERTEXID_NOTPRESENT);
     }
     return vertex;
   }
@@ -145,24 +145,24 @@ class Graph {
    */
   int addEdge(int edgeIndex, std::size_t src, std::size_t dest) {
     if (vertices.find(src) == vertices.end()) {
-      throw std::invalid_argument(ERROR_SOURCEID_NOTPRESENT);
+      throw std::invalid_argument(ErrorMessages::ERROR_SOURCEID_NOTPRESENT);
     }
 
     if (vertices.find(dest) == vertices.end()) {
-      throw std::invalid_argument(ERROR_DESTID_NOTPRESENT);
+      throw std::invalid_argument(ErrorMessages::ERROR_DESTID_NOTPRESENT);
     }
 
     if (edges.find(edgeIndex) != edges.end()) {
-      throw std::invalid_argument(ERROR_EDGEID_PRESENT);
+      throw std::invalid_argument(ErrorMessages::ERROR_EDGEID_PRESENT);
     }
 
     if (!graph_properties.parallel_edges) {
       if (adjacency_list[dest].find(src) != adjacency_list[dest].end()) {
-        throw std::invalid_argument(ERROR_PARALLEL_EDGE_PRESENT);
+        throw std::invalid_argument(ErrorMessages::ERROR_PARALLEL_EDGE_PRESENT);
       }
 
       if (adjacency_list[src].find(dest) != adjacency_list[src].end()) {
-        throw std::invalid_argument(ERROR_PARALLEL_EDGE_PRESENT);
+        throw std::invalid_argument(ErrorMessages::ERROR_PARALLEL_EDGE_PRESENT);
       }
     }
 
@@ -200,11 +200,11 @@ class Graph {
   void mergeVertices(std::size_t src, std::size_t dest) {
     if (src != dest) {
       if (vertices.find(src) == vertices.end()) {
-        throw std::invalid_argument(ERROR_SOURCEID_NOTPRESENT);
+        throw std::invalid_argument(ErrorMessages::ERROR_SOURCEID_NOTPRESENT);
       }
 
       if (vertices.find(dest) == vertices.end()) {
-        throw std::invalid_argument(ERROR_DESTID_NOTPRESENT);
+        throw std::invalid_argument(ErrorMessages::ERROR_DESTID_NOTPRESENT);
       }
 
       auto edge_indices = getEdges();
@@ -254,7 +254,7 @@ class Graph {
    */
   int removeEdge(int edgeIndex) {
     if (edges.find(edgeIndex) == edges.end()) {
-      throw std::invalid_argument(ERROR_EDGEID_NOTPRESENT);
+      throw std::invalid_argument(ErrorMessages::ERROR_EDGEID_NOTPRESENT);
     } else {
       auto src = edges[edgeIndex].src;
       auto dest = edges[edgeIndex].dest;

@@ -170,7 +170,7 @@ TEST(TensorNetworkTest, logicError_MoreThanTwoLegs) {
       try {
         TensorNetwork tn(std::move(tensorList), legLinks);
       } catch (const std::invalid_argument &ex) {
-        EXPECT_STREQ(ERROR_EDGEID_PRESENT, ex.what());
+        EXPECT_STREQ(ErrorMessages::ERROR_EDGEID_PRESENT, ex.what());
         throw;
       },
       std::invalid_argument);

@@ -62,13 +62,13 @@ class TensorNetwork
     for (int _leg_index : _subscript_vector) {
       // 0 is an invalid leg index by convention
       if (_leg_index == 0) {
-        throw std::invalid_argument(ERROR_CONSTRAINT_INVALIDLEG);
+        throw std::invalid_argument(ErrorMessages::ERROR_CONSTRAINT_INVALIDLEG);
       }
 
       // store negative leg ids as dangling legs
       if (_leg_index < 0) {
         if (m_dangling_legs.contains(_leg_index)) {
-          throw std::invalid_argument(ERROR_CONSTRAINT_UNIQUELEGS);
+          throw std::invalid_argument(ErrorMessages::ERROR_CONSTRAINT_UNIQUELEGS);
         }
         m_dangling_legs.insert(_leg_index);
       }
@@ -489,7 +489,7 @@ class TensorNetwork
         }
       }
     } else {
-      throw std::invalid_argument(ERROR_OUT_OF_SIZE);
+      throw std::invalid_argument(ErrorMessages::ERROR_OUT_OF_SIZE);
     }
   }
 
