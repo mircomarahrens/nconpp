@@ -1,8 +1,13 @@
 {
     "version": 3,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 28,
+        "patch": 0
+      },
     "configurePresets": [
         {
-            "name": "default",
+            "name": "default-linux",
             "displayName": "Default Config",
             "description": "Default build using Ninja generator.",
             "generator": "Ninja",
@@ -11,10 +16,7 @@
                 "microsoft.com/VisualStudioSettings/CMake/1.0": {
                     "hostOS": [
                         "Linux"
-                    ],
-                    "clangTidyChecks": "llvm-include-order, -modernize-use-override",
-                    "enableMicrosoftCodeAnalysis": true,
-                    "enableClangTidyCodeAnalysis": true
+                    ]
                 },
                 "microsoft.com/VisualStudioRemoteSettings/CMake/1.0": {
                     "sourceDir": "$env{HOME}/.vs/$ms{projectDirName}"
@@ -22,31 +24,35 @@
             }
         },
         {
-            "name": "linux-debug-with-vcpkg",
-            "inherits": "default",
+            "name": "user-configure-debug",
+            "description": "User specified configure preset using vcpkg.",
+            "displayName": "configure debug (user)",
+            "inherits": "default-linux",
             "environment": {
                 "VCPKG_ROOT": "${sourceDir}/vcpkg",
                 "PYTHON_VENV": "${sourceDir}/.venv"
-              },
+            },
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
                 "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
                 "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
                 "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
-                "CMAKE_CXX_COMPILER": "/usr/bin/clang++-15",
-                "CMAKE_CXX_STANDARD": "20",
-                "CMAKE_CXX_STANDARD_REQUIRED": "ON",
-                "CMAKE_CXX_EXTENSIONS": "OFF",
                 "Python_EXECUTABLE": "${sourceDir}/.venv/bin/python"
             }
         }
+    ],
+    "buildPresets": [
+      {
+        "name": "user-default",
+        "configurePreset": "default-linux"
+      }
     ],
     "testPresets": [
         {
             "name": "user-googletests-debug",
             "description": "User specified test preset running googletest.",
             "displayName": "googletest debug (user)",
-            "configurePreset": "linux-debug-with-vcpkg"
+            "configurePreset": "user-configure-debug"
         }
     ]
 }

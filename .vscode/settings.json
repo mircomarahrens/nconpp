@@ -3,9 +3,13 @@
     "cmake.cmakePath": "${workspaceFolder}/.venv/bin/cmake",
     "C_Cpp.intelliSenseEngine": "default",
     "C_Cpp.intelliSenseEngineFallback": "enabled",
+    "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
     "files.associations": {
         "iostream": "cpp",
         "optional": "cpp",
-        "stdexcept": "cpp"
+        "stdexcept": "cpp",
+        "vector": "cpp",
+        "string": "cpp",
+        "functional": "cpp"
     }
 }

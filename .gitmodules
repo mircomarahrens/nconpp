@@ -1,8 +1,3 @@
-[submodule "misc/python/extern/pybind11"]
-	path = misc/python/extern/pybind11
-	url = https://github.com/pybind/pybind11.git
-	branch = stable
-[submodule "misc/python/extern/xtensor-python"]
-	path = misc/python/extern/xtensor-python
-	url = https://github.com/xtensor-stack/xtensor-python.git
-	branch = master
+[submodule "python/extern/xtensor-python"]
+	path = python/extern/xtensor-python
+	url = https://github.com/mircomarahrens/xtensor-python

@@ -1,11 +1,10 @@
 # Custom
-/.venv/
-/out/
-/misc/vcpkg/
-/misc/python/__init__.py
-/misc/python/nconpp/__init__.py
-/misc/python/tests/.pytest_cache
-/misc/python/tests/__pycache__
+.DS_Store
+.ruff_cache
+.vscode/
+.venv/
+out/
+vcpkg/
 
 # JetBrains
 /.idea/

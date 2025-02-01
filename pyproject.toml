@@ -29,7 +29,7 @@ wheel.install-dir = "nconpp"
 minimum-version = "0.2.2"
 build-dir = "out/build/python"
 cmake.args = [
-    "-DCMAKE_TOOLCHAIN_FILE=/home/mircomarahrens/projects/nconpp/misc/vcpkg/scripts/buildsystems/vcpkg.cmake",
+    "-DCMAKE_TOOLCHAIN_FILE=/home/mircomarahrens/documents/PhD/code/nconpp/vcpkg/scripts/buildsystems/vcpkg.cmake",
     "-DCMAKE_BUILD_TYPE=Python"
     ]
 cmake.minimum-version = "3.26.1"
@@ -40,6 +40,7 @@ logging.level = "INFO"
 
 
 [tool.poetry]
+package-mode = false # not implemented yet, we use poetry only for dependencies
 name = "nconpp"
 version = "0.1.0"
 description = "A library for tensor network calculations."
@@ -47,7 +48,7 @@ authors = ["Mirco Marahrens <mirco.marahrens@googlemail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.11"
 cmake = "^3.28.1"
 numpy = "^1.26.3"
 pybind11 = {extras = ["global"], version = "^2.11.1"}
@@ -65,3 +66,8 @@ sympy = "^1.12"
 invoke = "^2.2.0"
 gitpython = "^3.1.41"
 pre-commit = "^3.8.0"
+pre-commit-update = "^0.6.1"
+clang-format = "^19.1.7"
+clang-tidy = "^19.1.0"
+cppcheck = "^1.4.7"
+cpplint = "^2.0.0"
