@@ -6,7 +6,7 @@ set(Python_ROOT_DIR $ENV{PYTHON_VENV})
 message(STATUS "Use Python venv: $ENV{PYTHON_VENV}")
 # the format Python_EXECUTABLE is correct
 # otherwise some packages won't find the interpreter
-message(STATUS "Use Python exe: ${Python_EXECUTABLE}")
+message(STATUS "Use Python executable: ${Python_EXECUTABLE}")
 
 execute_process(
     COMMAND ${Python_EXECUTABLE} -c "import numpy; print(numpy.get_include())"
@@ -22,6 +22,7 @@ execute_process(
     OUTPUT_STRIP_TRAILING_WHITESPACE
     )
 
+# set(Python_INCLUDE_DIR $ENV{PYTHON_VENV}/include)
 message(STATUS "Use Python_INCLUDE_DIR: ${Python_INCLUDE_DIR}")
 
 execute_process(
@@ -30,6 +31,7 @@ execute_process(
     OUTPUT_STRIP_TRAILING_WHITESPACE
     )
 
+    # set(Python_LIBRARY $ENV{PYTHON_VENV}/lib)
 message(STATUS "Use Python_LIBRARY: ${Python_LIBRARY}")
 
 execute_process(
@@ -54,6 +56,10 @@ pybind11_add_module(${PYBIND11_MODULE}
     )
 
 # xtensor-python
+set(XTENSOR_VERSION ${xtensor_VERSION})
+set(XTENSOR_VERSION_MAJOR ${xtensor_VERSION_MAJOR})
+set(XTENSOR_VERSION_MINOR ${xtensor_VERSION_MINOR})
+set(XTENSOR_VERSION_PATCH ${xtensor_VERSION_PATCH})
 find_package(xtensor REQUIRED)
 add_subdirectory(${NCONPP_PY_DIR}/extern/xtensor-python)
 
@@ -98,7 +104,7 @@ __all__ = (\"Graph\", \"LatticeGraph\", \"TensorNetwork\")
 __version__ = \"0.1.0\"")
     endif()
 
-    if (UNIX)
+    if(UNIX)
         file(WRITE ${NCONPP_PY_DIR}/src/__init__.py
 "from ._nconpp import Graph, LatticeGraph, TensorNetwork
 

@@ -10,61 +10,22 @@ git clone https://github.com/mircomarahrens/nconpp.git
 cd nconpp
 ```
 
-### C++
+### Project dependencies
 
-Package manager: [vcpkg](https://vcpkg.io/en/)
+- C++ Package manager: [vcpkg](https://vcpkg.io/en/)
 
 ```bash
 git clone https://github.com/microsoft/vcpkg utils/vcpkg
 ```
 
-Build system: [cmake](https://cmake.org/)
-
-### Python
-
-Python binding: [pybind11](https://pybind11.readthedocs.io/)
-
-Execute the following commands if you wish to install ``nconpp`` in a virtual environment.
-
-* Linux
-
-Using the python module `venv`:
+- C++ build system: [CMake](https://cmake.org/)
+- Python binding: [pybind11](https://pybind11.readthedocs.io/)
+- Python package manager: [Poetry](https://python-poetry.org/)
 
 ```bash
-python -m venv .venv # or python3
-source ./venv/bin/activate
-python -m pip install .
+poetry shell
+poetry install
 ```
-
----
-
-## Getting Started
-
-* cmake
-* vcpkg
-* presets
-
-## Install as Python module
-
-* Windows with `pylauncher`
-
-```bash
-py -m venv venv
-.\venv\Scripts\activate
-pip install .
-```
-
-## References
-
-* [BGL (Boost Graph Library)](https://www.boost.org/doc/libs/1_80_0/libs/graph/doc/index.html)
-* [pybind11](https://pybind11.readthedocs.io/)
-* [vcpkg](https://vcpkg.io/en/)
-* [scikit-build-core](https://scikit-build-core.readthedocs.io/)
-* [xtensor](https://xtensor.readthedocs.io/)
-
-## Licensing
-
-...
 
 ## Ideas
 

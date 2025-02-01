@@ -16,7 +16,6 @@ set(VCPKG_FEATURE_FLAGS "versions")
 
 set(NCONPP_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set(NCONPP_TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test)
-set(NCONPP_UTILS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/utils)
 set(NCONPP_PY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/python)
 
 # dependencies
@@ -54,11 +53,11 @@ set(NCONPP_SRC
 # endforeach()
 
 # debug
-if(CMAKE_BUILD_TYPE MATCHES Debug AND NOT SKBUILD)
-    include(cmake/googletest.cmake)
+if(CMAKE_BUILD_TYPE MATCHES Debug AND NOT Python)
+    include(test/googletest.cmake)
 endif()
 
 # python
-if (CMAKE_BUILD_TYPE MATCHES Python OR Debug)
-    include(cmake/python.cmake)
+if(CMAKE_BUILD_TYPE MATCHES Debug OR Python)
+    include(python/python.cmake)
 endif()
