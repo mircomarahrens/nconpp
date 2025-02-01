@@ -1,3 +1,4 @@
 [submodule "python/extern/xtensor-python"]
 	path = python/extern/xtensor-python
 	url = https://github.com/mircomarahrens/xtensor-python
+	branch = master
