@@ -1,7 +1,7 @@
 // Copyright 2023 Mirco Marahrens
 
-#ifndef NCONPP_INCLUDE_ERRORMESSAGES_H_
-#define NCONPP_INCLUDE_ERRORMESSAGES_H_
+#ifndef SRC_ERRORMESSAGES_HPP_
+#define SRC_ERRORMESSAGES_HPP_
 
 namespace ErrorMessages
 {
@@ -19,4 +19,4 @@ const char *const ERROR_SOURCEID_NOTPRESENT = "Source vertex identifier not pres
 const char *const ERROR_DESTID_NOTPRESENT = "Destination vertex identifier not present.";
 } // namespace ErrorMessages
 
-#endif // NCONPP_INCLUDE_ERRORMESSAGES_H_
+#endif // SRC_ERRORMESSAGES_HPP_

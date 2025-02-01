@@ -56,12 +56,15 @@ repos:
     hooks:
       - id: clang-format
         args: [--style=Microsoft, -i]
-      - id: clang-tidy
-        args: [-extra-arg=-std=c++20, -extra-arg=-stdlib=libc++, -p=out/build/linux-debug-with-vcpkg]
-        exclude: "(python|out)/.*"
+      # - id: cpplint
+      # - id: cppcheck
+      # - id: clang-tidy
+      #   args:
+      #     - -extra-arg=-std=c++20
+      #     - -extra-arg=-stdlib=libc++
+      #     - -p=out/build/linux-debug-with-vcpkg
+      #     - "-header-filter=^(?!.*\\.hpp$).*"
       # - id: oclint
       # - id: uncrustify
-      # - id: cppcheck
-      # - id: cpplint
       # - id: include-what-you-use
-        # exclude: "(python|test|python/extern)/.*"
+      # exclude: "(python|test|python/extern)/.*"

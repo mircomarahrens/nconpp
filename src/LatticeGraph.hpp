@@ -1,7 +1,7 @@
 // Copyright 2023 Mirco Marahrens
 
-#ifndef NCONPP_INCLUDE_LATTICEGRAPH_H_
-#define NCONPP_INCLUDE_LATTICEGRAPH_H_
+#ifndef SRC_LATTICEGRAPH_HPP_
+#define SRC_LATTICEGRAPH_HPP_
 
 #include <string>
 #include <vector>
@@ -168,4 +168,4 @@ class LatticeGraph
     }
 };
 
-#endif // NCONPP_INCLUDE_LATTICEGRAPH_H_
+#endif // SRC_LATTICEGRAPH_HPP_

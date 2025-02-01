@@ -1,7 +1,7 @@
 // Copyright 2023 Mirco Marahrens
 
-#ifndef NCONPP_INCLUDE_GRAPH_H_
-#define NCONPP_INCLUDE_GRAPH_H_
+#ifndef SRC_GRAPH_HPP_
+#define SRC_GRAPH_HPP_
 
 #include <optional>
 #include <set>
@@ -325,4 +325,4 @@ class Graph
     }
 };
 
-#endif // NCONPP_INCLUDE_GRAPH_H_
+#endif // SRC_GRAPH_HPP_

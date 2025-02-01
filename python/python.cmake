@@ -59,7 +59,7 @@ pybind11_add_module(${PYBIND11_MODULE}
 set(XTENSOR_VERSION ${xtensor_VERSION})
 set(XTENSOR_VERSION_MAJOR ${xtensor_VERSION_MAJOR})
 set(XTENSOR_VERSION_MINOR ${xtensor_VERSION_MINOR})
-set(XTENSOR_VERSION_PATCH ${xtensor_VERSION_PATCH}) 
+set(XTENSOR_VERSION_PATCH ${xtensor_VERSION_PATCH})
 find_package(xtensor REQUIRED)
 add_subdirectory(${NCONPP_PY_DIR}/extern/xtensor-python)
 

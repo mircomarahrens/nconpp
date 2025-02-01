@@ -10,9 +10,9 @@
 #include <utility>
 #include <vector>
 
-#include "Graph.hpp"
-#include "LatticeGraph.hpp"
-#include "TensorNetwork.hpp"
+#include "Graph.cpp"
+#include "LatticeGraph.cpp"
+#include "TensorNetwork.cpp"
 
 #define FORCE_IMPORT_ARRAY
 #include "pybind11/pybind11.h"

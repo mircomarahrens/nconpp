@@ -1,7 +1,7 @@
 // Copyright 2023 Mirco Marahrens
 
-#ifndef NCONPP_INCLUDE_TENSORNETWORK_H_
-#define NCONPP_INCLUDE_TENSORNETWORK_H_
+#ifndef SRC_TENSORNETWORK_HPP_
+#define SRC_TENSORNETWORK_HPP_
 
 #include <algorithm>
 #include <complex>
@@ -603,4 +603,4 @@ class TensorNetwork : public Graph<GRAPH_PROPERTIES::tensornetwork_graph_propert
     }
 };
 
-#endif // NCONPP_INCLUDE_TENSORNETWORK_H_
+#endif // SRC_TENSORNETWORK_HPP_
