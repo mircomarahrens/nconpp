@@ -1,27 +1,70 @@
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
 repos:
-    - repo: https://github.com/pre-commit/pre-commit-hooks
-      rev: v3.2.0
-      hooks:
-          - id: trailing-whitespace
-          - id: end-of-file-fixer
-          - id: check-yaml
-          - id: check-added-large-files
-    - repo: https://github.com/psf/black
-      rev: 22.10.0
-      hooks:
-          - id: black
-    - repo: https://github.com/cmake-lint/cmake-lint
-      rev: 1.4.2
-      hooks:
-          - id: cmakelint
-            args: [--filter=-readability/wonkycase,--linelength=120]
-    - repo: https://github.com/cpplint/cpplint
-      rev: 1.6.1
-      hooks:
-          - id: cpplint
-            # https://github.com/cpplint/cpplint/issues/44
-            args: ['--filter=-runtime/references,-build/header_guard']
-            files: \.(h\+\+|h|hh|hxx|hpp|cuh|c|cc|cpp|cu|c\+\+|cxx|tpp|txx)$
-            exclude: '(python|test)/.*'
+  # Pre-commit hooks.
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+    - id: trailing-whitespace
+    - id: end-of-file-fixer
+    - id: check-yaml
+    - id: check-added-large-files
+    - id: check-merge-conflict
+    - id: no-commit-to-branch
+      args: [--branch, main]
+    - id: name-tests-test
+  # Conventional commit message linter.
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: v4.0.0
+    hooks:
+      - id: conventional-pre-commit
+        stages: [commit-msg]
+        args: []
+  # Ruff is a linter and formatter for Python.
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    # Ruff version.
+    rev: v0.9.4
+    hooks:
+      # Run the linter.
+      - id: ruff
+        types_or: [ python, pyi ]
+        args: [ --fix ]
+      # Run the formatter.
+      - id: ruff-format
+        types_or: [ python, pyi ]
+  # Poetry is a tool for dependency management and packaging in Python.
+  - repo: https://github.com/python-poetry/poetry
+    rev: 2.0.1
+    hooks:
+    - id: poetry-check
+    - id: poetry-lock
+  # Poetry plugin for exporting requirements.
+  - repo: https://github.com/python-poetry/poetry-plugin-export
+    rev: 1.9.0
+    hooks:
+    - id: poetry-export
+      args: [--with, "dev", -f, requirements.txt, -o, requirements.dev.txt]
+    - id: poetry-export
+      args: [--without, "dev", -f, requirements.txt, -o, requirements.txt]
+  - repo: https://github.com/cmake-lint/cmake-lint
+    rev: 1.4.3
+    hooks:
+      - id: cmakelint
+        args: [--filter=-readability/wonkycase, --linelength=120]
+  - repo: https://github.com/pocc/pre-commit-hooks
+    rev: v1.3.5
+    hooks:
+      - id: clang-format
+        args: [--style=Microsoft, -i]
+      # - id: cpplint
+      # - id: cppcheck
+      # - id: clang-tidy
+      #   args:
+      #     - -extra-arg=-std=c++20
+      #     - -extra-arg=-stdlib=libc++
+      #     - -p=out/build/linux-debug-with-vcpkg
+      #     - "-header-filter=^(?!.*\\.hpp$).*"
+      # - id: oclint
+      # - id: uncrustify
+      # - id: include-what-you-use
+      # exclude: "(python|test|python/extern)/.*"

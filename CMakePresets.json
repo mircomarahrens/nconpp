@@ -1,5 +1,5 @@
 {
-    "version": 2,
+    "version": 3,
     "configurePresets": [
         {
             "name": "default",
@@ -11,7 +11,10 @@
                 "microsoft.com/VisualStudioSettings/CMake/1.0": {
                     "hostOS": [
                         "Linux"
-                    ]
+                    ],
+                    "clangTidyChecks": "llvm-include-order, -modernize-use-override",
+                    "enableMicrosoftCodeAnalysis": true,
+                    "enableClangTidyCodeAnalysis": true
                 },
                 "microsoft.com/VisualStudioRemoteSettings/CMake/1.0": {
                     "sourceDir": "$env{HOME}/.vs/$ms{projectDirName}"
@@ -19,24 +22,31 @@
             }
         },
         {
-            "name": "vcpkg-debug",
+            "name": "linux-debug-with-vcpkg",
             "inherits": "default",
             "environment": {
-                "VCPKG_ROOT": "$env{HOME}/.local/vcpkg"
+                "VCPKG_ROOT": "${sourceDir}/vcpkg",
+                "PYTHON_VENV": "${sourceDir}/.venv"
               },
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
                 "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
-                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+                "CMAKE_CXX_COMPILER": "/usr/bin/clang++-15",
+                "CMAKE_CXX_STANDARD": "20",
+                "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+                "CMAKE_CXX_EXTENSIONS": "OFF",
+                "Python_EXECUTABLE": "${sourceDir}/.venv/bin/python"
             }
         }
     ],
     "testPresets": [
         {
-            "name": "googletests-debug",
-            "description": "",
-            "displayName": "",
-            "configurePreset": "vcpkg-debug"
+            "name": "user-googletests-debug",
+            "description": "User specified test preset running googletest.",
+            "displayName": "googletest debug (user)",
+            "configurePreset": "linux-debug-with-vcpkg"
         }
     ]
 }

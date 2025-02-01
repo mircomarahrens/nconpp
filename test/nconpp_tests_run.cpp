@@ -5,12 +5,13 @@
 
 #include <gtest/gtest.h>
 
-int main(int argc, char **argv) {
-  ::testing::InitGoogleTest(&argc, argv);
+int main(int argc, char **argv)
+{
+    ::testing::InitGoogleTest(&argc, argv);
 
-  const int result = RUN_ALL_TESTS();
+    const int result = RUN_ALL_TESTS();
 
-  return result;
+    return result;
 }
 
-#endif  // NCONPP_TEST_NCONPP_TESTS_RUN_H_
+#endif // NCONPP_TEST_NCONPP_TESTS_RUN_H_
