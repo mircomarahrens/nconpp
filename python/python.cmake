@@ -52,7 +52,7 @@ set(PYBIND11_MODULE _nconpp)
 
 pybind11_add_module(${PYBIND11_MODULE}
     ${PYBIND11_MAIN}
-    ${NCONPP_SRC}
+    ${NCONPP_CPP_SRC}
     )
 
 # xtensor-python
@@ -64,7 +64,7 @@ find_package(xtensor REQUIRED)
 add_subdirectory(${NCONPP_PY_DIR}/extern/xtensor-python)
 
 target_include_directories(${PYBIND11_MODULE} PRIVATE
-    ${NCONPP_SRC_DIR}
+    ${NCONPP_CPP_SRC_DIR}
     ${NCONPP_PY_DIR}/extern/)
 
 target_link_libraries(${PYBIND11_MODULE} PRIVATE

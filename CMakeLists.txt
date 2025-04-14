@@ -14,8 +14,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # activate vcpkg manifest mode
 set(VCPKG_FEATURE_FLAGS "versions")
 
-set(NCONPP_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
-set(NCONPP_TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test)
+set(NCONPP_CPP_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cpp/src)
+set(NCONPP_CPP_TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cpp/test)
 set(NCONPP_PY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/python)
 
 # dependencies
@@ -28,7 +28,7 @@ message(STATUS "Blas libraries " ${BLAS_LIBRARIES})
 find_package(xtl CONFIG REQUIRED)
 find_package(xtensor CONFIG REQUIRED)
 message(STATUS "xtensor version is " ${xtensor_VERSION} ".")
-find_package(xtensor-blas REQUIRED)
+find_package(xtensor-blas CONFIG REQUIRED)
 message(STATUS "xtensor-blas version is " ${xtensor-blas_VERSION} ".")
 
 set(NCONPP_DEPENDENCIES
@@ -39,11 +39,11 @@ set(NCONPP_DEPENDENCIES
     xtensor-blas
     )
 
-set(NCONPP_SRC
-    src/Graph.hpp
-    src/LatticeGraph.hpp
-    src/Tensor.hpp
-    src/TensorNetwork.hpp
+set(NCONPP_CPP_SRC
+    cpp/src/Graph.hpp
+    cpp/src/LatticeGraph.hpp
+    cpp/src/Tensor.hpp
+    cpp/src/TensorNetwork.hpp
     )
 
 # get_cmake_property(_variableNames VARIABLES)
@@ -54,7 +54,7 @@ set(NCONPP_SRC
 
 # debug
 if(CMAKE_BUILD_TYPE MATCHES Debug AND NOT Python)
-    include(test/googletest.cmake)
+    include(cpp/test/googletest.cmake)
 endif()
 
 # python

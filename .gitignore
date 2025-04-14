@@ -1,7 +1,6 @@
 # Custom
 .DS_Store
 .ruff_cache
-.vscode/
 .venv/
 out/
 vcpkg/
