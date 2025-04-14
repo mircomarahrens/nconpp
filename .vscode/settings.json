@@ -1,0 +1,13 @@
+{
+    "CMake.configureOnOpen": true,
+    "CMake.buildDirectory": "${workspaceFolder}/out/build/linux-debug-with-vcpkg",
+    "C_Cpp.intelliSenseEngine": "disabled",
+    "clangd.arguments": [
+        "--compile-commands-dir=${workspaceFolder}/out/build/linux-debug-with-vcpkg"
+    ],
+    "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+    "C_Cpp.default.includePath": [
+        "${workspaceFolder}/**",
+        "${workspaceFolder}/out/build/linux-debug-with-vcpkg/vcpkg_installed/x64-linux/include/**"
+    ]
+}
