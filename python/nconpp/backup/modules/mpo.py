@@ -1,34 +1,33 @@
-import numpy as np
-
 from .lattice import LATTICE
 
+
 class MPO(LATTICE):
-    """ ========================================================================
-        The class for matrix product operators (MPO).
-        ========================================================================
-        Inherit classes: LATTICE
-        ========================================================================
-        Key             |  Default        | Description
-        ----------------+-----------------+-------------------------------------
-        W_rules         | dict()          | dictionary of mpo rules
-        W_list          | list()          | list for mpos
-        wdim            | None            | dimension of the mpo
-        channels        | None            | number of channels
-        ========================================================================
+    """========================================================================
+    The class for matrix product operators (MPO).
+    ========================================================================
+    Inherit classes: LATTICE
+    ========================================================================
+    Key             |  Default        | Description
+    ----------------+-----------------+-------------------------------------
+    W_rules         | dict()          | dictionary of mpo rules
+    W_list          | list()          | list for mpos
+    wdim            | None            | dimension of the mpo
+    channels        | None            | number of channels
+    ========================================================================
     """
 
-    def __init__(self, sites=None, name=None, mpo_dim=None, channels=None, mpo_rules={}):
-        super().__init__()       # initilize inherit classes
-        self.W_rules = mpo_rules # dictionary of mpo rules
-        self.W_list = []         # list for mpos
-        self.wdim = mpo_dim      # dimension of the mpo
-        self.channels = channels # number of channels
-        
+    def __init__(
+        self, sites=None, name=None, mpo_dim=None, channels=None, mpo_rules={}
+    ):
+        super().__init__()  # initilize inherit classes
+        self.W_rules = mpo_rules  # dictionary of mpo rules
+        self.W_list = []  # list for mpos
+        self.wdim = mpo_dim  # dimension of the mpo
+        self.channels = channels  # number of channels
 
     def init_mpo(self, **kwargs):
-        """ Shortcut function for mpo initialization. """
+        """Shortcut function for mpo initialization."""
         pass
-
 
     # # predefined mpos ##########################################################
     # def init_pauli(self):
@@ -77,14 +76,15 @@ class MPO(LATTICE):
     #         self.mpo_list.append(W)
     ########################################################################
 
+
 #     def init_mpo_khm(self):
 #         # init an empty container list for the mpo
 #         self.mpo_list = [np.zeros((D, D, d, d), dtype=complex)]*int(Lx*Ly)
-# 
+#
 #         # unitary transition I->I, F->F
 #         for i in range(int(Lx*Ly)):
 #             self.mpo_list[i][0][0] = I; self.mpo_list[i][D-1][D-1] = I
-# 
+#
 #         # iterating through rules and fill paths to the matrix product operator list
 #         for rule in transition_rules:
 #             n = rule["n"] # current channel

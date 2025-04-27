@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-24.02
+    strategy:
+      matrix:
+        python-version: [3.12]
+        poetry-version: [2.1.2]
+        vcpgk-version: [2025.04.09]
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: pyproject.toml
+      - name: Install Poetry
+        run: |
+          pip install poetry==${{ matrix.poetry-version }}
+      - name: Poetry install
+        run: |
+          poetry config virtualenvs.create false
+          poetry install --no-interaction --no-root
+      - name: Set up vcpkg
+        id: vcpkg
+        env:
+          VCPKG_ROOT: ${{ github.workspace }}/vcpkg
+        run: |
+          git clone https://github.com/microsoft/vcpkg.git --branch ${matrix.vcpgk-version} --depth 1
+          cd vcpkg; ./bootstrap-vcpkg.sh --disableMetrics
+          ./vcpkg integrate install
+      - name: Install clangd
+        run: |
+          sudo apt-get install -y clangd-19
+          sudo update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-19 100
+      - name: Cmake
+        run: |
+          mkdir build
+          cd build
+          cmake -DCMAKE_BUILD_TYPE=Debug \
+                -DCMAKE_TOOLCHAIN_FILE=${{ steps.vcpkg.outputs.vcpkg_root }}/scripts/buildsystems/vcpkg.cmake
+                -DCMAKE_EXPORT_COMPILE_COMMANDS=OFF \
+                -DCMAKE_C_COMPILER=clang \
+                -DCMAKE_CXX_COMPILER=clang++ \
+                -DCMAKE_CXX_STANDARD=20 \
+                -DCMAKE_CXX_STANDARD_REQUIRED=ON \
+                -DCMAKE_CXX_EXTENSIONS=OFF \
+                -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install \
+                -S${GITHUB_WORKSPACE} \
+                -B${GITHUB_WORKSPACE}/build \
+                -G Ninja

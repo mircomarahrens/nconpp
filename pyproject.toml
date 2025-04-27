@@ -1,7 +1,7 @@
 [project]
 name = "nconpp"
 version = "0.1.0"
-description="A library for tensor network calculations."
+description = "A library for tensor network calculations."
 readme = "README.md"
 authors = [
     { name = "Mirco Marahrens", email = "mirco.marahrens@googlemail.com" },
@@ -18,10 +18,7 @@ classifiers = [
 ]
 
 [build-system]
-requires = [
-    "scikit-build-core>=0.2.2",
-    "numpy>=1.24.2"
-]
+requires = ["scikit-build-core>=0.2.2", "numpy>=1.24.2"]
 build-backend = "scikit_build_core.build"
 
 [tool.scikit-build]
@@ -31,13 +28,12 @@ build-dir = "out/build/python"
 cmake.args = [
     "-DCMAKE_TOOLCHAIN_FILE=/home/mircomarahrens/documents/PhD/code/nconpp/vcpkg/scripts/buildsystems/vcpkg.cmake",
     "-DCMAKE_BUILD_TYPE=Python"
-    ]
+]
 cmake.minimum-version = "3.26.1"
 cmake.verbose = true
 ninja.make-fallback = false
 ninja.minimum-version = "1.11"
 logging.level = "INFO"
-
 
 [tool.poetry]
 package-mode = false # not implemented yet, we use poetry only for dependencies
@@ -48,13 +44,14 @@ authors = ["Mirco Marahrens <mirco.marahrens@googlemail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.12"
 cmake = "^3.28.1"
 numpy = "^1.26.3"
-pybind11 = {extras = ["global"], version = "^2.11.1"}
+pybind11 = { extras = ["global"], version = "^2.11.1" }
 scikit-build = "^0.17.6"
 ninja = "^1.11.1.1"
 python-dotenv = "^1.0.1"
+clang = "^19"
 
 [tool.poetry.group.dev.dependencies]
 ipykernel = "^6.29.0"
