@@ -1,21 +1,27 @@
 {
-  "dependencies" : [ {
-    "name" : "xtensor",
-    "version>=" : "0.25.0"
-  }, {
-    "name" : "xtl",
-    "version>=" : "0.7.5"
-  }, {
-    "name" : "xtensor-blas",
-    "version>=" : "0.20.0"
-  }, {
-    "name" : "openblas",
-    "version>=" : "0.3.26"
-  }, {
-    "name" : "lapack",
-    "version>=" : "2022-02-22#2"
-  }],
-  "builtin-baseline" : "c9f906558f9bb12ee9811d6edc98ec9255c6cda5",
-  "name" : "nconpp-core",
-  "version" : "0.0.1"
+  "dependencies": [
+    {
+      "name": "xtensor",
+      "version>=": "0.25.0"
+    },
+    {
+      "name": "xtl",
+      "version>=": "0.7.5"
+    },
+    {
+      "name": "xtensor-blas",
+      "version>=": "0.20.0"
+    },
+    {
+      "name": "openblas",
+      "version>=": "0.3.26"
+    },
+    {
+      "name": "lapack",
+      "version>=": "2022-02-22#2"
+    }
+  ],
+  "builtin-baseline": "c9f906558f9bb12ee9811d6edc98ec9255c6cda5",
+  "name": "nconpp-core",
+  "version": "0.0.1"
 }

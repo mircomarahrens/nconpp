@@ -2,7 +2,6 @@ import numpy as np
 import multiprocessing as mp
 
 from tensornetwork import TENSORNETWORK
-from python.nconpp.operations import rotate_left, rotate_right, update
 
 
 class DMRG(TENSORNETWORK):

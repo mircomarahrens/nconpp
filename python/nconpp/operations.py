@@ -272,7 +272,6 @@ def mult_bra_to_ket(M1_list, M2_list, s1_list, s2_list, form="left"):
     return T
 
 
-
 # FIXME adapt functions below to A_list, l_list and B_list
 
 # def calc_correlator_2p(A_list, l_list, B_list, O1, O2, i1, i2):

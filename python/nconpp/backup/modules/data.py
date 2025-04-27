@@ -2,15 +2,16 @@ import json
 import pickle
 from datetime import datetime
 
+
 class pickleDataHandler:
-    """ A short class for data handling using pickle. """
+    """A short class for data handling using pickle."""
 
     def __init__(self, pickleDataObject=None):
         self.datafile = pickleDataObject  # datafile object
-        self.datetime = datetime.now()    # flag for current datetime 
+        self.datetime = datetime.now()  # flag for current datetime
 
     def dump_data(self, data):
-        """ Dump data to the simulation datafile. """
+        """Dump data to the simulation datafile."""
         pickle.dump(data, self.datafile)
 
     def load_data(self):
@@ -23,15 +24,16 @@ class pickleDataHandler:
                     break
         return data
 
+
 class jsonDataHandler:
-    """ A short class for data handling using json. """
+    """A short class for data handling using json."""
 
     def __init__(self, jsonDataObject=None):
-        self.datafile = jsonDataObject   # datafile object
-        self.datetime = datetime.now()   # flag for current datetime
+        self.datafile = jsonDataObject  # datafile object
+        self.datetime = datetime.now()  # flag for current datetime
 
     def dump_data(self, data):
-        """ Dump data to the simulation datafile. """
+        """Dump data to the simulation datafile."""
         json.dump(data, self.datafile)
 
     def load_data(self):

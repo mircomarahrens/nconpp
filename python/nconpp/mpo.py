@@ -1,7 +1,5 @@
 #!/usr/bin/python3
 
-import numpy as np
-
 
 class Mpo(object):
     """The class for matrix product operators (MPO)."""
