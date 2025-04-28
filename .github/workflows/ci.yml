@@ -34,7 +34,7 @@ jobs:
       - name: Set up vcpkg
         id: vcpkg
         run: |
-          git clone --branch ${{ matrix.vcpgk-version }} --depth 1 --single-branch https://github.com/microsoft/vcpkg.git
+          git clone --branch ${{ matrix.vcpgk-version }} --single-branch https://github.com/microsoft/vcpkg.git
           cd vcpkg
           ./bootstrap-vcpkg.sh --disableMetrics
           ./vcpkg integrate install
