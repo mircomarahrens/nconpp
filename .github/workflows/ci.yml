@@ -46,6 +46,9 @@ jobs:
       - name: Install make
         run: |
           sudo apt-get install -y make
+      - name: Clone xtensor-python
+        run: |
+          git clone https://github.com/xtensor-stack/xtensor-python.git extern/xtensor-python
       - name: Cmake
         env:
           VCPKG_ROOT: ${{ steps.vcpkg.outputs.vcpkg_root }}
