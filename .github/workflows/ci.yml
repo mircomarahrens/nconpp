@@ -38,7 +38,7 @@ jobs:
           cd vcpkg
           ./bootstrap-vcpkg.sh --disableMetrics
           ./vcpkg integrate install
-          echo "VCPKG_ROOT=$(pwd)" >> $GITHUB_OUTPUTS
+          echo "VCPKG_ROOT=$(pwd)" >> "$GITHUB_OUTPUT"
       - name: Install clangd
         run: |
           sudo apt-get install -y clangd-19
