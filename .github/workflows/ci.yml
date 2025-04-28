@@ -62,6 +62,7 @@ jobs:
                 -DCMAKE_CXX_STANDARD_REQUIRED=ON \
                 -DCMAKE_CXX_EXTENSIONS=OFF \
                 -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install/${ presetName } \
+                -DPython_EXECUTABLE=${{ github.workspace }}/.venv/bin/python \
                 -S${{ github.workspace }} \
                 -B${{ github.workspace }}/build \
                 -G Ninja
