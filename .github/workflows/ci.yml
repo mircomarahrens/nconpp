@@ -33,13 +33,12 @@ jobs:
           poetry install --no-interaction --no-root
       - name: Set up vcpkg
         id: vcpkg
-        env:
-          VCPKG_ROOT: ${{ github.workspace }}/vcpkg
         run: |
           git clone --branch ${{ matrix.vcpgk-version }} --depth 1 --single-branch https://github.com/microsoft/vcpkg.git
           cd vcpkg
           ./bootstrap-vcpkg.sh --disableMetrics
           ./vcpkg integrate install
+          echo "VCPKG_ROOT=$(pwd)" >> $GITHUB_OUTPUTS
       - name: Install clangd
         run: |
           sudo apt-get install -y clangd-19
@@ -48,9 +47,11 @@ jobs:
         run: |
           sudo apt-get install -y make
       - name: Cmake
+        env:
+          VCPKG_ROOT: ${{ steps.vcpkg.outputs.vcpkg_root }}
         run: |
           cmake -DCMAKE_BUILD_TYPE=Debug \
-                -DCMAKE_TOOLCHAIN_FILE=${{ steps.vcpkg.outputs.vcpkg_root }}/scripts/buildsystems/vcpkg.cmake
+                -DCMAKE_TOOLCHAIN_FILE=$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake
                 -DCMAKE_EXPORT_COMPILE_COMMANDS=OFF \
                 -DCMAKE_C_COMPILER=clang \
                 -DCMAKE_CXX_COMPILER=clang++ \
