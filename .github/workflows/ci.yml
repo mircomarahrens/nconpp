@@ -46,8 +46,6 @@ jobs:
           sudo update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-19 100
       - name: Cmake
         run: |
-          mkdir build
-          cd build
           cmake -DCMAKE_BUILD_TYPE=Debug \
                 -DCMAKE_TOOLCHAIN_FILE=${{ steps.vcpkg.outputs.vcpkg_root }}/scripts/buildsystems/vcpkg.cmake
                 -DCMAKE_EXPORT_COMPILE_COMMANDS=OFF \
@@ -56,7 +54,8 @@ jobs:
                 -DCMAKE_CXX_STANDARD=20 \
                 -DCMAKE_CXX_STANDARD_REQUIRED=ON \
                 -DCMAKE_CXX_EXTENSIONS=OFF \
-                -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install \
-                -S${GITHUB_WORKSPACE} \
-                -B${GITHUB_WORKSPACE}/build \
+                -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install/${ presetName } \
+                -S${{ github.workspace }} \
+                -B${{ github.workspace }}/build \
                 -G Ninja
+
