@@ -44,6 +44,9 @@ jobs:
         run: |
           sudo apt-get install -y clangd-19
           sudo update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-19 100
+      - name: Install make
+        run: |
+          sudo apt-get install -y make
       - name: Cmake
         run: |
           cmake -DCMAKE_BUILD_TYPE=Debug \
