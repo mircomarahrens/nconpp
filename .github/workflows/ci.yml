@@ -18,20 +18,8 @@ jobs:
         vcpgk-version: [2025.04.09]
         xtensor-python-version: [0.27.0]
     steps:
-
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version-file: pyproject.toml
-      - name: Install Poetry
-        run: |
-          pip install poetry==${{ matrix.poetry-version }}
-      - name: Poetry install
-        run: |
-          # poetry config virtualenvs.create false
-          poetry install --no-interaction --no-root
       - name: Set up vcpkg
         id: vcpkg
         run: |
@@ -40,6 +28,9 @@ jobs:
           ./bootstrap-vcpkg.sh --disableMetrics
           ./vcpkg integrate install
           echo "VCPKG_ROOT=$(pwd)" >> "$GITHUB_OUTPUT"
+      - name: Clone xtensor-python
+        run: |
+          git clone --branch ${{ matrix.xtensor-python-version }} --depth 1 --single-branch https://github.com/xtensor-stack/xtensor-python.git ${{ github.workspace }}/python/extern/xtensor-python
       - name: Install clangd
         run: |
           sudo apt-get install -y clangd-18
@@ -47,10 +38,17 @@ jobs:
       - name: Install make
         run: |
           sudo apt-get install -y make
-      - name: Clone xtensor-python
+          - name: Set up Python
+          uses: actions/setup-python@v5
+          with:
+            python-version-file: pyproject.toml
+      - name: Install Poetry
         run: |
-          git clone --branch ${{ matrix.xtensor-python-version }} --depth 1 --single-branch \ 
-            https://github.com/xtensor-stack/xtensor-python.git ${{ github.workspace }}/python/extern/xtensor-python
+          pip install poetry==${{ matrix.poetry-version }}
+      - name: Poetry install
+        run: |
+          # poetry config virtualenvs.create false
+          poetry install --no-interaction --no-root
       - name: Cmake
         env:
           VCPKG_ROOT: ${{ steps.vcpkg.outputs.vcpkg_root }}
