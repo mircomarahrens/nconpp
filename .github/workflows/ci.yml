@@ -41,8 +41,8 @@ jobs:
           echo "VCPKG_ROOT=$(pwd)" >> "$GITHUB_OUTPUT"
       - name: Install clangd
         run: |
-          sudo apt-get install -y clangd-19
-          sudo update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-19 100
+          sudo apt-get install -y clangd-18
+          sudo update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-18 100
       - name: Install make
         run: |
           sudo apt-get install -y make
@@ -56,8 +56,8 @@ jobs:
           cmake -DCMAKE_BUILD_TYPE=Debug \
                 -DCMAKE_TOOLCHAIN_FILE=$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake
                 -DCMAKE_EXPORT_COMPILE_COMMANDS=OFF \
-                -DCMAKE_C_COMPILER=clang \
-                -DCMAKE_CXX_COMPILER=clang++ \
+                -DCMAKE_C_COMPILER=/usr/bin/clang \
+                -DCMAKE_CXX_COMPILER=/usr/bin/clang++ \
                 -DCMAKE_CXX_STANDARD=20 \
                 -DCMAKE_CXX_STANDARD_REQUIRED=ON \
                 -DCMAKE_CXX_EXTENSIONS=OFF \
