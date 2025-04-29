@@ -16,6 +16,7 @@ jobs:
         python-version: [3.12]
         poetry-version: [2.1.2]
         vcpgk-version: [2025.04.09]
+        xtensor-python-version: [0.27.0]
     steps:
 
       - name: Checkout code
@@ -48,7 +49,8 @@ jobs:
           sudo apt-get install -y make
       - name: Clone xtensor-python
         run: |
-          git clone https://github.com/xtensor-stack/xtensor-python.git ${{ github.workspace }}/python/extern/xtensor-python
+          git clone --branch ${{ matrix.xtensor-python-version }} --depth 1 --single-branch \ 
+            https://github.com/xtensor-stack/xtensor-python.git ${{ github.workspace }}/python/extern/xtensor-python
       - name: Cmake
         env:
           VCPKG_ROOT: ${{ steps.vcpkg.outputs.vcpkg_root }}
