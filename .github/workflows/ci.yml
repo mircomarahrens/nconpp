@@ -28,9 +28,10 @@ jobs:
           ./bootstrap-vcpkg.sh --disableMetrics
           ./vcpkg integrate install
           echo "VCPKG_ROOT=$(pwd)" >> "$GITHUB_OUTPUT"
-      - name: Clone xtensor-python
+      - name: Set up xtensor-python
         run: |
           git clone --branch ${{ matrix.xtensor-python-version }} --depth 1 --single-branch https://github.com/xtensor-stack/xtensor-python.git ${{ github.workspace }}/python/extern/xtensor-python
+          mv ${{ github.workspace }}/python/extern/CMakeLists_xtensor-python.txt ${{ github.workspace }}/python/extern/xtensor-python/CMakeLists.txt
       - name: Install clangd
         run: |
           sudo apt-get install -y clangd-18
@@ -53,17 +54,4 @@ jobs:
         env:
           VCPKG_ROOT: ${{ steps.vcpkg.outputs.vcpkg_root }}
         run: |
-          # cmake -DCMAKE_BUILD_TYPE=Debug \
-          #       -DCMAKE_TOOLCHAIN_FILE=$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake
-          #       -DCMAKE_EXPORT_COMPILE_COMMANDS=OFF \
-          #       -DCMAKE_C_COMPILER=/usr/bin/clang \
-          #       -DCMAKE_CXX_COMPILER=/usr/bin/clang++ \
-          #       -DCMAKE_CXX_STANDARD=20 \
-          #       -DCMAKE_CXX_STANDARD_REQUIRED=ON \
-          #       -DCMAKE_CXX_EXTENSIONS=OFF \
-          #       -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install/ \
-          #       -DPython_EXECUTABLE=$pythonLocation \
-          #       -S${{ github.workspace }} \
-          #       -B${{ github.workspace }}/build \
-          #       -G Ninja
           cmake --preset linux-debug-with-vcpkg
