@@ -1,8 +1,8 @@
 # python
 project(nconpp_python LANGUAGES CXX)
 
-set(Python_FIND_VIRTUALENV FIRST)
-set(Python_ROOT_DIR $ENV{PYTHON_VENV})
+#set(Python_FIND_VIRTUALENV FIRST)
+#set(Python_ROOT_DIR $ENV{PYTHON_VENV})
 message(STATUS "Use Python venv: $ENV{PYTHON_VENV}")
 # the format Python_EXECUTABLE is correct
 # otherwise some packages won't find the interpreter
