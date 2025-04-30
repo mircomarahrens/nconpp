@@ -50,11 +50,14 @@ jobs:
         run: |
           # poetry config virtualenvs.create false
           poetry install --no-interaction --no-root
-      - name: Cmake build
+      - name: Cmake configure
         env:
           VCPKG_ROOT: ${{ steps.vcpkg.outputs.vcpkg_root }}
         run: |
           cmake --preset linux-debug-with-vcpkg
+      - name: Cmake build
+        run: |
+          cmake --build build
       - name: Run ctest
         run: |
           cd build && ctest
