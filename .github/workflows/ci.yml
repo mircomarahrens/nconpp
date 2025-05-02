@@ -17,6 +17,7 @@ jobs:
         poetry-version: [2.1.2]
         vcpgk-version: [2025.04.09]
         xtensor-python-version: [0.27.0]
+        cmake-preset-target: [linux-debug-with-vcpkg]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -54,10 +55,10 @@ jobs:
         env:
           VCPKG_ROOT: ${{ steps.vcpkg.outputs.vcpkg_root }}
         run: |
-          cmake --preset linux-debug-with-vcpkg
+          cmake --preset ${{ matrix.cmake-preset-target }}
       - name: Cmake build
         run: |
-          cmake --build build
+          cmake --build ${{ github.workspace }}/build/${{ matrix.cmake-preset-target }} --parallel 10 --
       - name: Run ctest
         run: |
           cd build && ctest
