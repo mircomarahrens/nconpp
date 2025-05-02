@@ -61,4 +61,4 @@ jobs:
           cmake --build ${{ github.workspace }}/build/${{ matrix.cmake-preset-target }} --parallel 10 --
       - name: Run ctest
         run: |
-          cd build && ctest
+          cd build/${{ matrix.cmake-preset-target }} && ctest
