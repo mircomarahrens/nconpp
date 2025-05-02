@@ -15,7 +15,10 @@ cd nconpp
 - C++ Package manager: [vcpkg](https://vcpkg.io/en/)
 
 ```bash
-git clone https://github.com/microsoft/vcpkg utils/vcpkg
+git clone --branch "2025.04.09" --single-branch https://github.com/microsoft/vcpkg.git
+cd vcpkg
+./bootstrap-vcpkg.sh --disableMetrics
+./vcpkg integrate install
 ```
 
 - C++ build system: [CMake](https://cmake.org/)
@@ -23,8 +26,16 @@ git clone https://github.com/microsoft/vcpkg utils/vcpkg
 - Python package manager: [Poetry](https://python-poetry.org/)
 
 ```bash
-poetry shell
 poetry install
+poetry env activate
+```
+
+- Multi-dimensional arrays with broadcasting and lazy computing: [Xtensor](https://github.com/xtensor-stack/xtensor)
+
+```bash
+git clone --branch "0.27.0" --depth 1 --single-branch https://github.com/xtensor-stack/xtensor-python.git python/extern/xtensor-python
+# the CMakeLists is outdated and needed an update 
+mv python/extern/CMakeLists_xtensor-python.txt python/extern/xtensor-python/CMakeLists.txt
 ```
 
 ## Ideas
