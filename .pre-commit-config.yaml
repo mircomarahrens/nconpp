@@ -62,7 +62,7 @@ repos:
       #   args:
       #     - -extra-arg=-std=c++20
       #     - -extra-arg=-stdlib=libc++
-      #     - -p=out/build/linux-debug-with-vcpkg
+      #     - -p=build/linux-debug-with-vcpkg
       #     - "-header-filter=^(?!.*\\.hpp$).*"
       # - id: oclint
       # - id: uncrustify

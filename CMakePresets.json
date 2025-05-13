@@ -40,6 +40,26 @@
                 "CMAKE_CXX_EXTENSIONS": "OFF",
                 "Python_EXECUTABLE": "${sourceDir}/.venv/bin/python"
             }
+        },
+        {
+            "name": "python",
+            "inherits": "default",
+            "environment": {
+                "VCPKG_ROOT": "${sourceDir}/vcpkg",
+                "PYTHON_VENV": "${sourceDir}/.venv"
+              },
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Python",
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/install/${presetName}",
+                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+                "CMAKE_C_COMPILER": "/usr/bin/clang",
+                "CMAKE_CXX_COMPILER": "/usr/bin/clang++",
+                "CMAKE_CXX_STANDARD": "20",
+                "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+                "CMAKE_CXX_EXTENSIONS": "OFF",
+                "Python_EXECUTABLE": "${sourceDir}/.venv/bin/python"
+            }
         }
     ],
     "testPresets": [
