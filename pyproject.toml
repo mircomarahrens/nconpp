@@ -21,9 +21,16 @@ build-backend = "scikit_build_core.build"
 [tool.scikit-build]
 wheel.install-dir = "nconpp"
 minimum-version = "0.2.2"
-build-dir = "out/build/python"
+build-dir = "build/python"
 cmake.args = [
-    "-DCMAKE_TOOLCHAIN_FILE=/home/mircomarahrens/documents/PhD/code/nconpp/vcpkg/scripts/buildsystems/vcpkg.cmake",
+    "-DCMAKE_TOOLCHAIN_FILE=/home/mircomarahrens/github/mircomarahrens/nconpp/vcpkg/scripts/buildsystems/vcpkg.cmake",
+    "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
+    "-DCMAKE_C_COMPILER=/usr/bin/clang",
+    "-DCMAKE_CXX_COMPILER=/usr/bin/clang++",
+    "-DCMAKE_CXX_STANDARD=20",
+    "-DCMAKE_CXX_STANDARD_REQUIRED=ON",
+    "-DCMAKE_CXX_EXTENSIONS=OFF",
+    "-DPython_EXECUTABLE=.venv/bin/python",
     "-DCMAKE_BUILD_TYPE=Python"
 ]
 cmake.minimum-version = "3.26.1"
@@ -31,6 +38,7 @@ cmake.verbose = true
 ninja.make-fallback = false
 ninja.minimum-version = "1.11"
 logging.level = "INFO"
+
 
 [tool.poetry]
 package-mode = false # not implemented yet, we use poetry only for dependencies

@@ -53,11 +53,11 @@ set(NCONPP_CPP_SRC
 # endforeach()
 
 # debug
-if(CMAKE_BUILD_TYPE MATCHES Debug AND NOT Python)
+if(CMAKE_BUILD_TYPE MATCHES Debug)
     include(cpp/test/googletest.cmake)
 endif()
 
 # python
-if(CMAKE_BUILD_TYPE MATCHES Debug OR Python)
+if(CMAKE_BUILD_TYPE MATCHES Python)
     include(python/python.cmake)
 endif()

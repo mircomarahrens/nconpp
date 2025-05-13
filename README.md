@@ -27,6 +27,27 @@ poetry shell
 poetry install
 ```
 
+- custom xtensor-python; needs an update by time
+
+```bash
+git clone git@github.com:mircomarahrens/xtensor-python.git python/extern/xtensor-python
+```
+
+## Build
+
+### Debug
+
+```bash
+cmake --preset Debug
+```
+
+### Python
+
+```bash
+cmake --preset Python
+pip install .
+```
+
 ## Ideas
 
 * Text-based user interface; inspiration: <https://www.tensortrace.com/>
