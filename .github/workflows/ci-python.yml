@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        python-version: [3.12]
+        poetry-version: [2.1.2]
+        vcpgk-version: [2025.04.09]
+        xtensor-python-version: [0.27.0]
+        cmake-preset-target: [python]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up vcpkg
+        id: vcpkg
+        run: |
+          git clone --branch ${{ matrix.vcpgk-version }} --single-branch https://github.com/microsoft/vcpkg.git
+          cd vcpkg
+          ./bootstrap-vcpkg.sh --disableMetrics
+          ./vcpkg integrate install
+          echo "VCPKG_ROOT=$(pwd)" >> "$GITHUB_OUTPUT"
+      - name: Set up xtensor-python
+        run: |
+          git clone --branch ${{ matrix.xtensor-python-version }} --depth 1 --single-branch https://github.com/xtensor-stack/xtensor-python.git ${{ github.workspace }}/python/extern/xtensor-python
+          mv ${{ github.workspace }}/python/extern/CMakeLists_xtensor-python.txt ${{ github.workspace }}/python/extern/xtensor-python/CMakeLists.txt
+      - name: Install clangd
+        run: |
+          sudo apt-get install -y clangd-18
+          sudo update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-18 100
+      - name: Install make
+        run: |
+          sudo apt-get install -y make
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: pyproject.toml
+      - name: Install Poetry
+        run: |
+          pip install poetry==${{ matrix.poetry-version }}
+      - name: Poetry install
+        run: |
+          # poetry config virtualenvs.create false
+          poetry install --no-interaction --no-root
+      - name: Cmake configure
+        env:
+          VCPKG_ROOT: ${{ steps.vcpkg.outputs.vcpkg_root }}
+        run: |
+          cmake --preset ${{ matrix.cmake-preset-target }}
+      - name: Pip install
+        run: |
+          pip install .
