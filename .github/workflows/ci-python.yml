@@ -32,7 +32,7 @@ jobs:
       - name: Set up xtensor-python
         run: |
           git clone --branch ${{ matrix.xtensor-python-version }} --depth 1 --single-branch https://github.com/xtensor-stack/xtensor-python.git ${{ github.workspace }}/python/extern/xtensor-python
-          mv ${{ github.workspace }}/python/extern/CMakeLists_xtensor-python.txt ${{ github.workspace }}/python/extern/xtensor-python/CMakeLists.txt
+          cp ${{ github.workspace }}/python/extern/CMakeLists_xtensor-python.txt ${{ github.workspace }}/python/extern/xtensor-python/CMakeLists.txt
       - name: Install clangd
         run: |
           sudo apt-get install -y clangd-18
