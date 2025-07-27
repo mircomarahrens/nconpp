@@ -1,6 +1,8 @@
+from __future__ import annotations
 import itertools
 import numpy as np
 import sympy as sp
+
 
 
 class FSM:
@@ -176,7 +178,7 @@ class MPO(FSM):
     def __str__(self):
         return self.table.__str__()
 
-    def __matmul__(self, other):
+    def __matmul__(self, other) -> MPO:
         if not isinstance(other, MPO):
             raise ValueError("Operand must be an instance of MPO")
 

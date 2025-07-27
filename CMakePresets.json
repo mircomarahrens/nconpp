@@ -22,7 +22,7 @@
             }
         },
         {
-            "name": "linux-debug-with-vcpkg",
+            "name": "linux-debug",
             "inherits": "default",
             "environment": {
                 "VCPKG_ROOT": "${sourceDir}/vcpkg",
@@ -64,10 +64,10 @@
     ],
     "testPresets": [
         {
-            "name": "user-googletests-debug",
+            "name": "linux-gtests-debug",
             "description": "User specified test preset running googletest.",
             "displayName": "googletest debug (user)",
-            "configurePreset": "linux-debug-with-vcpkg"
+            "configurePreset": "linux-debug"
         }
     ]
 }
