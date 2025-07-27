@@ -46,11 +46,11 @@ set(NCONPP_CPP_SRC
     cpp/src/TensorNetwork.hpp
     )
 
-# get_cmake_property(_variableNames VARIABLES)
-# list (SORT _variableNames)
-# foreach (_variableName ${_variableNames})
-#     message(STATUS "${_variableName}=${${_variableName}}")
-# endforeach()
+get_cmake_property(_variableNames VARIABLES)
+list (SORT _variableNames)
+foreach (_variableName ${_variableNames})
+    message(STATUS "${_variableName}=${${_variableName}}")
+endforeach()
 
 # debug
 if(CMAKE_BUILD_TYPE MATCHES Debug)

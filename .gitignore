@@ -1,4 +1,5 @@
 # Custom
+python/extern/xtensor-python
 .DS_Store
 .ruff_cache
 .venv/

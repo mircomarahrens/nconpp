@@ -35,15 +35,16 @@ poetry env activate
 ```bash
 git clone --branch "0.27.0" --depth 1 --single-branch https://github.com/xtensor-stack/xtensor-python.git python/extern/xtensor-python
 # the CMakeLists is outdated and needed an update 
-mv python/extern/CMakeLists_xtensor-python.txt python/extern/xtensor-python/CMakeLists.txt
+cp python/extern/CMakeLists_xtensor-python.txt python/extern/xtensor-python/CMakeLists.txt
 ```
 
 ## Build
 
-### Debug
+### C++ Debug
 
 ```bash
-cmake --preset Debug
+cmake --preset linux-debug
+cmake --build build/linux-debug
 ```
 
 ### Python
@@ -51,6 +52,14 @@ cmake --preset Debug
 ```bash
 cmake --preset Python
 pip install .
+```
+
+## Testing
+
+### C++
+
+```bash
+ctest --test-dir build/linux-debug
 ```
 
 ## Ideas
