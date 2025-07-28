@@ -56,6 +56,9 @@ jobs:
           VCPKG_ROOT: ${{ steps.vcpkg.outputs.vcpkg_root }}
         run: |
           cmake --preset ${{ matrix.cmake-preset-target }}
+      - name: Cmake build
+        run: |
+          cmake --build build/${{ matrix.cmake-preset-target }}
       - name: Pip install
         run: |
           pip install .
