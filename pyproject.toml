@@ -1,5 +1,4 @@
 [project]
-package-mode = false
 name = "nconpp"
 version = "0.1.0"
 description = "A library for tensor network calculations."
