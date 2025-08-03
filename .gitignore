@@ -5,6 +5,7 @@ python/extern/xtensor-python
 .venv/
 out/
 vcpkg/
+.compile-commands.json
 
 # JetBrains
 /.idea/

@@ -26,8 +26,8 @@ cd vcpkg
 - Python package manager: [Poetry](https://python-poetry.org/)
 
 ```bash
-poetry install
-poetry env activate
+uv venv
+source .venv/bin/activate
 ```
 
 - Multi-dimensional arrays with broadcasting and lazy computing: [Xtensor](https://github.com/xtensor-stack/xtensor)
@@ -51,7 +51,7 @@ cmake --build build/linux-debug
 
 ```bash
 cmake --preset Python
-pip install .
+uv pip install .
 ```
 
 ## Testing
@@ -62,8 +62,22 @@ pip install .
 ctest --test-dir build/linux-debug
 ```
 
+## Development
+
+If you are using Neovim, a language server like clangd and getting messages like "Header file not found", you can symlink the `compile_commands.json` file to the root directory of the project:
+
+```bash
+ln -s build/linux-debug/compile_commands.json .
+```
+
+or for the Python bindings:
+
+```bash
+ln -s build/python/compile_commands.json .
+```
+
 ## Ideas
 
-* Text-based user interface; inspiration: <https://www.tensortrace.com/>
-* Add mechanism for empty initilaization of class TensorNetwork with CRUD-like behavior
-* Add tests for python via pytest or similar
+- Text-based user interface; inspiration: <https://www.tensortrace.com/>
+- Add mechanism for empty initialization of class TensorNetwork with CRUD-like behavior
+- Add tests for python via pytest or similar
