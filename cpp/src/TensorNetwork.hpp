@@ -575,27 +575,19 @@ class TensorNetwork : public Graph<GRAPH_PROPERTIES::tensornetwork_graph_propert
 
     /**
      * @brief Get a map where the keys are representing indexes of vertices and
-     *  the value the corresponings legs indices
+     *  the value the corresponding legs indices
      *
-     * @return std::unordered_map<int, std::vector<int>>
+     * @return std::unordered_map<std::size_t, std::vector<int>>
      */
-    std::unordered_map<int, std::vector<int>> getLegs()
+    std::unordered_map<std::size_t, std::vector<int>> getLegs()
     {
-        std::unordered_map<int, std::vector<int>> legsMap;
-        auto vs = this->getVertices();
+        std::unordered_map<std::size_t, std::vector<int>> legsMap;
 
-        for (const auto &vertex : vs)
-        {
-            int vertexIndex = vertex.first;        // Assuming vertex.first gives the vertex index
+        for (const auto &vertex : this->getVertexProperties())
+        {   
+            auto vertexIndex = vertex.first;       // Assuming vertex.first gives the vertex index
             const auto &legs = vertex.second.legs; // Assuming vertex.second.legs gives the legs of the vertex
-            std::vector<int> legIndices;
-
-            for (const auto &leg : legs)
-            {
-                legIndices.push_back(leg.index); // Assuming leg.index gives the index of the leg
-            }
-
-            legsMap[vertexIndex] = legIndices;
+            legsMap[vertexIndex] = legs;
         }
 
         return legsMap;
