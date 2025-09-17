@@ -94,14 +94,22 @@ class Graph
         return keys;
     }
 
-/**
- * @brief Add a new vertex from a given index to the graph and return its
- * index. Throws exception if vertex index is present.
- *
- * @return std::size_t
- */
-#include <optional>
+    /**
+     * @brief Get the properties of the graph.
+     *
+     * @return graph_properties_t
+     */
+    std::unordered_map<std::size_t, vertex_properties_t> getVertexProperties()
+    {
+        return vertices;
+    }
 
+    /**
+     * @brief Add a new vertex from a given index to the graph and return its
+     * index. Throws exception if vertex index is present.
+     *
+     * @return std::size_t
+     */
     std::size_t addVertex(std::optional<std::size_t> newVertexIndex = std::nullopt)
     {
         if (newVertexIndex)
