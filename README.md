@@ -1,4 +1,17 @@
-# Efficient tensor network contraction and decomposition with ``nconpp``
+<!-- markdownlint-disable-file MD003 MD041 MD025 -->
+==================================================================
+=  =======  ====     =====    ====  =======  ==       ===       ==
+=   ======  ===  ===  ===  ==  ===   ======  ==  ====  ==  ====  =
+=    =====  ==  ========  ====  ==    =====  ==  ====  ==  ====  =
+=  ==  ===  ==  ========  ====  ==  ==  ===  ==  ====  ==  ====  =
+=  ===  ==  ==  ========  ====  ==  ===  ==  ==       ===       ==
+=  ====  =  ==  ========  ====  ==  ====  =  ==  ========  =======
+=  =====    ==  ========  ====  ==  =====    ==  ========  =======
+=  ======   ===  ===  ===  ==  ===  ======   ==  ========  =======
+=  =======  ====     =====    ====  =======  ==  ========  =======
+==================================================================
+
+# A library for tensor network contraction and decomposition
 
 This module facilitates efficient contraction and decomposition of tensor networks. It is inspired by the MATLAB library NCON (<https://arxiv.org/abs/1402.0939>) and extensively leverages graph algorithms and linear algebra.
 
