@@ -44,13 +44,10 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version-file: pyproject.toml
-      - name: Install Poetry
-        run: |
-          pip install poetry==${{ matrix.poetry-version }}
-      - name: Poetry install
-        run: |
-          # poetry config virtualenvs.create false
-          poetry install --no-interaction --no-root
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+      - name: Install the project
+        run: uv sync --locked --all-extras --dev
       - name: Cmake configure
         env:
           VCPKG_ROOT: ${{ steps.vcpkg.outputs.vcpkg_root }}

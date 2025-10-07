@@ -19,7 +19,7 @@ The following dependencies are required for local development. The instructions 
 lsb_release -a
 ```
 
-```text
+```bash
 No LSB modules are available.
 Distributor ID: Ubuntu
 Description:    Ubuntu 24.04.3 LTS
