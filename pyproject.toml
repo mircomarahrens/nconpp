@@ -42,7 +42,7 @@ dev = [
 ]
 
 [build-system]
-requires = ["scikit-build-core>=0.2.2", "numpy>=1.24.2"]
+requires = ["scikit-build-core>=0.2.2", "numpy>=1.24.2", "pybind11"]
 build-backend = "scikit_build_core.build"
 
 [tool.uv]
