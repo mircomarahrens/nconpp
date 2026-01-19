@@ -1,10 +1,11 @@
 # Dockerfile for multi-stage container: https://devblogs.microsoft.com/cppblog/using-multi-stage-containers-for-c-development/
-FROM debian:latest as builder
-LABEL description="Build container - nconpp-build"
+FROM ubuntu:24.04 as builder
+LABEL description="NCONPP - Build container for CPP"
 
 # install needed packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
+    clang-18 \
     ca-certificates \
     pkg-config \
     gfortran \
@@ -17,11 +18,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     --fix-missing \
     && rm -rf /var/lib/apt/lists/*
 
+RUN update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100 \
+ && update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-18 100
+
 RUN cd /tmp \
-    && wget https://github.com/Kitware/CMake/releases/download/v3.26.3/cmake-3.26.3-linux-x86_64.sh \
-    && chmod +x cmake-3.26.3-linux-x86_64.sh \
-    && ./cmake-3.26.3-linux-x86_64.sh --prefix=/usr/local --skip-license \
-    && rm cmake-3.26.3-linux-x86_64.sh
+    && wget https://github.com/Kitware/CMake/releases/download/v4.1.2/cmake-4.1.2-linux-x86_64.sh \
+    && chmod +x cmake-4.1.2-linux-x86_64.sh \
+    && ./cmake-4.1.2-linux-x86_64.sh --prefix=/usr/local --skip-license \
+    && rm cmake-4.1.2-linux-x86_64.sh
 
 # need ninja >= 1.10.2
 RUN cd /tmp \
@@ -29,26 +33,19 @@ RUN cd /tmp \
     && unzip ninja-linux.zip \
     && chmod +x ninja \
     && mv ninja /usr/bin/
+    
+WORKDIR /tmp/project
 
 # build vcpkg
-RUN cd /tmp \
+RUN cd /tmp/project \
     && git clone https://github.com/Microsoft/vcpkg.git \
     && cd vcpkg \
     && ./bootstrap-vcpkg.sh -useSystemBinaries -disableMetrics
 
-WORKDIR /tmp/project
+COPY CMakePresets.json CMakeLists.txt vcpkg.json /tmp/project/
+COPY cpp /tmp/project/cpp
 
-COPY CMakeLists.txt vcpkg.json /tmp/project/
-COPY include /tmp/project/include
-
-RUN mkdir build \
-    && cmake \
-        -DCMAKE_GENERATOR=Ninja \
-        -DCMAKE_CXX_COMPILER=/usr/bin/gcc \
-        -DCMAKE_TOOLCHAIN_FILE=/tmp/vcpkg/scripts/buildsystems/vcpkg.cmake \
-        -DCMAKE_BUILD_TYPE:STRING=Release \
-        -DVCPKG_TARGET_TRIPLET=x64-linux \
-        -H/tmp/project -B/tmp/project/build
+RUN cmake --preset linux-debug
 
 ENTRYPOINT ["tail", "-f", "/dev/null"]
 
