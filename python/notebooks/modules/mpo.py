@@ -4,24 +4,23 @@ import numpy as np
 import sympy as sp
 
 
-
 class FSM:
     def __init__(self):
         self.start = 0
-        self.end = int()
-        self.symbols = dict()
-        self.states = {self.start: "S"}
-        self.transitions = dict()
+        self.states = {self.start: "S"}  # Q with initial state S
+        self.symbols = dict()  # Sigma
+        self.transitions = dict()  # delta
+        self.end = int()  # single-accept state, |F|=1
         self.table = self._construct_table()
 
-    def add_state(self, state: int, label: str = "", is_end: bool = False):
+    def add_state(self, state: int, label: str = "", is_final: bool = False):
         """
         Adds a state to the finite state machine.
 
         Args:
             state (int): The state to be added.
             label (str, optional): The label for the state. Defaults to an empty string.
-            is_end (bool, optional): Indicates if the state is an end state. Defaults to False.
+            is_final (bool, optional): Indicates if the state is an end state. Defaults to False.
 
         Raises:
             ValueError: If the end state already exists or if the state already exists.
@@ -29,7 +28,7 @@ class FSM:
         Returns:
             None
         """
-        if is_end:
+        if is_final:
             if self.end:
                 raise ValueError("End state already exists")
             self.end = state
@@ -148,9 +147,11 @@ class MPO(FSM):
         self.local_dim = local_dim
         self.symbols = dict()
         self.site = sp.Symbol("i", real=True)
-        self.default()
+        self.sites = int()
 
     def default(self):
+        self.sites = 2
+        
         self.add_state(1, "T")
         self.add_state(2, "F", True)
 
@@ -180,10 +181,13 @@ class MPO(FSM):
 
     def __matmul__(self, other) -> MPO:
         if not isinstance(other, MPO):
-            raise ValueError("Operand must be an instance of MPO")
+            raise ValueError("Operand must be an instance of class MPO")
 
         result = MPO()
 
+        if self.site != other.site:
+            # matmul elements
+            pass
         result = self.get_symbolic_table() @ other.get_symbolic_table()
 
         # for i in range(len(self.states)):
@@ -227,5 +231,8 @@ class MPO(FSM):
             table[pair] = 0
         return table
 
-    def site_index(self, site: int) -> str:
-        """ """
+    def get_site_symbol(self) -> str:
+        """
+        Returns the symbolic site index used in the MPO.
+        """
+        return self.site
