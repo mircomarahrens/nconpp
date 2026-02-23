@@ -33,7 +33,7 @@ RUN cd /tmp \
     && unzip ninja-linux.zip \
     && chmod +x ninja \
     && mv ninja /usr/bin/
-    
+
 WORKDIR /tmp/project
 
 # build vcpkg

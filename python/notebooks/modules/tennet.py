@@ -8,13 +8,13 @@ class Tennet:
     def __init__(self):
         self.symbols = {}
         pass
-    
+
     def mpd(self):
         pass
 
     def mps(self):
         pass
-    
+
     def symbols():
         pass
 
