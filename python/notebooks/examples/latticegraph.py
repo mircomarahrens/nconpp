@@ -1,7 +1,5 @@
 #!/usr/bin/python3
 
-import numpy as np
-import matplotlib.pyplot as plt
 from nconpp import LatticeGraph
 
 
@@ -11,7 +9,14 @@ class PyLatticeGraph(LatticeGraph):
     Adds predefined lattice configurations and plotting utilities.
     """
 
-    def __init__(self, kind="honeycomb", sites=None, unitcell=None, bcs=None):
+    def __init__(
+        self,
+        kind="honeycomb",
+        sites=None,
+        unitcell=None,
+        bcs=None,
+        remove_edgeless_boundary=True,
+    ):
         self.kind = kind
 
         # Use predefined defaults if not provided
@@ -22,6 +27,9 @@ class PyLatticeGraph(LatticeGraph):
 
         # Call the C++ LatticeGraph constructor
         super().__init__(kind, sites, unitcell, bcs)
+
+        if remove_edgeless_boundary:
+            self.removeEdgelessBoundaryVertices()
 
     @staticmethod
     def _get_predefined(kind):
@@ -48,12 +56,23 @@ class PyLatticeGraph(LatticeGraph):
             },
             "cube": {
                 "sites": (2, 2, 2),
-                "unitcell": [((+1, 0, 0), (0, +1, 0), (0, 0, +1), (-1, 0, 0), (0, -1, 0), (0, 0, -1))],
+                "unitcell": [
+                    (
+                        (+1, 0, 0),
+                        (0, +1, 0),
+                        (0, 0, +1),
+                        (-1, 0, 0),
+                        (0, -1, 0),
+                        (0, 0, -1),
+                    )
+                ],
                 "bcs": ("obc", "obc", "obc"),
             },
         }
         if kind not in predefined:
-            raise ValueError(f"Unknown lattice kind '{kind}'. Available: {list(predefined.keys())}")
+            raise ValueError(
+                f"Unknown lattice kind '{kind}'. Available: {list(predefined.keys())}"
+            )
         return predefined[kind]
 
     @property
@@ -78,63 +97,79 @@ class PyLatticeGraph(LatticeGraph):
     def plot_graph(self):
         """Plotting the graph of the lattice with the help of rustworkx.
 
+        Creates a temporary rustworkx graph for visualization only.
+        Does not modify the LatticeGraph instance.
+        Works with or without edgeless boundary vertices.
+
         See https://www.rustworkx.org/ for further details.
         """
         import rustworkx as rx
         from rustworkx.visualization import mpl_draw
+        from matplotlib import pyplot as plt
         import matplotlib.patches as mpatches
 
+        # Build a temporary rustworkx graph for visualization
         G = rx.PyDiGraph()
 
+        # Map our vertex indices to rustworkx node indices
         rx_index_map = {}
         pos = {}
-        labels = {}
         node_colors = []
-
         interior = self.interior_indices
-        vdict = self.vertex_dict
+        has_boundary = False
 
-        for idx, coord in vdict.items():
+        for idx, vp in self.vertices.items():
+            coord = tuple(vp.coordinate)
             rx_idx = G.add_node(idx)
             rx_index_map[idx] = rx_idx
+
+            # Ensure 2D coordinates for plotting
             if len(coord) == 1:
                 pos[rx_idx] = (coord[0], 0)
             elif len(coord) == 2:
                 pos[rx_idx] = coord
             else:
                 pos[rx_idx] = (coord[0], coord[1])
-            labels[rx_idx] = str(idx)
 
             if idx in interior:
-                node_colors.append('yellow')
+                node_colors.append("yellow")
             else:
-                node_colors.append('lightsalmon')
+                node_colors.append("lightsalmon")
+                has_boundary = True
 
-        edict = self.edge_dict
-        for bond_idx, (src, tgt) in edict.items():
-            G.add_edge(rx_index_map[src], rx_index_map[tgt], bond_idx)
+        # Add edges to the temporary rustworkx graph
+        for _, ep in self.edges.items():
+            if ep.src in rx_index_map and ep.dest in rx_index_map:
+                G.add_edge(rx_index_map[ep.src], rx_index_map[ep.dest], None)
 
+        # Plot
         fig, ax = plt.subplots(1, 1, figsize=(8, 6))
 
-        mpl_draw(G,
-                 pos=pos,
-                 labels=lambda node: labels[node],
-                 node_color=node_colors,
-                 node_size=750,
-                 edge_color='black',
-                 arrows=False,
-                 font_size=8,
-                 with_labels=True,
-                 ax=ax)
+        mpl_draw(
+            G,
+            pos=pos,
+            labels=lambda node: str(node),
+            node_color=node_colors,
+            node_size=750,
+            edge_color="black",
+            arrows=False,
+            font_size=8,
+            with_labels=True,
+            ax=ax,
+        )
 
-        interior_patch = mpatches.Patch(color='yellow', label='Lattice sites')
-        boundary_patch = mpatches.Patch(color='lightsalmon', label='Boundary sites')
-        ax.legend(handles=[interior_patch, boundary_patch], loc='upper right')
+        # Legend
+        handles = [mpatches.Patch(color="yellow", label="Lattice sites")]
+        if has_boundary:
+            handles.append(mpatches.Patch(color="lightsalmon", label="Boundary sites"))
+        ax.legend(handles=handles, loc="upper right")
 
         ax.set_axis_off()
         plt.tight_layout()
         plt.show()
 
     def __repr__(self):
-        return (f"PyLatticeGraph(kind='{self.kind}', "
-                f"vertices={len(self.vertices)}, edges={len(self.edges)})")
+        return (
+            f"PyLatticeGraph(kind='{self.kind}', "
+            f"vertices={len(self.vertices)}, edges={len(self.edges)})"
+        )

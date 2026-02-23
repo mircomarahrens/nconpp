@@ -31,8 +31,7 @@ namespace py = pybind11;
  * @tparam V
  * @tparam E
  */
-template <class G, class V, class E> class PyGraph_trampoline : public Graph<G, V, E>
-{
+template <class G, class V, class E> class PyGraph_trampoline : public Graph<G, V, E> {
   public:
     using Graph<G, V, E>::Graph;
 };
@@ -43,8 +42,7 @@ template <class G, class V, class E> class PyGraph_trampoline : public Graph<G, 
  * @param m
  * @param typestr
  */
-void PyGraph_wrapper(py::module &m)
-{
+void PyGraph_wrapper(py::module &m) {
     using default_struct = GRAPH_PROPERTIES::default_struct;
     using graph = PyGraph_trampoline<default_struct, default_struct, default_struct>;
 
@@ -64,8 +62,8 @@ void PyGraph_wrapper(py::module &m)
 
     py::class_<graph>(m, "Graph", py::buffer_protocol(), py::dynamic_attr())
         .def(py::init<>())
-        .def(py::init<std::size_t, bool, bool>(), py::arg("nodes"), py::arg("parallel_edges") = true,
-             py::arg("directed_edges") = false)
+        .def(py::init<std::size_t, bool, bool>(), py::arg("nodes"),
+             py::arg("parallel_edges") = true, py::arg("directed_edges") = false)
         .def("get_vertices", &graph::getVertices)
         .def("add_vertex", &graph::addVertex, py::arg("vertex") = py::none())
         .def("remove_vertex", &graph::removeVertex, py::arg("vertex"))
@@ -86,8 +84,7 @@ void PyGraph_wrapper(py::module &m)
  * @param m
  * @param typestr
  */
-void PyLatticeGraph_wrapper(py::module &m)
-{
+void PyLatticeGraph_wrapper(py::module &m) {
     using lattice = LatticeGraph;
     using lg = GRAPH_PROPERTIES::lattice_graph_properties;
     using lv = GRAPH_PROPERTIES::lattice_vertex_properties;
@@ -110,12 +107,13 @@ void PyLatticeGraph_wrapper(py::module &m)
         .def_readonly("dest", &graph::edge_properties_t::dest)
         .def_readonly("boundary", &graph::edge_properties_t::boundary);
 
-    py::class_<lattice>(m, "LatticeGraph", py::buffer_protocol(), py::dynamic_attr(), py::module_local())
+    py::class_<lattice>(m, "LatticeGraph", py::buffer_protocol(), py::dynamic_attr(),
+                        py::module_local())
         .def(py::init<std::string &, std::vector<std::size_t> &, lattice::directions_type &,
                       std::vector<std::string> &>(),
              py::arg("name") = "honeycomb", py::arg("shape") = std::vector<std::size_t>({4, 4}),
-             py::arg("directions") =
-                 LatticeGraph::directions_type({{{0, -1}, {0, +1}, {+1, 0}}, {{-1, 0}, {0, -1}, {0, +1}}}),
+             py::arg("directions") = LatticeGraph::directions_type(
+                 {{{0, -1}, {0, +1}, {+1, 0}}, {{-1, 0}, {0, -1}, {0, +1}}}),
              py::arg("boundary_conditions") = std::vector<std::string>({"pbc", "pbc"}))
         .def("getGridShape", &lattice::getGridShape)
         .def("getBoundaryGridShape", &lattice::getBoundaryGridShape)
@@ -131,7 +129,8 @@ void PyLatticeGraph_wrapper(py::module &m)
         .def_property_readonly("num_vertices", &lattice::NumVertices)
         .def_readonly("adjacency_list", &lattice::adjacency_list)
         .def_readonly("vertices", &lattice::vertices)
-        .def_readonly("edges", &lattice::edges);
+        .def_readonly("edges", &lattice::edges)
+        .def("removeEdgelessBoundaryVertices", &lattice::removeEdgelessBoundaryVertices);
 }
 
 /**
@@ -139,33 +138,25 @@ void PyLatticeGraph_wrapper(py::module &m)
  *
  * @tparam T
  */
-template <typename T> class PyTensorNetwork_trampoline : public TensorNetwork<T>
-{
+template <typename T> class PyTensorNetwork_trampoline : public TensorNetwork<T> {
   public:
     PyTensorNetwork_trampoline(const std::vector<npp::tensor_type<T>> &tensorList,
                                const std::vector<std::vector<int>> &subscriptVectorList)
-        : TensorNetwork<T>(tensorList, subscriptVectorList)
-    {
-    }
+        : TensorNetwork<T>(tensorList, subscriptVectorList) {}
 
     PyTensorNetwork_trampoline(std::vector<npp::tensor_type<T>> &&tensorList,
                                std::vector<std::vector<int>> &&subscriptVectorList)
-        : TensorNetwork<T>(std::move(tensorList), std::move(subscriptVectorList))
-    {
-    }
+        : TensorNetwork<T>(std::move(tensorList), std::move(subscriptVectorList)) {}
 
     void contract_wrapper(std::optional<std::vector<int>> opt_contractionSequence = std::nullopt,
-                          std::optional<std::vector<int>> opt_finalOrder = std::nullopt)
-    {
+                          std::optional<std::vector<int>> opt_finalOrder = std::nullopt) {
         std::vector<int> contractionSequence = {};
-        if (opt_contractionSequence.has_value())
-        {
+        if (opt_contractionSequence.has_value()) {
             contractionSequence = opt_contractionSequence.value();
         }
 
         std::vector<int> finalOrder = {};
-        if (opt_finalOrder.has_value())
-        {
+        if (opt_finalOrder.has_value()) {
             finalOrder = opt_finalOrder.value();
         }
 
@@ -173,25 +164,21 @@ template <typename T> class PyTensorNetwork_trampoline : public TensorNetwork<T>
     }
 };
 
-class PyTensorNetworkGraphProperties_trampoline : public GRAPH_PROPERTIES::tensornetwork_graph_properties
-{
-};
+class PyTensorNetworkGraphProperties_trampoline
+    : public GRAPH_PROPERTIES::tensornetwork_graph_properties {};
 template <typename T>
-class PyTensorNetworkVertexProperties_trampoline : public GRAPH_PROPERTIES::tensornetwork_vertex_properties<T>
-{
-};
+class PyTensorNetworkVertexProperties_trampoline
+    : public GRAPH_PROPERTIES::tensornetwork_vertex_properties<T> {};
 template <typename T>
-class PyTensorNetworkEdgeProperties_trampoline : public GRAPH_PROPERTIES::tensornetwork_edge_properties<T>
-{
-};
+class PyTensorNetworkEdgeProperties_trampoline
+    : public GRAPH_PROPERTIES::tensornetwork_edge_properties<T> {};
 
 /**
  * @brief Wrapper function for trampoline class PyTensorNetwork_trampoline
  *
  * @param m
  */
-void PyTensorNetwork_wrapper(py::module &m)
-{
+void PyTensorNetwork_wrapper(py::module &m) {
     using tensornetwork = PyTensorNetwork_trampoline<std::complex<double>>;
     using tng = PyTensorNetworkGraphProperties_trampoline;
     using tnv = PyTensorNetworkVertexProperties_trampoline<std::complex<double>>;
@@ -214,13 +201,16 @@ void PyTensorNetwork_wrapper(py::module &m)
         .def_readonly("dest", &graph::edge_properties_t::dest)
         .def_readwrite("singular_values", &graph::edge_properties_t::singular_values);
 
-    py::class_<tensornetwork>(m, "TensorNetwork", py::buffer_protocol(), py::dynamic_attr(), py::module_local())
-        .def(py::init<std::vector<npp::tensor_type<std::complex<double>>> &, std::vector<std::vector<int>> &>(),
+    py::class_<tensornetwork>(m, "TensorNetwork", py::buffer_protocol(), py::dynamic_attr(),
+                              py::module_local())
+        .def(py::init<std::vector<npp::tensor_type<std::complex<double>>> &,
+                      std::vector<std::vector<int>> &>(),
              py::arg("tensorList"), py::arg("legsList"))
-        .def(py::init<std::vector<npp::tensor_type<std::complex<double>>> &&, std::vector<std::vector<int>> &&>(),
+        .def(py::init<std::vector<npp::tensor_type<std::complex<double>>> &&,
+                      std::vector<std::vector<int>> &&>(),
              py::arg("tensorList"), py::arg("legsList"))
-        .def("contract", &tensornetwork::contract_wrapper, py::arg("contractionSequence") = py::none(),
-             py::arg("finalOrder") = py::none())
+        .def("contract", &tensornetwork::contract_wrapper,
+             py::arg("contractionSequence") = py::none(), py::arg("finalOrder") = py::none())
         .def("connect", &tensornetwork::connect)
         .def_property_readonly("num_tensors", &tensornetwork::NumTensors)
         .def("get_vertices", &tensornetwork::getVertices)
@@ -238,8 +228,7 @@ void PyTensorNetwork_wrapper(py::module &m)
         .def_readonly("edges", &tensornetwork::edges);
 }
 
-PYBIND11_MODULE(_nconpp, m)
-{
+PYBIND11_MODULE(_nconpp, m) {
     xt::import_numpy();
 
     m.doc() = R"pbdoc(
