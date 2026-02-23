@@ -584,7 +584,7 @@ class TensorNetwork : public Graph<GRAPH_PROPERTIES::tensornetwork_graph_propert
         std::unordered_map<std::size_t, std::vector<int>> legsMap;
 
         for (const auto &vertex : this->getVertexProperties())
-        {   
+        {
             auto vertexIndex = vertex.first;       // Assuming vertex.first gives the vertex index
             const auto &legs = vertex.second.legs; // Assuming vertex.second.legs gives the legs of the vertex
             legsMap[vertexIndex] = legs;

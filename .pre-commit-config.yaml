@@ -68,3 +68,11 @@ repos:
       # - id: uncrustify
       # - id: include-what-you-use
       # exclude: "(python|test|python/extern)/.*"
+  # - repo: local
+  #   hooks:
+  #     - id: clang-tidy
+  #       name: clang-tidy (CppCoreGuidelines)
+  #       entry: bash -c 'clang-tidy -p build "$@"'
+  #       language: system
+  #       types: [c++]
+  #       pass_filenames: true

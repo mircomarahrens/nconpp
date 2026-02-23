@@ -151,7 +151,7 @@ class MPO(FSM):
 
     def default(self):
         self.sites = 2
-        
+
         self.add_state(1, "T")
         self.add_state(2, "F", True)
 

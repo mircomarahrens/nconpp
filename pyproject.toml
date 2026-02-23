@@ -39,6 +39,8 @@ dev = [
     "cppcheck>=1.4.7,<2",
     "cpplint>=2.0.0,<3",
     "poethepoet>=0.35.0,<0.36",
+    "scipy>=1.13.1",
+    "rustworkx>=0.17.1",
 ]
 
 [build-system]
