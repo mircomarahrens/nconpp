@@ -2,12 +2,13 @@
 
 import numpy as np
 
-from latticegraph import LatticeGraph
+from python.notebooks.examples.pylatticegraph import PyLatticeGraph
 from mps import Mps
 from mpo import Mpo
 
-class TensorNetwork(LatticeGraph, Mps, Mpo):
-    """ Derived class for construction of tensor networks based on matrix
+
+class TensorNetwork(PyLatticeGraph, Mps, Mpo):
+    """Derived class for construction of tensor networks based on matrix
     product states, -operators and a lattice graph.
 
     A Tensor Network TN=(G,M) can be derived from a Graph G and a set of tensors
@@ -23,7 +24,7 @@ class TensorNetwork(LatticeGraph, Mps, Mpo):
       tensor network:
            ->  A  ->  A  ->  A  -> A -> l <-  B  <-  B  <-  B  <-
       graph:
-      (i-4)--(i-3)--(i-2)--(i-1)--(i)--(i)--(i+1)--(i+2)--(i+3)--(i+4)
+      [i-4]--[i-3]--[i-2]--[i-1]--[i]--[i]--[i+1]--[i+2]--[i+3]--[i+4]
       +--> x
 
     2D:
@@ -75,20 +76,20 @@ class TensorNetwork(LatticeGraph, Mps, Mpo):
         Le = np.zeros((1, self.wdim, 1), dtype=complex)
         Le[0, 0, 0] = 1.0
         Re = np.zeros((1, self.wdim, 1), dtype=complex)
-        Re[0, self.wdim-1, 0] = 1.0
+        Re[0, self.wdim - 1, 0] = 1.0
         for i in range(L):
             Le = np.tensordot(Le, M_list[i], axes=(0, 0))
             Le = np.tensordot(Le, W_list[i], axes=([0, 2], [0, 3]))
             Le = np.tensordot(Le, np.conj(M_list[i]), axes=([0, 3], [0, 1]))
-            Re = np.tensordot(Re, M_list[-i-1], axes=(0, 2))
-            Re = np.tensordot(Re, W_list[-i-1], axes=([0, 3], [1, 3]))
-            Re = np.tensordot(Re, np.conj(M_list[-i-1]), axes=([1, 3], [2, 1]))
+            Re = np.tensordot(Re, M_list[-i - 1], axes=(0, 2))
+            Re = np.tensordot(Re, W_list[-i - 1], axes=([0, 3], [1, 3]))
+            Re = np.tensordot(Re, np.conj(M_list[-i - 1]), axes=([1, 3], [2, 1]))
             self.Le_list.append(Le)
             self.Re_list = [Re] + self.Re_list
-        return(self.Le_list, self.Re_list)
+        return (self.Le_list, self.Re_list)
 
     def init_mps_random(self):
-        """ Initialize a specific normalized mps with random entries and set all
+        """Initialize a specific normalized mps with random entries and set all
         Schmidt values equal to one.
         Indices: [Mi]_ai-1 si ai, [Ai]_ai-1 si ai, [Bi+1]_ai si+1 ai+1, [li]_ ai
         """
@@ -97,8 +98,8 @@ class TensorNetwork(LatticeGraph, Mps, Mpo):
         self.M_list = []
         self.l_list = []
         for _ in range(L):
-            M = np.random.rand(d)+1j*np.random.rand(d)
-            M = M/(np.linalg.norm(M))
+            M = np.random.rand(d) + 1j * np.random.rand(d)
+            M = M / (np.linalg.norm(M))
             M = M.reshape(1, d, 1)
             self.M_list.append(M)
             self.l_list.append(np.ones(1))
