@@ -15,17 +15,14 @@
 #include "Graph.hpp"
 #include "Tensor.hpp"
 
-namespace GRAPH_PROPERTIES
-{
+namespace GRAPH_PROPERTIES {
 // custom graph properties
-struct tensornetwork_graph_properties
-{
+struct tensornetwork_graph_properties {
     // place custom properties for the graph here
 };
 
 // custom vertex properties
-template <typename U = std::complex<double>> struct tensornetwork_vertex_properties
-{
+template <typename U = std::complex<double>> struct tensornetwork_vertex_properties {
     // place custom properties for vertices here
     std::vector<int> cartesian_coordinates;
     std::vector<int> legs;
@@ -33,8 +30,7 @@ template <typename U = std::complex<double>> struct tensornetwork_vertex_propert
 };
 
 // custom edge properties
-template <typename U = std::complex<double>> struct tensornetwork_edge_properties
-{
+template <typename U = std::complex<double>> struct tensornetwork_edge_properties {
     // place custom properties for edges here
     npp::tensor_type<U> singular_values;
 };
@@ -43,8 +39,7 @@ template <typename U = std::complex<double>> struct tensornetwork_edge_propertie
 template <typename T = std::complex<double>>
 class TensorNetwork : public Graph<GRAPH_PROPERTIES::tensornetwork_graph_properties,
                                    GRAPH_PROPERTIES::tensornetwork_vertex_properties<T>,
-                                   GRAPH_PROPERTIES::tensornetwork_edge_properties<T>>
-{
+                                   GRAPH_PROPERTIES::tensornetwork_edge_properties<T>> {
   private:
     // store negative and positive legs in separate sets
     std::set<int> m_dangling_legs = {}; // negative leg indices
@@ -57,33 +52,26 @@ class TensorNetwork : public Graph<GRAPH_PROPERTIES::tensornetwork_graph_propert
      * @param _vertex_index
      * @param _subscript_vector
      */
-    void create_edges(std::unordered_map<std::size_t, std::size_t> &_vertex_leg_map, int _vertex_index,
-                      const std::vector<int> &_subscript_vector)
-    {
-        for (int _leg_index : _subscript_vector)
-        {
+    void create_edges(std::unordered_map<std::size_t, std::size_t> &_vertex_leg_map,
+                      int _vertex_index, const std::vector<int> &_subscript_vector) {
+        for (int _leg_index : _subscript_vector) {
             // 0 is an invalid leg index by convention
-            if (_leg_index == 0)
-            {
+            if (_leg_index == 0) {
                 throw std::invalid_argument(ErrorMessages::ERROR_CONSTRAINT_INVALIDLEG);
             }
 
             // store negative leg ids as dangling legs
-            if (_leg_index < 0)
-            {
-                if (m_dangling_legs.contains(_leg_index))
-                {
+            if (_leg_index < 0) {
+                if (m_dangling_legs.contains(_leg_index)) {
                     throw std::invalid_argument(ErrorMessages::ERROR_CONSTRAINT_UNIQUELEGS);
                 }
                 m_dangling_legs.insert(_leg_index);
             }
 
             // store positive legs as edge legs
-            if (_leg_index > 0)
-            {
+            if (_leg_index > 0) {
                 // if leg_id has already been seen -> form an edge
-                if (m_legs.contains(_leg_index))
-                {
+                if (m_legs.contains(_leg_index)) {
                     // obtain previous src from map
                     std::size_t prev = _vertex_leg_map[_leg_index];
 
@@ -94,9 +82,7 @@ class TensorNetwork : public Graph<GRAPH_PROPERTIES::tensornetwork_graph_propert
 
                     // erase entry from map
                     _vertex_leg_map.erase(_leg_index);
-                }
-                else
-                {
+                } else {
                     // store mapping leg to src
                     _vertex_leg_map[_leg_index] = _vertex_index;
 
@@ -121,9 +107,9 @@ class TensorNetwork : public Graph<GRAPH_PROPERTIES::tensornetwork_graph_propert
      */
     TensorNetwork(const TensorNetwork &other)
         : m_dangling_legs(other.m_dangling_legs), m_legs(other.m_legs),
-          Graph<GRAPH_PROPERTIES::tensornetwork_graph_properties, GRAPH_PROPERTIES::tensornetwork_vertex_properties<T>,
-                GRAPH_PROPERTIES::tensornetwork_edge_properties<T>>()
-    {
+          Graph<GRAPH_PROPERTIES::tensornetwork_graph_properties,
+                GRAPH_PROPERTIES::tensornetwork_vertex_properties<T>,
+                GRAPH_PROPERTIES::tensornetwork_edge_properties<T>>() {
         this->vertices = other.vertices;
         this->edges = other.edges;
     }
@@ -145,20 +131,19 @@ class TensorNetwork : public Graph<GRAPH_PROPERTIES::tensornetwork_graph_propert
      */
     explicit TensorNetwork(const std::vector<npp::tensor_type<T>> &tensor_list,
                            const std::vector<std::vector<int>> &subscript_vector_list)
-        : Graph<GRAPH_PROPERTIES::tensornetwork_graph_properties, GRAPH_PROPERTIES::tensornetwork_vertex_properties<T>,
-                GRAPH_PROPERTIES::tensornetwork_edge_properties<T>>(tensor_list.size())
-    {
-        if (tensor_list.size() != subscript_vector_list.size())
-        {
-            throw std::invalid_argument("The number of tensors, which is " + std::to_string(tensor_list.size()) +
+        : Graph<GRAPH_PROPERTIES::tensornetwork_graph_properties,
+                GRAPH_PROPERTIES::tensornetwork_vertex_properties<T>,
+                GRAPH_PROPERTIES::tensornetwork_edge_properties<T>>(tensor_list.size()) {
+        if (tensor_list.size() != subscript_vector_list.size()) {
+            throw std::invalid_argument("The number of tensors, which is " +
+                                        std::to_string(tensor_list.size()) +
                                         ", does not match the number of legs, which is " +
                                         std::to_string(subscript_vector_list.size()) + ".");
         }
 
         // counting occurrence of legs to check constraints
         std::unordered_map<std::size_t, std::size_t> _vertex_leg_map;
-        for (std::size_t _vertex_index = 0; _vertex_index < tensor_list.size(); _vertex_index++)
-        {
+        for (std::size_t _vertex_index = 0; _vertex_index < tensor_list.size(); _vertex_index++) {
             const std::vector<int> &_subscript_vector = subscript_vector_list[_vertex_index];
 
             create_edges(_vertex_leg_map, _vertex_index, _subscript_vector);
@@ -174,8 +159,7 @@ class TensorNetwork : public Graph<GRAPH_PROPERTIES::tensornetwork_graph_propert
      * @param other
      * @return TensorNetwork&
      */
-    TensorNetwork &operator=(TensorNetwork &other)
-    {
+    TensorNetwork &operator=(TensorNetwork &other) {
         std::swap(m_dangling_legs, other.m_dangling_legs);
         std::swap(m_legs, other.m_legs);
         std::swap(this->vertices, other.vertices);
@@ -190,9 +174,9 @@ class TensorNetwork : public Graph<GRAPH_PROPERTIES::tensornetwork_graph_propert
      */
     TensorNetwork(TensorNetwork &&other)
         : m_dangling_legs(other.m_dangling_legs), m_legs(other.m_legs),
-          Graph<GRAPH_PROPERTIES::tensornetwork_graph_properties, GRAPH_PROPERTIES::tensornetwork_vertex_properties<T>,
-                GRAPH_PROPERTIES::tensornetwork_edge_properties<T>>()
-    {
+          Graph<GRAPH_PROPERTIES::tensornetwork_graph_properties,
+                GRAPH_PROPERTIES::tensornetwork_vertex_properties<T>,
+                GRAPH_PROPERTIES::tensornetwork_edge_properties<T>>() {
         other.m_dangling_legs = {};
         other.m_legs = {};
 
@@ -220,20 +204,19 @@ class TensorNetwork : public Graph<GRAPH_PROPERTIES::tensornetwork_graph_propert
      */
     explicit TensorNetwork(std::vector<npp::tensor_type<T>> &&tensor_list,
                            std::vector<std::vector<int>> &&subscript_vector_list)
-        : Graph<GRAPH_PROPERTIES::tensornetwork_graph_properties, GRAPH_PROPERTIES::tensornetwork_vertex_properties<T>,
-                GRAPH_PROPERTIES::tensornetwork_edge_properties<T>>(tensor_list.size())
-    {
-        if (tensor_list.size() != subscript_vector_list.size())
-        {
-            throw std::invalid_argument("The number of tensors, which is " + std::to_string(tensor_list.size()) +
+        : Graph<GRAPH_PROPERTIES::tensornetwork_graph_properties,
+                GRAPH_PROPERTIES::tensornetwork_vertex_properties<T>,
+                GRAPH_PROPERTIES::tensornetwork_edge_properties<T>>(tensor_list.size()) {
+        if (tensor_list.size() != subscript_vector_list.size()) {
+            throw std::invalid_argument("The number of tensors, which is " +
+                                        std::to_string(tensor_list.size()) +
                                         ", does not match the number of legs, which is " +
                                         std::to_string(subscript_vector_list.size()) + ".");
         }
 
         // counting occurrence of legs to check constraints
         std::unordered_map<std::size_t, std::size_t> _vertex_leg_map;
-        for (std::size_t _vertex_index = 0; _vertex_index < tensor_list.size(); _vertex_index++)
-        {
+        for (std::size_t _vertex_index = 0; _vertex_index < tensor_list.size(); _vertex_index++) {
             const std::vector<int> &_subscript_vector = subscript_vector_list[_vertex_index];
 
             create_edges(_vertex_leg_map, _vertex_index, _subscript_vector);
@@ -249,8 +232,7 @@ class TensorNetwork : public Graph<GRAPH_PROPERTIES::tensornetwork_graph_propert
      * @param other
      * @return TensorNetwork&
      */
-    TensorNetwork &operator=(TensorNetwork &&other)
-    {
+    TensorNetwork &operator=(TensorNetwork &&other) {
         m_dangling_legs = std::move(other.m_dangling_legs);
         m_legs = std::move(other.m_legs);
         this->vertices = std::move(other.vertices);
@@ -270,8 +252,7 @@ class TensorNetwork : public Graph<GRAPH_PROPERTIES::tensornetwork_graph_propert
      *
      * @return const std::set<int>&
      */
-    const std::set<int> &DanglingLegs()
-    {
+    const std::set<int> &DanglingLegs() {
         return m_dangling_legs;
     }
 
@@ -279,8 +260,7 @@ class TensorNetwork : public Graph<GRAPH_PROPERTIES::tensornetwork_graph_propert
      * @brief Retrieve current legs (positive indices).
      *
      */
-    const std::set<int> &Legs()
-    {
+    const std::set<int> &Legs() {
         return m_legs;
     }
 
@@ -292,22 +272,18 @@ class TensorNetwork : public Graph<GRAPH_PROPERTIES::tensornetwork_graph_propert
      *  - permutation of the legs of the final tensors
      */
     void contract(std::vector<int> contraction_sequence = {}, std::vector<int> final_order = {},
-                  bool multi_index = false)
-    {
+                  bool multi_index = false) {
         // fill contraction sequence with positive legs if initially empty
-        if (contraction_sequence.empty())
-        {
+        if (contraction_sequence.empty()) {
             contraction_sequence.insert(contraction_sequence.begin(), m_legs.begin(), m_legs.end());
         }
 
         // fill final order with negative legs if initially empty
-        if (final_order.empty())
-        {
+        if (final_order.empty()) {
             final_order.insert(final_order.end(), m_dangling_legs.begin(), m_dangling_legs.end());
         }
 
-        while (!contraction_sequence.empty())
-        {
+        while (!contraction_sequence.empty()) {
             int _leg_index = *contraction_sequence.begin();
             auto _edge = this->edges[_leg_index];
 
@@ -321,13 +297,10 @@ class TensorNetwork : public Graph<GRAPH_PROPERTIES::tensornetwork_graph_propert
             auto &_dest_legs = _dest_vertex.legs;
             auto &_dest_tensor = _dest_vertex.tensor;
 
-            if (_src == _dest)
-            { // trace
+            if (_src == _dest) { // trace
                 std::vector<std::size_t> _axes = {};
-                for (auto _axis = 0; _axis < _src_legs.size(); _axis++)
-                {
-                    if (_src_legs[_axis] == _leg_index)
-                    {
+                for (auto _axis = 0; _axis < _src_legs.size(); _axis++) {
+                    if (_src_legs[_axis] == _leg_index) {
                         _axes.emplace_back(_axis);
                     }
                 }
@@ -338,23 +311,17 @@ class TensorNetwork : public Graph<GRAPH_PROPERTIES::tensornetwork_graph_propert
                 _src_tensor = npp::linalg::trace(_src_tensor, 0, _axes[0], _axes[1]);
 
                 this->removeEdge(_leg_index);
-            }
-            else
-            { // tensordot
+            } else { // tensordot
                 // TODO(mircomarahrens): add multi axis tensor contraction?
                 std::vector<std::size_t> _axes_a = {};
                 std::vector<std::size_t> _axes_b = {};
-                for (auto _axis = 0; _axis < _src_legs.size(); _axis++)
-                {
-                    if (_src_legs[_axis] == _leg_index)
-                    {
+                for (auto _axis = 0; _axis < _src_legs.size(); _axis++) {
+                    if (_src_legs[_axis] == _leg_index) {
                         _axes_a.emplace_back(_axis);
                     }
                 }
-                for (auto _axis = 0; _axis < _dest_legs.size(); _axis++)
-                {
-                    if (_dest_legs[_axis] == _leg_index)
-                    {
+                for (auto _axis = 0; _axis < _dest_legs.size(); _axis++) {
+                    if (_dest_legs[_axis] == _leg_index) {
                         _axes_b.emplace_back(_axis);
                     }
                 }
@@ -369,9 +336,9 @@ class TensorNetwork : public Graph<GRAPH_PROPERTIES::tensornetwork_graph_propert
                 // set new legs to src vertex
                 _src_legs = _legs;
 
-                if (npp::dimension(_edge.singular_values) > 0)
-                {
-                    _src_tensor = npp::linalg::tensordot(_src_tensor, npp::diag(_edge.singular_values), _axes_a, {0});
+                if (npp::dimension(_edge.singular_values) > 0) {
+                    _src_tensor = npp::linalg::tensordot(
+                        _src_tensor, npp::diag(_edge.singular_values), _axes_a, {0});
                 }
 
                 // tensordot and store result to src vertex
@@ -386,10 +353,10 @@ class TensorNetwork : public Graph<GRAPH_PROPERTIES::tensornetwork_graph_propert
             m_legs.erase(_leg_index);
         }
 
-        if (!contraction_sequence.empty())
-        {
+        if (!contraction_sequence.empty()) {
             throw std::invalid_argument("The contraction sequence vector, which size is " +
-                                        std::to_string(contraction_sequence.size()) + ", is not empty.");
+                                        std::to_string(contraction_sequence.size()) +
+                                        ", is not empty.");
         }
     }
 
@@ -398,8 +365,7 @@ class TensorNetwork : public Graph<GRAPH_PROPERTIES::tensornetwork_graph_propert
      *
      * @return std::size_t
      */
-    std::size_t NumTensors()
-    {
+    std::size_t NumTensors() {
         return this->NumVertices();
     }
 
@@ -408,12 +374,10 @@ class TensorNetwork : public Graph<GRAPH_PROPERTIES::tensornetwork_graph_propert
      *
      * @return std::vector<npp::shape_type>
      */
-    std::vector<npp::shape_type> TensorShapes()
-    {
+    std::vector<npp::shape_type> TensorShapes() {
         auto _nv = this->NumVertices();
         std::vector<npp::shape_type> _result(_nv);
-        for (int _i = 0; _i < _nv; _i++)
-        {
+        for (int _i = 0; _i < _nv; _i++) {
             _result[_i] = this->vertices[_i].tensor.shape();
         }
         return _result;
@@ -426,8 +390,7 @@ class TensorNetwork : public Graph<GRAPH_PROPERTIES::tensornetwork_graph_propert
      * @param leg_index
      * @param vertex_index
      */
-    void split(std::size_t vertex_index, std::size_t leg_index)
-    {
+    void split(std::size_t vertex_index, std::size_t leg_index) {
         auto _tensor = this->vertices[vertex_index].tensor;
 
         // split legs
@@ -438,22 +401,17 @@ class TensorNetwork : public Graph<GRAPH_PROPERTIES::tensornetwork_graph_propert
 
         // split tensor
         std::size_t _len = this->vertices[vertex_index].legs.size();
-        if (leg_index < _len)
-        {
+        if (leg_index < _len) {
             auto _shape = npp::shape(_tensor);
 
             std::size_t _left = 1, _right = 1;
             npp::shape_type _left_shape, _right_shape;
-            for (std::size_t _i = 0; _i < _len; _i++)
-            {
-                if (_i < leg_index)
-                {
+            for (std::size_t _i = 0; _i < _len; _i++) {
+                if (_i < leg_index) {
                     _left *= _shape[_i];
 
                     _left_shape.push_back(_shape[_i]);
-                }
-                else if (_i == leg_index)
-                {
+                } else if (_i == leg_index) {
                     _right *= _shape[_i];
 
                     // new shape after svd
@@ -461,9 +419,7 @@ class TensorNetwork : public Graph<GRAPH_PROPERTIES::tensornetwork_graph_propert
                     _right_shape.push_back(_left);
 
                     _right_shape.push_back(_shape[_i]);
-                }
-                else
-                {
+                } else {
                     _right *= _shape[_i];
 
                     _right_shape.push_back(_shape[_i]);
@@ -481,8 +437,7 @@ class TensorNetwork : public Graph<GRAPH_PROPERTIES::tensornetwork_graph_propert
 
             // new leg ids
             int _new_leg = 1;
-            if (!m_legs.empty())
-            {
+            if (!m_legs.empty()) {
                 _new_leg = *m_legs.rbegin() + 1;
             }
 
@@ -510,16 +465,12 @@ class TensorNetwork : public Graph<GRAPH_PROPERTIES::tensornetwork_graph_propert
 
             // only edges of rhs needs to be updated, because edges of lhs are reused
             // in U
-            for (int _i : _right_legs)
-            {
-                if (_i > 0)
-                {
+            for (int _i : _right_legs) {
+                if (_i > 0) {
                     this->edges[_i].src = _V_vertex;
                 }
             }
-        }
-        else
-        {
+        } else {
             throw std::invalid_argument(ErrorMessages::ERROR_OUT_OF_SIZE);
         }
     }
@@ -530,8 +481,7 @@ class TensorNetwork : public Graph<GRAPH_PROPERTIES::tensornetwork_graph_propert
      * @param src
      * @param dest
      */
-    void outer(std::size_t src, std::size_t dest)
-    {
+    void outer(std::size_t src, std::size_t dest) {
         auto _legs_a = this->vertices[src].legs;
         auto _legs_b = this->vertices[dest].legs;
 
@@ -555,19 +505,14 @@ class TensorNetwork : public Graph<GRAPH_PROPERTIES::tensornetwork_graph_propert
      * left one.
      *
      */
-    void connect()
-    {
+    void connect() {
         auto vs = this->getVertices();
         auto v0 = *vs.begin();
         std::size_t c = 0;
-        for (const auto &el : vs)
-        {
-            if (c > 0)
-            {
+        for (const auto &el : vs) {
+            if (c > 0) {
                 outer(v0, el);
-            }
-            else
-            {
+            } else {
                 c += 1;
             }
         }
@@ -579,14 +524,13 @@ class TensorNetwork : public Graph<GRAPH_PROPERTIES::tensornetwork_graph_propert
      *
      * @return std::unordered_map<std::size_t, std::vector<int>>
      */
-    std::unordered_map<std::size_t, std::vector<int>> getLegs()
-    {
+    std::unordered_map<std::size_t, std::vector<int>> getLegs() {
         std::unordered_map<std::size_t, std::vector<int>> legsMap;
 
-        for (const auto &vertex : this->getVertexProperties())
-        {
-            auto vertexIndex = vertex.first;       // Assuming vertex.first gives the vertex index
-            const auto &legs = vertex.second.legs; // Assuming vertex.second.legs gives the legs of the vertex
+        for (const auto &vertex : this->getVertexProperties()) {
+            auto vertexIndex = vertex.first; // Assuming vertex.first gives the vertex index
+            const auto &legs =
+                vertex.second.legs; // Assuming vertex.second.legs gives the legs of the vertex
             legsMap[vertexIndex] = legs;
         }
 

@@ -3,11 +3,11 @@
 #ifndef CPP_SRC_ERRORMESSAGES_HPP_
 #define CPP_SRC_ERRORMESSAGES_HPP_
 
-namespace ErrorMessages
-{
+namespace ErrorMessages {
 const char *const ERROR_CONSTRAINT_LEGPAIRS = "Only pairs of legs are allowed.";
 const char *const ERROR_CONSTRAINT_INVALIDLEG = "0 is not a valid leg id.";
-const char *const ERROR_CONSTRAINT_UNIQUELEGS = "Only unique dangling leg indices are allowed by convention.";
+const char *const ERROR_CONSTRAINT_UNIQUELEGS =
+    "Only unique dangling leg indices are allowed by convention.";
 const char *const ERROR_OUT_OF_SIZE = "The position to split is not within the range of legs.";
 const char *const ERROR_VERTEXID_PRESENT = "Vertex identifier already present.";
 const char *const ERROR_VERTEXID_NOTPRESENT = "Vertex identifier not present.";

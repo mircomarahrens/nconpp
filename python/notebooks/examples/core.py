@@ -2,19 +2,19 @@ import numpy as np
 from scipy.sparse.linalg.eigen import eigs
 
 def rotate_right(l,M):
-    """ Rotates a singular value vector from the left to the right of an MPS 
+    """ Rotates a singular value vector from the left to the right of an MPS
     matrix. See arxiv:0804.2509 (McCulloch's iDMRG paper) for details.
-    
+
     Args:
-        l (list): Schmidt values 
+        l (list): Schmidt values
         M (np.ndarray): MPS matrix
 
-    Pseudocode: 
-        1. lM = l M 
+    Pseudocode:
+        1. lM = l M
         2. U S V = svd(lM)
         3. Mt = U, lR = SV
 
-    Returns: 
+    Returns:
         MPS Matrix Mt
         Matrix lR
     """
@@ -30,11 +30,11 @@ def rotate_right(l,M):
     return Mt, lR
 
 def rotate_left(M,l):
-    """ Rotates a singular value vector from the right to the left of an MPS 
+    """ Rotates a singular value vector from the right to the left of an MPS
     matrix. See arxiv:0804.2509 (McCulloch's iDMRG paper) for details.
 
     Args:
-        l (lst): Schmidt values 
+        l (lst): Schmidt values
         M (np.ndarray): MPS matrix
 
     Pseudocode:
@@ -43,7 +43,7 @@ def rotate_left(M,l):
         3. lL = US, Mt = V
 
     Returns:
-        lL: Matrix 
+        lL: Matrix
         Mt: MPS Matrix
     """
     # construct Ml
@@ -64,30 +64,30 @@ def contract_right():
     raise Exception("Not implemented.")
 
 def transfer_matrix(M1, M2):
-    """ Returns the transfer matrix on a specific site with matrices M1 and M2. 
+    """ Returns the transfer matrix on a specific site with matrices M1 and M2.
     Usually M2 is the complex conjugate of M1.
 
     Args:
-        MPS Matrix M1, 
+        MPS Matrix M1,
         MPS Matrix M2
 
-    Returns: 
+    Returns:
         T: transfer matrix
     """
     return np.transpose(np.tensordot(M1, M2, axes=(1,1)), (0,2,1,3))
 
 def construct_leftblock_transfer(A1, l1, B2, l2):
     """ Constructs the two site transfer matrix of a block A1 l1 B2 l2.
-        
-    Args: 
-        left Mps Matrix A1, singular vector l1, right Mps Matrix B2, 
+
+    Args:
+        left Mps Matrix A1, singular vector l1, right Mps Matrix B2,
         singular vector l2
 
     Pseudocode:
         1. l1 B2 l2 -> At2 lR l2 -> At2 PR
         2. TL = A1 A1* At2 At2* PR PR*
 
-    Returns: 
+    Returns:
         TL: leftblock transfer object
     """
     # rotate l1 to the right of B2
@@ -110,16 +110,16 @@ def update(self, result):
 
 def construct_rightblock_transfer(l0, A1, l1, B2):
     """ Constructs the two site transfer matrix of a block l0 A1 l1 B2.
-        
-    Args: 
-        singular vector l0, left Mps Matrix A1, singular vector l1, 
-        right Mps Matrix B2 
+
+    Args:
+        singular vector l0, left Mps Matrix A1, singular vector l1,
+        right Mps Matrix B2
 
     Pseudocode:
         1. l0 A1 l2 -> l0 lL Bt1 -> PL Bt1
         2. TR = B2 B2* Bt1 Bt1* PL PL*
 
-    Returns: 
+    Returns:
         TR: rightblock transfer object
     """
     # rotate l1 to the left of A1
@@ -150,7 +150,7 @@ def calc_leftblock_eigvals(A_list, l_list, B_list, krylov_dim, eigvec = False):
         # constructing the transfer matrix in left-orthogonal basis
         TL = construct_leftblock_transfer(A1, l1, B2, l2)
         # diagonalizing transfer operator TL
-        if eigvec: 
+        if eigvec:
             ei, vi = eigs(TL, k=krylov_dim, return_eigenvectors=eigvec)
             ei_list[i2] = ei
             vi_list[i2] = vi
@@ -160,7 +160,7 @@ def calc_leftblock_eigvals(A_list, l_list, B_list, krylov_dim, eigvec = False):
     return ei_list, vi_list
 
 def calc_rightblock_eigvals(A_list, l_list, B_list, krylov_dim, eigvec = False):
-    """ Calculates the eigenvalues and corresponding eigenvectors (eigvec=True) 
+    """ Calculates the eigenvalues and corresponding eigenvectors (eigvec=True)
     of a right orthogonalized block.
     """
     L = len(l_list)
@@ -174,11 +174,11 @@ def calc_rightblock_eigvals(A_list, l_list, B_list, krylov_dim, eigvec = False):
         # constructing the transfer matrix in right-orthogonal basis
         TR = construct_rightblock_transfer(l0, A1, l1, B2)
         # diagonalizing transfer operator TL
-        if eigvec: 
+        if eigvec:
             ei, vi = eigs(TR, k=krylov_dim, return_eigenvectors=eigvec)
             ei_list[i0] = ei
             vi_list[i0] = vi
-        if not(eigvec): 
+        if not(eigvec):
             ei, vi = eigs(TR, k=krylov_dim, return_eigenvectors=eigvec)
             ei_list[i0] = ei
     return ei_list, vi_list
@@ -214,7 +214,7 @@ def calc_norm(M_list, l_list, form="left"):
 
 
 def mult_bra_to_ket(M1_list, M2_list, l1_list, l2_list, form="left"):
-    """ Calculates the overlap between two MPS given in a specific form.                  
+    """ Calculates the overlap between two MPS given in a specific form.
     """
     sites = len(M1_list)
     L = np.eye(M1_list[0].shape[0], M2_list[0].shape[0])
@@ -247,8 +247,8 @@ def mult_bra_to_ket(M1_list, M2_list, l1_list, l2_list, form="left"):
     return T
 
 def calc_entanglement_entropy(l_list):
-    """ Calculates the von Neumann entanglement entropy on every bond. 
-    
+    """ Calculates the von Neumann entanglement entropy on every bond.
+
     Args:
         l_list (lst): list of Schmidt values
 
@@ -270,13 +270,13 @@ def calc_correlation_length(M_list, l_list, form="left", sites=2, ncv=40):
         ========================================================================
         Name              | Value            | Description
         ------------------+------------------+----------------------------------
-        form              | "left"           | M_list is espected to be in 
+        form              | "left"           | M_list is espected to be in
                           |                  | left canonical form aka A_list.
-                          | "right"          | M_list is espected to be in 
+                          | "right"          | M_list is espected to be in
                           |                  | right canonical form aka B_list.
-                          | "canonical"      | M_list is espected to be in 
+                          | "canonical"      | M_list is espected to be in
                           |                  | canonical form (Vidal).
-        ======================================================================== 
+        ========================================================================
     """
 
     # constructing the transfer matrix over several sites
@@ -291,7 +291,7 @@ def calc_correlation_length(M_list, l_list, form="left", sites=2, ncv=40):
     eta = eigs(T, k=2, which='LM', return_eigenvectors=False, ncv=ncv)
 
     return -sites/np.log(np.min(np.abs(eta)))
-    
+
 
 def calc_site_expectation(M_list, operator, l_list=None, form="left"):
     """ Expectation value for a site operator.

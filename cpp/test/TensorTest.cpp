@@ -9,15 +9,13 @@
 
 using namespace std::complex_literals;
 
-class TensorTest : public testing::Test
-{
+class TensorTest : public testing::Test {
     TensorTest() = default;
 
     ~TensorTest() override = default;
 };
 
-TEST(TensorTest, trace)
-{
+TEST(TensorTest, trace) {
     npp::shape_type shapeA = {4, 3, 2, 8, 2};
     npp::tensor_type<std::complex<double>> A =
         npp::random::rand<double>(shapeA) + 1i * npp::random::rand<double>(shapeA);
@@ -27,8 +25,7 @@ TEST(TensorTest, trace)
     ASSERT_EQ(npp::shape(A), shapeA);
 }
 
-TEST(TensorTest, tensordot)
-{
+TEST(TensorTest, tensordot) {
     npp::shape_type shapeA = {4, 3, 2, 8};
     npp::tensor_type<std::complex<double>> A =
         npp::random::rand<double>(shapeA) + 1i * npp::random::rand<double>(shapeA);
@@ -48,8 +45,7 @@ TEST(TensorTest, tensordot)
     ASSERT_EQ(npp::shape(D), shapeD);
 }
 
-TEST(TensorTest, svd)
-{
+TEST(TensorTest, svd) {
     // from
     // https://github.com/xtensor-stack/xtensor-blas/blob/master/test/test_linalg.cpp
     npp::tensor_type<double> arg_0 = {{0, 1, 2}, {3, 4, 5}, {6, 7, 8}};
@@ -85,8 +81,7 @@ TEST(TensorTest, svd)
     ASSERT_TRUE(npp::allclose(arg_0, result));
 }
 
-TEST(TensorTest, reshape)
-{
+TEST(TensorTest, reshape) {
     npp::tensor_type<double> tensor = xt::random::rand<double>({3, 4, 5});
 
     std::size_t pos = 2;
@@ -96,14 +91,12 @@ TEST(TensorTest, reshape)
     npp::shape_type right_shape = std::vector(shape.begin() + pos, shape.end());
 
     size_t left = 1;
-    for (auto l : left_shape)
-    {
+    for (auto l : left_shape) {
         left *= l;
     }
 
     size_t right = 1;
-    for (auto r : right_shape)
-    {
+    for (auto r : right_shape) {
         right *= r;
     }
 
@@ -118,8 +111,7 @@ TEST(TensorTest, reshape)
     ASSERT_EQ(tensor.shape(), new_shape);
 }
 
-TEST(TensorTest, split)
-{
+TEST(TensorTest, split) {
     auto shape = npp::shape_type({3, 4, 5, 6});
     npp::tensor_type<double> tensor = npp::random::rand<double>(shape);
 
@@ -127,24 +119,18 @@ TEST(TensorTest, split)
     std::size_t left = 1, right = 1;
     std::size_t e = 2;
     npp::shape_type left_shape, right_shape;
-    for (std::size_t s = 0; s < len; s++)
-    {
-        if (s < e)
-        {
+    for (std::size_t s = 0; s < len; s++) {
+        if (s < e) {
             left *= shape[s];
             left_shape.push_back(shape[s]);
-        }
-        else if (s == e)
-        {
+        } else if (s == e) {
             right *= shape[s];
 
             left_shape.push_back(left);
             right_shape.push_back(left);
 
             right_shape.push_back(shape[s]);
-        }
-        else
-        {
+        } else {
             right *= shape[s];
 
             right_shape.push_back(shape[s]);

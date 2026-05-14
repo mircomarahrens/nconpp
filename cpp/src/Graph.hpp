@@ -10,24 +10,18 @@
 
 #include "ErrorMessages.hpp"
 
-namespace GRAPH_PROPERTIES
-{
-struct default_struct
-{
-};
+namespace GRAPH_PROPERTIES {
+struct default_struct {};
 } // namespace GRAPH_PROPERTIES
 
 template <class G = GRAPH_PROPERTIES::default_struct, class V = GRAPH_PROPERTIES::default_struct,
           class E = GRAPH_PROPERTIES::default_struct>
-class Graph
-{
+class Graph {
   public:
     Graph() = default;
 
-    Graph(std::size_t N, bool parallel_edges = true, bool directed_edges = false)
-    {
-        for (std::size_t i = 0; i < N; i++)
-        {
+    Graph(std::size_t N, bool parallel_edges = true, bool directed_edges = false) {
+        for (std::size_t i = 0; i < N; i++) {
             adjacency_list[i] = std::set<std::size_t>();
             vertices[i] = vertex_properties_t();
         }
@@ -39,21 +33,18 @@ class Graph
 
     ~Graph() = default;
 
-    struct graph_properties_t : G
-    {
+    struct graph_properties_t : G {
         // put any default property here
         bool parallel_edges = true;
         bool directed_edges = false;
     };
 
-    struct vertex_properties_t : V
-    {
+    struct vertex_properties_t : V {
         // put any default properties here
         std::set<int> edge_indices;
     };
 
-    struct edge_properties_t : E
-    {
+    struct edge_properties_t : E {
         // put any default property here
         std::size_t src, dest;
     };
@@ -74,8 +65,7 @@ class Graph
      * @brief Get the current number of vertices.
      *
      */
-    std::size_t NumVertices()
-    {
+    std::size_t NumVertices() {
         return vertices.size();
     }
 
@@ -84,11 +74,9 @@ class Graph
      *
      * @return std::set<size_t>
      */
-    std::set<std::size_t> getVertices()
-    {
+    std::set<std::size_t> getVertices() {
         std::set<std::size_t> keys;
-        for (auto p : vertices)
-        {
+        for (auto p : vertices) {
             keys.insert(p.first);
         }
         return keys;
@@ -99,8 +87,7 @@ class Graph
      *
      * @return graph_properties_t
      */
-    std::unordered_map<std::size_t, vertex_properties_t> getVertexProperties()
-    {
+    std::unordered_map<std::size_t, vertex_properties_t> getVertexProperties() {
         return vertices;
     }
 
@@ -110,28 +97,19 @@ class Graph
      *
      * @return std::size_t
      */
-    std::size_t addVertex(std::optional<std::size_t> newVertexIndex = std::nullopt)
-    {
-        if (newVertexIndex)
-        {
+    std::size_t addVertex(std::optional<std::size_t> newVertexIndex = std::nullopt) {
+        if (newVertexIndex) {
             std::size_t newVertex = newVertexIndex.value();
-            if (vertices.find(newVertex) == vertices.end())
-            {
+            if (vertices.find(newVertex) == vertices.end()) {
                 vertices[newVertex] = vertex_properties_t();
-            }
-            else
-            {
+            } else {
                 throw std::invalid_argument(ErrorMessages::ERROR_VERTEXID_PRESENT);
             }
             return newVertex;
-        }
-        else
-        {
+        } else {
             std::size_t len = vertices.size();
-            for (std::size_t id = 0; id < len; id++)
-            {
-                if (vertices.find(id) == vertices.end())
-                {
+            for (std::size_t id = 0; id < len; id++) {
+                if (vertices.find(id) == vertices.end()) {
                     vertices[id] = vertex_properties_t();
                     return id;
                 }
@@ -149,16 +127,12 @@ class Graph
      * @param vertex
      * @return std::size_t
      */
-    std::size_t removeVertex(std::size_t vertex)
-    {
-        if (vertices.find(vertex) != vertices.end())
-        {
+    std::size_t removeVertex(std::size_t vertex) {
+        if (vertices.find(vertex) != vertices.end()) {
             clearVertex(vertex);
             vertices.erase(vertex);
             adjacency_list.erase(vertex);
-        }
-        else
-        {
+        } else {
             throw std::invalid_argument(ErrorMessages::ERROR_VERTEXID_NOTPRESENT);
         }
         return vertex;
@@ -174,32 +148,25 @@ class Graph
      * @param dest
      * @return int
      */
-    int addEdge(int edgeIndex, std::size_t src, std::size_t dest)
-    {
-        if (vertices.find(src) == vertices.end())
-        {
+    int addEdge(int edgeIndex, std::size_t src, std::size_t dest) {
+        if (vertices.find(src) == vertices.end()) {
             throw std::invalid_argument(ErrorMessages::ERROR_SOURCEID_NOTPRESENT);
         }
 
-        if (vertices.find(dest) == vertices.end())
-        {
+        if (vertices.find(dest) == vertices.end()) {
             throw std::invalid_argument(ErrorMessages::ERROR_DESTID_NOTPRESENT);
         }
 
-        if (edges.find(edgeIndex) != edges.end())
-        {
+        if (edges.find(edgeIndex) != edges.end()) {
             throw std::invalid_argument(ErrorMessages::ERROR_EDGEID_PRESENT);
         }
 
-        if (!graph_properties.parallel_edges)
-        {
-            if (adjacency_list[dest].find(src) != adjacency_list[dest].end())
-            {
+        if (!graph_properties.parallel_edges) {
+            if (adjacency_list[dest].find(src) != adjacency_list[dest].end()) {
                 throw std::invalid_argument(ErrorMessages::ERROR_PARALLEL_EDGE_PRESENT);
             }
 
-            if (adjacency_list[src].find(dest) != adjacency_list[src].end())
-            {
+            if (adjacency_list[src].find(dest) != adjacency_list[src].end()) {
                 throw std::invalid_argument(ErrorMessages::ERROR_PARALLEL_EDGE_PRESENT);
             }
         }
@@ -210,8 +177,7 @@ class Graph
         vertices[dest].edge_indices.insert(edgeIndex);
 
         adjacency_list[src].insert(dest);
-        if (!graph_properties.directed_edges)
-        {
+        if (!graph_properties.directed_edges) {
             adjacency_list[dest].insert(src);
         }
 
@@ -223,10 +189,8 @@ class Graph
      *
      * @param vertex
      */
-    void clearVertex(std::size_t vertex)
-    {
-        for (int i : vertices[vertex].edge_indices)
-        {
+    void clearVertex(std::size_t vertex) {
+        for (int i : vertices[vertex].edge_indices) {
             removeEdge(i);
         }
     }
@@ -238,33 +202,25 @@ class Graph
      * @param src
      * @param dest
      */
-    void mergeVertices(std::size_t src, std::size_t dest)
-    {
-        if (src != dest)
-        {
-            if (vertices.find(src) == vertices.end())
-            {
+    void mergeVertices(std::size_t src, std::size_t dest) {
+        if (src != dest) {
+            if (vertices.find(src) == vertices.end()) {
                 throw std::invalid_argument(ErrorMessages::ERROR_SOURCEID_NOTPRESENT);
             }
 
-            if (vertices.find(dest) == vertices.end())
-            {
+            if (vertices.find(dest) == vertices.end()) {
                 throw std::invalid_argument(ErrorMessages::ERROR_DESTID_NOTPRESENT);
             }
 
             auto edge_indices = getEdges();
-            for (int i : edge_indices)
-            {
+            for (int i : edge_indices) {
                 auto &edge = edges[i];
-                if (edge.src == dest)
-                {
+                if (edge.src == dest) {
                     edge.src = src;
                     vertices[src].edge_indices.insert(i);
                     adjacency_list[src].insert(dest);
                     vertices[dest].edge_indices.erase(i);
-                }
-                else if (edge.dest == dest)
-                {
+                } else if (edge.dest == dest) {
                     adjacency_list[src].insert(edge.dest);
                     edge.dest = src;
                     vertices[src].edge_indices.insert(i);
@@ -279,8 +235,7 @@ class Graph
      * @brief Get the current number of edges.
      *
      */
-    std::size_t NumEdges()
-    {
+    std::size_t NumEdges() {
         return edges.size();
     }
 
@@ -289,11 +244,9 @@ class Graph
      *
      * @return std::set<size_t>
      */
-    std::set<std::size_t> getEdges()
-    {
+    std::set<std::size_t> getEdges() {
         std::set<std::size_t> keys;
-        for (auto p : edges)
-        {
+        for (auto p : edges) {
             keys.insert(p.first);
         }
         return keys;
@@ -306,20 +259,15 @@ class Graph
      * @param edgeIndex
      * @return int
      */
-    int removeEdge(int edgeIndex)
-    {
-        if (edges.find(edgeIndex) == edges.end())
-        {
+    int removeEdge(int edgeIndex) {
+        if (edges.find(edgeIndex) == edges.end()) {
             throw std::invalid_argument(ErrorMessages::ERROR_EDGEID_NOTPRESENT);
-        }
-        else
-        {
+        } else {
             auto src = edges[edgeIndex].src;
             auto dest = edges[edgeIndex].dest;
 
             adjacency_list[src].erase(dest);
-            if (!graph_properties.directed_edges && graph_properties.parallel_edges)
-            {
+            if (!graph_properties.directed_edges && graph_properties.parallel_edges) {
                 adjacency_list[dest].erase(src);
             }
 
