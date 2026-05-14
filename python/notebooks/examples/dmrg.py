@@ -8,7 +8,7 @@ from tensornetwork import TensorNetwork
 class DMRG(TensorNetwork):
     """ The Density Matrix Renormalization Group in MPS formalism
 
-    Args: 
+    Args:
         TENSORNETWORK: base class for tensor network simulations, it includes:
             * LATTICE: base class for a lattice graph implementation
             * Attributes for matrix product states, operator and environments.
@@ -17,28 +17,28 @@ class DMRG(TensorNetwork):
         step (int):
             current simulation step
             default 0
-        chi_min (int)        
+        chi_min (int)
             minimal bond dimension
             default 10
-        chi_max (int): 
+        chi_max (int):
             maximal bond dimension
             default 50
-        chi_delta (int) 
+        chi_delta (int)
             increment for bond dimension
             default 10
         chi_step (int)
             current bond dimension
             default chi_min
         disc_weight (float)
-            discarded weight  
+            discarded weight
             default 1e-9
         step_pre (int)
             pre run steps without diagonalization
-            default 5 
+            default 5
         step_max (int)
             maximal number of simulation steps
-            default 50 
-        checkpoint (bool)     
+            default 50
+        checkpoint (bool)
             do checkpointing, probably high memory throughput
             default False
         checkpoint_step
@@ -59,7 +59,7 @@ class DMRG(TensorNetwork):
     """
 
     def __init__(self):
-        super().__init__() 
+        super().__init__()
         self.step            = 0
         self.chi_min         = 10
         self.chi_max         = 50
@@ -98,7 +98,7 @@ class DMRG(TensorNetwork):
 
     def collect_data(self):
         """ Collect the current data in a big dictionary. """
-        return({"simulation":  {**self.simulation_dict(), 
+        return({"simulation":  {**self.simulation_dict(),
                                 **self.dmrg_dict()},
                 "mps":         self.mps_dict(),
                 "mpo":         self.mpo_dict(),
@@ -122,7 +122,7 @@ class DMRG(TensorNetwork):
                     print("{} hasn't be set.".format(i))
 
     def init_env(self):
-        """ Initialize left and right environments as unities. 
+        """ Initialize left and right environments as unities.
             [Li]_ai bi aip, [Ri]_ai-1 bi-1 ai-1p
         """
         W_list = self.W_list
@@ -206,7 +206,7 @@ class DMRG(TensorNetwork):
             check = False
         if None in vars(self).values():
             check = False
-        if not check: 
+        if not check:
             print("Simulation is not ready. Some parameters hasn't be set.")
         return check
 
@@ -375,4 +375,3 @@ class DMRG(TensorNetwork):
     def _contract_left(self,L,M):
 
     def _contract_right(self,R,M): """
-

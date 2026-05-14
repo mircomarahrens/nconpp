@@ -7,11 +7,11 @@ import matplotlib.pyplot as plt
 class LatticeGraph:
     """ A class for graphs of lattices.
 
-        This can be seen as a mixture of lattices and graphs, and therefore we 
+        This can be seen as a mixture of lattices and graphs, and therefore we
         have a mixture in the nomenclature of both fields.
 
         We construct lattices as graphs to achieve a solid framework where each
-        constituent has a fixed value. We enumerate sites, bonds, boundary 
+        constituent has a fixed value. We enumerate sites, bonds, boundary
         conditions (lattice) and setting up vertices and edges (graph) for them.
 
         The default values are describing a 4x4 honeycomb latticegraph with
@@ -40,21 +40,21 @@ class LatticeGraph:
         Attributes:
             sites (tuple): the number of sites spatial distributed, e.g. for d=2
                 we can have (Nx, Ny), where Nx, Ny are integers.
-            sites_position (tuple): each site has a fix index in this tuple and 
+            sites_position (tuple): each site has a fix index in this tuple and
                 each element to this index is a point in a coordinate system.
             sites_total (tuple): the total number of sites.
             boundary_conditions (tuple): the boundary condition per spatial
                 direction.
             unitcell (list): a list of tuples. This list set up the bonds of our
-                graph. Therefore, each entry corresponds to a site in a 
-                "unit cell" and each element in this entries is again a tuple 
+                graph. Therefore, each entry corresponds to a site in a
+                "unit cell" and each element in this entries is again a tuple
                 which represents an additive factor.
-                Any site in the lattice is connected to a site in this list. 
-                We call the site of interest the origin and the site connected 
-                to the origin the target. We can reach the target sites by 
+                Any site in the lattice is connected to a site in this list.
+                We call the site of interest the origin and the site connected
+                to the origin the target. We can reach the target sites by
                 adding the elements to the origin.
                 This pairs of (origin, target) are forming the bonds.
-            bonds (tuple): pairs of (origin, target) resulted from the 
+            bonds (tuple): pairs of (origin, target) resulted from the
                 "unit cell". Again each entry of this tuple is on a fixed index
                 position and can therefore be used as enumeration for the bonds.
             vertex_dict:

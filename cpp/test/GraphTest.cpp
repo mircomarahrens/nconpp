@@ -9,25 +9,21 @@ using ::testing::ElementsAre;
 using ::testing::Pair;
 using ::testing::UnorderedElementsAre;
 
-class GraphTest : public testing::Test
-{
+class GraphTest : public testing::Test {
     GraphTest() = default;
 
     ~GraphTest() override = default;
 };
 
-TEST(GraphTest, EmptyGraph)
-{
+TEST(GraphTest, EmptyGraph) {
     ASSERT_NO_THROW(Graph<> g);
 }
 
-TEST(GraphTest, FiniteGraph)
-{
+TEST(GraphTest, FiniteGraph) {
     ASSERT_NO_THROW(Graph<> g(123));
 }
 
-TEST(GraphTest, DefaultInit)
-{
+TEST(GraphTest, DefaultInit) {
     Graph<> g;
 
     ASSERT_FALSE(g.graph_properties.directed_edges);
@@ -37,8 +33,7 @@ TEST(GraphTest, DefaultInit)
     ASSERT_EQ(g.NumEdges(), 0);
 }
 
-TEST(GraphTest, getVertices)
-{
+TEST(GraphTest, getVertices) {
     Graph<> g(6);
 
     ASSERT_EQ(g.NumVertices(), 6);
@@ -46,8 +41,7 @@ TEST(GraphTest, getVertices)
     ASSERT_THAT(g.getVertices(), UnorderedElementsAre(0, 1, 2, 3, 4, 5));
 }
 
-TEST(GraphTest, addVertex)
-{
+TEST(GraphTest, addVertex) {
     Graph<> g(6);
 
     ASSERT_EQ(g.NumVertices(), 6);
@@ -68,8 +62,7 @@ TEST(GraphTest, addVertex)
     ASSERT_THAT(g.getVertices(), UnorderedElementsAre(0, 1, 2, 3, 4, 5, 6));
 }
 
-TEST(GraphTest, removeVertex)
-{
+TEST(GraphTest, removeVertex) {
     Graph<> g(6);
 
     ASSERT_EQ(g.NumVertices(), 6);
@@ -90,8 +83,7 @@ TEST(GraphTest, removeVertex)
     ASSERT_THAT(g.getVertices(), UnorderedElementsAre(0, 1, 2, 3, 4));
 }
 
-TEST(GraphTest, addEdge)
-{
+TEST(GraphTest, addEdge) {
     Graph<> g(6);
 
     ASSERT_EQ(g.NumVertices(), 6);
@@ -129,8 +121,7 @@ TEST(GraphTest, addEdge)
     ASSERT_EQ(g.edges[0].dest, 2);
 }
 
-TEST(GraphTest, removeEdge)
-{
+TEST(GraphTest, removeEdge) {
     Graph<> g(6);
 
     ASSERT_EQ(g.NumVertices(), 6);
@@ -155,56 +146,41 @@ TEST(GraphTest, removeEdge)
     ASSERT_EQ(g.NumEdges(), 0);
 }
 
-TEST(GraphTest, customVertexProperties)
-{
-    struct graph_properties
-    {
-    };
+TEST(GraphTest, customVertexProperties) {
+    struct graph_properties {};
 
-    struct vertex_properties
-    {
+    struct vertex_properties {
         int prop1 = 0;
         std::vector<int> prop2 = {1, 2, 3};
     };
 
-    struct edge_properties
-    {
-    };
+    struct edge_properties {};
 
     Graph<graph_properties, vertex_properties, edge_properties> g(6);
 
     g.vertices[3].prop1 = 1;
     g.vertices[3].prop2 = {4, 5, 6};
 
-    for (auto i = 0; i < g.NumVertices(); i++)
-    {
-        if (i != 3)
-        {
+    for (auto i = 0; i < g.NumVertices(); i++) {
+        if (i != 3) {
             ASSERT_EQ(g.vertices[i].prop1, 0);
             ASSERT_THAT(g.vertices[i].prop2, ElementsAre(1, 2, 3));
-        }
-        else
-        {
+        } else {
             ASSERT_EQ(g.vertices[i].prop1, 1);
             ASSERT_THAT(g.vertices[i].prop2, ElementsAre(4, 5, 6));
         }
     }
 }
 
-TEST(GraphTest, customEdgeProperties)
-{
-    struct graph_properties
-    {
-    };
+TEST(GraphTest, customEdgeProperties) {
+    struct graph_properties {};
 
-    struct vertex_properties
-    {
+    struct vertex_properties {
         int prop1 = 0;
         std::vector<int> prop2 = {1, 2, 3};
     };
 
-    struct edge_properties
-    {
+    struct edge_properties {
         bool prop3 = true;
     };
 
@@ -213,15 +189,11 @@ TEST(GraphTest, customEdgeProperties)
     g.vertices[3].prop1 = 1;
     g.vertices[3].prop2 = {4, 5, 6};
 
-    for (auto i = 0; i < g.NumVertices(); i++)
-    {
-        if (i != 3)
-        {
+    for (auto i = 0; i < g.NumVertices(); i++) {
+        if (i != 3) {
             ASSERT_EQ(g.vertices[i].prop1, 0);
             ASSERT_THAT(g.vertices[i].prop2, ElementsAre(1, 2, 3));
-        }
-        else
-        {
+        } else {
             ASSERT_EQ(g.vertices[i].prop1, 1);
             ASSERT_THAT(g.vertices[i].prop2, ElementsAre(4, 5, 6));
         }
@@ -232,8 +204,7 @@ TEST(GraphTest, customEdgeProperties)
     ASSERT_TRUE(g.edges[0].prop3 == true);
 }
 
-TEST(GraphTest, mergeVertices)
-{
+TEST(GraphTest, mergeVertices) {
     Graph<> g(6);
 
     g.addEdge(0, 1, 2);
@@ -264,8 +235,7 @@ TEST(GraphTest, mergeVertices)
     ASSERT_EQ(g.edges[3].dest, 4);
 }
 
-TEST(GraphTest, parallelEdgePresent)
-{
+TEST(GraphTest, parallelEdgePresent) {
     Graph<> g(3, false);
 
     g.addEdge(0, 1, 2);
@@ -285,38 +255,32 @@ TEST(GraphTest, parallelEdgePresent)
         std::invalid_argument);
 }
 
-TEST(GraphTest, largeCustomGraph)
-{
-    struct graph_properties
-    {
-    };
+TEST(GraphTest, largeCustomGraph) {
+    struct graph_properties {};
 
-    struct vertex_properties
-    {
+    struct vertex_properties {
         int vp1 = 0;
         std::vector<int> vp2 = {1, 2, 3, 4, 6};
         bool vp3 = false;
     };
 
-    struct edge_properties
-    {
+    struct edge_properties {
         bool ep1 = true;
         double ep2 = 0.55;
     };
 
     Graph<graph_properties, vertex_properties, edge_properties> g(1000);
 
-    for (std::size_t id = 0; id < 2000; id++)
-    {
+    for (std::size_t id = 0; id < 2000; id++) {
         g.addEdge(id, std::rand() % 1000, std::rand() % 1000);
     }
 
     ASSERT_EQ(g.NumEdges(), 2000);
 
-    for (auto el : g.edges)
-    {
+    for (auto el : g.edges) {
         auto edge = el.second;
         ASSERT_TRUE(g.adjacency_list[edge.src].find(edge.dest) != g.adjacency_list[edge.src].end());
-        ASSERT_TRUE(g.adjacency_list[edge.dest].find(edge.src) != g.adjacency_list[edge.dest].end());
+        ASSERT_TRUE(g.adjacency_list[edge.dest].find(edge.src) !=
+                    g.adjacency_list[edge.dest].end());
     }
 }
