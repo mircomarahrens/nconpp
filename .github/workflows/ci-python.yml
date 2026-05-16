@@ -17,7 +17,7 @@ jobs:
         poetry-version: [2.1.2]
         vcpgk-version: [2025.04.09]
         xtensor-python-version: [0.27.0]
-        cmake-preset-target: [python]
+        cmake-preset-target: [linux-python]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
