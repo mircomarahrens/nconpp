@@ -7,21 +7,23 @@
         "VIRTUAL_ENV": "${workspaceFolder}/.venv",
         "PATH": "${workspaceFolder}/.venv/bin:${env:PATH}"
     },
-    "CMake.configureOnOpen": true,
-    "CMake.buildDirectory": "${workspaceFolder}/build/linux-debug",
+    "cmake.configureOnOpen": true,
+    "cmake.copyCompileCommands": "${workspaceFolder}/compile_commands.json",
     "C_Cpp.intelliSenseEngine": "disabled",
     "clangd.arguments": [
-        "--compile-commands-dir=${workspaceFolder}/build/linux-debug"
+        "--compile-commands-dir=${workspaceFolder}"
     ],
     "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
     "C_Cpp.default.includePath": [
         "${workspaceFolder}/**",
-        "${workspaceFolder}/build/linux-debug/vcpkg_installed/x64-linux/include/**"
+        "${workspaceFolder}/build/**/vcpkg_installed/x64-linux/include/**",
+        "${workspaceFolder}/build/**/_deps/googletest-src/googlemock/include/**",
+        "${workspaceFolder}/build/**/_deps/googletest-src/googletest/include/**"
     ],
     "C_Cpp.codeAnalysis.clangTidy.enabled": true,
     "C_Cpp.codeAnalysis.clangTidy.useBuildPath": true,
     "C_Cpp.codeAnalysis.clangTidy.path": "clang-tidy",
-    "C_Cpp.default.compileCommands": "${workspaceFolder}/build/linux-debug/compile_commands.json",
+    "C_Cpp.default.compileCommands": "${workspaceFolder}/compile_commands.json",
     "C_Cpp.clang_format_style": "file",
     "editor.formatOnSave": true
 }

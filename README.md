@@ -120,7 +120,7 @@ ln -s build/linux-debug/compile_commands.json .
 or for the Python bindings:
 
 ```bash
-ln -s build/python/compile_commands.json .
+ln -s build/linux-python/compile_commands.json .
 ```
 
 ## Build
@@ -135,7 +135,7 @@ cmake --build build/linux-debug
 ### Python
 
 ```bash
-cmake --preset python
+cmake --preset linux-python
 uv pip install .
 ```
 
