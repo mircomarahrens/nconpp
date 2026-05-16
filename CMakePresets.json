@@ -27,7 +27,7 @@
             "environment": {
                 "VCPKG_ROOT": "${sourceDir}/vcpkg",
                 "PYTHON_VENV": "${sourceDir}/.venv"
-              },
+            },
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
                 "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/install/${presetName}",
@@ -42,12 +42,12 @@
             }
         },
         {
-            "name": "python",
+            "name": "linux-python",
             "inherits": "default",
             "environment": {
                 "VCPKG_ROOT": "${sourceDir}/vcpkg",
                 "PYTHON_VENV": "${sourceDir}/.venv"
-              },
+            },
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Python",
                 "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/install/${presetName}",
