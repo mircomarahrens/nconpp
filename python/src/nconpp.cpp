@@ -1,11 +1,9 @@
 // Copyright 2023 Mirco Marahrens
 
-#ifndef NCONPP_PYTHON_SRC_NCONPP_CPP_
-#define NCONPP_PYTHON_SRC_NCONPP_CPP_
-
 #include <complex>
 #include <optional>
 #include <string>
+#include <type_traits>
 #include <utility>
 #include <vector>
 
@@ -59,7 +57,7 @@ void PyGraph_wrapper(py::module &m) {
         .def_readonly("src", &graph::edge_properties_t::src)
         .def_readonly("dest", &graph::edge_properties_t::dest);
 
-    py::class_<graph>(m, "Graph", py::buffer_protocol(), py::dynamic_attr())
+    py::class_<graph>(m, "Graph", py::dynamic_attr())
         .def(py::init<>())
         .def(py::init<std::size_t, bool, bool>(), py::arg("nodes"),
              py::arg("parallel_edges") = true, py::arg("directed_edges") = false)
@@ -106,8 +104,7 @@ void PyLatticeGraph_wrapper(py::module &m) {
         .def_readonly("dest", &graph::edge_properties_t::dest)
         .def_readonly("boundary", &graph::edge_properties_t::boundary);
 
-    py::class_<lattice>(m, "LatticeGraph", py::buffer_protocol(), py::dynamic_attr(),
-                        py::module_local())
+    py::class_<lattice>(m, "LatticeGraph", py::dynamic_attr(), py::module_local())
         .def(py::init<std::string &, std::vector<std::size_t> &, lattice::directions_type &,
                       std::vector<std::string> &>(),
              py::arg("name") = "honeycomb", py::arg("shape") = std::vector<std::size_t>({4, 4}),
@@ -139,56 +136,38 @@ void PyLatticeGraph_wrapper(py::module &m) {
  */
 template <typename T> class PyTensorNetwork_trampoline : public TensorNetwork<T> {
   public:
-    PyTensorNetwork_trampoline(const std::vector<npp::tensor_type<T>> &tensorList,
-                               const std::vector<std::vector<int>> &subscriptVectorList)
-        : TensorNetwork<T>(tensorList, subscriptVectorList) {}
-
-    PyTensorNetwork_trampoline(std::vector<npp::tensor_type<T>> &&tensorList,
-                               std::vector<std::vector<int>> &&subscriptVectorList)
-        : TensorNetwork<T>(std::move(tensorList), std::move(subscriptVectorList)) {}
+    template <typename TensorList, typename SubscriptVectorList,
+              typename = std::enable_if_t<
+                  std::is_same_v<std::decay_t<TensorList>, std::vector<npp::tensor_type<T>>> &&
+                  std::is_same_v<std::decay_t<SubscriptVectorList>, std::vector<std::vector<int>>>>>
+    PyTensorNetwork_trampoline(TensorList &&tensorList, SubscriptVectorList &&subscriptVectorList)
+        : TensorNetwork<T>(std::forward<TensorList>(tensorList),
+                           std::forward<SubscriptVectorList>(subscriptVectorList)) {}
 
     void contract_wrapper(std::optional<std::vector<int>> opt_contractionSequence = std::nullopt,
                           std::optional<std::vector<int>> opt_finalOrder = std::nullopt) {
-        std::vector<int> contractionSequence = {};
-        if (opt_contractionSequence.has_value()) {
-            contractionSequence = opt_contractionSequence.value();
-        }
-
-        std::vector<int> finalOrder = {};
-        if (opt_finalOrder.has_value()) {
-            finalOrder = opt_finalOrder.value();
-        }
-
-        TensorNetwork<T>::contract(contractionSequence, finalOrder);
+        TensorNetwork<T>::contract(opt_contractionSequence.value_or(std::vector<int>{}),
+                                   opt_finalOrder.value_or(std::vector<int>{}));
     }
 };
 
-class PyTensorNetworkGraphProperties_trampoline
-    : public GRAPH_PROPERTIES::tensornetwork_graph_properties {};
-template <typename T>
-class PyTensorNetworkVertexProperties_trampoline
-    : public GRAPH_PROPERTIES::tensornetwork_vertex_properties<T> {};
-template <typename T>
-class PyTensorNetworkEdgeProperties_trampoline
-    : public GRAPH_PROPERTIES::tensornetwork_edge_properties<T> {};
-
 /**
- * @brief Wrapper function for trampoline class PyTensorNetwork_trampoline
+ * @brief Wrapper function for TensorNetwork
  *
  * @param m
  */
 void PyTensorNetwork_wrapper(py::module &m) {
     using tensornetwork = PyTensorNetwork_trampoline<std::complex<double>>;
-    using tng = PyTensorNetworkGraphProperties_trampoline;
-    using tnv = PyTensorNetworkVertexProperties_trampoline<std::complex<double>>;
-    using tne = PyTensorNetworkEdgeProperties_trampoline<std::complex<double>>;
+    using tng = GRAPH_PROPERTIES::tensornetwork_graph_properties;
+    using tnv = GRAPH_PROPERTIES::tensornetwork_vertex_properties<std::complex<double>>;
+    using tne = GRAPH_PROPERTIES::tensornetwork_edge_properties<std::complex<double>>;
     using graph = PyGraph_trampoline<tng, tnv, tne>;
 
     py::class_<graph::graph_properties_t>(m, "TensorNetworkGraphProperties")
         .def(py::init<>())
         .def_readonly("parallel_edges", &graph::graph_properties_t::parallel_edges)
         .def_readonly("directed_edges", &graph::graph_properties_t::directed_edges);
-    py::class_<graph::vertex_properties_t>(m, "TensorNetworVertexProperties")
+    py::class_<graph::vertex_properties_t>(m, "TensorNetworkVertexProperties")
         .def(py::init<>())
         .def_readwrite("edge_indices", &graph::vertex_properties_t::edge_indices)
         .def_readwrite("cartesian_coordinates", &graph::vertex_properties_t::cartesian_coordinates)
@@ -256,125 +235,3 @@ PYBIND11_MODULE(_nconpp, m) {
     PyLatticeGraph_wrapper(m);
     PyTensorNetwork_wrapper(m);
 }
-
-/**
- *     """A class for a graph representation of a lattice.
-
-    Note:
-        We construct lattices as graphs to achieve a solid framework where each
-        constituent has a fixed integer value as identifier. We enumerate sites,
-        bonds, boundary conditions (lattice) and setting up vertices and edges
-        (graph) corresponding to them. For handling of the lattice boundaries we
-        introduce boundary points.
-
-        A 4x4 honeycomb lattice has in total 6x6=36 sites, 4x4=16 bulk points
-        and 20 boundary points. In cartesian coordinates the graph has the
-        following representation:
-
-            (0, 5)  (1, 5)  (2, 5)  (3, 5)  (4, 5)  (5, 5)
-
-            (0, 4)  (1, 4)  (2, 4)  (3, 3)  (4, 4)  (5, 4)
-
-            (0, 3)  (1, 3)  (2, 3)  (3, 3)  (4, 3)  (5, 3)
-
-            (0, 2)  (1, 2)  (2, 2)  (3, 2)  (4, 2)  (5, 2)
-
-            (0, 1)  (1, 1)  (2, 1)  (3, 1)  (4, 1)  (5, 1)
-        y
-        ^   (0, 0)  (1, 0)  (2, 0)  (3, 0)  (4, 0)  (5, 0)
-        |
-        +-->x
-
-        The default lattice has periodic boundary conditions in both spatial
-        directions, hence are the edges of this graph as follows:
-
-                    (1, 1)--(2, 1)  (3, 1)--(4, 1)
-                      |       |       |       |
-            (4, 4)--(1, 4)  (2, 4)--(3, 3)  (4, 4)--(1, 4)
-                      |       |       |       |
-                    (1, 3)--(2, 3)  (3, 3)--(4, 3)
-                      |       |       |       |
-            (4, 2)--(1, 2)  (2, 2)--(3, 2)  (4, 2)--(1, 2)
-                      |       |       |       |
-                    (1, 1)--(2, 1)  (3, 1)--(4, 1)
-                      |       |       |       |
-                    (1, 4)  (2, 4)--(3, 3)  (4, 4)
-
-        whereas for open boundary conditions in both spatial directions
-        the coordinates of the lattice sites are as
-
-                    (1, 5)  (2, 5)  (3, 5)  (4, 5)
-                      |       |       |       |
-            (4, 4)--(1, 4)  (2, 4)--(3, 3)  (4, 4)--(1, 4)
-                      |       |       |       |
-                    (1, 3)--(2, 3)  (3, 3)--(4, 3)
-                      |       |       |       |
-            (4, 2)--(1, 2)  (2, 2)--(3, 2)  (4, 2)--(1, 2)
-                      |       |       |       |
-                    (1, 1)--(2, 1)  (3, 1)--(4, 1)
-                      |       |       |       |
-                    (1, 0)  (2, 0)  (3, 0)  (4, 0)
-
-        and for closed boundary conditions we have
-
-                    (1, 4)  (2, 4)--(3, 3)  (4, 4)
-                      |       |       |       |
-                    (1, 3)--(2, 3)  (3, 3)--(4, 3)
-                      |       |       |       |
-                    (1, 2)  (2, 2)--(3, 2)  (4, 2)
-                      |       |       |       |
-                    (1, 1)--(2, 1)  (3, 1)--(4, 1)
-
-        The last lattice graph represents the core of the lattice.
-
-    Args:
-        Graph (type): optional, default: None. Parent class of LatticeGraph.
-        name (str): see Attributes for a full description
-        grid (tuple): see Attributes for a full description
-        accu (list): accumulators, see Attributes for a full description
-        bcs (tuple): boundary_conditions, see Attributes for a full description
-
-    Attributes:
-        name (str): a free name for the lattice, e.g. "honeycomb", "square",
-            etc.
-
-        grid (tuple): the number of sites spatial distributed, e.g. for d=2
-            we have (Nx, Ny), where Nx, Ny are integers representing the
-            maximal number of sites for the x- and y-direction.
-
-        sites (tuple): the total number of sites.
-
-        accumulators (list): a list of tuples. The length of this list is the
-            number of sites in a "cell", i.e. a unit cell. Each entry of this
-            list is again a tuple consisting of multiple integers representing
-            additive coordinates. If a additive coordinate is added to a
-            origin site in the lattice one is getting a target site. A pair
-            (origin, target) is forming a bond/edge in the lattice/graph.
-
-        boundary_conditions (tuple): the boundary condition per spatial
-            direction, i.e. for d=2 we can have different conditions for the
-            x- and y-direction of the lattice. We currently support the
-            following boundary conditions:
-
-                - "pbc": periodic boundary conditions
-                - "obc": open boundary conditions
-                - "cbc": closed boundary conditions
-
-                tbd:
-
-                - "ibc": infinite boundary conditions
-
-        edges (dict of int : any): key: id, value: pairs of (origin, target)
- resulted from the "unit cell".
-
-        vertices (dict of int: any): key: id, value: vertex properties
-
-    Methods:
-        - _init_lattice: see docstrings in methods for details.
-        - unravel: see docstrings in methods for details.
-        - ravel: see docstrings in methods for details.
-    """
- *
- */
-
-#endif // NCONPP_PYTHON_SRC_NCONPP_CPP_
