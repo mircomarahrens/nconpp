@@ -105,7 +105,7 @@ cmake --preset linux-debug
 cmake --preset python
 ```
 
-#### IDE
+#### IDEs
 
 Here are some instructions for setting up the project in different IDEs.
 

@@ -18,6 +18,7 @@ add_executable(nconpp_tests_run
     ${NCONPP_CPP_TEST_DIR}/nconpp_tests_run.cpp
     ${NCONPP_CPP_TEST_DIR}/GraphTest.cpp
     ${NCONPP_CPP_TEST_DIR}/LatticeGraphTest.cpp
+    ${NCONPP_CPP_TEST_DIR}/LinAlgTest.cpp
     ${NCONPP_CPP_TEST_DIR}/TensorTest.cpp
     ${NCONPP_CPP_TEST_DIR}/TensorNetworkTest.cpp)
 
