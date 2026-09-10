@@ -1,73 +1,92 @@
-# Dockerfile for multi-stage container: https://devblogs.microsoft.com/cppblog/using-multi-stage-containers-for-c-development/
-FROM ubuntu:24.04 as builder
-LABEL description="NCONPP - Build container for CPP"
+# -----------------------------------------------------------------------------
+# Base toolchain & vcpkg setup
+# -----------------------------------------------------------------------------
+FROM ubuntu:24.04 AS base
+LABEL description="NCONPP - Base toolchain container"
 
-# install needed packages
+# Install core build, debug, and dev dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     clang-18 \
+    clang-tools-18 \
+    clangd-18 \
+    clang-format-18 \
+    clang-tidy-18 \
+    lldb-18 \
+    gdb \
+    cmake \
+    ninja-build \
     ca-certificates \
     pkg-config \
     gfortran \
     curl \
+    libcurl4-openssl-dev \
     git \
     tar \
     zip \
     unzip \
-    wget \
-    --fix-missing \
-    && rm -rf /var/lib/apt/lists/*
+    sudo \
+    stow \
+    openssh-client \
+    && rm -rf /var/lib/apt/lists/* \
+    && update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100 \
+    && update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-18 100 \
+    && update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-18 100 \
+    && update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-18 100 \
+    && update-alternatives --install /usr/bin/clang-tidy clang-tidy /usr/bin/clang-tidy-18 100 \
+    && update-alternatives --install /usr/bin/clang-scan-deps clang-scan-deps /usr/bin/clang-scan-deps-18 100
 
-RUN update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100 \
- && update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-18 100
+# Remove default Ubuntu 24.04 user and create developer user with UID 1000
+RUN (userdel -r ubuntu 2>/dev/null || true) \
+    && (groupdel ubuntu 2>/dev/null || true) \
+    && groupadd -g 1000 developer \
+    && useradd -u 1000 -g developer -m -s /bin/bash developer \
+    && echo "developer ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/developer
 
-RUN cd /tmp \
-    && wget https://github.com/Kitware/CMake/releases/download/v4.1.2/cmake-4.1.2-linux-x86_64.sh \
-    && chmod +x cmake-4.1.2-linux-x86_64.sh \
-    && ./cmake-4.1.2-linux-x86_64.sh --prefix=/usr/local --skip-license \
-    && rm cmake-4.1.2-linux-x86_64.sh
+USER developer
+WORKDIR /home/developer
 
-# need ninja >= 1.10.2
-RUN cd /tmp \
-    && wget https://github.com/ninja-build/ninja/releases/download/v1.11.1/ninja-linux.zip \
-    && unzip ninja-linux.zip \
-    && chmod +x ninja \
-    && mv ninja /usr/bin/
+ENV VCPKG_ROOT=/home/developer/vcpkg
+ENV VCPKG_FORCE_SYSTEM_BINARIES=1
+ENV PATH="${VCPKG_ROOT}:${PATH}"
 
-WORKDIR /tmp/project
+# Clone & bootstrap vcpkg
+RUN git clone https://github.com/Microsoft/vcpkg.git "${VCPKG_ROOT}" \
+    && "${VCPKG_ROOT}/bootstrap-vcpkg.sh" -useSystemBinaries -disableMetrics
 
-# build vcpkg
-RUN cd /tmp/project \
-    && git clone https://github.com/Microsoft/vcpkg.git \
-    && cd vcpkg \
-    && ./bootstrap-vcpkg.sh -useSystemBinaries -disableMetrics
+# -----------------------------------------------------------------------------
+# Devcontainer Stage (Target for Zed / Podman dev environment)
+# -----------------------------------------------------------------------------
+FROM base AS devcontainer
+LABEL description="NCONPP - Devcontainer"
 
-COPY CMakePresets.json CMakeLists.txt vcpkg.json /tmp/project/
-COPY cpp /tmp/project/cpp
+# Pre-cache vcpkg dependencies in the image
+WORKDIR /home/developer/cache
+COPY --chown=developer:developer vcpkg.json ./
+RUN vcpkg install --x-feature=test --clean-after-build \
+    && rm -rf /home/developer/cache
 
-RUN cmake --preset linux-debug
+WORKDIR /workspaces/nconpp
+ENTRYPOINT ["/bin/bash"]
+
+# -----------------------------------------------------------------------------
+# Builder Stage (Build project artifacts)
+# -----------------------------------------------------------------------------
+FROM base AS builder
+LABEL description="NCONPP - Build container for CPP"
+
+WORKDIR /home/developer/project
+COPY --chown=developer:developer CMakePresets.json CMakeLists.txt vcpkg.json ./
+COPY --chown=developer:developer cpp ./cpp
+
+# -----------------------------------------------------------------------------
+# Tester Stage (Run automated tests)
+# -----------------------------------------------------------------------------
+FROM builder AS tester
+LABEL description="Test container - nconpp-tester"
+
+RUN cmake --preset linux-debug \
+    && cmake --build --preset linux-debug \
+    && ctest --preset linux-gtests-debug --output-on-failure
 
 ENTRYPOINT ["tail", "-f", "/dev/null"]
-
-# FROM alpine:edge as tester
-# LABEL description="Test container - nconpp-tester"
-
-# COPY --from=builder /tmp/vpckg /tmp/vcpkg
-# COPY --from=builder /tmp/project /tmp/project
-# COPY test /tmp/project/test
-
-# RUN VCPKG_FORCE_SYSTEM_BINARIES=1 ./tmp/vcpkg/vcpkg --clean-after-build \
-#         install gtest
-
-# RUN cmake \
-#         -DCMAKE_TOOLCHAIN_FILE=/tmp/vcpkg/scripts/buildsystems/vcpkg.cmake \
-#         -DCMAKE_BUILD_TYPE:STRING=Debug \
-#         -DVCPKG_TARGET_TRIPLET=x64-linux-musl -H/tmp/project -B/tmp/project/build -G Ninja
-
-# ENTRYPOINT ["tail", "-f", "/dev/null"]
-#RUN apk update && apk add --no-cache \
-#        python3
-
-#RUN VCPKG_FORCE_SYSTEM_BINARIES=1 ./tmp/vcpkg/vcpkg install pybind11
-
-#ADD ["python", "/project"]
