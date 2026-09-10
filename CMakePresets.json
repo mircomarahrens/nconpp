@@ -25,7 +25,6 @@
             "name": "linux-debug",
             "inherits": "default",
             "environment": {
-                "VCPKG_ROOT": "${sourceDir}/vcpkg",
                 "PYTHON_VENV": "${sourceDir}/.venv"
             },
             "cacheVariables": {
@@ -45,7 +44,6 @@
             "name": "linux-python",
             "inherits": "default",
             "environment": {
-                "VCPKG_ROOT": "${sourceDir}/vcpkg",
                 "PYTHON_VENV": "${sourceDir}/.venv"
             },
             "cacheVariables": {
@@ -60,6 +58,16 @@
                 "CMAKE_CXX_EXTENSIONS": "OFF",
                 "Python_EXECUTABLE": "${sourceDir}/.venv/bin/python"
             }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "linux-debug",
+            "configurePreset": "linux-debug"
+        },
+        {
+            "name": "linux-python",
+            "configurePreset": "linux-python"
         }
     ],
     "testPresets": [
