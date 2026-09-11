@@ -12,5 +12,5 @@
   "mounts": [
     "source=nconpp-vcpkg-cache,target=/home/developer/.cache/vcpkg,type=volume"
   ],
-  "postCreateCommand": "cmake --fresh --preset linux-debug && ln -sf build/linux-debug/compile_commands.json compile_commands.json"
+  "postCreateCommand": "cmake --fresh --preset container-debug && ln -sf build/container-debug/compile_commands.json compile_commands.json"
 }

@@ -85,8 +85,8 @@ COPY --chown=developer:developer cpp ./cpp
 FROM builder AS tester
 LABEL description="Test container - nconpp-tester"
 
-RUN cmake --preset linux-debug \
-    && cmake --build --preset linux-debug \
-    && ctest --preset linux-gtests-debug --output-on-failure
+RUN cmake --preset container-debug \
+    && cmake --build --preset container-debug \
+    && ctest --preset container-gtests-debug --output-on-failure
 
 ENTRYPOINT ["tail", "-f", "/dev/null"]
