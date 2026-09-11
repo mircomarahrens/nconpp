@@ -23,13 +23,39 @@
         },
         {
             "name": "linux-debug",
+            "displayName": "Linux Debug (Host)",
+            "description": "Build on host system using build/linux-debug",
             "inherits": "default",
+            "binaryDir": "${sourceDir}/build/linux-debug",
+            "environment": {
+                "PYTHON_VENV": "${sourceDir}/.venv",
+                "VCPKG_ROOT": "${sourceDir}/vcpkg"
+            },
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/install/linux-debug",
+                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+                "CMAKE_C_COMPILER": "/usr/bin/clang",
+                "CMAKE_CXX_COMPILER": "/usr/bin/clang++",
+                "CMAKE_CXX_STANDARD": "20",
+                "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+                "CMAKE_CXX_EXTENSIONS": "OFF",
+                "Python_EXECUTABLE": "${sourceDir}/.venv/bin/python"
+            }
+        },
+        {
+            "name": "container-debug",
+            "displayName": "Container Debug (Devcontainer/CI)",
+            "description": "Build inside container using build/container-debug",
+            "inherits": "default",
+            "binaryDir": "${sourceDir}/build/container-debug",
             "environment": {
                 "PYTHON_VENV": "${sourceDir}/.venv"
             },
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
-                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/install/${presetName}",
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/install/container-debug",
                 "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
                 "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
                 "CMAKE_C_COMPILER": "/usr/bin/clang",
@@ -44,7 +70,8 @@
             "name": "linux-python",
             "inherits": "default",
             "environment": {
-                "PYTHON_VENV": "${sourceDir}/.venv"
+                "PYTHON_VENV": "${sourceDir}/.venv",
+                "VCPKG_ROOT": "${sourceDir}/vcpkg"
             },
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Python",
@@ -66,6 +93,10 @@
             "configurePreset": "linux-debug"
         },
         {
+            "name": "container-debug",
+            "configurePreset": "container-debug"
+        },
+        {
             "name": "linux-python",
             "configurePreset": "linux-python"
         }
@@ -73,9 +104,15 @@
     "testPresets": [
         {
             "name": "linux-gtests-debug",
-            "description": "User specified test preset running googletest.",
-            "displayName": "googletest debug (user)",
+            "description": "User specified test preset running googletest on host.",
+            "displayName": "googletest debug (host)",
             "configurePreset": "linux-debug"
+        },
+        {
+            "name": "container-gtests-debug",
+            "description": "User specified test preset running googletest in container.",
+            "displayName": "googletest debug (container)",
+            "configurePreset": "container-debug"
         }
     ]
 }
