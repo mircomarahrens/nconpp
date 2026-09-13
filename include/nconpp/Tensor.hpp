@@ -118,8 +118,8 @@ static inline auto rand(shape_type shape, T lower = 0, T upper = 1,
 namespace linalg {
 // dot
 template <typename T, typename O>
-static inline auto dot(const expression_type<T> &xa,
-                       const expression_type<O> &xb) -> decltype(xt::linalg::dot(xa, xb)) {
+static inline auto dot(const expression_type<T> &xa, const expression_type<O> &xb)
+    -> decltype(xt::linalg::dot(xa, xb)) {
     return xt::linalg::dot(xa, xb);
 }
 

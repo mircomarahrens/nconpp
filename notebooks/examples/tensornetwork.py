@@ -1,10 +1,9 @@
 #!/usr/bin/python3
 
 import numpy as np
-
-from python.notebooks.examples.pylatticegraph import PyLatticeGraph
-from mps import Mps
 from mpo import Mpo
+from mps import Mps
+from python.notebooks.examples.pylatticegraph import PyLatticeGraph
 
 
 class TensorNetwork(PyLatticeGraph, Mps, Mpo):
