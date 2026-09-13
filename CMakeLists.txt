@@ -2,7 +2,7 @@
 
 cmake_minimum_required(VERSION 3.28)
 
-project(nconpp CXX)
+project(nconpp LANGUAGES C CXX)
 
 include(CTest)
 
@@ -16,9 +16,10 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # activate vcpkg manifest mode
 set(VCPKG_FEATURE_FLAGS "versions")
 
-set(NCONPP_CPP_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cpp/src)
-set(NCONPP_CPP_TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cpp/test)
-set(NCONPP_PY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/python)
+set(NCONPP_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
+set(NCONPP_TESTS_CPP_DIR ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp)
+set(NCONPP_BINDINGS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/bindings)
+set(NCONPP_EXTERN_DIR ${CMAKE_CURRENT_SOURCE_DIR}/extern)
 
 # dependencies
 find_package(LAPACK CONFIG REQUIRED)
@@ -41,11 +42,14 @@ set(NCONPP_DEPENDENCIES
     xtensor-blas
     )
 
-set(NCONPP_CPP_SRC
-    cpp/src/Graph.hpp
-    cpp/src/LatticeGraph.hpp
-    cpp/src/Tensor.hpp
-    cpp/src/TensorNetwork.hpp
+set(NCONPP_CPP_HEADERS
+    ${NCONPP_INCLUDE_DIR}/nconpp/ErrorMessages.hpp
+    ${NCONPP_INCLUDE_DIR}/nconpp/Graph.hpp
+    ${NCONPP_INCLUDE_DIR}/nconpp/LatticeGraph.hpp
+    ${NCONPP_INCLUDE_DIR}/nconpp/LinAlg.hpp
+    ${NCONPP_INCLUDE_DIR}/nconpp/Tensor.hpp
+    ${NCONPP_INCLUDE_DIR}/nconpp/TensorNetwork.hpp
+    ${NCONPP_INCLUDE_DIR}/nconpp/Utils.hpp
     )
 
 get_cmake_property(_variableNames VARIABLES)
@@ -54,12 +58,12 @@ foreach(_variableName ${_variableNames})
     message(STATUS "${_variableName}=${${_variableName}}")
 endforeach()
 
-# debug
+# debug / C++ tests
 if(CMAKE_BUILD_TYPE MATCHES Debug)
-    include(cpp/test/googletest.cmake)
+    include(tests/cpp/googletest.cmake)
 endif()
 
-# python
+# python bindings
 if(CMAKE_BUILD_TYPE MATCHES Python)
-    include(python/python.cmake)
+    include(bindings/python/python.cmake)
 endif()
