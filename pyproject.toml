@@ -2,7 +2,7 @@
 name = "nconpp"
 version = "0.1.0"
 description = "A library for tensor network calculations."
-authors = [{ name = "Mirco Marahrens", email = "mirco.marahrens@googlemail.com" }]
+authors = [{ name = "Mirco Marahrens", email = "mirco.marahrens@googlemail.com" } ]
 requires-python = ">=3.9"
 readme = "README.md"
 classifiers = [
@@ -43,6 +43,7 @@ dev = [
     "rustworkx>=0.17.1",
     "jupytext>=1.19.5",
     "jupyter>=1.1.1",
+    "pytest>=8.0.0",
 ]
 
 [build-system]
@@ -72,3 +73,6 @@ cmake.verbose = true
 ninja.make-fallback = false
 ninja.minimum-version = "1.11"
 logging.level = "INFO"
+
+[tool.pytest.ini_options]
+testpaths = ["tests/python"]
