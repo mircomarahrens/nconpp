@@ -7,9 +7,9 @@
 #include <utility>
 #include <vector>
 
-#include "Graph.hpp"
-#include "LatticeGraph.hpp"
-#include "TensorNetwork.hpp"
+#include "nconpp/Graph.hpp"
+#include "nconpp/LatticeGraph.hpp"
+#include "nconpp/TensorNetwork.hpp"
 
 #define FORCE_IMPORT_ARRAY
 #include "pybind11/pybind11.h"

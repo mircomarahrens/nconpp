@@ -1,7 +1,7 @@
 // Copyright (c) 2026 Mirco Marahrens
 
-#ifndef CPP_SRC_LINALG_HPP_
-#define CPP_SRC_LINALG_HPP_
+#ifndef INCLUDE_NCONPP_LINALG_HPP_
+#define INCLUDE_NCONPP_LINALG_HPP_
 
 #include <algorithm>
 #include <complex>
@@ -14,7 +14,7 @@
 #include <xtensor/xmath.hpp>
 #include <xtensor/xview.hpp>
 
-#include "Tensor.hpp"
+#include "nconpp/Tensor.hpp"
 
 namespace npp::linalg {
 namespace detail {
@@ -121,4 +121,4 @@ static inline auto hosvd(const npp::expression_type<T> &M, std::size_t rank = 0)
 }
 } // namespace npp::linalg
 
-#endif // CPP_SRC_LINALG_HPP_
+#endif // INCLUDE_NCONPP_LINALG_HPP_
