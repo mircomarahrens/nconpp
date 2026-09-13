@@ -1,14 +1,14 @@
 // Copyright 2023 Mirco Marahrens
 
-#ifndef CPP_SRC_LATTICEGRAPH_HPP_
-#define CPP_SRC_LATTICEGRAPH_HPP_
+#ifndef INCLUDE_NCONPP_LATTICEGRAPH_HPP_
+#define INCLUDE_NCONPP_LATTICEGRAPH_HPP_
 
 #include <set>
 #include <string>
 #include <vector>
 
-#include "Graph.hpp"
-#include "Tensor.hpp"
+#include "nconpp/Graph.hpp"
+#include "nconpp/Tensor.hpp"
 
 namespace GRAPH_PROPERTIES {
 struct lattice_graph_properties {
@@ -169,4 +169,4 @@ class LatticeGraph : public Graph<GRAPH_PROPERTIES::lattice_graph_properties,
     }
 };
 
-#endif // CPP_SRC_LATTICEGRAPH_HPP_
+#endif // INCLUDE_NCONPP_LATTICEGRAPH_HPP_

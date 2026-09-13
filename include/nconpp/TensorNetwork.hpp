@@ -1,7 +1,7 @@
 // Copyright 2023 Mirco Marahrens
 
-#ifndef CPP_SRC_TENSORNETWORK_HPP_
-#define CPP_SRC_TENSORNETWORK_HPP_
+#ifndef INCLUDE_NCONPP_TENSORNETWORK_HPP_
+#define INCLUDE_NCONPP_TENSORNETWORK_HPP_
 
 #include <algorithm>
 #include <complex>
@@ -11,9 +11,11 @@
 #include <utility>
 #include <vector>
 
-#include "ErrorMessages.hpp"
-#include "Graph.hpp"
-#include "Tensor.hpp"
+#include "nconpp/ErrorMessages.hpp"
+#include "nconpp/Graph.hpp"
+#include "nconpp/LinAlg.hpp"
+#include "nconpp/Tensor.hpp"
+#include "nconpp/Utils.hpp"
 
 namespace GRAPH_PROPERTIES {
 // custom graph properties
@@ -250,7 +252,7 @@ class TensorNetwork : public Graph<GRAPH_PROPERTIES::tensornetwork_graph_propert
     /**
      * @brief Retrieve current dangling legs (negative indices).
      *
-     * @return const std::set<int>&
+     * @return const std::set<int> &
      */
     const std::set<int> &DanglingLegs() {
         return m_dangling_legs;
@@ -538,4 +540,4 @@ class TensorNetwork : public Graph<GRAPH_PROPERTIES::tensornetwork_graph_propert
     }
 };
 
-#endif // CPP_SRC_TENSORNETWORK_HPP_
+#endif // INCLUDE_NCONPP_TENSORNETWORK_HPP_

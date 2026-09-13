@@ -4,7 +4,7 @@
 
 #include <vector>
 
-#include "LinAlg.hpp"
+#include "nconpp/LinAlg.hpp"
 
 namespace {
 template <typename T>

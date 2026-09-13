@@ -3,7 +3,7 @@
 #include <gmock/gmock-matchers.h>
 #include <gtest/gtest.h>
 
-#include "LatticeGraph.hpp"
+#include "nconpp/LatticeGraph.hpp"
 
 using ::testing::ElementsAre;
 using ::testing::Pair;

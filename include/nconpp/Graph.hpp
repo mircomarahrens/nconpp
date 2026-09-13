@@ -1,14 +1,14 @@
 // Copyright 2023 Mirco Marahrens
 
-#ifndef CPP_SRC_GRAPH_HPP_
-#define CPP_SRC_GRAPH_HPP_
+#ifndef INCLUDE_NCONPP_GRAPH_HPP_
+#define INCLUDE_NCONPP_GRAPH_HPP_
 
 #include <optional>
 #include <set>
 #include <stdexcept>
 #include <unordered_map>
 
-#include "ErrorMessages.hpp"
+#include "nconpp/ErrorMessages.hpp"
 
 namespace GRAPH_PROPERTIES {
 struct default_struct {};
@@ -280,4 +280,4 @@ class Graph {
     }
 };
 
-#endif // CPP_SRC_GRAPH_HPP_
+#endif // INCLUDE_NCONPP_GRAPH_HPP_

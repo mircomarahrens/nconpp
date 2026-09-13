@@ -3,7 +3,8 @@
 #include <gmock/gmock-matchers.h>
 #include <gtest/gtest.h>
 
-#include "Graph.hpp"
+#include "nconpp/ErrorMessages.hpp"
+#include "nconpp/Graph.hpp"
 
 using ::testing::ElementsAre;
 using ::testing::Pair;
