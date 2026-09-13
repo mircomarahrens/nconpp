@@ -13,8 +13,7 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        python-version: [3.12]
-        poetry-version: [2.1.2]
+        python-version: ["3.12"]
         vcpgk-version: [2025.04.09]
         xtensor-python-version: [0.27.0]
         cmake-preset-target: [linux-python]
@@ -33,21 +32,21 @@ jobs:
         run: |
           git clone --branch ${{ matrix.xtensor-python-version }} --depth 1 --single-branch https://github.com/xtensor-stack/xtensor-python.git ${{ github.workspace }}/extern/xtensor-python
           cp ${{ github.workspace }}/extern/CMakeLists_xtensor-python.txt ${{ github.workspace }}/extern/xtensor-python/CMakeLists.txt
-      - name: Install clangd
+      - name: Install build tools and compilers
         run: |
-          sudo apt-get install -y clangd-18
+          sudo apt-get update
+          sudo apt-get install -y clang-18 clangd-18 gfortran make
+          sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100
+          sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-18 100
           sudo update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-18 100
-      - name: Install make
-        run: |
-          sudo apt-get install -y make
       - name: Set up Python
         uses: actions/setup-python@v7
         with:
-          python-version-file: pyproject.toml
+          python-version: ${{ matrix.python-version }}
       - name: Install uv
         uses: astral-sh/setup-uv@v7
       - name: Install the project
-        run: uv sync --locked --all-extras --dev
+        run: uv sync --all-extras --dev
       - name: Cmake configure
         env:
           VCPKG_ROOT: ${{ steps.vcpkg.outputs.vcpkg_root }}
