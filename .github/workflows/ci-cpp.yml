@@ -35,7 +35,7 @@ jobs:
       - name: Install build tools and compilers
         run: |
           sudo apt-get update
-          sudo apt-get install -y clang-18 clangd-18 gfortran make
+          sudo apt-get install -y clang-18 clangd-18 gfortran make ninja-build pkg-config
           sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100
           sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-18 100
           sudo update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-18 100
@@ -50,6 +50,8 @@ jobs:
       - name: Cmake configure
         env:
           VCPKG_ROOT: ${{ steps.vcpkg.outputs.vcpkg_root }}
+          CFLAGS: "-mfma"
+          CXXFLAGS: "-mfma"
         run: |
           cmake --preset ${{ matrix.cmake-preset-target }}
       - name: Cmake build
