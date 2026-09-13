@@ -103,10 +103,10 @@ class PyLatticeGraph(LatticeGraph):
 
         See https://www.rustworkx.org/ for further details.
         """
-        import rustworkx as rx
-        from rustworkx.visualization import mpl_draw
-        from matplotlib import pyplot as plt
         import matplotlib.patches as mpatches
+        import rustworkx as rx
+        from matplotlib import pyplot as plt
+        from rustworkx.visualization import mpl_draw
 
         # Build a temporary rustworkx graph for visualization
         G = rx.PyDiGraph()

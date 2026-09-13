@@ -1,22 +1,19 @@
 #!/usr/bin/python3
 
-import numpy as np
 
-class Mpo(object):
-    """ The class for matrix product operators (MPO).
-    """
+class Mpo:
+    """The class for matrix product operators (MPO)."""
 
-    def __init__(self, hamiltonian_dict = None, operator_dict = None):
+    def __init__(self, hamiltonian_dict=None, operator_dict=None):
         self.hamiltonian_dict = hamiltonian_dict
         self.operator_dict = operator_dict
         self.alphabet = set()
-        self.states = {"I","F"}
+        self.states = {"I", "F"}
         self.state_transistion_function = 0
         self.W_list = []
 
     def init_mpo(self):
         return 0
-
 
     # # predefined mpos ##########################################################
     # def init_pauli(self):
@@ -64,6 +61,7 @@ class Mpo(object):
     #         W[1:,2] = [X, I]
     #         self.mpo_list.append(W)
     ########################################################################
+
 
 #     def init_mpo_khm(self):
 #         # init an empty container list for the mpo

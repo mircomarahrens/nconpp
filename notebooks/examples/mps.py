@@ -2,10 +2,11 @@
 
 import numpy as np
 
-class Mps(object):
+
+class Mps:
     """description of class"""
 
-    def __init__(self, sites = (4,), local_dimension = 2, coordination_number = 2):
+    def __init__(self, sites=(4,), local_dimension=2, coordination_number=2):
         self.A_list = list()
         self.B_list = list()
         self.l_list = list()
@@ -13,9 +14,8 @@ class Mps(object):
         self.ldim = local_dimension
         self.sites = sites
 
-
     def init_mps_random(self):
-        """ Initialize a normalized mps with random entries and set all
+        """Initialize a normalized mps with random entries and set all
         Schmidt values equal to one.
         """
         d = self.ldim
@@ -23,8 +23,8 @@ class Mps(object):
         self.M_list = []
         self.l_list = []
         for _ in range(L):
-            M = np.random.rand(d)+1j*np.random.rand(d)
-            M = M/(np.linalg.norm(M))
+            M = np.random.rand(d) + 1j * np.random.rand(d)
+            M = M / (np.linalg.norm(M))
             M = M.reshape(d, 1, 1)
             self.M_list.append(M)
             self.l_list.append(np.ones(1))

@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 import itertools
+
 import numpy as np
 import sympy as sp
 
@@ -10,7 +12,7 @@ class FSM:
         self.states = {self.start: "S"}  # Q with initial state S
         self.symbols = dict()  # Sigma
         self.transitions = dict()  # delta
-        self.end = int()  # single-accept state, |F|=1
+        self.end = 0  # single-accept state, |F|=1
         self.table = self._construct_table()
 
     def add_state(self, state: int, label: str = "", is_final: bool = False):
@@ -58,9 +60,9 @@ class FSM:
             if pair[1] in self.states:
                 self.transitions[pair] = label
             else:
-                raise ValueError("State {val} does not exist".format(val=pair[1]))
+                raise ValueError(f"State {pair[1]} does not exist")
         else:
-            raise ValueError("State {val} does not exist".format(val=pair[0]))
+            raise ValueError(f"State {pair[0]} does not exist")
 
         self.table = self._construct_table()
 
@@ -137,7 +139,7 @@ class FSM:
     def clear(self):
         self.states = {self.start: "S"}
         self.transitions = dict()
-        self.end = int()
+        self.end = 0
         self.table = self._construct_table()
 
 
@@ -147,7 +149,7 @@ class MPO(FSM):
         self.local_dim = local_dim
         self.symbols = dict()
         self.site = sp.Symbol("i", real=True)
-        self.sites = int()
+        self.sites = 0
 
     def default(self):
         self.sites = 2

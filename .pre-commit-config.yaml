@@ -21,17 +21,19 @@ repos:
         stages: [commit-msg]
         args: []
   # Ruff is a linter and formatter for Python.
-  # - repo: https://github.com/astral-sh/ruff-pre-commit
-  #   # Ruff version.
-  #   rev: v0.9.4
-  #   hooks:
-  #     # Run the linter.
-  #     - id: ruff
-  #       types_or: [ python, pyi ]
-  #       args: [ --fix ]
-  #     # Run the formatter.
-  #     - id: ruff-format
-  #       types_or: [ python, pyi ]
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    # Ruff version.
+    rev: v0.16.7
+    hooks:
+      # Run the linter.
+      - id: ruff
+        files: "^src/, ^tests/"
+        types_or: [ python, pyi ]
+        args: [ --fix ]
+      # Run the formatter.
+      - id: ruff-format
+        files: "^src/, ^tests/"
+        types_or: [ python, pyi ]
   # Poetry is a tool for dependency management and packaging in Python.
   - repo: https://github.com/python-poetry/poetry
     rev: 2.0.1

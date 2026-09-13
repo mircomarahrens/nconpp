@@ -1,70 +1,70 @@
 #!/usr/bin/python3
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 class LatticeGraph:
-    """ A class for graphs of lattices.
+    """A class for graphs of lattices.
 
-        This can be seen as a mixture of lattices and graphs, and therefore we
-        have a mixture in the nomenclature of both fields.
+    This can be seen as a mixture of lattices and graphs, and therefore we
+    have a mixture in the nomenclature of both fields.
 
-        We construct lattices as graphs to achieve a solid framework where each
-        constituent has a fixed value. We enumerate sites, bonds, boundary
-        conditions (lattice) and setting up vertices and edges (graph) for them.
+    We construct lattices as graphs to achieve a solid framework where each
+    constituent has a fixed value. We enumerate sites, bonds, boundary
+    conditions (lattice) and setting up vertices and edges (graph) for them.
 
-        The default values are describing a 4x4 honeycomb latticegraph with
-        open boundary conditions in both spatial direction:
+    The default values are describing a 4x4 honeycomb latticegraph with
+    open boundary conditions in both spatial direction:
 
-                        (0, 5)  (1, 5)  (2, 5)  (3, 5)
-                          |       |       |       |
-                        (0, 4)--(1, 4)  (2, 4)--(3, 4)
-                          |       |       |       |
-               (-1, 3)--(0, 3)  (1, 3)--(2, 3)  (3, 3)--(4, 3)
-                          |       |       |       |
-                        (0, 2)--(1, 2)  (2, 2)--(3, 2)
-                          |       |       |       |
-               (-1, 2)--(0, 1)  (1, 1)--(2, 1)  (3, 1)--(4, 1)
-                          |       |       |       |
-            y           (0, 0)--(1, 0)  (2, 0)--(3, 0)
-            ^             |       |       |       |
-            |           (0,-1)  (1,-1)  (2,-1)  (3,-1)
-            +-->x
+                    (0, 5)  (1, 5)  (2, 5)  (3, 5)
+                      |       |       |       |
+                    (0, 4)--(1, 4)  (2, 4)--(3, 4)
+                      |       |       |       |
+           (-1, 3)--(0, 3)  (1, 3)--(2, 3)  (3, 3)--(4, 3)
+                      |       |       |       |
+                    (0, 2)--(1, 2)  (2, 2)--(3, 2)
+                      |       |       |       |
+           (-1, 2)--(0, 1)  (1, 1)--(2, 1)  (3, 1)--(4, 1)
+                      |       |       |       |
+        y           (0, 0)--(1, 0)  (2, 0)--(3, 0)
+        ^             |       |       |       |
+        |           (0,-1)  (1,-1)  (2,-1)  (3,-1)
+        +-->x
 
-        Args:
-            sites (tuple): see Attributes
-            unitcell (list): see Attributes
-            bcs (tuple): boundary_conditions, see Attributes
+    Args:
+        sites (tuple): see Attributes
+        unitcell (list): see Attributes
+        bcs (tuple): boundary_conditions, see Attributes
 
-        Attributes:
-            sites (tuple): the number of sites spatial distributed, e.g. for d=2
-                we can have (Nx, Ny), where Nx, Ny are integers.
-            sites_position (tuple): each site has a fix index in this tuple and
-                each element to this index is a point in a coordinate system.
-            sites_total (tuple): the total number of sites.
-            boundary_conditions (tuple): the boundary condition per spatial
-                direction.
-            unitcell (list): a list of tuples. This list set up the bonds of our
-                graph. Therefore, each entry corresponds to a site in a
-                "unit cell" and each element in this entries is again a tuple
-                which represents an additive factor.
-                Any site in the lattice is connected to a site in this list.
-                We call the site of interest the origin and the site connected
-                to the origin the target. We can reach the target sites by
-                adding the elements to the origin.
-                This pairs of (origin, target) are forming the bonds.
-            bonds (tuple): pairs of (origin, target) resulted from the
-                "unit cell". Again each entry of this tuple is on a fixed index
-                position and can therefore be used as enumeration for the bonds.
-            vertex_dict:
-            edge_dict:
+    Attributes:
+        sites (tuple): the number of sites spatial distributed, e.g. for d=2
+            we can have (Nx, Ny), where Nx, Ny are integers.
+        sites_position (tuple): each site has a fix index in this tuple and
+            each element to this index is a point in a coordinate system.
+        sites_total (tuple): the total number of sites.
+        boundary_conditions (tuple): the boundary condition per spatial
+            direction.
+        unitcell (list): a list of tuples. This list set up the bonds of our
+            graph. Therefore, each entry corresponds to a site in a
+            "unit cell" and each element in this entries is again a tuple
+            which represents an additive factor.
+            Any site in the lattice is connected to a site in this list.
+            We call the site of interest the origin and the site connected
+            to the origin the target. We can reach the target sites by
+            adding the elements to the origin.
+            This pairs of (origin, target) are forming the bonds.
+        bonds (tuple): pairs of (origin, target) resulted from the
+            "unit cell". Again each entry of this tuple is on a fixed index
+            position and can therefore be used as enumeration for the bonds.
+        vertex_dict:
+        edge_dict:
 
-        Methods:
-            _init_lattice, _init_graph: see docstrings in methods for details.
+    Methods:
+        _init_lattice, _init_graph: see docstrings in methods for details.
 
-        Todo:
-            * implement transformation to bravais lattice
+    Todo:
+        * implement transformation to bravais lattice
     """
 
     def __init__(self, kind="honeycomb", sites=None, unitcell=None, bcs=None):
@@ -109,17 +109,28 @@ class LatticeGraph:
             },
             "cube": {
                 "sites": (2, 2, 2),
-                "unitcell": [((+1, 0, 0), (0, +1, 0), (0, 0, +1), (-1, 0, 0), (0, -1, 0), (0, 0, -1))],
+                "unitcell": [
+                    (
+                        (+1, 0, 0),
+                        (0, +1, 0),
+                        (0, 0, +1),
+                        (-1, 0, 0),
+                        (0, -1, 0),
+                        (0, 0, -1),
+                    )
+                ],
                 "bcs": ("obc", "obc", "obc"),
             },
         }
         if kind not in predefined:
-            raise ValueError(f"Unknown lattice kind '{kind}'. Available: {list(predefined.keys())}")
+            raise ValueError(
+                f"Unknown lattice kind '{kind}'. Available: {list(predefined.keys())}"
+            )
         return predefined[kind]
 
     def _init_lattice(self):
-        """ Function for initializing the site indices for a lattice.
-            This function writes the attributes sites_position and bonds.
+        """Function for initializing the site indices for a lattice.
+        This function writes the attributes sites_position and bonds.
         """
         Npos = {}
         bonds_dict = {}
@@ -145,8 +156,8 @@ class LatticeGraph:
         self.bonds = tuple(self.bonds)
 
     def _init_graph(self, bonds=None, Npos=None):
-        """ Function for initializing the vertices and edges for a graph.
-            This function writes the attributes vertex_dict and edge_dict.
+        """Function for initializing the vertices and edges for a graph.
+        This function writes the attributes vertex_dict and edge_dict.
         """
         if bonds is not None:
             self.bonds = bonds
@@ -168,8 +179,8 @@ class LatticeGraph:
                 edge_count += 1
 
     def plot_graph(self, show_boundary=False):
-        """ Plotting the graph of the lattice with the help of rustworkx, please
-            see https://www.rustworkx.org/ for further details.
+        """Plotting the graph of the lattice with the help of rustworkx, please
+        see https://www.rustworkx.org/ for further details.
         """
         import rustworkx as rx
         from rustworkx.visualization import mpl_draw
@@ -197,31 +208,34 @@ class LatticeGraph:
 
             # Color interior sites yellow, boundary sites light red
             if idx in interior_indices:
-                node_colors.append('yellow')
+                node_colors.append("yellow")
             else:
-                node_colors.append('lightsalmon')
+                node_colors.append("lightsalmon")
 
         for bond_idx, (src, tgt) in self.edge_dict.items():
             G.add_edge(rx_index_map[src], rx_index_map[tgt], bond_idx)
 
         fig, ax = plt.subplots(1, 1, figsize=(8, 6))
 
-        mpl_draw(G,
-                 pos=pos,
-                 labels=lambda node: labels[node],
-                 node_color=node_colors,
-                 node_size=750,
-                 edge_color='black',
-                 arrows=True,
-                 font_size=8,
-                 with_labels=True,
-                 ax=ax)
+        mpl_draw(
+            G,
+            pos=pos,
+            labels=lambda node: labels[node],
+            node_color=node_colors,
+            node_size=750,
+            edge_color="black",
+            arrows=True,
+            font_size=8,
+            with_labels=True,
+            ax=ax,
+        )
 
         # Add a legend
         import matplotlib.patches as mpatches
-        interior_patch = mpatches.Patch(color='yellow', label='Lattice sites')
-        boundary_patch = mpatches.Patch(color='lightsalmon', label='Boundary sites')
-        ax.legend(handles=[interior_patch, boundary_patch], loc='upper right')
+
+        interior_patch = mpatches.Patch(color="yellow", label="Lattice sites")
+        boundary_patch = mpatches.Patch(color="lightsalmon", label="Boundary sites")
+        ax.legend(handles=[interior_patch, boundary_patch], loc="upper right")
 
         ax.set_axis_off()
         plt.tight_layout()
