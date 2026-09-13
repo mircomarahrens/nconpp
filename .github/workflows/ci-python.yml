@@ -58,7 +58,7 @@ jobs:
           cmake --build build/${{ matrix.cmake-preset-target }}
       - name: Pip install
         run: |
-          pip install .
+          uv pip install .
       - name: Run pytest
         run: |
-          pytest
+          uv run pytest
