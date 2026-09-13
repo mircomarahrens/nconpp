@@ -1,0 +1,14 @@
+[
+  {
+    "label": "Convert Jupyter Notebook (.ipynb) to Python script (.py)",
+    "command": "uv run jupytext --to py:percent \"$ZED_FILE\"",
+    "cwd": "$ZED_DIRNAME",
+    "save": "current"
+  },
+  {
+    "label": "Convert Python script (.py) to Jupyter Notebook (.ipynb)",
+    "command": "uv run jupytext --to ipynb \"$ZED_FILE\"",
+    "cwd": "$ZED_DIRNAME",
+    "save": "current"
+  }
+]

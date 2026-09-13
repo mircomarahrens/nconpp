@@ -15,15 +15,16 @@ FetchContent_MakeAvailable(googletest)
 enable_testing()
 
 add_executable(nconpp_tests_run
-    ${NCONPP_CPP_TEST_DIR}/nconpp_tests_run.cpp
-    ${NCONPP_CPP_TEST_DIR}/GraphTest.cpp
-    ${NCONPP_CPP_TEST_DIR}/LatticeGraphTest.cpp
-    ${NCONPP_CPP_TEST_DIR}/LinAlgTest.cpp
-    ${NCONPP_CPP_TEST_DIR}/TensorTest.cpp
-    ${NCONPP_CPP_TEST_DIR}/TensorNetworkTest.cpp)
+    ${NCONPP_TESTS_CPP_DIR}/nconpp_tests_run.cpp
+    ${NCONPP_TESTS_CPP_DIR}/GraphTest.cpp
+    ${NCONPP_TESTS_CPP_DIR}/LatticeGraphTest.cpp
+    ${NCONPP_TESTS_CPP_DIR}/LinAlgTest.cpp
+    ${NCONPP_TESTS_CPP_DIR}/TensorTest.cpp
+    ${NCONPP_TESTS_CPP_DIR}/TensorNetworkTest.cpp)
 
 target_include_directories(nconpp_tests_run PUBLIC
-    ${NCONPP_CPP_SRC_DIR}
+    ${NCONPP_INCLUDE_DIR}
+    ${NCONPP_INCLUDE_DIR}/nconpp
     ${BLAS_INCLUDE_DIR})
 
 target_link_libraries(nconpp_tests_run
@@ -32,6 +33,5 @@ target_link_libraries(nconpp_tests_run
     gmock_main
     gtest_main)
 
-# include(CTest)
 include(GoogleTest)
 gtest_discover_tests(nconpp_tests_run)
