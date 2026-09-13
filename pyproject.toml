@@ -65,7 +65,6 @@ cmake.args = [
     "-DCMAKE_CXX_STANDARD=20",
     "-DCMAKE_CXX_STANDARD_REQUIRED=ON",
     "-DCMAKE_CXX_EXTENSIONS=OFF",
-    "-DPython_EXECUTABLE=.venv/bin/python",
     "-DCMAKE_BUILD_TYPE=Python"
 ]
 cmake.minimum-version = "3.26.1"

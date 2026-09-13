@@ -3,21 +3,17 @@
 # Python find package
 find_package(Python 3.11 COMPONENTS Interpreter Development.Module NumPy REQUIRED)
 
-# Locate pybind11 CMake config from the Python environment
-if(NOT pybind11_DIR)
+# pybind11: Try standard CMake config first, then fallback to python module directory
+find_package(pybind11 CONFIG QUIET)
+if(NOT pybind11_FOUND)
     execute_process(
         COMMAND "${Python_EXECUTABLE}" -m pybind11 --cmakedir
         OUTPUT_STRIP_TRAILING_WHITESPACE
         OUTPUT_VARIABLE pybind11_DIR
         RESULT_VARIABLE pybind11_FIND_RESULT
     )
-    if(NOT pybind11_FIND_RESULT EQUAL 0)
-        message(FATAL_ERROR "Could not find pybind11 cmake directory using ${Python_EXECUTABLE} -m pybind11 --cmakedir")
-    endif()
+    find_package(pybind11 CONFIG REQUIRED)
 endif()
-
-# pybind11
-find_package(pybind11 CONFIG REQUIRED)
 
 # nconpp Python module
 set(PYBIND11_MODULE _nconpp)
