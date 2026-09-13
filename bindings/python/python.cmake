@@ -40,24 +40,20 @@ target_include_directories(${PYBIND11_MODULE} PRIVATE
     ${NCONPP_INCLUDE_DIR}
     ${NCONPP_INCLUDE_DIR}/nconpp
     ${NCONPP_EXTERN_DIR}
+    ${Python_NumPy_INCLUDE_DIRS}
+    ${BLAS_INCLUDE_DIR}
     )
 
 target_link_libraries(${PYBIND11_MODULE} PRIVATE
     ${NCONPP_DEPENDENCIES}
     pybind11::module
     xtensor-python
+    Python::NumPy
     )
 
 if(SKBUILD)
     message(STATUS "Skbuild process triggered.")
     message(STATUS "Use NumPy include dir: ${Python_NumPy_INCLUDE_DIRS}")
-
-    target_include_directories(${PYBIND11_MODULE} PRIVATE
-        ${Python_NumPy_INCLUDE_DIRS}
-        ${BLAS_INCLUDE_DIR})
-
-    target_link_libraries(${PYBIND11_MODULE} PRIVATE
-        Python::NumPy)
 
     target_compile_definitions(${PYBIND11_MODULE} PRIVATE
         VERSION_INFO=${VERSION_INFO})
