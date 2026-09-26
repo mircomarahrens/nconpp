@@ -5,6 +5,8 @@ extern/xtensor-python
 .venv/
 out/
 vcpkg/
+.vscode/
+.zed/
 .compile-commands.json
 
 # JetBrains
