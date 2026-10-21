@@ -7,6 +7,10 @@
             "description": "Default build using Ninja generator.",
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/build/${presetName}",
+            "environment": {
+                "CC": "/usr/bin/clang",
+                "CXX": "/usr/bin/clang++"
+            },
             "vendor": {
                 "microsoft.com/VisualStudioSettings/CMake/1.0": {
                     "hostOS": [

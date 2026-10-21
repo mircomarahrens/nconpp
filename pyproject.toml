@@ -73,5 +73,9 @@ ninja.make-fallback = false
 ninja.minimum-version = "1.11"
 logging.level = "INFO"
 
+[tool.scikit-build.cmake.define]
+CMAKE_C_COMPILER = "clang"
+CMAKE_CXX_COMPILER = "clang++"
+
 [tool.pytest.ini_options]
 testpaths = ["tests/python"]

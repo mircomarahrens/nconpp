@@ -8,6 +8,8 @@ vcpkg/
 .vscode/
 .zed/
 .compile-commands.json
+.agents/
+.gemini/
 
 # JetBrains
 /.idea/
