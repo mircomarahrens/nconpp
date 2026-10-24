@@ -1,7 +1,7 @@
 # Python bindings configuration
 
 # Python find package
-find_package(Python 3.11 COMPONENTS Interpreter Development.Module NumPy REQUIRED)
+find_package(Python COMPONENTS Interpreter Development.Module NumPy REQUIRED)
 
 # pybind11: Try standard CMake config first, then fallback to python module directory
 find_package(pybind11 CONFIG QUIET)

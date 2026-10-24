@@ -1,4 +1,4 @@
-﻿message(STATUS "Processing directory " ${CMAKE_CURRENT_SOURCE_DIR})
+message(STATUS "Processing directory " ${CMAKE_CURRENT_SOURCE_DIR})
 
 cmake_minimum_required(VERSION 3.28)
 
@@ -51,12 +51,6 @@ set(NCONPP_CPP_HEADERS
     ${NCONPP_INCLUDE_DIR}/nconpp/TensorNetwork.hpp
     ${NCONPP_INCLUDE_DIR}/nconpp/Utils.hpp
     )
-
-get_cmake_property(_variableNames VARIABLES)
-list(SORT _variableNames)
-foreach(_variableName ${_variableNames})
-    message(STATUS "${_variableName}=${${_variableName}}")
-endforeach()
 
 # debug / C++ tests
 if(CMAKE_BUILD_TYPE MATCHES Debug)
