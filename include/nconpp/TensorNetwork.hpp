@@ -13,7 +13,6 @@
 
 #include "nconpp/ErrorMessages.hpp"
 #include "nconpp/Graph.hpp"
-#include "nconpp/LinAlg.hpp"
 #include "nconpp/Tensor.hpp"
 #include "nconpp/Utils.hpp"
 

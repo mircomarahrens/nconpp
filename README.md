@@ -84,9 +84,9 @@ source .venv/bin/activate
 - Multi-dimensional arrays with broadcasting and lazy computing: [Xtensor](https://github.com/xtensor-stack/xtensor)
 
 ```bash
-git clone --branch "0.27.0" --depth 1 --single-branch https://github.com/xtensor-stack/xtensor-python.git python/extern/xtensor-python
+git clone --branch "0.27.0" --depth 1 --single-branch https://github.com/xtensor-stack/xtensor-python.git extern/xtensor-python
 # the CMakeLists is outdated and needs an update
-cp python/extern/CMakeLists_xtensor-python.txt python/extern/xtensor-python/CMakeLists.txt
+cp extern/CMakeLists_xtensor-python.txt extern/xtensor-python/CMakeLists.txt
 ```
 
 ### Configuration

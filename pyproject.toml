@@ -15,43 +15,25 @@ dependencies = [
     "cmake>=3.28.1,<4",
     "numpy>=1.26.3,<2",
     "pybind11[global]>=2.11.1,<3",
-    "scikit-build>=0.17.6,<0.18",
     "ninja>=1.11.1.1,<2",
-    "python-dotenv>=1.0.1,<2",
     "clang>=19,<20",
     "make>=0.1.6.post2,<0.2",
 ]
 
 [dependency-groups]
 dev = [
-    "ipykernel>=6.29.0,<7",
-    "matplotlib>=3.8.2,<4",
-    "ipywidgets>=8.1.1,<9",
-    "ipympl>=0.9.3,<0.10",
-    "graphviz>=0.20.1,<0.21",
-    "sympy~=1.12",
-    "invoke>=2.2.0,<3",
-    "gitpython>=3.1.41,<4",
     "pre-commit>=3.8.0,<4",
     "pre-commit-update>=0.6.1,<0.7",
     "clang-format>=19.1.7,<20",
     "clang-tidy>=19.1.0,<20",
     "cppcheck>=1.4.7,<2",
     "cpplint>=2.0.0,<3",
-    "poethepoet>=0.35.0,<0.36",
-    "scipy>=1.13.1",
-    "rustworkx>=0.17.1",
-    "jupytext>=1.19.5",
-    "jupyter>=1.1.1",
     "pytest>=8.0.0",
 ]
 
 [build-system]
 requires = ["scikit-build-core>=0.2.2", "numpy>=1.24.2", "pybind11"]
 build-backend = "scikit_build_core.build"
-
-[tool.uv]
-package = false
 
 [tool.scikit-build]
 wheel.packages = ["src/nconpp"]

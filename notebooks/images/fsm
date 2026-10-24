@@ -1,6 +1,0 @@
-digraph {
-	graph [color=transparent rankdir=LR ranksep=1 splines=true]
-	node [fillcolor=lightgray fontsize=10 height=0.1 shape=circle style=filled]
-	edge [arrowsize=0.5 fontsize=8]
-	0 [label=S shape=doublecircle]
-}
