@@ -13,8 +13,6 @@ if(NOT pybind11_FOUND)
     find_package(pybind11 CONFIG REQUIRED)
 endif()
 
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/xtensor-python)
-
 set(PYBIND11_MODULE _nconpp)
 
 pybind11_add_module(${PYBIND11_MODULE}
@@ -23,10 +21,13 @@ pybind11_add_module(${PYBIND11_MODULE}
     ${CMAKE_CURRENT_SOURCE_DIR}/bindings/python/bindings.cpp
 )
 
+target_include_directories(${PYBIND11_MODULE} PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/extern/xtensor-python/include
+)
+
 target_link_libraries(${PYBIND11_MODULE} PRIVATE
     nconpp
     pybind11::module
-    xtensor-python
     Python::NumPy
 )
 

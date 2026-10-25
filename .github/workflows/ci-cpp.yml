@@ -20,7 +20,6 @@ jobs:
       matrix:
         python-version: ["3.12"]
         vcpkg-version: [2025.04.09]
-        xtensor-python-version: [0.27.0]
         cmake-preset-target: [linux-debug]
     steps:
       - name: Checkout code
@@ -33,10 +32,6 @@ jobs:
           ./bootstrap-vcpkg.sh --disableMetrics
           ./vcpkg integrate install
           echo "VCPKG_ROOT=$(pwd)" >> "$GITHUB_OUTPUT"
-      - name: Set up xtensor-python
-        run: |
-          git clone --branch ${{ matrix.xtensor-python-version }} --depth 1 --single-branch https://github.com/xtensor-stack/xtensor-python.git ${{ github.workspace }}/extern/xtensor-python
-          cp ${{ github.workspace }}/extern/CMakeLists_xtensor-python.txt ${{ github.workspace }}/extern/xtensor-python/CMakeLists.txt
       - name: Install build tools and compilers
         run: |
           sudo apt-get update
@@ -57,15 +52,6 @@ jobs:
           VCPKG_ROOT: ${{ steps.vcpkg.outputs.vcpkg_root }}
         run: |
           cmake --preset ${{ matrix.cmake-preset-target }}
-      - name: Show vcpkg build failure logs
-        if: failure()
-        run: |
-          find vcpkg/buildtrees/ -name "install-*.log" -o -name "config-*.log" 2>/dev/null | while read -r logfile; do
-            echo "================================================================="
-            echo "LOG: $logfile"
-            echo "================================================================="
-            tail -n 120 "$logfile"
-          done
       - name: Cmake build
         run: |
           cmake --build ${{ github.workspace }}/build/${{ matrix.cmake-preset-target }} --parallel 10 --

@@ -36,7 +36,6 @@ jobs:
       - name: Set up xtensor-python
         run: |
           git clone --branch ${{ matrix.xtensor-python-version }} --depth 1 --single-branch https://github.com/xtensor-stack/xtensor-python.git ${{ github.workspace }}/extern/xtensor-python
-          cp ${{ github.workspace }}/extern/CMakeLists_xtensor-python.txt ${{ github.workspace }}/extern/xtensor-python/CMakeLists.txt
       - name: Install build tools and compilers
         run: |
           sudo apt-get update
@@ -52,15 +51,6 @@ jobs:
         uses: astral-sh/setup-uv@v7
       - name: Install the project and dependencies
         run: uv sync --all-extras --dev
-      - name: Show vcpkg build failure logs
-        if: failure()
-        run: |
-          find vcpkg/buildtrees/ -name "install-*.log" -o -name "config-*.log" 2>/dev/null | while read -r logfile; do
-            echo "================================================================="
-            echo "LOG: $logfile"
-            echo "================================================================="
-            tail -n 120 "$logfile"
-          done
       - name: Run pytest
         run: |
           uv run pytest

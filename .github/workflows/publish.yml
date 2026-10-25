@@ -30,7 +30,6 @@ jobs:
       - name: Set up xtensor-python
         run: |
           git clone --branch 0.27.0 --depth 1 --single-branch https://github.com/xtensor-stack/xtensor-python.git extern/xtensor-python
-          cp extern/CMakeLists_xtensor-python.txt extern/xtensor-python/CMakeLists.txt
 
       - name: Set up vcpkg
         run: |
@@ -50,16 +49,6 @@ jobs:
           CIBW_ENVIRONMENT_LINUX: "CC=clang CXX=clang++ CFLAGS='-mfma' CXXFLAGS='-mfma'"
           CIBW_TEST_REQUIRES: "pytest>=8.0.0"
           CIBW_TEST_COMMAND: "pytest {project}/tests/python"
-
-      - name: Show vcpkg build failure logs
-        if: failure()
-        run: |
-          find vcpkg/buildtrees/ -name "install-*.log" -o -name "config-*.log" 2>/dev/null | while read -r logfile; do
-            echo "================================================================="
-            echo "LOG: $logfile"
-            echo "================================================================="
-            tail -n 120 "$logfile"
-          done
 
       - name: Upload wheel artifacts
         uses: actions/upload-artifact@v4
