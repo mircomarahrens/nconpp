@@ -20,6 +20,7 @@ set(PYBIND11_MODULE _nconpp)
 
 pybind11_add_module(${PYBIND11_MODULE}
     MODULE
+    NO_EXTRAS
     ${NCONPP_BINDINGS_DIR}/python/bindings.cpp
     ${NCONPP_CPP_HEADERS}
     )

@@ -45,9 +45,10 @@ jobs:
           CIBW_MANYLINUX_X86_64_IMAGE: manylinux_2_28
           CIBW_BEFORE_ALL_LINUX: >
             yum install -y clang ninja-build gcc-gfortran zip unzip &&
+            pipx upgrade patchelf &&
             ./vcpkg/bootstrap-vcpkg.sh -disableMetrics
           CIBW_ENVIRONMENT_LINUX: "CC=clang CXX=clang++ CFLAGS='-mfma' CXXFLAGS='-mfma'"
-          CIBW_TEST_REQUIRES: "pytest>=8.0.0 numpy"
+          CIBW_TEST_REQUIRES: "pytest>=8.0.0 numpy<2"
           CIBW_TEST_COMMAND: "pytest {project}/tests/python"
 
       - name: Show vcpkg build failure logs

@@ -43,9 +43,11 @@ set(NCONPP_DEPENDENCIES
     ${BLAS_LIBRARIES}
     ${LAPACK_LIBRARIES}
     xtensor
-    xtensor::optimize
     xtensor-blas
     )
+if(NOT SKBUILD)
+    list(APPEND NCONPP_DEPENDENCIES xtensor::optimize)
+endif()
 
 set(NCONPP_CPP_HEADERS
     ${NCONPP_INCLUDE_DIR}/nconpp/ErrorMessages.hpp
@@ -63,6 +65,6 @@ if(CMAKE_BUILD_TYPE MATCHES Debug)
 endif()
 
 # python bindings
-if(CMAKE_BUILD_TYPE MATCHES Python)
+if(CMAKE_BUILD_TYPE MATCHES Python OR SKBUILD)
     include(bindings/python/python.cmake)
 endif()
