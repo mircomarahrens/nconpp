@@ -3,7 +3,7 @@ name = "nconpp"
 version = "0.1.0"
 description = "A library for tensor network calculations."
 authors = [{ name = "Mirco Marahrens", email = "mirco.marahrens@googlemail.com" } ]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 readme = "README.md"
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -23,13 +23,13 @@ dev = [
     "cmake>=3.28.1,<4",
     "ninja>=1.11.1.1,<2",
     "pybind11[global]>=2.12.0,<3",
-    "pre-commit>=3.8.0,<4",
-    "pre-commit-update>=0.6.1,<0.7",
-    "clang-format>=19.1.7,<20",
-    "clang-tidy>=19.1.0,<20",
+    "pre-commit>=4.0.0",
+    "pre-commit-update>=0.6.1",
+    "clang-format>=19.1.7",
+    "clang-tidy>=19.1.0",
     "cppcheck>=1.4.7,<2",
     "cpplint>=2.0.0,<3",
-    "pytest>=8.0.0",
+    "pytest>=9.0.3",
 ]
 
 [build-system]
