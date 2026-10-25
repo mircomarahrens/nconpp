@@ -14,7 +14,10 @@
     },
     {
       "name": "openblas",
-      "version>=": "0.3.29"
+      "version>=": "0.3.29",
+      "features": [
+        "dynamic-arch"
+      ]
     },
     {
       "name": "lapack",
@@ -24,7 +27,9 @@
   "features": {
     "test": {
       "description": "Dependencies for testing",
-      "dependencies": ["gtest"]
+      "dependencies": [
+        "gtest"
+      ]
     }
   },
   "builtin-baseline": "c9f906558f9bb12ee9811d6edc98ec9255c6cda5",

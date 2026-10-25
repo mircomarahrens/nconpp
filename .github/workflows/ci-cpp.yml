@@ -54,6 +54,15 @@ jobs:
           CXXFLAGS: "-mfma"
         run: |
           cmake --preset ${{ matrix.cmake-preset-target }}
+      - name: Show vcpkg build failure logs
+        if: failure()
+        run: |
+          find vcpkg/buildtrees/ -name "install-*.log" -o -name "config-*.log" 2>/dev/null | while read -r logfile; do
+            echo "================================================================="
+            echo "LOG: $logfile"
+            echo "================================================================="
+            tail -n 120 "$logfile"
+          done
       - name: Cmake build
         run: |
           cmake --build ${{ github.workspace }}/build/${{ matrix.cmake-preset-target }} --parallel 10 --

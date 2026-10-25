@@ -2,6 +2,11 @@ message(STATUS "Processing directory " ${CMAKE_CURRENT_SOURCE_DIR})
 
 cmake_minimum_required(VERSION 3.28)
 
+# Set overlay triplets for vcpkg
+if(NOT DEFINED VCPKG_OVERLAY_TRIPLETS)
+    set(VCPKG_OVERLAY_TRIPLETS "${CMAKE_CURRENT_SOURCE_DIR}/triplets" CACHE STRING "Overlay triplets directory for vcpkg")
+endif()
+
 project(nconpp LANGUAGES C CXX)
 
 include(CTest)

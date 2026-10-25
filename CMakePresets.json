@@ -11,6 +11,9 @@
                 "CC": "/usr/bin/clang",
                 "CXX": "/usr/bin/clang++"
             },
+            "cacheVariables": {
+                "VCPKG_OVERLAY_TRIPLETS": "${sourceDir}/triplets"
+            },
             "vendor": {
                 "microsoft.com/VisualStudioSettings/CMake/1.0": {
                     "hostOS": [
