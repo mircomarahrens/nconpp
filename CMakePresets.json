@@ -3,16 +3,24 @@
     "configurePresets": [
         {
             "name": "default",
+            "hidden": true,
             "displayName": "Default Config",
             "description": "Default build using Ninja generator.",
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/build/${presetName}",
             "environment": {
-                "CC": "/usr/bin/clang",
-                "CXX": "/usr/bin/clang++"
+                "CC": "clang",
+                "CXX": "clang++",
+                "PYTHON_VENV": "${sourceDir}/.venv",
+                "VCPKG_ROOT": "${sourceDir}/vcpkg"
             },
             "cacheVariables": {
-                "VCPKG_OVERLAY_TRIPLETS": "${sourceDir}/triplets"
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/install/${presetName}",
+                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+                "VCPKG_OVERLAY_TRIPLETS": "${sourceDir}/triplets",
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++",
+                "Python_EXECUTABLE": "${sourceDir}/.venv/bin/python"
             },
             "vendor": {
                 "microsoft.com/VisualStudioSettings/CMake/1.0": {
@@ -33,22 +41,8 @@
             "displayName": "Linux Debug (Host)",
             "description": "Build on host system using build/linux-debug",
             "inherits": "default",
-            "binaryDir": "${sourceDir}/build/linux-debug",
-            "environment": {
-                "PYTHON_VENV": "${sourceDir}/.venv",
-                "VCPKG_ROOT": "${sourceDir}/vcpkg"
-            },
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug",
-                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/install/linux-debug",
-                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
-                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
-                "CMAKE_C_COMPILER": "/usr/bin/clang",
-                "CMAKE_CXX_COMPILER": "/usr/bin/clang++",
-                "CMAKE_CXX_STANDARD": "20",
-                "CMAKE_CXX_STANDARD_REQUIRED": "ON",
-                "CMAKE_CXX_EXTENSIONS": "OFF",
-                "Python_EXECUTABLE": "${sourceDir}/.venv/bin/python"
+                "CMAKE_BUILD_TYPE": "Debug"
             }
         },
         {
@@ -56,41 +50,17 @@
             "displayName": "Container Debug (Devcontainer/CI)",
             "description": "Build inside container using build/container-debug",
             "inherits": "default",
-            "binaryDir": "${sourceDir}/build/container-debug",
-            "environment": {
-                "PYTHON_VENV": "${sourceDir}/.venv"
-            },
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug",
-                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/install/container-debug",
-                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
-                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
-                "CMAKE_C_COMPILER": "/usr/bin/clang",
-                "CMAKE_CXX_COMPILER": "/usr/bin/clang++",
-                "CMAKE_CXX_STANDARD": "20",
-                "CMAKE_CXX_STANDARD_REQUIRED": "ON",
-                "CMAKE_CXX_EXTENSIONS": "OFF",
-                "Python_EXECUTABLE": "${sourceDir}/.venv/bin/python"
+                "CMAKE_BUILD_TYPE": "Debug"
             }
         },
         {
             "name": "linux-python",
+            "displayName": "Linux Python Bindings",
+            "description": "Build Python bindings using build/linux-python",
             "inherits": "default",
-            "environment": {
-                "PYTHON_VENV": "${sourceDir}/.venv",
-                "VCPKG_ROOT": "${sourceDir}/vcpkg"
-            },
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Python",
-                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/install/${presetName}",
-                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
-                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
-                "CMAKE_C_COMPILER": "/usr/bin/clang",
-                "CMAKE_CXX_COMPILER": "/usr/bin/clang++",
-                "CMAKE_CXX_STANDARD": "20",
-                "CMAKE_CXX_STANDARD_REQUIRED": "ON",
-                "CMAKE_CXX_EXTENSIONS": "OFF",
-                "Python_EXECUTABLE": "${sourceDir}/.venv/bin/python"
+                "CMAKE_BUILD_TYPE": "Python"
             }
         }
     ],

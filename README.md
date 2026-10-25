@@ -13,19 +13,7 @@ cd nconpp
 
 ### Dependencies
 
-The following dependencies are required for local development. The instructions are used to set up the development environment on a Linux system. The author has used:
-
-```bash
-lsb_release -a
-```
-
-```bash
-No LSB modules are available.
-Distributor ID: Ubuntu
-Description:    Ubuntu 24.04.3 LTS
-Release:        24.04
-Codename:       noble
-```
+The following dependencies are required for local development. The instructions are used to set up the development environment on a Linux system.
 
 ### C++ Development
 
@@ -53,27 +41,6 @@ CMake suite maintained and supported by Kitware (kitware.com/cmake).
 ### Python Development
 
 - Python package manager: [UV](https://docs.astral.sh/uv/)
-
-```bash
-uv --version
-```
-
-```bash
-uv 0.8.2
-```
-
-```bash
-uv python list
-```
-
-```bash
-[...]
-cpython-3.12.3-linux-x86_64-gnu                   /usr/bin/python3.12
-cpython-3.12.3-linux-x86_64-gnu                   /usr/bin/python3 -> python3.12
-cpython-3.12.3-linux-x86_64-gnu                   /usr/bin/python -> python3
-[...]
-```
-
 - Create and activate a virtual environment:
 
 ```bash
