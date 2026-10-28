@@ -1,2 +1,6 @@
 CompileFlags:
   CompilationDatabase: build/linux-debug
+
+Diagnostics:
+  UnusedIncludes: None
+  MissingIncludes: None
