@@ -52,6 +52,6 @@ if(CMAKE_BUILD_TYPE MATCHES Debug)
 endif()
 
 # Python bindings
-if(CMAKE_BUILD_TYPE MATCHES Python OR SKBUILD)
+if(CMAKE_BUILD_TYPE MATCHES Python OR CMAKE_BUILD_TYPE MATCHES Debug OR SKBUILD)
     include(bindings/python/python.cmake)
 endif()

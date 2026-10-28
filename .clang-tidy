@@ -5,5 +5,4 @@ Checks: >
 
 WarningsAsErrors: 'cppcoreguidelines-*'
 HeaderFilterRegex: '.*'
-AnalyzeTemporaryDtors: false
 FormatStyle: none
