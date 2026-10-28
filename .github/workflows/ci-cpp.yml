@@ -54,7 +54,7 @@ jobs:
           cmake --preset ${{ matrix.cmake-preset-target }}
       - name: Cmake build
         run: |
-          cmake --build ${{ github.workspace }}/build/${{ matrix.cmake-preset-target }} --parallel 10 --
+          cmake --build ${{ github.workspace }}/build/${{ matrix.cmake-preset-target }} --target nconpp_tests_run --parallel 10
       - name: Run ctest
         run: |
           ctest --test-dir build/${{ matrix.cmake-preset-target }} --output-on-failure

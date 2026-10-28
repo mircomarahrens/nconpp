@@ -52,6 +52,7 @@ if(CMAKE_BUILD_TYPE MATCHES Debug)
 endif()
 
 # Python bindings
-if(CMAKE_BUILD_TYPE MATCHES Python OR CMAKE_BUILD_TYPE MATCHES Debug OR SKBUILD)
+if(CMAKE_BUILD_TYPE MATCHES Python OR SKBUILD OR
+   (CMAKE_BUILD_TYPE MATCHES Debug AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/extern/xtensor-python/include"))
     include(bindings/python/python.cmake)
 endif()
