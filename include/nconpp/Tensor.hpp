@@ -83,13 +83,13 @@ static inline auto expand_dims(const expression_type<T> &M, std::size_t axis) {
 }
 
 // unravel_index
-static inline auto unravel_index(int i, const shape_type &shape) {
+static inline auto unravel_index(std::size_t i, const shape_type &shape) {
     auto _res = xt::unravel_index(i, shape);
     return std::vector<size_t>(_res.begin(), _res.end());
 }
 
 // unravel_index
-static inline auto unravel_index(int i, const std::vector<std::size_t> &shape) {
+static inline auto unravel_index(std::size_t i, const std::vector<std::size_t> &shape) {
     auto _res = xt::unravel_index(i, shape);
     return std::vector<size_t>(_res.begin(), _res.end());
 }

@@ -31,7 +31,11 @@ class Graph {
         graph_properties.directed_edges = directed_edges;
     }
 
-    ~Graph() = default;
+    virtual ~Graph() = default;
+    Graph(const Graph &) = default;
+    Graph &operator=(const Graph &) = default;
+    Graph(Graph &&) noexcept = default;
+    Graph &operator=(Graph &&) noexcept = default;
 
     struct graph_properties_t : G {
         // put any default property here

@@ -160,20 +160,26 @@ class TensorNetwork : public Graph<GRAPH_PROPERTIES::tensornetwork_graph_propert
      * @param other
      * @return TensorNetwork&
      */
-    TensorNetwork &operator=(TensorNetwork &other) {
-        std::swap(m_dangling_legs, other.m_dangling_legs);
-        std::swap(m_legs, other.m_legs);
-        std::swap(this->vertices, other.vertices);
-        std::swap(this->edges, other.edges);
+    TensorNetwork &operator=(const TensorNetwork &other) {
+        if (this != &other) {
+            // 1. Assign base class Graph (copies vertices, edges, adjacency_list, graph_properties)
+            Graph<GRAPH_PROPERTIES::tensornetwork_graph_properties,
+                  GRAPH_PROPERTIES::tensornetwork_vertex_properties<T>,
+                  GRAPH_PROPERTIES::tensornetwork_edge_properties<T>>::operator=(other);
 
+            // 2. Assign TensorNetwork members
+            m_dangling_legs = other.m_dangling_legs;
+            m_legs = other.m_legs;
+        }
         return *this;
     }
+
 
     /**
      * @brief Move constructor.
      *
      */
-    TensorNetwork(TensorNetwork &&other)
+    TensorNetwork(TensorNetwork &&other) noexcept
         : m_dangling_legs(other.m_dangling_legs), m_legs(other.m_legs),
           Graph<GRAPH_PROPERTIES::tensornetwork_graph_properties,
                 GRAPH_PROPERTIES::tensornetwork_vertex_properties<T>,
@@ -203,8 +209,8 @@ class TensorNetwork : public Graph<GRAPH_PROPERTIES::tensornetwork_graph_propert
      *      - legs with negative integers won't be contracted, so-called dangling
      * legs
      */
-    explicit TensorNetwork(std::vector<npp::tensor_type<T>> &&tensor_list,
-                           std::vector<std::vector<int>> &&subscript_vector_list)
+    explicit TensorNetwork(std::vector<npp::tensor_type<T>> &&tensor_list, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
+                           std::vector<std::vector<int>> &&subscript_vector_list)   // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
         : Graph<GRAPH_PROPERTIES::tensornetwork_graph_properties,
                 GRAPH_PROPERTIES::tensornetwork_vertex_properties<T>,
                 GRAPH_PROPERTIES::tensornetwork_edge_properties<T>>(tensor_list.size()) {
@@ -215,17 +221,15 @@ class TensorNetwork : public Graph<GRAPH_PROPERTIES::tensornetwork_graph_propert
                                         std::to_string(subscript_vector_list.size()) + ".");
         }
 
-        // counting occurrence of legs to check constraints
         std::unordered_map<std::size_t, std::size_t> _vertex_leg_map;
         for (std::size_t _vertex_index = 0; _vertex_index < tensor_list.size(); _vertex_index++) {
-            const std::vector<int> &_subscript_vector = subscript_vector_list[_vertex_index];
-
-            create_edges(_vertex_leg_map, _vertex_index, _subscript_vector);
+            create_edges(_vertex_leg_map, _vertex_index, subscript_vector_list[_vertex_index]);
 
             this->vertices[_vertex_index].legs = std::move(subscript_vector_list[_vertex_index]);
             this->vertices[_vertex_index].tensor = std::move(tensor_list[_vertex_index]);
         }
     }
+
 
     /**
      * @brief Move assignment
@@ -233,7 +237,7 @@ class TensorNetwork : public Graph<GRAPH_PROPERTIES::tensornetwork_graph_propert
      * @param other
      * @return TensorNetwork&
      */
-    TensorNetwork &operator=(TensorNetwork &&other) {
+    TensorNetwork &operator=(TensorNetwork &&other) noexcept {
         m_dangling_legs = std::move(other.m_dangling_legs);
         m_legs = std::move(other.m_legs);
         this->vertices = std::move(other.vertices);
@@ -303,7 +307,7 @@ class TensorNetwork : public Graph<GRAPH_PROPERTIES::tensornetwork_graph_propert
 
             if (_src == _dest) { // trace
                 std::vector<std::size_t> _axes = {};
-                for (auto _axis = 0; _axis < _src_legs.size(); _axis++) {
+                for (std::size_t _axis = 0; _axis < _src_legs.size(); _axis++) {
                     if (_src_legs[_axis] == _leg_index) {
                         _axes.emplace_back(_axis);
                     }
@@ -319,12 +323,12 @@ class TensorNetwork : public Graph<GRAPH_PROPERTIES::tensornetwork_graph_propert
                 // TODO(mircomarahrens): add multi axis tensor contraction?
                 std::vector<std::size_t> _axes_a = {};
                 std::vector<std::size_t> _axes_b = {};
-                for (auto _axis = 0; _axis < _src_legs.size(); _axis++) {
+                for (std::size_t _axis = 0; _axis < _src_legs.size(); _axis++) {
                     if (_src_legs[_axis] == _leg_index) {
                         _axes_a.emplace_back(_axis);
                     }
                 }
-                for (auto _axis = 0; _axis < _dest_legs.size(); _axis++) {
+                for (std::size_t _axis = 0; _axis < _dest_legs.size(); _axis++) {
                     if (_dest_legs[_axis] == _leg_index) {
                         _axes_b.emplace_back(_axis);
                     }
@@ -381,7 +385,7 @@ class TensorNetwork : public Graph<GRAPH_PROPERTIES::tensornetwork_graph_propert
     std::vector<npp::shape_type> TensorShapes() {
         auto _nv = this->NumVertices();
         std::vector<npp::shape_type> _result(_nv);
-        for (int _i = 0; _i < _nv; _i++) {
+        for (std::size_t _i = 0; _i < _nv; _i++) {
             _result[_i] = this->vertices[_i].tensor.shape();
         }
         return _result;

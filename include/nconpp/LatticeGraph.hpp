@@ -41,14 +41,18 @@ class LatticeGraph : public Graph<GRAPH_PROPERTIES::lattice_graph_properties,
         this->graph_properties.name = _name;
 
         m_boundary_grid_shape.resize(m_grid_shape.size());
-        for (int i = 0; i < m_grid_shape.size(); ++i) {
+        for (std::size_t i = 0; i < m_grid_shape.size(); ++i) {
             m_boundary_grid_shape[i] = m_grid_shape[i] + 2;
         }
 
         m_lattice_initialization();
     }
 
-    ~LatticeGraph() = default;
+    ~LatticeGraph() override = default;
+    LatticeGraph(const LatticeGraph &) = default;
+    LatticeGraph &operator=(const LatticeGraph &) = default;
+    LatticeGraph(LatticeGraph &&) noexcept = default;
+    LatticeGraph &operator=(LatticeGraph &&) noexcept = default;
 
     const std::vector<std::size_t> &getGridShape() const {
         return m_grid_shape;
@@ -103,7 +107,7 @@ class LatticeGraph : public Graph<GRAPH_PROPERTIES::lattice_graph_properties,
 
             // check if site is a boundary site, store the result as vertex property
             for (std::size_t _ic = 0; _ic < v.coordinate.size(); _ic++) {
-                int _c = v.coordinate[_ic];
+                std::size_t _c = v.coordinate[_ic];
                 if (_c == 0 || _c == m_boundary_grid_shape[_ic] - 1) {
                     v.boundary = true;
                     break;
