@@ -36,7 +36,7 @@ jobs:
           git clone --branch 2025.04.09 --single-branch https://github.com/microsoft/vcpkg.git vcpkg
 
       - name: Build wheels via cibuildwheel
-        uses: pypa/cibuildwheel@v3.2.1
+        uses: pypa/cibuildwheel@v4.3.4
         env:
           CIBW_ARCHS_LINUX: ${{ matrix.arch }}
           CIBW_BUILD: "cp310-manylinux* cp311-manylinux* cp312-manylinux* cp313-manylinux* cp314-manylinux*"
