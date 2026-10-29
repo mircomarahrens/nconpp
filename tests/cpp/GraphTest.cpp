@@ -10,12 +10,6 @@ using ::testing::ElementsAre;
 using ::testing::Pair;
 using ::testing::UnorderedElementsAre;
 
-class GraphTest : public testing::Test {
-    GraphTest() = default;
-
-    ~GraphTest() override = default;
-};
-
 TEST(GraphTest, EmptyGraph) {
     ASSERT_NO_THROW(Graph<> g);
 }
@@ -162,7 +156,7 @@ TEST(GraphTest, customVertexProperties) {
     g.vertices[3].prop1 = 1;
     g.vertices[3].prop2 = {4, 5, 6};
 
-    for (auto i = 0; i < g.NumVertices(); i++) {
+    for (std::size_t i = 0; i < g.NumVertices(); ++i) {
         if (i != 3) {
             ASSERT_EQ(g.vertices[i].prop1, 0);
             ASSERT_THAT(g.vertices[i].prop2, ElementsAre(1, 2, 3));
@@ -190,7 +184,7 @@ TEST(GraphTest, customEdgeProperties) {
     g.vertices[3].prop1 = 1;
     g.vertices[3].prop2 = {4, 5, 6};
 
-    for (auto i = 0; i < g.NumVertices(); i++) {
+    for (std::size_t i = 0; i < g.NumVertices(); ++i) {
         if (i != 3) {
             ASSERT_EQ(g.vertices[i].prop1, 0);
             ASSERT_THAT(g.vertices[i].prop2, ElementsAre(1, 2, 3));
@@ -272,14 +266,14 @@ TEST(GraphTest, largeCustomGraph) {
 
     Graph<graph_properties, vertex_properties, edge_properties> g(1000);
 
-    for (std::size_t id = 0; id < 2000; id++) {
+    for (int id = 0; id < 2000; ++id) {
         g.addEdge(id, std::rand() % 1000, std::rand() % 1000);
     }
 
     ASSERT_EQ(g.NumEdges(), 2000);
 
-    for (auto el : g.edges) {
-        auto edge = el.second;
+    for (const auto &el : g.edges) {
+        const auto &edge = el.second;
         ASSERT_TRUE(g.adjacency_list[edge.src].find(edge.dest) != g.adjacency_list[edge.src].end());
         ASSERT_TRUE(g.adjacency_list[edge.dest].find(edge.src) !=
                     g.adjacency_list[edge.dest].end());

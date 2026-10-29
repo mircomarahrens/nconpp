@@ -18,13 +18,13 @@ static auto createTensorList(const std::vector<npp::shape_type> &shapes) {
     std::vector<npp::tensor_type<std::complex<double>>> tensorList = {};
     std::vector<std::vector<int>> legs = {};
     int leg = -1;
-    for (auto shape : shapes) {
+    for (const auto &shape : shapes) {
         // tensor
         tensorList.emplace_back(xt::random::rand<double>(shape));
 
         // legs
         std::vector<int> tlegs = {};
-        for (auto i : shape) {
+        for (std::size_t d = 0; d < shape.size(); ++d) {
             tlegs.push_back(leg);
             leg--;
         }
@@ -34,12 +34,6 @@ static auto createTensorList(const std::vector<npp::shape_type> &shapes) {
 
     return std::make_pair(tensorList, legs);
 }
-
-class TensorNetworkTest : public testing::Test {
-    TensorNetworkTest() = default;
-
-    ~TensorNetworkTest() override = default;
-};
 
 TEST(TensorNetworkTest, explicitCopyConstructor) {
     auto vals = createTensorList({{2, 3, 1}, {3, 1, 2}});
@@ -67,11 +61,13 @@ TEST(TensorNetworkTest, copyConstructor) {
 
 TEST(TensorNetworkTest, copyAssignment) {
     auto vals = createTensorList({{2, 3, 1}, {3, 1, 2}});
+    auto other_vals = createTensorList({{1, 2}, {2, 1}});
 
     TensorNetwork<> tn1(vals.first, vals.second);
+    TensorNetwork<> tn2(other_vals.first, other_vals.second);
 
     // call copy assignment
-    TensorNetwork<> tn2 = tn1;
+    tn2 = tn1;
 
     ASSERT_EQ(tn1.DanglingLegs(), tn2.DanglingLegs());
     ASSERT_EQ(tn1.Legs(), tn2.Legs());
@@ -103,6 +99,7 @@ TEST(TensorNetworkTest, moveConstructor) {
 
 TEST(TensorNetworkTest, moveAssignment) {
     auto vals = createTensorList({{2, 3, 1}, {3, 1, 2}});
+    auto other_vals = createTensorList({{1, 2}, {2, 1}});
 
     TensorNetwork<> tn1(vals.first, vals.second);
 
@@ -111,8 +108,10 @@ TEST(TensorNetworkTest, moveAssignment) {
     ASSERT_THAT(tn1.TensorShapes(),
                 ElementsAre(npp::shape_type({2, 3, 1}), npp::shape_type({3, 1, 2})));
 
+    TensorNetwork<> tn2(other_vals.first, other_vals.second);
+
     // call move assignment
-    TensorNetwork<> tn2 = std::move(tn1);
+    tn2 = std::move(tn1);
 
     ASSERT_THAT(tn2.DanglingLegs(), ElementsAre(-6, -5, -4, -3, -2, -1));
     ASSERT_THAT(tn2.Legs(), ElementsAre());
@@ -125,27 +124,10 @@ TEST(TensorNetworkTest, moveAssignment) {
 }
 
 TEST(TensorNetworkTest, explicitMoveConstructor) {
-    std::vector<npp::shape_type> shapes = {{2, 3, 1}, {3, 1, 2}};
-
-    std::vector<npp::tensor_type<std::complex<double>>> tensorList = {};
-    std::vector<std::vector<int>> legs = {};
-    int leg = -1;
-    for (auto shape : shapes) {
-        // tensor
-        tensorList.emplace_back(xt::random::rand<double>(shape));
-
-        // legs
-        std::vector<int> tlegs = {};
-        for (auto i : shape) {
-            tlegs.push_back(leg);
-            leg--;
-        }
-
-        legs.emplace_back(tlegs);
-    }
+    auto vals = createTensorList({{2, 3, 1}, {3, 1, 2}});
 
     // call explicit move constructor
-    TensorNetwork<> tn(std::move(tensorList), std::move(legs));
+    TensorNetwork<> tn(std::move(vals.first), std::move(vals.second));
 
     ASSERT_THAT(tn.DanglingLegs(), ElementsAre(-6, -5, -4, -3, -2, -1));
     ASSERT_THAT(tn.Legs(), ElementsAre());

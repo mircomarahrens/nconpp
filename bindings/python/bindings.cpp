@@ -105,8 +105,8 @@ void PyLatticeGraph_wrapper(py::module &m) {
         .def_readonly("boundary", &graph::edge_properties_t::boundary);
 
     py::class_<lattice>(m, "LatticeGraph", py::dynamic_attr(), py::module_local())
-        .def(py::init<std::string &, std::vector<std::size_t> &, lattice::directions_type &,
-                      std::vector<std::string> &>(),
+        .def(py::init<const std::string &, const std::vector<std::size_t> &,
+                      const lattice::directions_type &, const std::vector<std::string> &>(),
              py::arg("name") = "honeycomb", py::arg("shape") = std::vector<std::size_t>({4, 4}),
              py::arg("directions") = LatticeGraph::directions_type(
                  {{{0, -1}, {0, +1}, {+1, 0}}, {{-1, 0}, {0, -1}, {0, +1}}}),
@@ -181,8 +181,8 @@ void PyTensorNetwork_wrapper(py::module &m) {
 
     py::class_<tensornetwork>(m, "TensorNetwork", py::buffer_protocol(), py::dynamic_attr(),
                               py::module_local())
-        .def(py::init<std::vector<npp::tensor_type<std::complex<double>>> &,
-                      std::vector<std::vector<int>> &>(),
+        .def(py::init<const std::vector<npp::tensor_type<std::complex<double>>> &,
+                      const std::vector<std::vector<int>> &>(),
              py::arg("tensorList"), py::arg("legsList"))
         .def(py::init<std::vector<npp::tensor_type<std::complex<double>>> &&,
                       std::vector<std::vector<int>> &&>(),

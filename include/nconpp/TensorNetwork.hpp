@@ -4,6 +4,7 @@
 #define INCLUDE_NCONPP_TENSORNETWORK_HPP_
 
 #include <algorithm>
+#include <iterator>
 #include <complex>
 #include <set>
 #include <string>
@@ -78,8 +79,6 @@ class TensorNetwork : public Graph<GRAPH_PROPERTIES::tensornetwork_graph_propert
 
                     // add edge between previous src and dest (the current src)
                     this->addEdge(_leg_index, prev, _vertex_index);
-
-                    this->edges[_leg_index].singular_values;
 
                     // erase entry from map
                     _vertex_leg_map.erase(_leg_index);
@@ -250,7 +249,7 @@ class TensorNetwork : public Graph<GRAPH_PROPERTIES::tensornetwork_graph_propert
      * @brief Destroy the Tensor Network object
      *
      */
-    ~TensorNetwork() = default;
+    ~TensorNetwork() override = default;
 
     /**
      * @brief Retrieve current dangling legs (negative indices).
@@ -313,8 +312,8 @@ class TensorNetwork : public Graph<GRAPH_PROPERTIES::tensornetwork_graph_propert
                     }
                 }
 
-                _src_legs.erase(_src_legs.begin() + _axes[1]);
-                _src_legs.erase(_src_legs.begin() + _axes[0]);
+                _src_legs.erase(std::next(_src_legs.begin(), static_cast<std::ptrdiff_t>(_axes[1])));
+                _src_legs.erase(std::next(_src_legs.begin(), static_cast<std::ptrdiff_t>(_axes[0])));
 
                 _src_tensor = npp::linalg::trace(_src_tensor, 0, _axes[0], _axes[1]);
 
@@ -334,8 +333,8 @@ class TensorNetwork : public Graph<GRAPH_PROPERTIES::tensornetwork_graph_propert
                     }
                 }
 
-                _src_legs.erase(_src_legs.begin() + _axes_a[0]);
-                _dest_legs.erase(_dest_legs.begin() + _axes_b[0]);
+                _src_legs.erase(std::next(_src_legs.begin(), static_cast<std::ptrdiff_t>(_axes_a[0])));
+                _dest_legs.erase(std::next(_dest_legs.begin(), static_cast<std::ptrdiff_t>(_axes_b[0])));
 
                 std::vector<int> _legs = {};
                 _legs.insert(_legs.end(), _src_legs.begin(), _src_legs.end());
@@ -403,8 +402,8 @@ class TensorNetwork : public Graph<GRAPH_PROPERTIES::tensornetwork_graph_propert
 
         // split legs
         std::vector<int> _left_legs(this->vertices[vertex_index].legs.begin(),
-                                    this->vertices[vertex_index].legs.begin() + leg_index);
-        std::vector<int> _right_legs(this->vertices[vertex_index].legs.begin() + leg_index,
+                                    std::next(this->vertices[vertex_index].legs.begin(), static_cast<std::ptrdiff_t>(leg_index)));
+        std::vector<int> _right_legs(std::next(this->vertices[vertex_index].legs.begin(), static_cast<std::ptrdiff_t>(leg_index)),
                                      this->vertices[vertex_index].legs.end());
 
         // split tensor

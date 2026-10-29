@@ -50,7 +50,7 @@ class Graph {
 
     struct edge_properties_t : E {
         // put any default property here
-        std::size_t src, dest;
+        std::size_t src = 0, dest = 0;
     };
 
     // graph properties

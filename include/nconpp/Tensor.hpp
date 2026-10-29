@@ -4,6 +4,7 @@
 #define INCLUDE_NCONPP_TENSOR_HPP_
 
 #include <functional>
+#include <utility>
 
 #include <xtensor-blas/xlinalg.hpp>
 #include <xtensor/xarray.hpp>
@@ -38,7 +39,7 @@ template <class E> static inline auto diag(const E &arr) {
 // allclose
 template <class E1, class E2>
 static inline auto allclose(E1 &&e1, E2 &&e2, double rtol = 1e-05, double atol = 1e-08) noexcept {
-    return xt::allclose(e1, e2, rtol, atol);
+    return xt::allclose(std::forward<E1>(e1), std::forward<E2>(e2), rtol, atol);
 }
 
 // reshape

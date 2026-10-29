@@ -9,12 +9,6 @@ using ::testing::ElementsAre;
 using ::testing::Pair;
 using ::testing::UnorderedElementsAre;
 
-class LatticeGraphTest : public testing::Test {
-    LatticeGraphTest() = default;
-
-    ~LatticeGraphTest() override = default;
-};
-
 TEST(LatticeGraphTest, Honeycomb) {
     std::string name = "Honeycomb";
     std::vector<std::size_t> grid_shape = {4, 4};

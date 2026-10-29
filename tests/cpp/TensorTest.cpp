@@ -3,17 +3,13 @@
 #include <gtest/gtest.h>
 
 #include <complex>
+#include <iterator>
+
 #include <random>
 
 #include "nconpp/Tensor.hpp"
 
 using namespace std::complex_literals;
-
-class TensorTest : public testing::Test {
-    TensorTest() = default;
-
-    ~TensorTest() override = default;
-};
 
 TEST(TensorTest, trace) {
     npp::shape_type shapeA = {4, 3, 2, 8, 2};
@@ -84,11 +80,11 @@ TEST(TensorTest, svd) {
 TEST(TensorTest, reshape) {
     npp::tensor_type<double> tensor = xt::random::rand<double>({3, 4, 5});
 
-    std::size_t pos = 2;
+    std::ptrdiff_t pos = 2;
 
     npp::shape_type shape = npp::shape(tensor);
-    npp::shape_type left_shape = std::vector(shape.begin(), shape.begin() + pos);
-    npp::shape_type right_shape = std::vector(shape.begin() + pos, shape.end());
+    npp::shape_type left_shape = std::vector(shape.begin(), std::next(shape.begin(), pos));
+    npp::shape_type right_shape = std::vector(std::next(shape.begin(), pos), shape.end());
 
     size_t left = 1;
     for (auto l : left_shape) {
