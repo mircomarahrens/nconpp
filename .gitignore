@@ -100,8 +100,11 @@ instance/
 # Scrapy stuff:
 .scrapy
 
-# Sphinx documentation
+# Documentation builds
 docs/_build/
+docs/html/
+docs/xml/
+docs/latex/
 
 # PyBuilder
 .pybuilder/

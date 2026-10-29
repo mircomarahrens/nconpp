@@ -13,7 +13,7 @@ if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
     endif()
 endif()
 
-project(nconpp LANGUAGES C CXX)
+project(nconpp VERSION 0.1.0 LANGUAGES C CXX)
 
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Choose the type of build." FORCE)
@@ -55,4 +55,26 @@ endif()
 if(CMAKE_BUILD_TYPE MATCHES Python OR SKBUILD OR
    (CMAKE_BUILD_TYPE MATCHES Debug AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/extern/xtensor-python/include"))
     include(bindings/python/python.cmake)
+endif()
+
+# Documentation
+find_package(Doxygen OPTIONAL_COMPONENTS dot)
+if(DOXYGEN_FOUND)
+    if(DOXYGEN_DOT_FOUND)
+        set(DOXYGEN_HAVE_DOT "YES")
+    else()
+        set(DOXYGEN_HAVE_DOT "NO")
+    endif()
+    set(DOXYGEN_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/docs")
+    set(DOXYGEN_IN "${CMAKE_CURRENT_SOURCE_DIR}/docs/Doxyfile.in")
+    set(DOXYGEN_OUT "${CMAKE_CURRENT_BINARY_DIR}/Doxyfile")
+
+    configure_file(${DOXYGEN_IN} ${DOXYGEN_OUT} @ONLY)
+
+    add_custom_target(docs
+        COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUT}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        COMMENT "Generating API documentation with Doxygen"
+        VERBATIM
+    )
 endif()

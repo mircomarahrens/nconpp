@@ -266,11 +266,14 @@ class TensorNetwork : public Graph<GRAPH_PROPERTIES::tensornetwork_graph_propert
     }
 
     /**
+     * @brief Contract tensors in the network according to a contraction sequence.
      *
      * @param contraction_sequence
      *  - order by legs in which the tensors shall be contracted
      * @param final_order
      *  - permutation of the legs of the final tensors
+     * @param multi_index
+     *  - flag indicating whether multi-index contraction is enabled
      */
     void contract(std::vector<int> contraction_sequence = {}, std::vector<int> final_order = {},
                   bool multi_index = false) {
