@@ -2,7 +2,7 @@
 
 A C++ library for tensor network operations with Python bindings.
 
-`nconpp` facilitates efficient contraction and decomposition of tensor networks. It is inspired by the MATLAB library NCON ([arXiv:1402.0939](https://arxiv.org/abs/1402.0939)) and extensively leverages graph algorithms and modern linear algebra.
+`nconpp` facilitates efficient contraction and decomposition of tensor networks. It is inspired by the MATLAB library NCON ([arXiv:1402.0939](https://arxiv.org/abs/1402.0939)) and extensively leverages graph algorithms and linear algebra.
 
 ---
 
