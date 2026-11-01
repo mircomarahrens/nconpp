@@ -39,11 +39,11 @@ jobs:
         uses: astral-sh/setup-uv@v7
 
       - name: Install doc dependencies
-        run: uv sync --only-group docs
+        run: uv sync --no-install-project --only-group docs
 
       - name: Build documentation site
         run: |
-          uv run mkdocs build
+          uv run --no-sync mkdocs build
           touch site/.nojekyll
 
       - name: Upload artifact
