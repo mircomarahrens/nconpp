@@ -1,4 +1,4 @@
-"""nconpp: A library for tensor network calculations."""
+"""nconpp: A library for tensor network operations."""
 
 from ._nconpp import Graph, LatticeGraph, TensorNetwork
 

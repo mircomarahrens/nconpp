@@ -1,0 +1,90 @@
+site_name: nconpp
+site_description: A C++ & Python library for tensor network calculations
+site_author: Mirco Marahrens
+repo_url: https://github.com/mircomarahrens/nconpp
+repo_name: mircomarahrens/nconpp
+
+docs_dir: docs
+site_dir: site
+
+exclude_docs: |
+  Doxyfile*
+  header.html
+  doxygen-awesome-css/**
+  html/**
+  xml/**
+
+not_in_nav: |
+  cpp/**
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+
+plugins:
+  - search
+  - mkdoxy:
+      projects:
+        nconpp:
+          src-dirs: "include/nconpp"
+          full-doc: true
+          api-path: "cpp"
+          doxy-cfg:
+            FILE_PATTERNS: "*.hpp *.h"
+            RECURSIVE: "YES"
+            EXTRACT_ALL: "YES"
+            JAVADOC_AUTOBRIEF: "YES"
+            GENERATE_HTML: "NO"
+            GENERATE_XML: "YES"
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
+          options:
+            show_root_heading: true
+            show_source: false
+            show_if_no_docstring: true
+            heading_level: 2
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.arithmatex:
+      generic: true
+  - tables
+  - admonition
+  - pymdownx.details
+
+nav:
+  - Home: index.md
+  - Python API:
+      - Overview: python/index.md
+  - C++ API:
+      - Overview: cpp/index.md
+      - Classes: cpp/classes.md
+      - Hierarchy: cpp/hierarchy.md
+      - Namespaces: cpp/namespaces.md
+      - Files: cpp/files.md

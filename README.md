@@ -1,6 +1,6 @@
 # NCONPP
 
-A playground for tensor network contraction, decomposition and renormalization group.
+A C++ library for tensor network operations with python bindings.
 
 This module facilitates efficient contraction and decomposition of tensor networks. It is inspired by the MATLAB library NCON (<https://arxiv.org/abs/1402.0939>) and extensively leverages graph algorithms and linear algebra.
 

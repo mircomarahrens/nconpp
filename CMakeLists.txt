@@ -78,3 +78,13 @@ if(DOXYGEN_FOUND)
         VERBATIM
     )
 endif()
+
+find_program(MKDOCS_EXECUTABLE NAMES mkdocs HINTS "${CMAKE_CURRENT_SOURCE_DIR}/.venv/bin")
+if(MKDOCS_EXECUTABLE)
+    add_custom_target(site
+        COMMAND ${MKDOCS_EXECUTABLE} build
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        COMMENT "Building unified documentation site with MkDocs"
+        VERBATIM
+    )
+endif()
