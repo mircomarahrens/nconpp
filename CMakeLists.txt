@@ -2,14 +2,23 @@ cmake_minimum_required(VERSION 3.28)
 
 # Set overlay triplets and toolchain file for vcpkg
 if(NOT DEFINED VCPKG_OVERLAY_TRIPLETS)
-    set(VCPKG_OVERLAY_TRIPLETS "${CMAKE_CURRENT_SOURCE_DIR}/triplets" CACHE STRING "Overlay triplets directory for vcpkg")
+    set(VCPKG_OVERLAY_TRIPLETS
+        "${CMAKE_CURRENT_SOURCE_DIR}/triplets"
+        CACHE STRING "Overlay triplets directory for vcpkg"
+    )
 endif()
 
 if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
     if(DEFINED ENV{VCPKG_ROOT})
-        set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CACHE STRING "Vcpkg toolchain file")
+        set(CMAKE_TOOLCHAIN_FILE
+            "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+            CACHE STRING "Vcpkg toolchain file"
+        )
     else()
-        set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake" CACHE STRING "Vcpkg toolchain file")
+        set(CMAKE_TOOLCHAIN_FILE
+            "${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake"
+            CACHE STRING "Vcpkg toolchain file"
+        )
     endif()
 endif()
 
@@ -53,7 +62,7 @@ endif()
 
 # Python bindings
 if(CMAKE_BUILD_TYPE MATCHES Python OR SKBUILD OR
-   (CMAKE_BUILD_TYPE MATCHES Debug AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/extern/xtensor-python/include"))
+    (CMAKE_BUILD_TYPE MATCHES Debug AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/extern/xtensor-python/include"))
     include(bindings/python/python.cmake)
 endif()
 

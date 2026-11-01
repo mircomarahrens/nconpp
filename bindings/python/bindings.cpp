@@ -158,10 +158,10 @@ template <typename T> class PyTensorNetwork_trampoline : public TensorNetwork<T>
  */
 void PyTensorNetwork_wrapper(py::module &m) {
     using tensornetwork = PyTensorNetwork_trampoline<std::complex<double>>;
-    using tng = GRAPH_PROPERTIES::tensornetwork_graph_properties;
-    using tnv = GRAPH_PROPERTIES::tensornetwork_vertex_properties<std::complex<double>>;
-    using tne = GRAPH_PROPERTIES::tensornetwork_edge_properties<std::complex<double>>;
-    using graph = PyGraph_trampoline<tng, tnv, tne>;
+    using tn_graph_props = GRAPH_PROPERTIES::tensornetwork_graph_properties;
+    using tn_vertex_props = GRAPH_PROPERTIES::tensornetwork_vertex_properties<std::complex<double>>;
+    using tn_edge_props = GRAPH_PROPERTIES::tensornetwork_edge_properties<std::complex<double>>;
+    using graph = PyGraph_trampoline<tn_graph_props, tn_vertex_props, tn_edge_props>;
 
     py::class_<graph::graph_properties_t>(m, "TensorNetworkGraphProperties")
         .def(py::init<>())
@@ -219,7 +219,7 @@ PYBIND11_MODULE(_nconpp, m) {
              Nomenclature of the legs of the tensors in tensorList:
                  - the legs are named by integers
                  - contractable legs have the same positive integer as name,
-                   hence occuring in pairs
+                   hence occurring in pairs
                  - legs with negative integers won't be contracted, so called
                    dangling legs
          contractionSequence (optional):

@@ -302,7 +302,7 @@ TEST(TensorNetworkTest, split) {
     ASSERT_EQ(result.shape(), npp::shape_type({4, 2, 9}));
     ASSERT_TRUE(npp::allclose(tensor, result));
 
-    // recontract splitted network
+    // recontract split network
     tn.contract();
 
     nt = tn.NumTensors();

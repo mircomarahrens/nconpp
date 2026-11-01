@@ -1,80 +1,86 @@
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
 repos:
-  # Pre-commit hooks.
+  # General file & syntax checks
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
     hooks:
-    - id: trailing-whitespace
-    - id: end-of-file-fixer
-    - id: check-yaml
-    - id: check-added-large-files
-    - id: check-merge-conflict
-    # - id: no-commit-to-branch
-    #   args: [--branch, main]
-    - id: name-tests-test
-  # Conventional commit message linter.
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+        args: [--fix=lf]
+      - id: check-yaml
+        args: [--unsafe]
+      - id: check-toml
+      - id: check-json
+      - id: check-added-large-files
+      - id: check-merge-conflict
+      - id: check-case-conflict
+      - id: name-tests-test
+        files: "^tests/python/"
+
+  # Conventional commit message linter
   - repo: https://github.com/compilerla/conventional-pre-commit
     rev: v4.0.0
     hooks:
       - id: conventional-pre-commit
         stages: [commit-msg]
         args: []
-  # Ruff is a linter and formatter for Python.
+
+  # uv lockfile synchronization (replaces Poetry)
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.7.2
+    hooks:
+      - id: uv-lock
+
+  # Ruff: Python & .pyi stub linter and formatter
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    # Ruff version.
     rev: v0.16.7
     hooks:
-      # Run the linter.
-      - id: ruff
-        files: "^src/, ^tests/"
-        types_or: [ python, pyi ]
-        args: [ --fix ]
-      # Run the formatter.
+      - id: ruff-check
+        files: "^(src|tests)/"
+        types_or: [python, pyi]
+        args: [--fix]
       - id: ruff-format
-        files: "^src/, ^tests/"
-        types_or: [ python, pyi ]
-  # Poetry is a tool for dependency management and packaging in Python.
-  - repo: https://github.com/python-poetry/poetry
-    rev: 2.0.1
+        files: "^(src|tests)/"
+        types_or: [python, pyi]
+
+  # Static type checking for Python and .pyi stubs
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.15.0
     hooks:
-    - id: poetry-check
-    - id: poetry-lock
-  # Poetry plugin for exporting requirements.
-  # - repo: https://github.com/python-poetry/poetry-plugin-export
-  #   rev: 1.9.0
-  #   hooks:
-  #   - id: poetry-export
-  #     args: [--with, "dev", -f, requirements.txt, -o, requirements.dev.txt]
-  #   - id: poetry-export
-  #     args: [--without, "dev", -f, requirements.txt, -o, requirements.txt]
+      - id: mypy
+        files: "^(src|tests/python)/"
+        additional_dependencies: [numpy>=2.0, pytest]
+
+  # CMake linter
   - repo: https://github.com/cmake-lint/cmake-lint
     rev: 1.4.3
     hooks:
       - id: cmakelint
+        files: "(^CMakeLists\\.txt$|\\.cmake$)"
+        exclude: "^extern/"
         args: [--filter=-readability/wonkycase, --linelength=120]
+
+  # C++ formatting (clang-format)
   - repo: https://github.com/pocc/pre-commit-hooks
     rev: v1.3.5
     hooks:
       - id: clang-format
+        files: "^(include|bindings|tests/cpp)/"
+        types_or: [c++, c]
         args: [--style=file, --fallback-style=none, -i]
-      # - id: cpplint
-      # - id: cppcheck
-      # - id: clang-tidy
-      #   args:
-      #     - -extra-arg=-std=c++20
-      #     - -extra-arg=-stdlib=libc++
-      #     - -p=build/linux-debug-with-vcpkg
-      #     - "-header-filter=^(?!.*\\.hpp$).*"
-      # - id: oclint
-      # - id: uncrustify
-      # - id: include-what-you-use
-      # exclude: "(python|test|python/extern)/.*"
-  # - repo: local
-  #   hooks:
-  #     - id: clang-tidy
-  #       name: clang-tidy (CppCoreGuidelines)
-  #       entry: bash -c 'clang-tidy -p build "$@"'
-  #       language: system
-  #       types: [c++]
-  #       pass_filenames: true
+
+  # GitHub Actions workflow linter
+  - repo: https://github.com/rhysd/actionlint
+    rev: v1.7.7
+    hooks:
+      - id: actionlint
+
+  # Spell-checking for docs, comments, and identifiers
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.4.1
+    hooks:
+      - id: codespell
+        exclude: "^(uv\\.lock|docs/doxygen-awesome-css/)"
+        args: [--ignore-words-list=nd,te,ba]

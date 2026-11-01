@@ -7,8 +7,7 @@
 
 #include "nconpp/LinAlg.hpp"
 
-template <typename T = std::complex<double>>
-class Renormalization {
+template <typename T = std::complex<double>> class Renormalization {
     Renormalization() {
         // 1. Init: Takes an initial TensorNetwork object
         // 2. Init: Takes SIMULATION PARAMETERS
@@ -18,9 +17,7 @@ class Renormalization {
         // 5. performs a renormalization step on odd and even edges consecutive
     };
 
-
-    private:
-
+  private:
 };
 
 #endif // INCLUDE_NCONPP_RENORMALIZATION_HPP_
