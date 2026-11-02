@@ -54,3 +54,8 @@ logging.level = "INFO"
 
 [tool.pytest.ini_options]
 testpaths = ["tests/python"]
+
+[tool.pyright]
+venvPath = "."
+venv = ".venv"
+reportMissingModuleSource = "none"
