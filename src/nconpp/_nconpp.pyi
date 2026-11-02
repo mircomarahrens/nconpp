@@ -167,14 +167,14 @@ class TensorNetworkEdgeProperties:
     def src(self) -> int: ...
 
 class TensorNetwork:
-    def __buffer__(self, flags):
+    def __buffer__(self, flags: int, /) -> memoryview:
         """
         Return a buffer object that exposes the underlying memory of the object.
         """
     def __init__(
         self, tensorList: list[npt.NDArray[numpy.complex128]], legsList: list[list[int]]
     ) -> None: ...
-    def __release_buffer__(self, buffer):
+    def __release_buffer__(self, buffer: memoryview, /) -> None:
         """
         Release the buffer object that exposes the underlying memory of the object.
         """
