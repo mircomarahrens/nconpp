@@ -321,48 +321,98 @@ class TensorNetwork : public Graph<GRAPH_PROPERTIES::tensornetwork_graph_propert
                 _src_tensor = npp::linalg::trace(_src_tensor, 0, _axes[0], _axes[1]);
 
                 this->removeEdge(_leg_index);
+                contraction_sequence.erase(contraction_sequence.begin());
+                m_legs.erase(_leg_index);
             } else { // tensordot
-                // TODO(mircomarahrens): add multi axis tensor contraction?
+                std::vector<int> _contracted_legs = {_leg_index};
+                if (multi_index) {
+                    for (auto _it = std::next(contraction_sequence.begin());
+                         _it != contraction_sequence.end(); ++_it) {
+                        int _candidate = *_it;
+                        if (std::find(_contracted_legs.begin(), _contracted_legs.end(),
+                                      _candidate) != _contracted_legs.end()) {
+                            continue;
+                        }
+                        auto _edge_it = this->edges.find(_candidate);
+                        if (_edge_it != this->edges.end()) {
+                            const auto &_candidate_edge = _edge_it->second;
+                            if ((_candidate_edge.src == _src && _candidate_edge.dest == _dest) ||
+                                (_candidate_edge.src == _dest && _candidate_edge.dest == _src)) {
+                                _contracted_legs.push_back(_candidate);
+                            }
+                        }
+                    }
+                }
+
                 std::vector<std::size_t> _axes_a = {};
                 std::vector<std::size_t> _axes_b = {};
-                for (std::size_t _axis = 0; _axis < _src_legs.size(); _axis++) {
-                    if (_src_legs[_axis] == _leg_index) {
-                        _axes_a.emplace_back(_axis);
-                    }
-                }
-                for (std::size_t _axis = 0; _axis < _dest_legs.size(); _axis++) {
-                    if (_dest_legs[_axis] == _leg_index) {
-                        _axes_b.emplace_back(_axis);
-                    }
-                }
+                _axes_a.reserve(_contracted_legs.size());
+                _axes_b.reserve(_contracted_legs.size());
 
-                _src_legs.erase(
-                    std::next(_src_legs.begin(), static_cast<std::ptrdiff_t>(_axes_a[0])));
-                _dest_legs.erase(
-                    std::next(_dest_legs.begin(), static_cast<std::ptrdiff_t>(_axes_b[0])));
+                for (int _leg : _contracted_legs) {
+                    for (std::size_t _axis = 0; _axis < _src_legs.size(); _axis++) {
+                        if (_src_legs[_axis] == _leg) {
+                            _axes_a.emplace_back(_axis);
+                            break;
+                        }
+                    }
+                    for (std::size_t _axis = 0; _axis < _dest_legs.size(); _axis++) {
+                        if (_dest_legs[_axis] == _leg) {
+                            _axes_b.emplace_back(_axis);
+                            break;
+                        }
+                    }
+                }
 
                 std::vector<int> _legs = {};
-                _legs.insert(_legs.end(), _src_legs.begin(), _src_legs.end());
-                _legs.insert(_legs.end(), _dest_legs.begin(), _dest_legs.end());
+                _legs.reserve(_src_legs.size() + _dest_legs.size() - 2 * _contracted_legs.size());
+                for (int _leg : _src_legs) {
+                    if (std::find(_contracted_legs.begin(), _contracted_legs.end(), _leg) ==
+                        _contracted_legs.end()) {
+                        _legs.push_back(_leg);
+                    }
+                }
+                for (int _leg : _dest_legs) {
+                    if (std::find(_contracted_legs.begin(), _contracted_legs.end(), _leg) ==
+                        _contracted_legs.end()) {
+                        _legs.push_back(_leg);
+                    }
+                }
 
                 // set new legs to src vertex
-                _src_legs = _legs;
+                _src_legs = std::move(_legs);
 
-                if (npp::dimension(_edge.singular_values) > 0) {
-                    _src_tensor = npp::linalg::tensordot(
-                        _src_tensor, npp::diag(_edge.singular_values), _axes_a, {0});
+                for (std::size_t _i = 0; _i < _contracted_legs.size(); ++_i) {
+                    const auto &_cur_edge = this->edges[_contracted_legs[_i]];
+                    if (npp::dimension(_cur_edge.singular_values) > 0) {
+                        npp::shape_type _broadcast_shape(npp::dimension(_src_tensor), 1);
+                        _broadcast_shape[_axes_a[_i]] = _cur_edge.singular_values.size();
+                        auto _sv = _cur_edge.singular_values;
+                        _sv.reshape(_broadcast_shape);
+                        _src_tensor *= _sv;
+                    }
                 }
 
                 // tensordot and store result to src vertex
                 _src_tensor = npp::linalg::tensordot(_src_tensor, _dest_tensor, _axes_a, _axes_b);
 
-                this->removeEdge(_leg_index);
+                for (int _leg : _contracted_legs) {
+                    this->removeEdge(_leg);
+                    m_legs.erase(_leg);
+                }
 
                 // merge dest vertex into src vertex
                 this->mergeVertices(_src, _dest);
+
+                contraction_sequence.erase(
+                    std::remove_if(contraction_sequence.begin(), contraction_sequence.end(),
+                                   [&_contracted_legs](int _leg) {
+                                       return std::find(_contracted_legs.begin(),
+                                                        _contracted_legs.end(),
+                                                        _leg) != _contracted_legs.end();
+                                   }),
+                    contraction_sequence.end());
             }
-            contraction_sequence.erase(contraction_sequence.begin());
-            m_legs.erase(_leg_index);
         }
 
         if (!contraction_sequence.empty()) {

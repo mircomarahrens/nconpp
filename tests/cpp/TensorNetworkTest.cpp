@@ -311,3 +311,97 @@ TEST(TensorNetworkTest, split) {
     ASSERT_EQ(tn.vertices[0].tensor.shape(), npp::shape_type({4, 2, 9}));
     ASSERT_TRUE(npp::allclose(tensor, tn.vertices[0].tensor));
 }
+
+TEST(TensorNetworkTest, multi_index_contract_matches_single_index) {
+    std::vector<npp::tensor_type<std::complex<double>>> tensorList = {
+        xt::random::rand<double>({3, 4, 5}), xt::random::rand<double>({5, 3, 6, 7, 6}),
+        xt::random::rand<double>({7, 2}),    xt::random::rand<double>({8}),
+        xt::random::rand<double>({8, 9}),    xt::random::rand<double>({9, 9}),
+    };
+
+    std::vector<std::vector<int>> legLinks = {
+        {3, -2, 2}, {2, 3, 1, 4, 1}, {4, -1}, {5}, {5, -3}, {6, 6},
+    };
+
+    TensorNetwork tn_single(tensorList, legLinks);
+    TensorNetwork tn_multi(tensorList, legLinks);
+
+    tn_single.contract({}, {}, false);
+    tn_multi.contract({}, {}, true);
+
+    ASSERT_EQ(tn_multi.NumTensors(), tn_single.NumTensors());
+    ASSERT_EQ(tn_multi.getLegs(), tn_single.getLegs());
+
+    for (std::size_t v : tn_single.getVertices()) {
+        ASSERT_EQ(tn_multi.vertices[v].tensor.shape(), tn_single.vertices[v].tensor.shape());
+        ASSERT_TRUE(npp::allclose(tn_multi.vertices[v].tensor, tn_single.vertices[v].tensor));
+    }
+}
+
+TEST(TensorNetworkTest, multi_index_contract_full_scalar) {
+    npp::tensor_type<std::complex<double>> A = xt::random::rand<double>({4, 2, 3});
+    npp::tensor_type<std::complex<double>> B = xt::random::rand<double>({3, 4, 2});
+
+    std::vector<npp::tensor_type<std::complex<double>>> tensorList = {A, B};
+    std::vector<std::vector<int>> legLinks = {{3, 1, 2}, {2, 3, 1}};
+
+    TensorNetwork tn_single(tensorList, legLinks);
+    TensorNetwork tn_multi(tensorList, legLinks);
+
+    tn_single.contract({}, {}, false);
+    tn_multi.contract({}, {}, true);
+
+    ASSERT_EQ(tn_multi.NumTensors(), 1);
+    ASSERT_EQ(tn_multi.vertices[0].tensor.shape(), npp::shape_type({}));
+    ASSERT_TRUE(npp::allclose(tn_multi.vertices[0].tensor, tn_single.vertices[0].tensor));
+
+    auto expected = npp::linalg::tensordot(A, B, {1, 2, 0}, {2, 0, 1});
+    ASSERT_TRUE(npp::allclose(tn_multi.vertices[0].tensor, expected));
+}
+
+TEST(TensorNetworkTest, multi_index_contract_partial_sequence) {
+    std::vector<npp::tensor_type<std::complex<double>>> tensorList = {
+        xt::random::rand<double>({3, 4, 5}),
+        xt::random::rand<double>({5, 3, 2}),
+    };
+    std::vector<std::vector<int>> legLinks = {{2, -1, 1}, {1, 2, -2}};
+
+    TensorNetwork tn(tensorList, legLinks);
+
+    // Only contract leg 1; leg 2 is not in the sequence and must remain uncontracted.
+    tn.contract({1}, {}, true);
+
+    ASSERT_EQ(tn.NumTensors(), 1);
+    ASSERT_THAT(tn.Legs(), ElementsAre(2));
+    ASSERT_EQ(tn.vertices[0].tensor.shape(), npp::shape_type({3, 4, 3, 2}));
+}
+
+TEST(TensorNetworkTest, multi_index_contract_with_singular_values) {
+    npp::tensor_type<std::complex<double>> A = xt::random::rand<double>({3, 4, 5});
+    npp::tensor_type<std::complex<double>> B = xt::random::rand<double>({5, 3, 2});
+    npp::tensor_type<std::complex<double>> sv1 = xt::random::rand<double>({5});
+    npp::tensor_type<std::complex<double>> sv2 = xt::random::rand<double>({3});
+
+    std::vector<npp::tensor_type<std::complex<double>>> tensorList = {A, B};
+    std::vector<std::vector<int>> legLinks = {{2, -1, 1}, {1, 2, -2}};
+
+    TensorNetwork tn_multi(tensorList, legLinks);
+    tn_multi.edges[1].singular_values = sv1;
+    tn_multi.edges[2].singular_values = sv2;
+
+    tn_multi.contract({}, {}, true);
+
+    // Compute reference: scale A along axis 2 by sv1 and axis 0 by sv2, then contract
+    auto A_scaled = A;
+    auto sv1_r = sv1;
+    sv1_r.reshape({1, 1, 5});
+    auto sv2_r = sv2;
+    sv2_r.reshape({3, 1, 1});
+    A_scaled *= sv1_r;
+    A_scaled *= sv2_r;
+    auto expected = npp::linalg::tensordot(A_scaled, B, {2, 0}, {0, 1});
+
+    ASSERT_EQ(tn_multi.NumTensors(), 1);
+    ASSERT_EQ(tn_multi.vertices[0].tensor.shape(), npp::shape_type({4, 2}));
+    ASSERT_TRUE(npp::allclose(tn_multi.vertices[0].tensor, expected));
+}

@@ -145,9 +145,10 @@ template <typename T> class PyTensorNetwork_trampoline : public TensorNetwork<T>
                            std::forward<SubscriptVectorList>(subscriptVectorList)) {}
 
     void contract_wrapper(std::optional<std::vector<int>> opt_contractionSequence = std::nullopt,
-                          std::optional<std::vector<int>> opt_finalOrder = std::nullopt) {
+                          std::optional<std::vector<int>> opt_finalOrder = std::nullopt,
+                          bool multi_index = false) {
         TensorNetwork<T>::contract(opt_contractionSequence.value_or(std::vector<int>{}),
-                                   opt_finalOrder.value_or(std::vector<int>{}));
+                                   opt_finalOrder.value_or(std::vector<int>{}), multi_index);
     }
 };
 
@@ -188,7 +189,8 @@ void PyTensorNetwork_wrapper(py::module &m) {
                       std::vector<std::vector<int>> &&>(),
              py::arg("tensorList"), py::arg("legsList"))
         .def("contract", &tensornetwork::contract_wrapper,
-             py::arg("contractionSequence") = py::none(), py::arg("finalOrder") = py::none())
+             py::arg("contractionSequence") = py::none(), py::arg("finalOrder") = py::none(),
+             py::arg("multi_index") = false)
         .def("connect", &tensornetwork::connect)
         .def_property_readonly("num_tensors", &tensornetwork::NumTensors)
         .def("get_vertices", &tensornetwork::getVertices)

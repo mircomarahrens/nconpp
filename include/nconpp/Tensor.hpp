@@ -128,9 +128,12 @@ static inline auto dot(const expression_type<T> &xa, const expression_type<O> &x
 template <typename T, typename O>
 static inline auto tensordot(const expression_type<T> &xa, const expression_type<O> &xb,
                              const std::vector<std::size_t> &ax_a,
-                             const std::vector<std::size_t> &ax_b)
-    -> decltype(xt::linalg::tensordot(xa, xb, ax_a, ax_b)) {
-    return xt::linalg::tensordot(xa, xb, ax_a, ax_b);
+                             const std::vector<std::size_t> &ax_b) {
+    auto res = xt::linalg::tensordot(xa, xb, ax_a, ax_b);
+    if (ax_a.size() == dimension(xa) && ax_b.size() == dimension(xb) && res.dimension() != 0) {
+        res.reshape(shape_type{});
+    }
+    return res;
 }
 
 // trace
