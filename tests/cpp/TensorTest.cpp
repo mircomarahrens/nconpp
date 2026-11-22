@@ -7,7 +7,7 @@
 
 #include <random>
 
-#include "nconpp/Tensor.hpp"
+#include "nconpp/tensor.hpp"
 
 using namespace std::complex_literals;
 

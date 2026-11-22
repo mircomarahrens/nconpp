@@ -1,7 +1,7 @@
 // Copyright 2023 Mirco Marahrens
 
-#ifndef INCLUDE_NCONPP_ERRORMESSAGES_HPP_
-#define INCLUDE_NCONPP_ERRORMESSAGES_HPP_
+#ifndef INCLUDE_NCONPP_ERROR_MESSAGES_HPP_
+#define INCLUDE_NCONPP_ERROR_MESSAGES_HPP_
 
 namespace ErrorMessages {
 const char *const ERROR_CONSTRAINT_LEGPAIRS = "Only pairs of legs are allowed.";
@@ -19,4 +19,4 @@ const char *const ERROR_SOURCEID_NOTPRESENT = "Source vertex identifier not pres
 const char *const ERROR_DESTID_NOTPRESENT = "Destination vertex identifier not present.";
 } // namespace ErrorMessages
 
-#endif // INCLUDE_NCONPP_ERRORMESSAGES_HPP_
+#endif // INCLUDE_NCONPP_ERROR_MESSAGES_HPP_

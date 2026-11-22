@@ -8,7 +8,7 @@
 #include <stdexcept>
 #include <unordered_map>
 
-#include "nconpp/ErrorMessages.hpp"
+#include "nconpp/error_messages.hpp"
 
 namespace GRAPH_PROPERTIES {
 struct default_struct {};

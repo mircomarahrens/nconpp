@@ -5,7 +5,7 @@
 
 #include <complex>
 
-#include "nconpp/LinAlg.hpp"
+#include "nconpp/linalg.hpp"
 
 template <typename T = std::complex<double>> class Renormalization {
     Renormalization() {

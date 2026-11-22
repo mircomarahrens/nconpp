@@ -1,7 +1,7 @@
 // Copyright 2023 Mirco Marahrens
 
-#ifndef INCLUDE_NCONPP_TENSORNETWORK_HPP_
-#define INCLUDE_NCONPP_TENSORNETWORK_HPP_
+#ifndef INCLUDE_NCONPP_TENSOR_NETWORK_HPP_
+#define INCLUDE_NCONPP_TENSOR_NETWORK_HPP_
 
 #include <algorithm>
 #include <complex>
@@ -12,10 +12,10 @@
 #include <utility>
 #include <vector>
 
-#include "nconpp/ErrorMessages.hpp"
-#include "nconpp/Graph.hpp"
-#include "nconpp/Tensor.hpp"
-#include "nconpp/Utils.hpp"
+#include "nconpp/error_messages.hpp"
+#include "nconpp/graph.hpp"
+#include "nconpp/tensor.hpp"
+#include "nconpp/utils.hpp"
 
 namespace GRAPH_PROPERTIES {
 // custom graph properties
@@ -602,4 +602,4 @@ class TensorNetwork : public Graph<GRAPH_PROPERTIES::tensornetwork_graph_propert
     }
 };
 
-#endif // INCLUDE_NCONPP_TENSORNETWORK_HPP_
+#endif // INCLUDE_NCONPP_TENSOR_NETWORK_HPP_

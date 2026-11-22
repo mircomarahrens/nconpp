@@ -14,7 +14,7 @@
 #include <xtensor/xmath.hpp>
 #include <xtensor/xview.hpp>
 
-#include "nconpp/Tensor.hpp"
+#include "nconpp/tensor.hpp"
 
 namespace npp::linalg {
 namespace detail {
