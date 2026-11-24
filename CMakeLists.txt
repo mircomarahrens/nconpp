@@ -60,6 +60,12 @@ if(CMAKE_BUILD_TYPE MATCHES Debug)
     include(tests/cpp/googletest.cmake)
 endif()
 
+# C++ benchmarks
+option(NCONPP_BUILD_BENCHMARKS "Build C++ benchmark executable" ON)
+if(NCONPP_BUILD_BENCHMARKS)
+    include(benchmarks/benchmarks.cmake)
+endif()
+
 # Python bindings
 if(CMAKE_BUILD_TYPE MATCHES Python OR SKBUILD OR
     (CMAKE_BUILD_TYPE MATCHES Debug AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/extern/xtensor-python/include"))

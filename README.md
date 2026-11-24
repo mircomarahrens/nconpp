@@ -114,6 +114,29 @@ uv pip install .
 ctest --test-dir build/linux-debug
 ```
 
+## Benchmarks
+
+C++ benchmarks are built with [Google Benchmark](https://github.com/google/benchmark) (enabled by default; disable with `-DNCONPP_BUILD_BENCHMARKS=OFF`):
+
+```bash
+uv run poe benchmark
+```
+
+Or build and run manually:
+
+```bash
+cmake --preset linux-debug
+cmake --build build/linux-debug --target nconpp_benchmarks
+./build/linux-debug/nconpp_benchmarks
+```
+
+Filter specific benchmarks or export JSON results for before/after comparisons:
+
+```bash
+./build/linux-debug/nconpp_benchmarks --benchmark_filter=HOSVD
+./build/linux-debug/nconpp_benchmarks --benchmark_repetitions=3 --benchmark_out=results.json
+```
+
 ## Ideas
 
 - Text-based user interface; inspiration: <https://www.tensortrace.com/>

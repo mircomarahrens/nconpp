@@ -1,0 +1,141 @@
+name: Benchmarks C++
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "include/**"
+      - "benchmarks/**"
+      - "CMakeLists.txt"
+      - "CMakePresets.json"
+      - "vcpkg.json"
+      - ".github/workflows/benchmarks.yml"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "include/**"
+      - "benchmarks/**"
+      - "CMakeLists.txt"
+      - "CMakePresets.json"
+      - "vcpkg.json"
+      - ".github/workflows/benchmarks.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: benchmarks-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-24.04
+    env:
+      CC: clang
+      CXX: clang++
+      CFLAGS: "-mfma"
+      CXXFLAGS: "-mfma"
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Check or initialize benchmarks-data orphan branch
+        id: bench-branch
+        run: |
+          if git ls-remote --exit-code --heads origin benchmarks-data >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          elif [[ ("${{ github.event_name }}" == "push" || "${{ github.event_name }}" == "workflow_dispatch") && "${{ github.ref }}" == "refs/heads/main" ]]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git checkout --orphan benchmarks-data
+            git rm -rf . >/dev/null 2>&1 || true
+            echo "# NCONPP Benchmark History" > README.md
+            git add README.md
+            git commit -m "Initialize benchmarks-data orphan branch"
+            git push origin benchmarks-data
+            git checkout "${{ github.sha }}"
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Set up vcpkg
+        id: vcpkg
+        run: |
+          git clone --branch 2025.04.09 --single-branch https://github.com/microsoft/vcpkg.git
+          cd vcpkg
+          ./bootstrap-vcpkg.sh --disableMetrics
+          ./vcpkg integrate install
+          echo "VCPKG_ROOT=$(pwd)" >> "$GITHUB_OUTPUT"
+
+      - name: Install build tools and compilers
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang-18 gfortran make ninja-build pkg-config
+          sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100
+          sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-18 100
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+
+      - name: Install dev dependencies
+        run: uv sync --all-extras --dev --no-install-project
+
+      - name: Configure CMake (Release)
+        env:
+          VCPKG_ROOT: ${{ steps.vcpkg.outputs.VCPKG_ROOT }}
+        run: |
+          cmake --preset linux-debug -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build benchmarks
+        run: |
+          cmake --build ${{ github.workspace }}/build/linux-debug --target nconpp_benchmarks --parallel 10
+
+      - name: Run benchmarks
+        run: |
+          ./build/linux-debug/nconpp_benchmarks \
+            --benchmark_min_time=0.5s \
+            --benchmark_out=benchmark_results.json \
+            --benchmark_out_format=json | tee benchmark_output.txt
+
+      - name: Publish job summary
+        run: |
+          {
+            echo "## C++ Benchmarks"
+            echo '```text'
+            cat benchmark_output.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Store benchmark results
+        if: steps.bench-branch.outputs.exists == 'true'
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          name: NCONPP C++ Benchmarks
+          tool: googlecpp
+          output-file-path: benchmark_results.json
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          gh-pages-branch: benchmarks-data
+          benchmark-data-dir-path: dev/bench
+          auto-push: ${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main' }}
+          alert-threshold: "150%"
+          comment-on-alert: true
+          fail-on-alert: false
+
+      - name: Upload benchmark results artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: benchmark-results-${{ github.sha }}
+          path: |
+            benchmark_results.json
+            benchmark_output.txt
+          retention-days: 90

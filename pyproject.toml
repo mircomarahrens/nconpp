@@ -66,3 +66,7 @@ reportMissingModuleSource = "none"
 [tool.poe.tasks.test-all]
 shell = "cmake --preset linux-debug && cmake --build build/linux-debug && ctest --test-dir build/linux-debug --output-on-failure && uv sync --reinstall-package nconpp && uv run pytest"
 help = "Configure and build C++, run C++ ctest, reinstall nconpp wheel, and run pytest"
+
+[tool.poe.tasks.benchmark]
+shell = "cmake --preset linux-debug && cmake --build build/linux-debug --target nconpp_benchmarks && ./build/linux-debug/nconpp_benchmarks"
+help = "Configure, build, and run C++ benchmarks"
